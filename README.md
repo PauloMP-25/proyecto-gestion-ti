@@ -14,7 +14,6 @@ Este repositorio contiene el código fuente y la documentación técnica del Sis
 - `docs/`: Documentación técnica (Reglas, Fase 1, Arquitectura, Requerimientos, Diseño de BD).
 - `backend/`: Código fuente de la API REST (Java Spring Boot).
 - `frontend/`: Código fuente de la interfaz de usuario (Angular).
-- `.agents/`: Contexto, reglas e instrucciones para las IAs asistentes (Claude, Gemini, Antigravity).
 
 ## Stack Tecnológico
 - **Backend:** Java (Spring Boot)
