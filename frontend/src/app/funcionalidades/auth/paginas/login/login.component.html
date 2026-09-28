@@ -1,4 +1,4 @@
-<div class="login-container">
+<div class="login-container" [class.design-two]="isDesignTwo">
   <div class="login-card">
     <div class="hospital-badge">
       <span class="secure-dot"></span>
@@ -6,8 +6,7 @@
     </div>
 
     <div class="logo-area">
-      <!-- Logo placeholder, will be replaced with real hospital logo -->
-      <div class="hospital-icon">🏥</div>
+      <img src="/assets/logo_hsmsi.jpeg" alt="Logo Hospital Santa María del Socorro" class="hospital-logo">
     </div>
 
     <h1 class="login-title">Mesa de Ayuda TI</h1>
@@ -42,15 +41,14 @@
         Iniciar Sesión
         <span>→</span>
       </button>
+      
+      <button type="button" class="btn-secondary" (click)="toggleDesign()">
+        Ver Diseño Alternativo
+      </button>
     </form>
 
     <div class="ad-badge">
-      <span>🛡️</span> Autenticación vinculada a Active Directory
+      © 2024 Hospital Santa María del Socorro.
     </div>
-  </div>
-
-  <div class="support-footer">
-    Soporte de Emergencia TI: Anexo 2400 (24/7)<br>
-    © 2026 Hospital Santa María del Socorro · Todos los derechos reservados.
   </div>
 </div>

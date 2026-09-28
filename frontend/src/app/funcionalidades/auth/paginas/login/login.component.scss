@@ -3,9 +3,23 @@
   align-items: center;
   justify-content: center;
   min-height: 100vh;
-  background-color: #f8f9ff; /* Fondo estéril clínico */
+  background-color: #f8f9ff;
+  background-size: cover;
+  background-position: center;
   font-family: 'Inter', sans-serif;
   padding: 1.5rem;
+  transition: all 0.4s ease;
+
+  &.design-two {
+    background-image: linear-gradient(rgba(2, 132, 199, 0.7), rgba(11, 28, 48, 0.8)), url('/assets/hospital_santa_maria_del_socorro_ica.jpeg');
+    
+    .login-card {
+      background-color: rgba(255, 255, 255, 0.92);
+      backdrop-filter: blur(12px);
+      border-color: rgba(255, 255, 255, 0.5);
+      box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.25);
+    }
+  }
 }
 
 .login-card {
@@ -17,6 +31,7 @@
   max-width: 440px;
   padding: 2.5rem 2rem;
   text-align: center;
+  transition: all 0.4s ease;
 }
 
 .hospital-badge {
@@ -42,17 +57,11 @@
 
 .logo-area {
   margin-bottom: 1rem;
-  .hospital-icon {
-    width: 64px;
-    height: 64px;
-    background-color: #e5eeff;
-    color: #0284c7;
-    border-radius: 12px;
-    display: inline-flex;
-    align-items: center;
-    justify-content: center;
-    font-size: 2rem;
-    font-weight: bold;
+  .hospital-logo {
+    width: 80px;
+    height: 80px;
+    object-fit: contain;
+    border-radius: 8px;
   }
 }
 
@@ -168,9 +177,31 @@
   align-items: center;
   justify-content: center;
   gap: 8px;
+  margin-bottom: 0.75rem;
 
   &:hover {
     background-color: #0369a1;
+  }
+}
+
+.btn-secondary {
+  width: 100%;
+  height: 40px;
+  background-color: #f1f5f9;
+  color: #0f172a;
+  border: 1px solid #cbd5e1;
+  border-radius: 4px;
+  font-size: 0.875rem;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 0.2s;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  &:hover {
+    background-color: #e2e8f0;
+    border-color: #94a3b8;
   }
 }
 
@@ -183,15 +214,4 @@
   display: flex;
   align-items: center;
   justify-content: center;
-  gap: 6px;
-}
-
-.support-footer {
-  position: absolute;
-  bottom: 2rem;
-  color: #64748b;
-  font-size: 0.75rem;
-  text-align: center;
-  width: 100%;
-  left: 0;
 }

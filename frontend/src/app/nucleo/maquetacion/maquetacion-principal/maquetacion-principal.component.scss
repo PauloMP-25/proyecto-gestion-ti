@@ -1,0 +1,27 @@
+.layout-wrapper {
+  display: flex;
+  min-height: 100vh;
+  background-color: #f1f5f9; /* Color base oscuro/claro para contraste */
+  position: relative;
+  overflow: hidden;
+}
+
+.overlay-sidebar {
+  position: fixed;
+  top: 1rem;
+  bottom: 1rem;
+  left: 1rem;
+  width: 260px;
+  z-index: 100;
+  /* El estilo del sidebar per se estará en su propio componente */
+}
+
+.main-content {
+  flex-grow: 1;
+  margin-left: calc(260px + 2rem); /* Ancho del sidebar + márgenes */
+  padding: 2rem;
+  width: calc(100% - 260px - 2rem);
+  box-sizing: border-box;
+  overflow-y: auto;
+  min-height: 100vh;
+}

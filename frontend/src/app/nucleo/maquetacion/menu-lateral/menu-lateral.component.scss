@@ -1,0 +1,146 @@
+.sidebar-container {
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+  background-color: #1e293b; /* Slate 800 - dark theme */
+  border-radius: 16px;
+  box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 8px 10px -6px rgba(0, 0, 0, 0.1); /* Floating shadow */
+  color: #f8fafc;
+  font-family: 'Inter', sans-serif;
+  overflow: hidden;
+  transition: all 0.3s ease;
+}
+
+.sidebar-header {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 1.5rem;
+  margin-bottom: 1rem;
+
+  .logo-box {
+    width: 32px;
+    height: 32px;
+    background-color: #f8fafc;
+    color: #0284c7; /* Hospital Blue */
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 8px;
+    font-weight: bold;
+    font-size: 1.25rem;
+  }
+
+  .brand-text {
+    font-family: 'Plus Jakarta Sans', sans-serif;
+    font-size: 1.25rem;
+    font-weight: 700;
+  }
+}
+
+.sidebar-nav {
+  flex-grow: 1;
+  display: flex;
+  flex-direction: column;
+  padding: 0 1rem;
+  overflow-y: auto;
+
+  /* Hide scrollbar */
+  &::-webkit-scrollbar {
+    display: none;
+  }
+  -ms-overflow-style: none;
+  scrollbar-width: none;
+}
+
+.nav-list {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+
+  &.bottom-list {
+    margin-top: auto;
+    margin-bottom: 1rem;
+    padding-top: 1rem;
+  }
+}
+
+.nav-item {
+  .nav-link {
+    display: flex;
+    align-items: center;
+    padding: 0.75rem 1rem;
+    color: #94a3b8; /* Slate 400 */
+    text-decoration: none;
+    border-radius: 12px;
+    transition: all 0.2s ease;
+    font-size: 0.9375rem;
+    font-weight: 500;
+
+    .icon {
+      margin-right: 12px;
+      font-size: 1.1rem;
+    }
+
+    .badge {
+      margin-left: auto;
+      background-color: #0284c7;
+      color: #fff;
+      font-size: 0.75rem;
+      padding: 2px 8px;
+      border-radius: 999px;
+      font-weight: bold;
+    }
+
+    &:hover {
+      color: #f8fafc;
+      background-color: rgba(255, 255, 255, 0.05);
+    }
+  }
+
+  &.active .nav-link {
+    background-color: #0284c7;
+    color: #ffffff;
+    box-shadow: 0 4px 6px -1px rgba(2, 132, 199, 0.4);
+  }
+}
+
+.sidebar-footer {
+  padding: 1.25rem 1.5rem;
+  border-top: 1px solid rgba(255, 255, 255, 0.05);
+
+  .user-profile {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+
+    .avatar {
+      width: 40px;
+      height: 40px;
+      background-color: #cbd5e1;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 1.25rem;
+    }
+
+    .user-info {
+      display: flex;
+      flex-direction: column;
+
+      .name {
+        font-size: 0.875rem;
+        font-weight: 600;
+        color: #f8fafc;
+      }
+      .role {
+        font-size: 0.75rem;
+        color: #94a3b8;
+      }
+    }
+  }
+}

@@ -9,8 +9,13 @@ import { Router } from '@angular/router';
 })
 export class LoginComponent {
   private router = inject(Router);
+  public isDesignTwo = false;
 
   login() {
     this.router.navigate(['/panel-control']);
+  }
+
+  toggleDesign() {
+    this.isDesignTwo = !this.isDesignTwo;
   }
 }
