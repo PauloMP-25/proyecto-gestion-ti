@@ -1,54 +1,146 @@
-<div class="login-container" [class.design-two]="isDesignTwo">
-  <div class="login-card">
-    <div class="hospital-badge">
-      <span class="secure-dot"></span>
-      Portal Seguro IT
+<div class="login-page-wrapper" [ngClass]="'design-v' + activeDesign">
+  <!-- Top Navbar Header (Common) -->
+  <header class="top-navbar">
+    <div class="nav-left">
+      <img src="/assets/logo.ico" alt="Logo Hospital Santa María del Socorro" class="nav-logo">
+      <span class="nav-title">Hospital Santa María del Socorro de Ica</span>
     </div>
-
-    <div class="logo-area">
-      <img src="/assets/logo_hsmsi.jpeg" alt="Logo Hospital Santa María del Socorro" class="hospital-logo">
+    <div class="nav-right">
+      <div class="design-switcher">
+        <button [class.active]="activeDesign === 1" (click)="setDesign(1)">1</button>
+        <button [class.active]="activeDesign === 2" (click)="setDesign(2)">2</button>
+        <button [class.active]="activeDesign === 3" (click)="setDesign(3)">3</button>
+        <button [class.active]="activeDesign === 4" (click)="setDesign(4)">4</button>
+      </div>
     </div>
+  </header>
 
-    <h1 class="login-title">Mesa de Ayuda TI</h1>
-    <p class="login-subtitle">Portal de Acceso Institucional y Soporte Clínico</p>
-
-    <form>
-      <div class="form-group">
-        <label for="email">Correo Electrónico Institucional</label>
-        <div class="input-wrapper">
-          <span class="icon">✉️</span>
-          <input type="email" id="email" placeholder="usuario@hsms.gob.pe" autocomplete="username">
+  <main class="login-content-container">
+    
+    <!-- DESIGN 1: Medigraph Replica (Split Left) -->
+    @if (activeDesign === 1) {
+      <div class="layout-d1">
+        <div class="image-side">
+          <!-- Text overlay removed as requested -->
+        </div>
+        <div class="form-side">
+          <div class="form-container">
+            <h1 class="login-title">Mesa de Ayuda</h1>
+            <p class="login-subtitle">Acceda a su cuenta institucional</p>
+            
+            <form class="login-form">
+              <div class="form-group">
+                <label>Usuario</label>
+                <input type="text" placeholder="Ingrese su usuario">
+              </div>
+              <div class="form-group">
+                <label>Contraseña</label>
+                <div class="password-input">
+                  <input type="password" placeholder="Ingrese su contraseña">
+                  <span class="eye-icon">👁️</span>
+                </div>
+              </div>
+              <div class="forgot-link-container">
+                <a href="#" class="forgot-link">¿Olvidó su contraseña?</a>
+              </div>
+              <button type="button" class="btn-primary" (click)="login()">Iniciar Sesión</button>
+              
+              <p class="copyright-text">© 2026 Hospital Santa María del Socorro. Todos los derechos reservados.</p>
+            </form>
+          </div>
         </div>
       </div>
+    }
 
-      <div class="form-group">
-        <label for="password">Contraseña de Red / Dominio</label>
-        <div class="input-wrapper">
-          <span class="icon">🔒</span>
-          <input type="password" id="password" placeholder="••••••••••••" autocomplete="current-password">
+    <!-- DESIGN 2: WeHealth Replica (Dynamic Shapes) -->
+    @if (activeDesign === 2) {
+      <div class="layout-d2">
+        <div class="content-wrapper">
+          <div class="form-side">
+            <div class="form-container">
+              <h1 class="login-title">Mesa de Ayuda</h1>
+              <form class="login-form">
+                <div class="form-group">
+                  <input type="text" placeholder="Usuario">
+                </div>
+                <div class="form-group password-group">
+                  <input type="password" placeholder="Contraseña">
+                  <span class="eye-icon">👁️</span>
+                </div>
+                <div class="form-actions">
+                  <label><input type="checkbox"> Recordarme</label>
+                  <a href="#">¿Olvidó su contraseña?</a>
+                </div>
+                <button type="button" class="btn-primary" (click)="login()">Ingresar</button>
+                <p class="copyright-text">© 2026 Hospital Santa María del Socorro. Todos los derechos reservados.</p>
+              </form>
+            </div>
+          </div>
+          
+          <div class="visual-side">
+            <div class="hexagon-image">
+              <img src="/assets/hospital_santa_maria_del_socorro_ica.jpeg" alt="Hospital">
+            </div>
+          </div>
         </div>
       </div>
+    }
 
-      <div class="form-actions-row">
-        <label class="remember-me">
-          <input type="checkbox">
-          Recordar credenciales
-        </label>
-        <a href="#" class="forgot-link">¿Olvidó su contraseña?</a>
+    <!-- DESIGN 3: Agendar Consulta Replica (Clean White & Image) -->
+    @if (activeDesign === 3) {
+      <div class="layout-d3">
+        <div class="form-side">
+          <div class="form-container">
+            <h1 class="login-title">Mesa de Ayuda</h1>
+            
+            <form class="login-form">
+              <div class="form-group">
+                <input type="text" placeholder="Usuario">
+              </div>
+              <div class="form-group">
+                <input type="password" placeholder="Contraseña">
+              </div>
+              <button type="button" class="btn-primary" (click)="login()">INGRESAR</button>
+              
+              <p class="copyright-text copyright-mt">© 2026 Hospital Santa María del Socorro. Todos los derechos reservados.</p>
+            </form>
+          </div>
+        </div>
+        <div class="image-side">
+          <img src="/assets/hospital_santa_maria_del_socorro_ica.jpeg" alt="Hospital" class="bg-image">
+          <div class="hex-overlay"></div>
+        </div>
       </div>
+    }
 
-      <button type="button" class="btn-primary" (click)="login()">
-        Iniciar Sesión
-        <span>→</span>
-      </button>
-      
-      <button type="button" class="btn-secondary" (click)="toggleDesign()">
-        Ver Diseño Alternativo
-      </button>
-    </form>
+    <!-- DESIGN 4: Infinity Replica (Health Colors) -->
+    @if (activeDesign === 4) {
+      <div class="layout-d4">
+        <div class="form-side">
+          <div class="form-container">
+            <h1 class="login-title">Mesa de Ayuda</h1>
+            <p class="subtitle">Inicie sesión para acceder a la plataforma institucional.</p>
+            
+            <form class="login-form">
+              <div class="form-group">
+                <input type="text" placeholder="Usuario">
+              </div>
+              <div class="form-group">
+                <input type="password" placeholder="Contraseña">
+              </div>
+              <button type="button" class="btn-primary" (click)="login()">INICIAR SESIÓN</button>
+              
+              <p class="copyright-text copyright-mt">© 2026 Hospital Santa María del Socorro. Todos los derechos reservados.</p>
+            </form>
+          </div>
+        </div>
+        <div class="image-side">
+          <div class="image-overlay">
+            <!-- Text removed as requested -->
+          </div>
+        </div>
+      </div>
+    }
 
-    <div class="ad-badge">
-      © 2024 Hospital Santa María del Socorro.
-    </div>
-  </div>
+  </main>
 </div>

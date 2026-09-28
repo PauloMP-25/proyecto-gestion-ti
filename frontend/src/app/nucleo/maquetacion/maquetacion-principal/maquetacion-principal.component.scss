@@ -1,7 +1,7 @@
 .layout-wrapper {
   display: flex;
   min-height: 100vh;
-  background-color: #f1f5f9; /* Color base oscuro/claro para contraste */
+  background-color: #f1f5f9;
   position: relative;
   overflow: hidden;
 }
@@ -13,15 +13,27 @@
   left: 1rem;
   width: 260px;
   z-index: 100;
-  /* El estilo del sidebar per se estará en su propio componente */
+  transition: transform 0.3s ease;
+
+  @media (max-width: 768px) {
+    /* En móvil, el sidebar está oculto por defecto (fuera de la pantalla) */
+    transform: translateX(calc(-100% - 2rem));
+  }
 }
 
 .main-content {
   flex-grow: 1;
-  margin-left: calc(260px + 2rem); /* Ancho del sidebar + márgenes */
+  margin-left: calc(260px + 2rem);
   padding: 2rem;
   width: calc(100% - 260px - 2rem);
   box-sizing: border-box;
   overflow-y: auto;
   min-height: 100vh;
+  transition: all 0.3s ease;
+
+  @media (max-width: 768px) {
+    margin-left: 0;
+    width: 100%;
+    padding: 1rem;
+  }
 }

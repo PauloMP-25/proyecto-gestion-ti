@@ -1,21 +1,23 @@
 import { Component, inject } from '@angular/core';
+import { CommonModule } from '@angular/common';
 import { Router } from '@angular/router';
 
 @Component({
   selector: 'app-login',
-  imports: [],
+  standalone: true,
+  imports: [CommonModule],
   templateUrl: './login.component.html',
   styleUrl: './login.component.scss',
 })
 export class LoginComponent {
   private router = inject(Router);
-  public isDesignTwo = false;
+  public activeDesign: number = 1;
 
   login() {
     this.router.navigate(['/panel-control']);
   }
 
-  toggleDesign() {
-    this.isDesignTwo = !this.isDesignTwo;
+  setDesign(designNumber: number) {
+    this.activeDesign = designNumber;
   }
 }

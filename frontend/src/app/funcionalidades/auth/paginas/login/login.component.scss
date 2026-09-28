@@ -1,217 +1,539 @@
-.login-container {
-  display: flex;
-  align-items: center;
-  justify-content: center;
+:host {
+  display: block;
   min-height: 100vh;
-  background-color: #f8f9ff;
-  background-size: cover;
-  background-position: center;
-  font-family: 'Inter', sans-serif;
-  padding: 1.5rem;
-  transition: all 0.4s ease;
-
-  &.design-two {
-    background-image: linear-gradient(rgba(2, 132, 199, 0.7), rgba(11, 28, 48, 0.8)), url('/assets/hospital_santa_maria_del_socorro_ica.jpeg');
-    
-    .login-card {
-      background-color: rgba(255, 255, 255, 0.92);
-      backdrop-filter: blur(12px);
-      border-color: rgba(255, 255, 255, 0.5);
-      box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.25);
-    }
-  }
-}
-
-.login-card {
-  background-color: #ffffff;
-  border: 1px solid #e2e8f0;
-  border-radius: 8px;
-  box-shadow: 0 4px 6px -1px rgba(15, 23, 42, 0.05), 0 2px 4px -2px rgba(15, 23, 42, 0.03);
   width: 100%;
-  max-width: 440px;
-  padding: 2.5rem 2rem;
-  text-align: center;
-  transition: all 0.4s ease;
 }
 
-.hospital-badge {
-  display: inline-flex;
-  align-items: center;
-  gap: 6px;
-  padding: 4px 12px;
-  background-color: #f0f9ff;
-  border: 1px solid #bae6fd;
-  border-radius: 9999px;
-  color: #0369a1;
-  font-size: 0.75rem;
-  font-weight: 600;
-  margin-bottom: 1.5rem;
-
-  .secure-dot {
-    width: 6px;
-    height: 6px;
-    border-radius: 50%;
-    background-color: #10b981;
-  }
-}
-
-.logo-area {
-  margin-bottom: 1rem;
-  .hospital-logo {
-    width: 80px;
-    height: 80px;
-    object-fit: contain;
-    border-radius: 8px;
-  }
-}
-
-.login-title {
-  color: #0b1c30;
-  font-family: 'Plus Jakarta Sans', sans-serif;
-  font-size: 1.5rem;
-  font-weight: 600;
-  margin: 0 0 0.5rem;
-  letter-spacing: -0.015em;
-}
-
-.login-subtitle {
-  color: #64748b;
-  font-size: 0.875rem;
-  margin-bottom: 2rem;
-}
-
-.form-group {
-  text-align: left;
-  margin-bottom: 1.25rem;
-
-  label {
-    display: block;
-    color: #3f4850;
-    font-size: 0.75rem;
-    font-weight: 600;
-    margin-bottom: 0.5rem;
-    letter-spacing: 0.025em;
-  }
-
-  .input-wrapper {
-    position: relative;
-    
-    .icon {
-      position: absolute;
-      left: 12px;
-      top: 50%;
-      transform: translateY(-50%);
-      color: #94a3b8;
-    }
-    
-    input {
-      width: 100%;
-      height: 40px;
-      padding: 0 12px 0 36px;
-      border: 1px solid #cbd5e1;
-      border-radius: 4px;
-      font-size: 0.9375rem;
-      color: #0f172a;
-      transition: all 0.2s;
-      box-sizing: border-box;
-
-      &:focus {
-        outline: none;
-        border-color: #0284c7;
-        box-shadow: 0 0 0 1px #0284c7;
-      }
-      
-      &::placeholder {
-        color: #94a3b8;
-      }
-    }
-  }
-}
-
-.form-actions-row {
+.login-page-wrapper {
   display: flex;
-  justify-content: space-between;
-  align-items: center;
-  margin-bottom: 2rem;
-  font-size: 0.8125rem;
+  flex-direction: column;
+  min-height: 100vh;
+  width: 100%;
+  font-family: 'Inter', system-ui, sans-serif;
+  background-color: #f0f2f5;
+}
 
-  .remember-me {
+/* Common Header */
+.top-navbar {
+  height: 60px;
+  background-color: #ffffff;
+  border-bottom: 1px solid #e2e8f0;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0 2rem;
+  z-index: 100;
+  box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+
+  .nav-left {
     display: flex;
     align-items: center;
+    gap: 12px;
+    
+    .nav-logo {
+      height: 40px;
+      width: auto;
+      border-radius: 4px;
+    }
+    
+    .nav-title {
+      font-weight: 700;
+      color: #0b1c30;
+      font-size: 1.1rem;
+    }
+  }
+
+  .design-switcher {
+    display: flex;
     gap: 8px;
-    color: #3f4850;
-    cursor: pointer;
-
-    input[type="checkbox"] {
-      width: 16px;
-      height: 16px;
-      accent-color: #0284c7;
+    
+    button {
+      width: 32px;
+      height: 32px;
+      border-radius: 50%;
+      border: 1px solid #cbd5e1;
+      background: white;
       cursor: pointer;
+      font-weight: 600;
+      color: #475569;
+      transition: all 0.2s;
+      
+      &:hover {
+        background: #f1f5f9;
+      }
+      
+      &.active {
+        background: #0284c7;
+        color: white;
+        border-color: #0284c7;
+      }
     }
   }
-
-  .forgot-link {
-    color: #0284c7;
-    text-decoration: none;
-    font-weight: 600;
-
-    &:hover {
-      text-decoration: underline;
-      color: #0369a1;
-    }
-  }
 }
 
-.btn-primary {
-  width: 100%;
-  height: 40px;
-  background-color: #0284c7;
-  color: #ffffff;
-  border: none;
-  border-radius: 4px;
-  font-size: 0.9375rem;
-  font-weight: 600;
-  cursor: pointer;
-  transition: background-color 0.2s;
+.login-content-container {
+  flex: 1;
   display: flex;
-  align-items: center;
+  align-items: stretch;
   justify-content: center;
-  gap: 8px;
-  margin-bottom: 0.75rem;
-
-  &:hover {
-    background-color: #0369a1;
-  }
+  padding: 2rem;
 }
 
-.btn-secondary {
-  width: 100%;
-  height: 40px;
-  background-color: #f1f5f9;
-  color: #0f172a;
-  border: 1px solid #cbd5e1;
-  border-radius: 4px;
-  font-size: 0.875rem;
-  font-weight: 500;
-  cursor: pointer;
-  transition: all 0.2s;
-  display: flex;
-  align-items: center;
-  justify-content: center;
+/* Colors for HSMSI */
+$primary-blue: #0056b3;
+$health-teal: #00897b; /* Teal color for health theme */
+$health-cyan: #4db6ac;
+$text-dark: #333;
+$text-light: #666;
 
-  &:hover {
-    background-color: #e2e8f0;
-    border-color: #94a3b8;
-  }
-}
-
-.ad-badge {
-  margin-top: 1.5rem;
-  padding-top: 1.5rem;
-  border-top: 1px solid #f1f5f9;
-  color: #94a3b8;
+.copyright-text {
+  text-align: center;
   font-size: 0.75rem;
-  display: flex;
-  align-items: center;
-  justify-content: center;
+  color: $text-light;
+  margin-top: 2rem;
+  
+  &.copyright-white {
+    color: rgba(255, 255, 255, 0.8);
+    margin-top: 1rem;
+  }
+  
+  &.copyright-mt {
+    margin-top: 3rem;
+  }
+}
+
+/* DESIGN 1: Medigraph Replica */
+.design-v1 {
+  .layout-d1 {
+    display: flex;
+    width: 100%;
+    max-width: 1100px;
+    background: white;
+    border-radius: 16px;
+    overflow: hidden;
+    box-shadow: 0 10px 30px rgba(0,0,0,0.1);
+    
+    .image-side {
+      flex: 1.2;
+      background: url('/assets/hospital_santa_maria_del_socorro_ica.jpeg') center/cover;
+      position: relative;
+    }
+    
+    .form-side {
+      flex: 1;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 3rem;
+      
+      .form-container {
+        width: 100%;
+        max-width: 360px;
+        
+        .login-title {
+          font-size: 1.8rem;
+          font-weight: 700;
+          color: $text-dark;
+          margin-bottom: 0.5rem;
+        }
+        
+        .login-subtitle {
+          color: $text-light;
+          font-size: 0.9rem;
+          margin-bottom: 2rem;
+        }
+        
+        .form-group {
+          margin-bottom: 1.2rem;
+          
+          label {
+            display: block;
+            font-size: 0.85rem;
+            font-weight: 600;
+            margin-bottom: 0.5rem;
+            color: $text-dark;
+          }
+          
+          input {
+            width: 100%;
+            padding: 0.75rem 1rem;
+            border: 1px solid #ddd;
+            border-radius: 8px;
+            box-sizing: border-box;
+            outline: none;
+            
+            &:focus {
+              border-color: $primary-blue;
+            }
+          }
+          
+          .password-input {
+            position: relative;
+            
+            .eye-icon {
+              position: absolute;
+              right: 12px;
+              top: 50%;
+              transform: translateY(-50%);
+              cursor: pointer;
+              color: $text-light;
+            }
+          }
+        }
+        
+        .forgot-link-container {
+          text-align: right;
+          margin-bottom: 1.5rem;
+          
+          .forgot-link {
+            color: $primary-blue;
+            text-decoration: none;
+            font-size: 0.85rem;
+            font-weight: 600;
+          }
+        }
+        
+        .btn-primary {
+          width: 100%;
+          padding: 0.85rem;
+          background: $primary-blue;
+          color: white;
+          border: none;
+          border-radius: 8px;
+          font-weight: 600;
+          cursor: pointer;
+          transition: 0.2s;
+          
+          &:hover { background: darken($primary-blue, 10%); }
+        }
+      }
+    }
+  }
+}
+
+/* DESIGN 2: WeHealth Replica */
+.design-v2 {
+  background: linear-gradient(135deg, #e0f7fa 0%, #bbdefb 100%);
+  
+  .layout-d2 {
+    width: 100%;
+    max-width: 1200px;
+    display: flex;
+    align-items: center;
+    position: relative;
+    
+    .content-wrapper {
+      display: flex;
+      width: 100%;
+      background: white;
+      border-radius: 24px;
+      overflow: hidden;
+      box-shadow: 0 20px 40px rgba(0,0,0,0.1);
+      position: relative;
+      
+      &::before {
+        content: '';
+        position: absolute;
+        top: 0;
+        right: 0;
+        bottom: 0;
+        width: 55%;
+        background: $primary-blue;
+        clip-path: polygon(20% 0, 100% 0, 100% 100%, 0 100%);
+        z-index: 0;
+      }
+      
+      .form-side {
+        flex: 1;
+        padding: 3rem;
+        z-index: 1;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        
+        .form-container {
+          max-width: 340px;
+          width: 100%;
+          
+          .login-title {
+            text-align: center;
+            margin-bottom: 2.5rem;
+            font-size: 2rem;
+            font-weight: 700;
+            color: $text-dark;
+          }
+          
+          .form-group {
+            margin-bottom: 1.2rem;
+            
+            input {
+              width: 100%;
+              padding: 0.85rem 1rem;
+              border-radius: 8px;
+              border: 1px solid #ccc;
+              outline: none;
+              box-sizing: border-box;
+              
+              &:focus {
+                border-color: $primary-blue;
+              }
+            }
+            
+            &.password-group {
+              position: relative;
+              
+              .eye-icon {
+                position: absolute;
+                right: 12px;
+                top: 50%;
+                transform: translateY(-50%);
+                color: #999;
+                cursor: pointer;
+              }
+            }
+          }
+          
+          .form-actions {
+            display: flex;
+            justify-content: space-between;
+            font-size: 0.8rem;
+            margin-bottom: 1.5rem;
+            color: $text-light;
+            
+            a {
+              color: $primary-blue;
+              text-decoration: none;
+              font-weight: 600;
+            }
+          }
+          
+          .btn-primary {
+            width: 100%;
+            padding: 0.85rem;
+            background: $primary-blue;
+            color: white;
+            border: none;
+            border-radius: 8px;
+            font-weight: 700;
+            font-size: 1rem;
+            cursor: pointer;
+            
+            &:hover { background: darken($primary-blue, 10%); }
+          }
+        }
+      }
+      
+      .visual-side {
+        flex: 1.2;
+        z-index: 1;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        padding: 2rem;
+        
+        .hexagon-image {
+          position: relative;
+          width: 500px;
+          height: 550px;
+          
+          img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            clip-path: polygon(50% 0%, 100% 25%, 100% 75%, 50% 100%, 0% 75%, 0% 25%);
+          }
+        }
+      }
+    }
+  }
+}
+
+/* DESIGN 3: Agendar Consulta Replica */
+.design-v3 {
+  background: linear-gradient(135deg, #4dd0e1 0%, #0277bd 100%);
+  
+  .layout-d3 {
+    width: 100%;
+    max-width: 900px;
+    background: white;
+    border-radius: 12px;
+    display: flex;
+    overflow: hidden;
+    box-shadow: 0 20px 40px rgba(0,0,0,0.2);
+    min-height: 500px;
+    
+    .form-side {
+      flex: 1;
+      padding: 4rem 3rem;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      
+      .form-container {
+        max-width: 320px;
+        margin: 0 auto;
+        width: 100%;
+        
+        .login-title {
+          font-size: 2.2rem;
+          color: $text-dark;
+          margin-bottom: 2.5rem;
+          font-weight: 700;
+        }
+        
+        .form-group {
+          margin-bottom: 1.5rem;
+          
+          input {
+            width: 100%;
+            padding: 0.5rem 0;
+            border: none;
+            border-bottom: 1px solid #ccc;
+            outline: none;
+            font-size: 0.95rem;
+            color: $text-dark;
+            
+            &:focus {
+              border-bottom-color: $primary-blue;
+            }
+          }
+        }
+        
+        .btn-primary {
+          width: 100%;
+          padding: 0.8rem;
+          background: #66bb6a;
+          color: white;
+          border: none;
+          border-radius: 4px;
+          font-weight: 600;
+          letter-spacing: 1px;
+          margin-top: 1rem;
+          cursor: pointer;
+          
+          &:hover { background: darken(#66bb6a, 10%); }
+        }
+      }
+    }
+    
+    .image-side {
+      flex: 1.2;
+      position: relative;
+      
+      .bg-image {
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+      }
+      
+      .hex-overlay {
+        position: absolute;
+        inset: 0;
+        background: linear-gradient(to right, rgba(255,255,255,1) 0%, rgba(255,255,255,0) 30%);
+      }
+    }
+  }
+}
+
+/* DESIGN 4: Infinity Replica (Health Theme) */
+.design-v4 {
+  background: #f5f5f5;
+  
+  .layout-d4 {
+    width: 100%;
+    max-width: 1000px;
+    background: white;
+    border-radius: 20px;
+    display: flex;
+    overflow: hidden;
+    box-shadow: 0 25px 50px rgba(0,0,0,0.15);
+    
+    .form-side {
+      flex: 1;
+      padding: 4rem 3rem;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      
+      .form-container {
+        width: 100%;
+        max-width: 340px;
+        text-align: center;
+        
+        .login-title {
+          color: $health-teal;
+          font-size: 2.2rem;
+          margin-bottom: 0.5rem;
+          font-weight: 700;
+        }
+        
+        .subtitle {
+          font-size: 0.85rem;
+          color: $text-light;
+          margin-bottom: 2.5rem;
+          line-height: 1.4;
+        }
+        
+        .form-group {
+          margin-bottom: 1.2rem;
+          
+          input {
+            width: 100%;
+            padding: 0.85rem 1rem;
+            border: 1px solid #e0e0e0;
+            border-radius: 30px;
+            outline: none;
+            box-sizing: border-box;
+            
+            &:focus {
+              border-color: $health-teal;
+            }
+          }
+        }
+        
+        .btn-primary {
+          width: 100%;
+          padding: 0.85rem;
+          background: $health-teal;
+          color: white;
+          border: none;
+          border-radius: 30px;
+          font-weight: 600;
+          margin-top: 1rem;
+          cursor: pointer;
+          box-shadow: 0 5px 15px rgba($health-teal, 0.4);
+          
+          &:hover { background: darken($health-teal, 5%); }
+        }
+      }
+    }
+    
+    .image-side {
+      flex: 1;
+      background: url('/assets/hospital_santa_maria_del_socorro_ica.jpeg') center/cover;
+      position: relative;
+      
+      .image-overlay {
+        position: absolute;
+        inset: 0;
+        background: linear-gradient(135deg, rgba($health-teal, 0.85), rgba($health-cyan, 0.85));
+      }
+    }
+  }
+}
+
+/* Responsiveness */
+@media (max-width: 900px) {
+  .layout-d1, .layout-d2 .content-wrapper, .layout-d3, .layout-d4 {
+    flex-direction: column;
+    
+    .image-side, .visual-side {
+      min-height: 300px;
+    }
+  }
+  
+  .design-v2 .layout-d2 .content-wrapper::before {
+    display: none;
+  }
 }
