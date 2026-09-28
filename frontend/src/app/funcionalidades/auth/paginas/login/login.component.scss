@@ -1,3 +1,5 @@
+@use "sass:color";
+
 :host {
   display: block;
   min-height: 100vh;
@@ -204,7 +206,7 @@ $text-light: #666;
           cursor: pointer;
           transition: 0.2s;
           
-          &:hover { background: darken($primary-blue, 10%); }
+          &:hover { background: color.adjust($primary-blue, $lightness: -10%); }
         }
       }
     }
@@ -318,7 +320,7 @@ $text-light: #666;
             font-size: 1rem;
             cursor: pointer;
             
-            &:hover { background: darken($primary-blue, 10%); }
+            &:hover { background: color.adjust($primary-blue, $lightness: -10%); }
           }
         }
       }
@@ -411,7 +413,7 @@ $text-light: #666;
           margin-top: 1rem;
           cursor: pointer;
           
-          &:hover { background: darken(#66bb6a, 10%); }
+          &:hover { background: color.adjust(#66bb6a, $lightness: -10%); }
         }
       }
     }
@@ -504,7 +506,7 @@ $text-light: #666;
           cursor: pointer;
           box-shadow: 0 5px 15px rgba($health-teal, 0.4);
           
-          &:hover { background: darken($health-teal, 5%); }
+          &:hover { background: color.adjust($health-teal, $lightness: -5%); }
         }
       }
     }

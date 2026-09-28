@@ -1,56 +1,170 @@
+@use "sass:color";
+
+/* Typography & Colors */
+$bg-dark: #161b22;
+$bg-darker: #0d1117;
+$text-main: #f0f6fc;
+$text-muted: #8b949e;
+$accent-blue: #1f6feb;
+$accent-red: #da3633;
+$accent-green: #2ea043;
+$hover-bg: rgba(255, 255, 255, 0.08);
+
+/* Multiples of 8 padding/margins */
+$sp-1: 8px;
+$sp-2: 16px;
+$sp-3: 24px;
+$sp-4: 32px;
+
+:host {
+  display: block;
+  height: 100vh;
+  /* Making sure host works well with fixed absolute positioning for responsive layout */
+  position: relative;
+  z-index: 1000;
+}
+
 .sidebar-container {
   display: flex;
   flex-direction: column;
   height: 100%;
-  background-color: #1e293b; /* Slate 800 - dark theme */
-  border-radius: 16px;
-  box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 8px 10px -6px rgba(0, 0, 0, 0.1); /* Floating shadow */
-  color: #f8fafc;
-  font-family: 'Inter', sans-serif;
+  background-color: $bg-dark;
+  color: $text-main;
+  font-family: 'Inter', system-ui, sans-serif;
+  transition: width 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  border-right: 1px solid rgba(255, 255, 255, 0.1);
   overflow: hidden;
-  transition: all 0.3s ease;
+
+  &.expanded {
+    width: 320px;
+  }
+
+  &.collapsed {
+    width: 80px; /* Only icons visible */
+
+    .toggle-btn {
+      margin: 0 auto;
+    }
+    
+    .sidebar-header {
+      justify-content: center;
+      padding: $sp-2;
+    }
+
+    .nav-item .nav-link {
+      justify-content: center;
+      padding: $sp-2;
+      
+      .icon {
+        margin-right: 0;
+        font-size: 1.5rem;
+      }
+    }
+    
+    .footer-actions {
+      justify-content: center;
+      .logout-link {
+        justify-content: center;
+        .icon {
+          margin-right: 0;
+          font-size: 1.5rem;
+        }
+      }
+    }
+  }
 }
 
+/* Scrollbar styling */
+.sidebar-scrollable {
+  flex: 1;
+  overflow-y: auto;
+  overflow-x: hidden;
+  padding: 0 $sp-2 $sp-2 $sp-2;
+  
+  &::-webkit-scrollbar {
+    width: 4px;
+  }
+  &::-webkit-scrollbar-thumb {
+    background-color: $text-muted;
+    border-radius: 4px;
+  }
+}
+
+/* Header */
 .sidebar-header {
   display: flex;
   align-items: center;
-  gap: 12px;
-  padding: 1.5rem;
-  margin-bottom: 1rem;
+  padding: $sp-2; /* Reduced padding to place it higher */
+  border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+  margin-bottom: $sp-2;
+  min-height: 64px; /* Slightly reduced min-height */
 
-  .logo-box {
-    width: 32px;
-    height: 32px;
-    background-color: #f8fafc;
-    color: #0284c7; /* Hospital Blue */
+  .logo-wrapper {
+    width: 40px;
+    height: 40px;
+    background-color: transparent; /* Changed from white to transparent as requested */
+    border-radius: $sp-1;
     display: flex;
     align-items: center;
     justify-content: center;
-    border-radius: 8px;
-    font-weight: bold;
-    font-size: 1.25rem;
+    flex-shrink: 0;
+
+    .hospital-logo {
+      width: 32px;
+      height: 32px;
+      object-fit: contain;
+    }
   }
 
-  .brand-text {
-    font-family: 'Plus Jakarta Sans', sans-serif;
-    font-size: 1.25rem;
-    font-weight: 700;
+  .header-text {
+    margin-left: $sp-2;
+    flex: 1;
+    overflow: hidden;
+    white-space: nowrap;
+
+    .hospital-name {
+      font-size: 0.95rem;
+      font-weight: 700;
+      margin: 0 0 4px 0;
+      color: $text-main;
+    }
+
+    .hospital-subtitle {
+      font-size: 0.75rem;
+      color: $text-muted;
+      margin: 0;
+    }
+  }
+
+  .toggle-btn {
+    background: transparent;
+    border: none;
+    color: $text-muted;
+    cursor: pointer;
+    font-size: 1.2rem;
+    padding: $sp-1;
+    border-radius: 4px;
+    
+    &:hover {
+      background-color: $hover-bg;
+      color: $text-main;
+    }
   }
 }
 
-.sidebar-nav {
-  flex-grow: 1;
-  display: flex;
-  flex-direction: column;
-  padding: 0 1rem;
-  overflow-y: auto;
 
-  /* Hide scrollbar */
-  &::-webkit-scrollbar {
-    display: none;
+/* Navigation Sections (Gestalt: Proximity & Similarity) */
+.nav-section {
+  margin-bottom: $sp-3;
+
+  .section-title {
+    font-size: 0.75rem;
+    font-weight: 700;
+    color: $text-muted;
+    letter-spacing: 1px;
+    text-transform: uppercase;
+    margin: 0 0 $sp-2 $sp-1;
   }
-  -ms-overflow-style: none;
-  scrollbar-width: none;
 }
 
 .nav-list {
@@ -59,88 +173,204 @@
   margin: 0;
   display: flex;
   flex-direction: column;
-  gap: 0.5rem;
-
-  &.bottom-list {
-    margin-top: auto;
-    margin-bottom: 1rem;
-    padding-top: 1rem;
-  }
+  gap: $sp-1;
 }
 
 .nav-item {
   .nav-link {
     display: flex;
     align-items: center;
-    padding: 0.75rem 1rem;
-    color: #94a3b8; /* Slate 400 */
+    padding: $sp-2;
+    color: $text-muted;
     text-decoration: none;
-    border-radius: 12px;
+    border-radius: $sp-1;
     transition: all 0.2s ease;
-    font-size: 0.9375rem;
-    font-weight: 500;
+    font-size: 0.9rem;
+    font-weight: 600;
+    position: relative;
 
     .icon {
-      margin-right: 12px;
-      font-size: 1.1rem;
+      margin-right: $sp-2;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .text {
+      flex: 1;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
     }
 
     .badge {
-      margin-left: auto;
-      background-color: #0284c7;
-      color: #fff;
-      font-size: 0.75rem;
-      padding: 2px 8px;
-      border-radius: 999px;
-      font-weight: bold;
+      font-size: 0.7rem;
+      font-weight: 700;
+      padding: 4px 8px;
+      border-radius: 12px;
+      margin-left: $sp-1;
+      white-space: nowrap;
+
+      &.badge-red {
+        background-color: rgba($accent-red, 0.2);
+        color: #ff7b72;
+      }
+      
+      &.badge-gray {
+        background-color: rgba(255, 255, 255, 0.1);
+        color: $text-muted;
+      }
+
+      &.badge-green {
+        background-color: rgba($accent-green, 0.1);
+        color: $accent-green;
+      }
     }
 
     &:hover {
-      color: #f8fafc;
-      background-color: rgba(255, 255, 255, 0.05);
+      background-color: $hover-bg;
+      color: $text-main;
     }
   }
 
   &.active .nav-link {
-    background-color: #0284c7;
-    color: #ffffff;
-    box-shadow: 0 4px 6px -1px rgba(2, 132, 199, 0.4);
+    background-color: $accent-blue;
+    color: white;
+    
+    /* Gestalt feature: Continuity */
+    &::before {
+      content: '';
+      position: absolute;
+      left: -($sp-2);
+      top: 10%;
+      height: 80%;
+      width: 4px;
+      background-color: #58a6ff;
+      border-radius: 0 4px 4px 0;
+    }
   }
 }
 
+
+/* Footer Section */
 .sidebar-footer {
-  padding: 1.25rem 1.5rem;
+  padding: $sp-2 $sp-2 $sp-4 $sp-2; /* Increased bottom padding to raise it */
+  background-color: $bg-darker;
   border-top: 1px solid rgba(255, 255, 255, 0.05);
 
   .user-profile {
     display: flex;
     align-items: center;
-    gap: 12px;
+    padding: $sp-1;
+    margin-bottom: $sp-2;
+    border-radius: $sp-1;
+    background-color: $hover-bg;
 
     .avatar {
-      width: 40px;
-      height: 40px;
-      background-color: #cbd5e1;
+      width: 32px;
+      height: 32px;
+      background-color: $accent-blue;
+      color: white;
+      font-weight: 700;
+      font-size: 0.85rem;
       border-radius: 50%;
       display: flex;
       align-items: center;
       justify-content: center;
-      font-size: 1.25rem;
+      flex-shrink: 0;
     }
 
-    .user-info {
-      display: flex;
-      flex-direction: column;
+    .user-details {
+      margin-left: $sp-2;
+      flex: 1;
+      overflow: hidden;
 
-      .name {
-        font-size: 0.875rem;
-        font-weight: 600;
-        color: #f8fafc;
+      .user-name {
+        display: block;
+        font-size: 0.85rem;
+        font-weight: 700;
+        color: $text-main;
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
       }
-      .role {
-        font-size: 0.75rem;
-        color: #94a3b8;
+
+      .user-role {
+        display: block;
+        font-size: 0.7rem;
+        color: $text-muted;
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
       }
+    }
+
+    .options-btn {
+      background: transparent;
+      border: none;
+      color: $text-muted;
+      cursor: pointer;
+      font-size: 1.2rem;
+      padding: 0 4px;
+      
+      &:hover { color: $text-main; }
+    }
+  }
+
+  .footer-actions {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 0 $sp-1;
+
+    .logout-link {
+      display: flex;
+      align-items: center;
+      color: $text-muted;
+      text-decoration: none;
+      font-size: 0.85rem;
+      font-weight: 600;
+      transition: color 0.2s;
+
+      .icon {
+        margin-right: $sp-1;
+        font-size: 1rem;
+      }
+
+      &:hover {
+        color: $text-main;
+      }
+    }
+
+    .version {
+      font-size: 0.7rem;
+      color: $text-muted;
+      font-weight: 600;
+    }
+  }
+}
+
+/* Responsiveness - Mobile behaviors */
+@media (max-width: 768px) {
+  :host {
+    position: absolute;
+    top: 0;
+    left: 0;
+    bottom: 0;
+  }
+
+  .sidebar-container {
+    /* Always completely collapsed to 0 on very small screens or keep 80px */
+    &.collapsed {
+      width: 0; /* Fully hide or keep icons? We'll keep 60px so it's a small rail */
+      width: 60px;
+      
+      .nav-item .nav-link { padding: $sp-1; }
+    }
+    
+    &.expanded {
+      width: 280px; /* Slightly narrower expanded state for phones */
+      box-shadow: 10px 0 30px rgba(0,0,0,0.5); /* Cast shadow when overlaid */
     }
   }
 }
