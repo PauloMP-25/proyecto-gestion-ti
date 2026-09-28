@@ -63,3 +63,9 @@ Thumbs.db
 
 # Project specific
 documentos-base/
+
+# Angular
+.angular/
+dist/
+/coverage/
+/out-tsc/
