@@ -1,47 +1,52 @@
 package com.hospital.servicedesk.entities;
 
 import jakarta.persistence.*;
-import lombok.*;
+import lombok.AllArgsConstructor;
+import lombok.Builder;
+import lombok.Data;
+import lombok.NoArgsConstructor;
 
 import java.time.LocalDateTime;
 
-@Entity
-@Table(name = "USUARIO")
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
+@Entity
+@Table(name = "usuario")
 public class Usuario {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "IdUsuario")
+    @Column(name = "id_usuario")
     private Integer idUsuario;
 
-    @Column(name = "Nombres", nullable = false, length = 80)
+    @Column(name = "nombres", nullable = false, length = 80)
     private String nombres;
 
-    @Column(name = "Apellidos", nullable = false, length = 80)
+    @Column(name = "apellidos", nullable = false, length = 80)
     private String apellidos;
 
-    @Column(name = "Correo", nullable = false, unique = true, length = 100)
+    @Column(name = "correo", nullable = false, unique = true, length = 100)
     private String correo;
 
-    @Column(name = "ContrasenaHash", nullable = false)
+    @Column(name = "contrasena_hash", nullable = false)
     private byte[] contrasenaHash;
 
-    @Column(name = "Rol", nullable = false, length = 30)
+    @Column(name = "rol", nullable = false, length = 30)
     private String rol;
 
-    @Column(name = "NivelSoporte", length = 20)
+    @Column(name = "nivel_soporte", length = 20)
     private String nivelSoporte;
 
-    @Column(name = "IdArea", nullable = false)
-    private Integer idArea;
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "id_area", nullable = false)
+    private Area area;
 
-    @Column(name = "Activo", nullable = false)
-    private Boolean activo;
+    @Builder.Default
+    @Column(name = "activo", nullable = false)
+    private Boolean activo = true;
 
-    @Column(name = "FechaCreacion", nullable = false)
+    @Column(name = "fecha_creacion", nullable = false, insertable = false, updatable = false)
     private LocalDateTime fechaCreacion;
 }
