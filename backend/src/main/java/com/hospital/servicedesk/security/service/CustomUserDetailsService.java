@@ -29,13 +29,13 @@ public class CustomUserDetailsService implements UserDetailsService {
             throw new DisabledException("El usuario se encuentra inactivo");
         }
 
-        // Convertir el hash almacenado en byte[] a String
-        String password = new String(usuario.getContrasenaHash(), StandardCharsets.UTF_8);
+        // Convertir el byte[] a String UTF-8 que BCryptPasswordEncoder pueda leer
+        String passwordHashStr = new String(usuario.getContrasenaHash(), StandardCharsets.UTF_8);
 
         return User.builder()
                 .username(usuario.getCorreo())
-                .password(password)
-                .authorities(Collections.singletonList(new SimpleGrantedAuthority("ROLE_" + usuario.getRol())))
+                .password(passwordHashStr)
+                .roles(usuario.getRol())
                 .build();
     }
 }
