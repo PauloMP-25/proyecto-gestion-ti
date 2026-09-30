@@ -41,16 +41,17 @@ Esta matriz mapea los requerimientos funcionales y no funcionales para que los d
 
 | Funcionalidad / Requerimiento | Área | Prioridad | Dificultad | Backend | Frontend |
 |-------------------------------|------|-----------|------------|---------|----------|
-| **1. Creación Tickets (Anónimo por IP)** | Core | ALTA | Alta | Leer IP del Request (`HttpServletRequest`), inferir Área/Equipo desde BD, crear ticket. | Formulario público intuitivo. Manejo de caso "IP no reconocida". |
-| **2. Autenticación (Técnicos)** | Auth | ALTA | Media | JWT, Filtros, UserDetails, Controladores de sesión. | Formulario Login, Interceptor JWT, AuthGuard. |
-| **3. Gestión Básica de Tickets** | Core | ALTA | Media | Endpoints GET/PUT para listar, asignar a técnico, resolver y cerrar. | Tabla de tickets, vista de detalles, cambios de estado (botones). |
-| **4. Asignación y Cálculo de SLA** | SLA | ALTA | Alta | Motor de cálculo basado en Matriz Impacto x Urgencia. Cronómetros y estados de SLA. | Indicadores visuales (semáforo) de tiempo restante y alertas. |
-| **5. Manejo Global de Errores** | Arq. | ALTA | Media | `@ControllerAdvice` para excepciones. Respuesta JSON consistente. | `ErrorInterceptor`, notificaciones tipo Toast/SnackBar. |
-| **6. Auditoría y Trazabilidad** | Arq. | ALTA | Media | Registrar todo cambio en `HISTORIAL_TICKET` (quién, qué, cuándo). | Vista cronológica (Timeline) del ciclo de vida del ticket. |
-| **7. Validación Estricta de Datos** | Arq. | ALTA | Baja | Anotaciones `@Valid`, lógica de validación de negocio en servicios. | Validaciones en Reactive Forms, feedback visual. |
-| **8. Escalamiento de Tickets** | Core | MEDIA | Media | Lógica de cambio de nivel (N1 -> N2), registro en tabla `ESCALAMIENTO`. | Modal de escalamiento con motivo y selección de nivel. |
-| **9. Base de Conocimiento (KEDB)** | Doc. | MEDIA | Media | CRUD `ERROR_CONOCIDO`, endpoint para vincular Ticket con Error. | Buscador de errores, vista de redacción, sección de consulta rápida. |
-| **10. Inventario e IPs (CMDB)** | Infra. | BAJA | Alta | CRUD `ELEMENTO_CONFIGURACION` y `DIRECCION_IP`, control de `HISTORIAL_ASIGNACION_IP`. | Paneles de administración de equipos informáticos y subredes. |
+| **1. Creación Tickets (Panel Privado + IP)** | Core | ALTA | Alta | Autenticación, leer IP del Request, inferir Área, crear ticket. | Formulario autenticado. Manejo de caso "IP no reconocida". |
+| **2. Autenticación (Toda la plataforma)** | Auth | ALTA | Media | JWT, Filtros, UserDetails, Controladores de sesión. | Formulario Login, Interceptor JWT, AuthGuard. |
+| **3. Gestión Básica de Tickets** | Core | ALTA | Media | Endpoints GET/PUT para listar, asignar, resolver y cerrar. | Tabla de tickets, vista de detalles, botones de estado. |
+| **4. Motor SLA y Alertas** | SLA | ALTA | Alta | Motor de cálculo configurable por BD, triggers para enviar email de incumplimiento. | Semáforos de tiempo, alertas visuales, y un Panel de Configuración de SLA. |
+| **5. Manejo Global de Errores** | Arq. | ALTA | Media | `@ControllerAdvice` para excepciones. Respuesta JSON consistente. | `ErrorInterceptor`, notificaciones Toast. |
+| **6. Auditoría y Trazabilidad** | Arq. | ALTA | Media | Registrar todo cambio en `HISTORIAL_TICKET` (quién, qué, cuándo). | Vista cronológica (Timeline) del ciclo de vida. |
+| **7. Validación Estricta de Datos** | Arq. | ALTA | Baja | Anotaciones `@Valid`, lógica de validación de negocio. | Validaciones en Reactive Forms, feedback visual. |
+| **8. Escalamiento y Gestión de Problemas** | Core | MEDIA | Media | Lógica N1 -> N2. Job automático de agrupación de incidentes similares. | Modal de escalamiento y panel de posibles Problemas subyacentes. |
+| **9. Base de Conocimiento (KEDB)** | Doc. | MEDIA | Media | CRUD `ERROR_CONOCIDO` de publicación directa (sin borrador). Módulo Público. | Portal de Autoayuda público, y creación directa para practicantes. |
+| **10. Inventario (CMDB) y Préstamos** | Infra. | BAJA | Alta | CRUD CI. Enlace dinámico de ticket a equipo (al resolver) y Préstamos Temporales. | Selección dinámica de equipo, panel de registro de préstamos. |
+| **11. Dashboard de Métricas** | Report. | BAJA | Media | Endpoints de agregación de métricas (volumen, demoras, SLA). | Gráficos estadísticos y botón para Exportación a PDF. |
 
 ---
 
@@ -58,61 +59,59 @@ Esta matriz mapea los requerimientos funcionales y no funcionales para que los d
 
 ### Hito A: Base Arquitectónica (Errores, Seguridad y Validaciones)
 **Backend:**
-1. Configurar `@ControllerAdvice` para devolver siempre un JSON estructurado de errores, sin stacktraces.
-2. Aplicar validaciones `@Valid` en todos los DTOs.
-3. Configurar JWT y Spring Security. Proveer el endpoint `/api/auth/login` **solo para técnicos**.
+1. Configurar `@ControllerAdvice` para devolver JSON estructurado.
+2. Aplicar validaciones `@Valid`.
+3. Configurar JWT y Spring Security. Proveer el endpoint `/api/auth/login` **para todos los usuarios y técnicos**.
 
 **Frontend:**
 1. Crear el `ErrorInterceptor` global para atrapar códigos 400, 401, 500 y mostrar Toasts.
-2. Crear `AuthService` y guardar el token. Crear `AuthInterceptor` para inyectarlo en peticiones a rutas protegidas.
+2. Crear `AuthService` y guardar el token.
 
-### Hito B: CMDB Base y Flujo "Sin Login" (Creación de Tickets vía IP)
+### Hito B: Flujo "Panel Privado" (Creación de Tickets vía Usuario + IP)
 **Backend:**
-1. Implementar los repositorios básicos de `Area`, `DireccionIP` y `ElementoConfiguracion`.
-2. Crear el endpoint `/api/tickets/public` (sin seguridad JWT).
-3. **Lógica Crucial:** Leer la IP remota, buscarla en la base de datos para deducir el `IdArea` y `IdCI`, y autocompletar esos datos al guardar el `Ticket`.
+1. Implementar repositorios básicos `Area`, `DireccionIP`, `ElementoConfiguracion`.
+2. Crear el endpoint protegido de creación de tickets.
+3. **Lógica Crucial:** Además del ID de usuario del token JWT, leer la IP remota para autocompletar o enlazar el Área (con opción fallback si la IP no existe).
 
 **Frontend:**
-1. Diseñar la pantalla principal pública para los usuarios del hospital. Solo un formulario de "Reportar Incidente" (Título, Descripción, Tipo).
-2. Si el Backend devuelve error de "IP no reconocida", permitir al usuario seleccionar su Área manualmente como fallback.
+1. Diseñar el portal de usuario final, con un formulario de "Reportar Incidente".
+2. Incluir el Módulo Público de Autoayuda de la KEDB, para desviar tickets comunes.
 
-### Hito C: Motor de Tickets, SLA y Auditoría
+### Hito C: Motor de Tickets, SLA, Alertas y Auditoría
 **Backend:**
-1. Desarrollar el servicio que cruza `Impacto` y `Urgencia` para calcular `Prioridad`.
-2. Calcular la `FechaLimiteRespuesta` y `FechaLimiteResolucion` basados en la Prioridad y guardarlos en el Ticket.
-3. En cada cambio de estado (ej. `NUEVO` a `ASIGNADO`), insertar obligatoriamente un registro en `HISTORIAL_TICKET`.
+1. Desarrollar el servicio que calcula SLA. Crear el Panel de Configuración de SLA (CRUD para parámetros de impacto/urgencia).
+2. Crear el servicio de **Alertas Automáticas** que envíe correos electrónicos si se incumple el SLA.
+3. Inserciones obligatorias en `HISTORIAL_TICKET`.
 
 **Frontend:**
-1. Dashboard protegido por JWT para los técnicos.
-2. Pantalla de detalle de ticket mostrando un "Timeline" leyendo del historial, y relojes de SLA.
+1. Dashboard JWT para los técnicos.
+2. Pantalla de detalle de ticket (Timeline, relojes de SLA, alertas visuales).
 
-### Hito D: Escalamientos y Conocimiento (KEDB)
+### Hito D: CMDB Dinámica, Escalamientos, Problemas y KEDB
 **Backend:**
-1. Endpoints para registrar un `Escalamiento` y cambiar el `NivelSoporteActual`.
-2. CRUD de `ErrorConocido` y tabla asociativa `TICKET_ERROR_CONOCIDO`.
+1. Endpoints de Escalamiento. Tarea en background para agrupar incidentes similares en "Problemas".
+2. KEDB con publicación directa y CRUD de `ErrorConocido`.
+3. CMDB: Permitir enlace de ticket a activo de forma dinámica y registrar préstamos.
 
 **Frontend:**
-1. Botón "Escalar Ticket" que exija justificación.
-2. Módulo KEDB para consultar soluciones previas antes de resolver un ticket nuevo.
+1. Botón "Escalar Ticket" y Panel de Préstamos temporales CMDB.
+2. Dashboard de métricas general con opción de **Exportación a PDF**.
 
 ---
 
-## 4. Diseño del Flujo Especial: Creación de Tickets desde el Hospital (Anónimo por IP)
+## 4. Diseño del Flujo Especial: Creación de Tickets con Autenticación + Captura de IP
 
-Para el caso específico de los usuarios del Hospital, la creación de tickets se diseñó para tener la **mínima fricción posible**, basándose en la topología de red.
+Para cumplir con la solicitud mixta del hospital, la creación de tickets fusiona trazabilidad y automatización.
 
 ### ¿Cómo funciona el mapeo?
-1. **Sin Credenciales:** El usuario (médico, enfermera) accede a la URL interna del Service Desk. No hay pantalla de Login. Ven directamente un botón "Reportar Incidente".
-2. **Extracción de IP:** Al enviar el formulario, el **Backend intercepta la Dirección IP** desde la petición HTTP (`request.getRemoteAddr()`).
-3. **Resolución en la CMDB:**
-   - El Backend busca la IP en la tabla `DIRECCION_IP`.
-   - Consulta la tabla `HISTORIAL_ASIGNACION_IP` para saber a qué Equipo (`ELEMENTO_CONFIGURACION`) está asignada esa IP en este instante.
-   - A través del Equipo, el sistema obtiene el Área (`AREA`) física exacta del hospital (ej. Admisión, UCI).
-4. **Asignación Automática:** El ticket se guarda vinculado automáticamente al Equipo y al Área. 
+1. **Login Tradicional:** El usuario (médico, enfermera) inicia sesión con DNI y contraseña en el portal.
+2. **Captura Silenciosa:** Al enviar el formulario, el **Backend intercepta la Dirección IP** desde la petición HTTP (`request.getRemoteAddr()`).
+3. **Resolución en la CMDB:** El Backend busca la IP en la base de datos para inferir a qué Equipo y Área pertenece.
+4. **Asignación Automática:** El ticket queda vinculado automáticamente al **Usuario** (por el login) y al **Área/Equipo** (por la IP).
 
-### Beneficios del Enfoque
-- **Cero bloqueos:** Los médicos no pierden tiempo recordando contraseñas o recuperando cuentas.
-- **Geolocalización interna:** Los técnicos de soporte N1/N2 saben exactamente a qué computadora ir y en qué pasillo, gracias a que la red actuó como autenticador del origen.
+### Beneficios del Enfoque Mixto
+- **Trazabilidad perfecta:** Se sabe exactamente quién hizo la solicitud.
+- **Geolocalización interna:** Se sabe exactamente de qué PC física provino el ticket, agilizando el soporte presencial.
 
 ### Fallbacks (Plan de Respaldo)
-Si la IP no está registrada en la BD (ej. el usuario está en una tablet nueva o por WiFi de invitados), la API devolverá un estado especial. El Frontend interceptará esto y mostrará un campo adicional pidiendo: *"No pudimos detectar tu ubicación. Por favor, selecciona tu Área de la lista."*
+Si la IP no está registrada en la BD, la API devolverá una alerta leve pero creará el ticket asignándolo solo al usuario, solicitando al técnico de soporte que haga el registro dinámico del equipo (Opción 2 CMDB) al momento de atender el caso.

@@ -6,6 +6,7 @@ El proyecto sigue una arquitectura de N-Capas con las siguientes tecnologías:
 - **Lenguaje / Framework:** Java con Spring Boot.
 - **Responsabilidad:** Toda la lógica de negocio (matriz de prioridades, reglas de SLA, transiciones de estado) reside aquí, estructurada en la capa de Servicios. Los Controladores solo manejan enrutamiento y validación inicial de entrada.
 - **Seguridad:** Middleware/Filtros para autenticación y autorización obligatoria de todas las rutas.
+- **Notificaciones y Reportes:** Integración con `spring-boot-starter-mail` para alertas automáticas, y librería de PDF (ej. `JasperReports` o `iTextPDF`) para generación de reportes y métricas.
 - **Manejo de Errores:** Se devuelven respuestas JSON estructuradas limpias al frontend.
 
 ## Frontend

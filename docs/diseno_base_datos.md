@@ -123,6 +123,28 @@ erDiagram
         INT IdTicket PK_FK
         INT IdErrorConocido PK_FK
     }
+    PROBLEMA {
+        INT IdProblema PK
+        VARCHAR(150) Titulo
+        VARCHAR(20) Estado
+        DATETIME2(0) FechaCreacion
+    }
+    CONFIGURACION_SLA {
+        INT IdConfiguracion PK
+        VARCHAR(10) Impacto
+        VARCHAR(10) Urgencia
+        VARCHAR(10) PrioridadResultante
+        INT MinutosRespuesta
+        INT MinutosResolucion
+    }
+    PRESTAMO_EQUIPO {
+        INT IdPrestamo PK
+        INT IdCI FK
+        INT IdUsuarioReceptor FK
+        INT IdUsuarioTecnico FK
+        DATETIME2(0) FechaPrestamo
+        DATETIME2(0) FechaDevolucion "NULL"
+    }
 
     AREA ||--o{ USUARIO : "ubica"
     AREA ||--o{ ELEMENTO_CONFIGURACION : "ubica"
@@ -143,6 +165,9 @@ erDiagram
     USUARIO ||--o{ ERROR_CONOCIDO : "crea"
     TICKET ||--o{ TICKET_ERROR_CONOCIDO : "vincula"
     ERROR_CONOCIDO ||--o{ TICKET_ERROR_CONOCIDO : "vincula"
+    PROBLEMA ||--o{ TICKET : "agrupa"
+    ELEMENTO_CONFIGURACION ||--o{ PRESTAMO_EQUIPO : "es prestado"
+    USUARIO ||--o{ PRESTAMO_EQUIPO : "recibe/entrega"
 ```
  
 ### 1.1 Diagrama Lógico (Sin Atributos)
@@ -168,6 +193,9 @@ erDiagram
     USUARIO ||--o{ ERROR_CONOCIDO : "crea"
     TICKET ||--o{ TICKET_ERROR_CONOCIDO : "vincula"
     ERROR_CONOCIDO ||--o{ TICKET_ERROR_CONOCIDO : "vincula"
+    PROBLEMA ||--o{ TICKET : "agrupa"
+    ELEMENTO_CONFIGURACION ||--o{ PRESTAMO_EQUIPO : "es prestado"
+    USUARIO ||--o{ PRESTAMO_EQUIPO : "recibe/entrega"
 ```
  
 ---
@@ -189,7 +217,20 @@ Con la lógica fuera de la base de datos, el criterio de eficiencia cambia de en
  
 ---
  
-## 3. Diccionario de Datos Optimizado (12 tablas núcleo)
+## 3. Matriz de Roles y Permisos (RBAC)
+
+De acuerdo con las decisiones de diseño, el acceso al sistema se rige mediante un control de acceso basado en roles (RBAC). Estos valores se almacenan en el campo `Rol` de la tabla `USUARIO`:
+
+| Rol | Nivel | Responsabilidades y Permisos (Alcance) |
+|---|---|---|
+| **USUARIO_FINAL** | Básico | **(Ej. Médicos, Enfermeras, Administrativos)**<br>- **Permisos:** Crear tickets de incidentes/peticiones, interactuar y hacer seguimiento solo de sus propios tickets, y acceder al módulo público (autoayuda) de la Base de Conocimiento (KEDB).<br>- **Restricciones:** No pueden ver tickets de terceros, editar configuraciones ni inventarios. |
+| **SERVICE_DESK_N1** | Soporte N1 | **(Ej. Practicantes, Técnicos de Soporte 1ra línea)**<br>- **Permisos:** Atender, asignar y resolver tickets que lleguen a la bandeja. Escalar tickets a N2. Enlazar activos dinámicamente en la CMDB y registrar préstamos temporales. Tienen permiso para publicar artículos de conocimiento **directamente** (sin aprobación previa) en la KEDB.<br>- **Restricciones:** No pueden alterar reglas de SLA ni ver reportes gerenciales (Dashboard). |
+| **SOPORTE_N2_ESPECIALISTA** | Soporte N2 | **(Ej. Ingenieros o Especialistas de red/servidores)**<br>- **Permisos:** Recibir y resolver tickets complejos escalados. Analizar y gestionar Problemas (incidentes agrupados). Modificar configuraciones avanzadas en la CMDB. |
+| **ADMINISTRADOR** | Gestión | **(Ej. Jefe de TI o Administrador del Sistema)**<br>- **Permisos:** Acceso y control total. Únicos autorizados a usar el Panel de Configuración de SLA (modificar tiempos, urgencia/impacto). Acceso al Dashboard de indicadores, KPIs y exportación a PDF. Administración completa de usuarios y áreas. |
+
+---
+ 
+## 4. Diccionario de Datos Optimizado (15 tablas núcleo)
  
 ### 3.1 USUARIO
 | Campo | Tipo | Notas |
@@ -329,6 +370,34 @@ Con la lógica fuera de la base de datos, el criterio de eficiencia cambia de en
 | IdTicket | INT PK, FK → Ticket |
 | IdErrorConocido | INT PK, FK → ErrorConocido |
  
+### 3.13 PROBLEMA
+| Campo | Tipo | Notas |
+|---|---|---|
+| IdProblema | INT PK IDENTITY | |
+| Titulo | VARCHAR(150) | |
+| Estado | VARCHAR(20) CHECK | `ENUM EstadoProblema` |
+| FechaCreacion | DATETIME2(0) | |
+
+### 3.14 CONFIGURACION_SLA
+| Campo | Tipo | Notas |
+|---|---|---|
+| IdConfiguracion | INT PK IDENTITY | Tabla de control para panel de UI |
+| Impacto | VARCHAR(10) CHECK | `ENUM NivelImpacto` |
+| Urgencia | VARCHAR(10) CHECK | `ENUM NivelUrgencia` |
+| PrioridadResultante | VARCHAR(10) CHECK | `ENUM Prioridad` |
+| MinutosRespuesta | INT | |
+| MinutosResolucion | INT | |
+
+### 3.15 PRESTAMO_EQUIPO
+| Campo | Tipo | Notas |
+|---|---|---|
+| IdPrestamo | INT PK IDENTITY | Registro de préstamo temporal de un activo |
+| IdCI | INT FK → ElementoConfiguracion | Equipo prestado |
+| IdUsuarioReceptor | INT FK → Usuario | Quien recibe el equipo temporal |
+| IdUsuarioTecnico | INT FK → Usuario | Quien registra el préstamo |
+| FechaPrestamo | DATETIME2(0) | |
+| FechaDevolucion | DATETIME2(0) NULL | |
+
 ---
  
 ## 4. Lista Exhaustiva de Relaciones
