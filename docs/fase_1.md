@@ -48,7 +48,7 @@ Esta matriz mapea los requerimientos funcionales y no funcionales para que los d
 | **5. Manejo Global de Errores** | Arq. | ALTA | Media | `@ControllerAdvice` para excepciones. Respuesta JSON consistente. | `ErrorInterceptor`, notificaciones Toast. |
 | **6. Auditoría y Trazabilidad** | Arq. | ALTA | Media | Registrar todo cambio en `HISTORIAL_TICKET` (quién, qué, cuándo). | Vista cronológica (Timeline) del ciclo de vida. |
 | **7. Validación Estricta de Datos** | Arq. | ALTA | Baja | Anotaciones `@Valid`, lógica de validación de negocio. | Validaciones en Reactive Forms, feedback visual. |
-| **8. Escalamiento y Gestión de Problemas** | Core | MEDIA | Media | Lógica N1 -> N2. Job automático de agrupación de incidentes similares. | Modal de escalamiento y panel de posibles Problemas subyacentes. |
+| **8. Escalamiento y Gestión de Problemas** | Core | MEDIA | Media | Lógica de escalamiento (Practicante -> Administrador). Job automático de agrupación de incidentes similares. | Modal de escalamiento y panel de posibles Problemas subyacentes. |
 | **9. Base de Conocimiento (KEDB)** | Doc. | MEDIA | Media | CRUD `ERROR_CONOCIDO` de publicación directa (sin borrador). Módulo Público. | Portal de Autoayuda público, y creación directa para practicantes. |
 | **10. Inventario (CMDB) y Préstamos** | Infra. | BAJA | Alta | CRUD CI. Enlace dinámico de ticket a equipo (al resolver) y Préstamos Temporales. | Selección dinámica de equipo, panel de registro de préstamos. |
 | **11. Dashboard de Métricas** | Report. | BAJA | Media | Endpoints de agregación de métricas (volumen, demoras, SLA). | Gráficos estadísticos y botón para Exportación a PDF. |

@@ -16,7 +16,6 @@ erDiagram
         VARCHAR(100) Correo UK
         VARBINARY(256) ContrasenaHash
         VARCHAR(30) Rol
-        VARCHAR(20) NivelSoporte "NULL"
         INT IdArea FK
         BIT Activo
         DATETIME2(0) FechaCreacion
@@ -59,7 +58,6 @@ erDiagram
         VARCHAR(10) Urgencia
         VARCHAR(10) Prioridad
         VARCHAR(20) Estado
-        VARCHAR(20) NivelSoporteActual
         INT IdUsuarioSolicitante FK
         INT IdUsuarioAsignado FK "NULL"
         INT IdCI FK "NULL"
@@ -79,8 +77,8 @@ erDiagram
     ESCALAMIENTO {
         INT IdEscalamiento PK
         INT IdTicket FK
-        VARCHAR(20) NivelOrigen
-        VARCHAR(20) NivelDestino
+        VARCHAR(30) RolOrigen
+        VARCHAR(30) RolDestino
         INT IdUsuarioOrigen FK
         INT IdUsuarioDestino FK "NULL"
         VARCHAR(300) Motivo
@@ -224,9 +222,8 @@ De acuerdo con las decisiones de diseño, el acceso al sistema se rige mediante 
 | Rol | Nivel | Responsabilidades y Permisos (Alcance) |
 |---|---|---|
 | **USUARIO_FINAL** | Básico | **(Ej. Médicos, Enfermeras, Administrativos)**<br>- **Permisos:** Crear tickets de incidentes/peticiones, interactuar y hacer seguimiento solo de sus propios tickets, y acceder al módulo público (autoayuda) de la Base de Conocimiento (KEDB).<br>- **Restricciones:** No pueden ver tickets de terceros, editar configuraciones ni inventarios. |
-| **SERVICE_DESK_N1** | Soporte N1 | **(Ej. Practicantes, Técnicos de Soporte 1ra línea)**<br>- **Permisos:** Atender, asignar y resolver tickets que lleguen a la bandeja. Escalar tickets a N2. Enlazar activos dinámicamente en la CMDB y registrar préstamos temporales. Tienen permiso para publicar artículos de conocimiento **directamente** (sin aprobación previa) en la KEDB.<br>- **Restricciones:** No pueden alterar reglas de SLA ni ver reportes gerenciales (Dashboard). |
-| **SOPORTE_N2_ESPECIALISTA** | Soporte N2 | **(Ej. Ingenieros o Especialistas de red/servidores)**<br>- **Permisos:** Recibir y resolver tickets complejos escalados. Analizar y gestionar Problemas (incidentes agrupados). Modificar configuraciones avanzadas en la CMDB. |
-| **ADMINISTRADOR** | Gestión | **(Ej. Jefe de TI o Administrador del Sistema)**<br>- **Permisos:** Acceso y control total. Únicos autorizados a usar el Panel de Configuración de SLA (modificar tiempos, urgencia/impacto). Acceso al Dashboard de indicadores, KPIs y exportación a PDF. Administración completa de usuarios y áreas. |
+| **PRACTICANTE** | Operativo | **(Ej. Practicantes, Técnicos de Soporte)**<br>- **Permisos:** Atender, asignar y resolver tickets que lleguen a la bandeja. Escalar tickets a Administrador. Enlazar activos dinámicamente en la CMDB y registrar préstamos temporales. Tienen permiso para publicar artículos de conocimiento **directamente** (sin aprobación previa) en la KEDB.<br>- **Restricciones:** No pueden alterar reglas de SLA ni ver reportes gerenciales (Dashboard). |
+| **ADMINISTRADOR** | Gestión | **(Ej. Ingenieros o Jefe de TI)**<br>- **Permisos:** Acceso y control total. Únicos autorizados a usar el Panel de Configuración de SLA (modificar tiempos, urgencia/impacto). Acceso al Dashboard de indicadores, KPIs y exportación a PDF. Administración completa de usuarios y áreas. Analizar y gestionar Problemas (incidentes agrupados). Modificar configuraciones avanzadas en la CMDB. |
 
 ---
  
@@ -240,8 +237,7 @@ De acuerdo con las decisiones de diseño, el acceso al sistema se rige mediante 
 | Apellidos | VARCHAR(80) | |
 | Correo | VARCHAR(100) UNIQUE | |
 | ContrasenaHash | VARBINARY(256) | Hash (bcrypt/SHA-256), nunca texto plano |
-| Rol | VARCHAR(30) CHECK | `ENUM Rol`: `USUARIO_FINAL`, `SERVICE_DESK_N1`, `SOPORTE_N2_ESPECIALISTA`, `ADMINISTRADOR` |
-| NivelSoporte | VARCHAR(20) NULL CHECK | `ENUM NivelSoporte`: `N1`, `N2`, `ESPECIALISTA`; NULL si el rol no es de soporte |
+| Rol | VARCHAR(30) CHECK | `ENUM Rol`: `USUARIO_FINAL`, `PRACTICANTE`, `ADMINISTRADOR` |
 | IdArea | INT FK → Area | |
 | Activo | BIT DEFAULT 1 | |
 | FechaCreacion | DATETIME2(0) | |
@@ -301,7 +297,6 @@ De acuerdo con las decisiones de diseño, el acceso al sistema se rige mediante 
 | Urgencia | VARCHAR(10) CHECK | `ENUM NivelUrgencia`: `ALTO`, `MEDIO`, `BAJO` |
 | Prioridad | VARCHAR(10) CHECK | `ENUM Prioridad`: `CRITICA`, `ALTA`, `MEDIA`, `BAJA` — calculada por el Backend vía matriz Impacto×Urgencia en código |
 | Estado | VARCHAR(20) CHECK | `ENUM EstadoTicket`: `NUEVO`, `ASIGNADO`, `EN_PROCESO`, `ESCALADO`, `RESUELTO`, `CERRADO`, `REABIERTO` |
-| NivelSoporteActual | VARCHAR(20) CHECK | `ENUM NivelSoporte`: `N1`, `N2`, `ESPECIALISTA` |
 | IdUsuarioSolicitante | INT FK → Usuario | |
 | IdUsuarioAsignado | INT NULL FK → Usuario | |
 | IdCI | INT NULL FK → ElementoConfiguracion | |
@@ -323,8 +318,8 @@ De acuerdo con las decisiones de diseño, el acceso al sistema se rige mediante 
 |---|---|
 | IdEscalamiento | INT PK IDENTITY |
 | IdTicket | INT FK → Ticket |
-| NivelOrigen | VARCHAR(20) CHECK — `ENUM NivelSoporte` |
-| NivelDestino | VARCHAR(20) CHECK — `ENUM NivelSoporte` |
+| RolOrigen | VARCHAR(30) CHECK — `ENUM Rol` |
+| RolDestino | VARCHAR(30) CHECK — `ENUM Rol` |
 | IdUsuarioOrigen | INT FK → Usuario |
 | IdUsuarioDestino | INT NULL FK → Usuario |
 | Motivo | VARCHAR(300) |
@@ -414,7 +409,7 @@ De acuerdo con las decisiones de diseño, el acceso al sistema se rige mediante 
 | 8 | `ELEMENTO_CONFIGURACION "1" \|\|--o{ "0..*" HISTORIAL_ASIGNACION_IP` | 1:N | Un equipo recibe múltiples IPs en su historial. |
 | 9 | `DIRECCION_IP "1" \|\|--o{ "0..*" HISTORIAL_ASIGNACION_IP` | 1:N | Una IP tiene múltiples registros de historial (reasignaciones). |
 | 10 | `USUARIO "1" \|\|--o{ "0..*" HISTORIAL_ASIGNACION_IP` | 1:N | **(asigna / libera):** Un usuario asigna o libera múltiples IPs; cada registro tiene un asignador obligatorio y un liberador opcional. |
-| 11 | `TICKET "1" \|\|--o{ "0..*" ESCALAMIENTO` | 1:N | Un ticket puede generar múltiples saltos de escalamiento. |
+| 11 | `TICKET "1" \|\|--o{ "0..*" ESCALAMIENTO` | 1:N | Un ticket puede generar múltiples saltos de escalamiento (ej. de Practicante a Administrador). |
 | 12 | `USUARIO "1" \|\|--o{ "0..*" ESCALAMIENTO` | 1:N | **(origina / recibe):** Un usuario origina o recibe múltiples escalamientos; el origen es obligatorio, el destino es opcional al inicio. |
 | 13 | `TICKET "1" \|\|--o{ "0..*" SOLUCION_TICKET` | 1:N | Un ticket tiene múltiples intentos de solución documentados. |
 | 14 | `USUARIO "1" \|\|--o{ "0..*" SOLUCION_TICKET` | 1:N | Un usuario redacta múltiples soluciones. |
@@ -445,7 +440,7 @@ Las 12 tablas que se conservan son, sin excepción, aquellas que almacenan **dat
 ## 6. Justificación Individual de cada Tabla Núcleo
  
 ### 6.1 USUARIO
-- **Función:** Almacena a todo actor del sistema (solicitantes, técnicos N1/N2/Especialista, administradores) con sus credenciales, rol y ubicación organizacional.
+- **Función:** Almacena a todo actor del sistema (usuarios finales, practicantes, administradores) con sus credenciales, rol y ubicación organizacional.
 - **Ventajas:** Es la única fuente de verdad sobre "quién hizo qué" en todo el sistema; al centralizar identidad y rol en una sola tabla, cualquier otra tabla que necesite referenciar a una persona (Ticket, Escalamiento, HistorialTicket, HistorialAsignacionIP, ErrorConocido) lo hace con una simple FK entera, evitando duplicar datos de identidad.
 - **Por qué se eligió esta tabla:** Es un dato transaccional por naturaleza (el personal del hospital cambia: ingresos, bajas, cambios de área) — no puede vivir como constante en el Backend, a diferencia del `ENUM Rol` que sí describe los valores posibles pero no las personas reales.
 - **Cumplimiento ITIL v4:** Sustenta la práctica de **Gestión de Seguridad de la Información**, garantizando que cada acción sobre un servicio quede atribuida a una identidad verificable — requisito base de cualquier práctica ITIL de gestión de servicios.
@@ -480,9 +475,9 @@ Las 12 tablas que se conservan son, sin excepción, aquellas que almacenan **dat
 - **Por qué se eligió esta tabla:** Es, por definición, el dato transaccional más importante del sistema — cada ticket es un hecho único e irrepetible del negocio (no una regla), por lo que debe persistirse íntegramente, mientras que las etiquetas de clasificación (Impacto, Urgencia, Prioridad, Estado) se guardan como `VARCHAR` validado por `ENUM` del Backend.
 - **Cumplimiento ITIL v4:** Es la implementación directa de las prácticas de **Gestión de Incidentes**, **Gestión de Solicitudes de Servicio** y **Gestión de Niveles de Servicio (SLM)** — el núcleo funcional exigido por el proyecto.
 ### 6.8 ESCALAMIENTO
-- **Función:** Registra cada evento de escalamiento de un ticket entre niveles de soporte (N1→N2→Especialista), con origen, destino, responsables y motivo.
-- **Ventajas:** Al guardar cada escalamiento como fila independiente (no como campo mutable en `Ticket`), un mismo ticket puede escalar múltiples veces sin perder el rastro de escalamientos previos; permite evaluar desempeño por nivel de soporte.
-- **Por qué se eligió esta tabla:** Es un evento transaccional (ocurre en un momento específico y no se repite igual dos veces), a diferencia de los niveles de soporte en sí (`N1`, `N2`, `ESPECIALISTA`), que sí son un conjunto fijo y por eso viven como `ENUM`.
+- **Función:** Registra cada evento de escalamiento de un ticket entre roles (ej. Practicante → Administrador), con origen, destino, responsables y motivo.
+- **Ventajas:** Al guardar cada escalamiento como fila independiente (no como campo mutable en `Ticket`), un mismo ticket puede escalar múltiples veces sin perder el rastro de escalamientos previos; permite evaluar desempeño por rol.
+- **Por qué se eligió esta tabla:** Es un evento transaccional (ocurre en un momento específico y no se repite igual dos veces), a diferencia de los roles en sí (`PRACTICANTE`, `ADMINISTRADOR`), que sí son un conjunto fijo y por eso viven como `ENUM`.
 - **Cumplimiento ITIL v4:** Implementa el **escalamiento funcional y jerárquico** descrito en la práctica de Gestión de Incidentes de ITIL v4.
 ### 6.9 SOLUCION_TICKET
 - **Función:** Documenta las soluciones aplicadas a un ticket, permitiendo múltiples intentos y marcando cuál fue la solución final.

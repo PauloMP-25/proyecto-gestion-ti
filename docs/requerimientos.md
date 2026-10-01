@@ -4,7 +4,7 @@
 1. **Gestión de Incidentes y Peticiones:** El sistema debe permitir registrar, clasificar, asignar y dar seguimiento a tickets. Al crear el ticket desde el panel de usuario, el sistema debe capturar automáticamente la dirección IP de la PC de origen por detrás.
 2. **Asignación de SLA y Matriz de Prioridad:** El sistema debe calcular tiempos de resolución/respuesta. Se debe incluir un **Panel de Configuración en la interfaz** para que los administradores editen las reglas de impacto y urgencia.
 3. **Alertas de SLA:** Si el tiempo de SLA se vence, el sistema debe emitir una alerta visual en pantalla y enviar un mensaje automático por correo electrónico.
-4. **Escalamiento de Tickets:** Permitir escalar tickets entre distintos niveles de soporte (N1, N2, Especialista).
+4. **Escalamiento de Tickets:** Permitir escalar tickets entre roles de soporte (de Practicante a Administrador).
 5. **Base de Conocimiento (KEDB):** Permitir registrar soluciones. Los practicantes deben poder **publicar directamente** sin aprobación previa estricta. Además, debe existir un **módulo público de autoayuda** para usuarios finales.
 6. **Gestión de Inventario (CMDB):** Registro dinámico de activos (el técnico puede enlazar o registrar el equipo al atender el ticket). Debe incluir una función para registrar explícitamente el **préstamo temporal de equipos**.
 7. **Gestión de Problemas:** El sistema debe agrupar automáticamente incidentes similares para alertar al área TI sobre un problema mayor subyacente.
