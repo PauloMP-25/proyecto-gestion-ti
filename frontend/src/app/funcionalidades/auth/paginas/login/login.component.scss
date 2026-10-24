@@ -3,117 +3,121 @@
   align-items: center;
   justify-content: center;
   min-height: 100vh;
-  background-color: #f8f9ff; /* Fondo estéril clínico */
-  font-family: 'Inter', sans-serif;
-  padding: 1.5rem;
+  background-color: var(--color-bg-warm); /* Crema institucional de fachada */
+  padding: var(--space-6);
+  position: relative;
 }
 
 .login-card {
-  background-color: #ffffff;
-  border: 1px solid #e2e8f0;
-  border-radius: 8px;
-  box-shadow: 0 4px 6px -1px rgba(15, 23, 42, 0.05), 0 2px 4px -2px rgba(15, 23, 42, 0.03);
+  background-color: var(--color-surface-card);
+  border: 1px solid var(--color-border-subtle);
+  border-radius: var(--radius-lg);
+  box-shadow: var(--shadow-lg);
   width: 100%;
   max-width: 440px;
-  padding: 2.5rem 2rem;
+  padding: var(--space-10) var(--space-8);
   text-align: center;
+  z-index: 1;
 }
 
 .hospital-badge {
   display: inline-flex;
   align-items: center;
-  gap: 6px;
-  padding: 4px 12px;
-  background-color: #f0f9ff;
-  border: 1px solid #bae6fd;
-  border-radius: 9999px;
-  color: #0369a1;
-  font-size: 0.75rem;
-  font-weight: 600;
-  margin-bottom: 1.5rem;
+  gap: var(--space-2);
+  padding: 0.25rem 0.75rem;
+  background-color: var(--color-primary-light);
+  border: 1px solid rgba(112, 28, 28, 0.15);
+  border-radius: var(--radius-full);
+  color: var(--color-primary-base);
+  font-size: var(--font-size-xs);
+  font-weight: var(--font-weight-semibold);
+  margin-bottom: var(--space-6);
 
   .secure-dot {
     width: 6px;
     height: 6px;
     border-radius: 50%;
-    background-color: #10b981;
+    background-color: var(--color-secondary-base);
   }
 }
 
 .logo-area {
-  margin-bottom: 1rem;
+  margin-bottom: var(--space-4);
+
   .hospital-icon {
     width: 64px;
     height: 64px;
-    background-color: #e5eeff;
-    color: #0284c7;
-    border-radius: 12px;
+    background-color: var(--color-primary-light);
+    color: var(--color-primary-base);
+    border: 1px solid rgba(112, 28, 28, 0.2);
+    border-radius: var(--radius-lg);
     display: inline-flex;
     align-items: center;
     justify-content: center;
     font-size: 2rem;
-    font-weight: bold;
   }
 }
 
 .login-title {
-  color: #0b1c30;
-  font-family: 'Plus Jakarta Sans', sans-serif;
-  font-size: 1.5rem;
-  font-weight: 600;
-  margin: 0 0 0.5rem;
+  color: var(--color-primary-base);
+  font-size: var(--font-size-2xl);
+  font-weight: var(--font-weight-bold);
+  margin: 0 0 var(--space-2);
   letter-spacing: -0.015em;
 }
 
 .login-subtitle {
-  color: #64748b;
-  font-size: 0.875rem;
-  margin-bottom: 2rem;
+  color: var(--color-text-muted);
+  font-size: var(--font-size-sm);
+  margin-bottom: var(--space-8);
 }
 
 .form-group {
   text-align: left;
-  margin-bottom: 1.25rem;
+  margin-bottom: var(--space-5);
 
   label {
     display: block;
-    color: #3f4850;
-    font-size: 0.75rem;
-    font-weight: 600;
-    margin-bottom: 0.5rem;
+    color: var(--color-text-main);
+    font-size: var(--font-size-xs);
+    font-weight: var(--font-weight-semibold);
+    margin-bottom: var(--space-2);
     letter-spacing: 0.025em;
+    text-transform: uppercase;
   }
 
   .input-wrapper {
     position: relative;
-    
+
     .icon {
       position: absolute;
       left: 12px;
       top: 50%;
       transform: translateY(-50%);
-      color: #94a3b8;
+      color: var(--color-text-muted);
+      font-size: 1rem;
     }
-    
+
     input {
       width: 100%;
-      height: 40px;
-      padding: 0 12px 0 36px;
-      border: 1px solid #cbd5e1;
-      border-radius: 4px;
-      font-size: 0.9375rem;
-      color: #0f172a;
-      transition: all 0.2s;
-      box-sizing: border-box;
+      height: 44px;
+      padding: 0 12px 0 38px;
+      border: 1px solid var(--color-border-subtle);
+      border-radius: var(--radius-md);
+      font-size: var(--font-size-sm);
+      color: var(--color-text-main);
+      background-color: var(--color-surface-card);
+      transition: border-color var(--transition-fast), box-shadow var(--transition-fast);
 
       &:focus {
         outline: none;
-        border-color: #0284c7;
-        box-shadow: 0 0 0 1px #0284c7;
+        border-color: var(--color-primary-base);
+        box-shadow: 0 0 0 3px var(--color-primary-focus-ring);
       }
-      
+
       &::placeholder {
-        color: #94a3b8;
+        color: var(--color-text-muted);
+        opacity: 0.7;
       }
     }
   }
@@ -123,75 +127,59 @@
   display: flex;
   justify-content: space-between;
   align-items: center;
-  margin-bottom: 2rem;
-  font-size: 0.8125rem;
+  margin-bottom: var(--space-8);
+  font-size: var(--font-size-xs);
 
   .remember-me {
     display: flex;
     align-items: center;
-    gap: 8px;
-    color: #3f4850;
+    gap: var(--space-2);
+    color: var(--color-text-muted);
     cursor: pointer;
 
-    input[type="checkbox"] {
+    input[type='checkbox'] {
       width: 16px;
       height: 16px;
-      accent-color: #0284c7;
+      accent-color: var(--color-primary-base);
       cursor: pointer;
     }
   }
 
   .forgot-link {
-    color: #0284c7;
+    color: var(--color-primary-base);
     text-decoration: none;
-    font-weight: 600;
+    font-weight: var(--font-weight-semibold);
 
     &:hover {
       text-decoration: underline;
-      color: #0369a1;
+      color: var(--color-primary-hover);
     }
   }
 }
 
 .btn-primary {
   width: 100%;
-  height: 40px;
-  background-color: #0284c7;
-  color: #ffffff;
-  border: none;
-  border-radius: 4px;
-  font-size: 0.9375rem;
-  font-weight: 600;
-  cursor: pointer;
-  transition: background-color 0.2s;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  gap: 8px;
-
-  &:hover {
-    background-color: #0369a1;
-  }
 }
 
 .ad-badge {
-  margin-top: 1.5rem;
-  padding-top: 1.5rem;
-  border-top: 1px solid #f1f5f9;
-  color: #94a3b8;
-  font-size: 0.75rem;
+  margin-top: var(--space-6);
+  padding-top: var(--space-6);
+  border-top: 1px solid var(--color-border-subtle);
+  color: var(--color-text-muted);
+  font-size: var(--font-size-xs);
   display: flex;
   align-items: center;
   justify-content: center;
-  gap: 6px;
+  gap: var(--space-2);
 }
 
 .support-footer {
   position: absolute;
-  bottom: 2rem;
-  color: #64748b;
-  font-size: 0.75rem;
+  bottom: var(--space-6);
+  color: var(--color-text-muted);
+  font-size: var(--font-size-xs);
   text-align: center;
   width: 100%;
   left: 0;
+  line-height: var(--line-height-normal);
 }
