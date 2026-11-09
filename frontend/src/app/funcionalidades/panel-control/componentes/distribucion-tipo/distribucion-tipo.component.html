@@ -2,36 +2,13 @@
   <div class="tarjeta-distribucion__header">
     <div class="tarjeta-distribucion__titulos">
       <h3 class="tarjeta-distribucion__titulo">Fallas por Activo de Infraestructura CMDB</h3>
-      <p class="tarjeta-distribucion__subtitulo">Distribución de incidentes según equipamiento y servicios tecnológicos</p>
+      <p class="tarjeta-distribucion__subtitulo">Top 5 elementos de configuración con mayor volumen de incidentes</p>
     </div>
-    <span class="badge-total-activos">39 Casos CMDB</span>
+    <span class="badge-total-activos">46 Casos Activos</span>
   </div>
 
-  <div class="tarjeta-distribucion__barras-grid">
-    @for (item of distribucion(); track item.categoria) {
-      <div class="fila-barra-cmdb">
-        <div class="fila-barra-cmdb__info">
-          <div class="categoria-info">
-            <app-icono [nombre]="item.icono" tamano="xs" class="categoria-icono"></app-icono>
-            <div class="categoria-textos">
-              <span class="categoria-titulo">{{ item.categoria }}</span>
-              <span class="categoria-ejemplo">{{ item.ejemplo }}</span>
-            </div>
-          </div>
-
-          <div class="categoria-metrica">
-            <span class="categoria-casos"><strong>{{ item.casos }}</strong> casos</span>
-            <span class="categoria-pct">{{ item.porcentaje }}%</span>
-          </div>
-        </div>
-
-        <div class="fila-barra-cmdb__track" aria-hidden="true">
-          <div 
-            class="fila-barra-cmdb__progreso" 
-            [style.width.%]="item.porcentaje">
-          </div>
-        </div>
-      </div>
-    }
+  <!-- Contenedor del Gráfico de Barras Chart.js estilo Excel/Power BI -->
+  <div class="tarjeta-distribucion__chart-container">
+    <canvas #canvasBarras></canvas>
   </div>
 </div>
