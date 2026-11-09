@@ -29,15 +29,13 @@
           </div>
 
           <div class="item-sla__cuerpo">
-            <div class="item-sla__titulo-fila">
-              <span class="item-sla__etiqueta">{{ d.etiqueta }}</span>
-              <span class="item-sla__porcentaje">{{ d.porcentaje }}%</span>
-            </div>
+            <span class="item-sla__etiqueta">{{ d.etiqueta }}</span>
             <p class="item-sla__descripcion">{{ d.descripcion }}</p>
           </div>
 
-          <div class="item-sla__conteo">
-            <strong>{{ d.casos }}</strong> casos
+          <div class="item-sla__metricas">
+            <span class="item-sla__porcentaje">{{ d.porcentaje }}%</span>
+            <span class="item-sla__conteo"><strong>{{ d.casos }}</strong> casos</span>
           </div>
         </div>
       }

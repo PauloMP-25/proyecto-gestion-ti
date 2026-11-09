@@ -102,36 +102,43 @@
     min-width: 0;
   }
 
-  &__titulo-fila {
-    display: flex;
-    justify-content: space-between;
-    align-items: baseline;
-  }
-
   &__etiqueta {
-    font-size: 0.8rem;
+    font-size: 0.82rem;
     font-weight: 700;
     color: var(--texto-principal, #0f172a);
-  }
-
-  &__porcentaje {
-    font-size: 0.8rem;
-    font-weight: 800;
-    color: var(--texto-principal, #0f172a);
+    display: block;
   }
 
   &__descripcion {
-    font-size: 0.69rem;
+    font-size: 0.7rem;
     color: var(--texto-secundario, #64748b);
     margin: 2px 0 0 0;
     line-height: 1.3;
   }
 
-  &__conteo {
-    font-size: 0.78rem;
-    color: var(--texto-secundario, #64748b);
+  &__metricas {
+    display: flex;
+    align-items: baseline;
+    gap: 12px;
     white-space: nowrap;
     padding-left: 8px;
+  }
+
+  &__porcentaje {
+    font-family: 'Inter', system-ui, sans-serif;
+    font-feature-settings: 'tnum' 1;
+    font-variant-numeric: tabular-nums;
+    font-size: 0.88rem;
+    font-weight: 800;
+    color: var(--texto-principal, #0f172a);
+    min-width: 34px;
+    text-align: right;
+  }
+
+  &__conteo {
+    font-family: 'Inter', system-ui, sans-serif;
+    font-size: 0.78rem;
+    color: var(--texto-secundario, #64748b);
 
     strong {
       color: var(--texto-principal, #0f172a);

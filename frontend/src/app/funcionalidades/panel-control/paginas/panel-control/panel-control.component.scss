@@ -80,32 +80,24 @@
     display: inline-flex;
     align-items: center;
     justify-content: center;
-    width: 20px;
-    height: 20px;
-    border-radius: 50%;
+    min-width: 22px;
+    height: 22px;
+    padding: 0 5px;
+    border-radius: var(--radio-full, 9999px);
     background-color: rgba(0, 0, 0, 0.06);
     color: var(--texto-secundario, #475569);
     font-size: 0.72rem;
     font-weight: 700;
+
+    &--conteo {
+      margin-left: 2px;
+      background-color: rgba(112, 28, 28, 0.08);
+      color: var(--primario-guinda, #701c1c);
+    }
   }
 
   &__texto {
     letter-spacing: -0.01em;
-  }
-
-  &__badge {
-    font-size: 0.7rem;
-    font-weight: 700;
-    padding: 2px 6px;
-    border-radius: var(--radio-full, 9999px);
-    background-color: #e2e8f0;
-    color: #334155;
-
-    &.badge--alerta {
-      background-color: var(--sla-venc-bg, #fee2e2);
-      color: var(--sla-venc-text, #7f1d1d);
-      border: 1px solid var(--sla-venc-border, #dc2626);
-    }
   }
 
   &:hover:not(.tab-btn--activo) {
@@ -123,6 +115,11 @@
     .tab-btn__numero {
       background-color: var(--primario-guinda, #701c1c);
       color: #ffffff;
+
+      &--conteo {
+        background-color: rgba(112, 28, 28, 0.14);
+        color: var(--primario-guinda, #701c1c);
+      }
     }
   }
 }

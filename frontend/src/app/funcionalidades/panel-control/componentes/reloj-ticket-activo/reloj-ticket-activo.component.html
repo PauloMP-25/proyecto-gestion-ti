@@ -20,7 +20,7 @@
 
           <span class="badge-estado">
             <span class="punto-latente"></span>
-            {{ t.estado }}
+            {{ t.estado === 'EN_PROCESO' ? 'EN PROCESO' : t.estado }}
           </span>
 
           @if (pausado()) {
@@ -118,7 +118,7 @@
       @let porcentajeConsumido = calcularPorcentajeSLA(60);
       <div class="reloj-sla-barra-container">
         <div class="sla-barra-info">
-          <span>Consumo de tiempo de SLA ITIL v4: <strong>{{ porcentajeConsumido }}%</strong></span>
+          <span>CONSUMO DE TIEMPO DE SLA: <strong>{{ porcentajeConsumido }}%</strong></span>
           <span 
             class="sla-estado-tag"
             [class.tag--ok]="porcentajeConsumido < 80"
