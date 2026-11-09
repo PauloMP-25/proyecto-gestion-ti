@@ -1,197 +1,272 @@
-.login-container {
-  display: flex;
-  align-items: center;
-  justify-content: center;
+@use "sass:color";
+
+:host {
+  display: block;
   min-height: 100vh;
-  background-color: #f8f9ff; /* Fondo estéril clínico */
-  font-family: 'Inter', sans-serif;
-  padding: 1.5rem;
-}
-
-.login-card {
-  background-color: #ffffff;
-  border: 1px solid #e2e8f0;
-  border-radius: 8px;
-  box-shadow: 0 4px 6px -1px rgba(15, 23, 42, 0.05), 0 2px 4px -2px rgba(15, 23, 42, 0.03);
   width: 100%;
-  max-width: 440px;
-  padding: 2.5rem 2rem;
-  text-align: center;
 }
 
-.hospital-badge {
-  display: inline-flex;
-  align-items: center;
-  gap: 6px;
-  padding: 4px 12px;
-  background-color: #f0f9ff;
-  border: 1px solid #bae6fd;
-  border-radius: 9999px;
-  color: #0369a1;
-  font-size: 0.75rem;
-  font-weight: 600;
-  margin-bottom: 1.5rem;
-
-  .secure-dot {
-    width: 6px;
-    height: 6px;
-    border-radius: 50%;
-    background-color: #10b981;
-  }
-}
-
-.logo-area {
-  margin-bottom: 1rem;
-  .hospital-icon {
-    width: 64px;
-    height: 64px;
-    background-color: #e5eeff;
-    color: #0284c7;
-    border-radius: 12px;
-    display: inline-flex;
-    align-items: center;
-    justify-content: center;
-    font-size: 2rem;
-    font-weight: bold;
-  }
-}
-
-.login-title {
-  color: #0b1c30;
-  font-family: 'Plus Jakarta Sans', sans-serif;
-  font-size: 1.5rem;
-  font-weight: 600;
-  margin: 0 0 0.5rem;
-  letter-spacing: -0.015em;
-}
-
-.login-subtitle {
-  color: #64748b;
-  font-size: 0.875rem;
-  margin-bottom: 2rem;
-}
-
-.form-group {
-  text-align: left;
-  margin-bottom: 1.25rem;
-
-  label {
-    display: block;
-    color: #3f4850;
-    font-size: 0.75rem;
-    font-weight: 600;
-    margin-bottom: 0.5rem;
-    letter-spacing: 0.025em;
-  }
-
-  .input-wrapper {
-    position: relative;
-    
-    .icon {
-      position: absolute;
-      left: 12px;
-      top: 50%;
-      transform: translateY(-50%);
-      color: #94a3b8;
-    }
-    
-    input {
-      width: 100%;
-      height: 40px;
-      padding: 0 12px 0 36px;
-      border: 1px solid #cbd5e1;
-      border-radius: 4px;
-      font-size: 0.9375rem;
-      color: #0f172a;
-      transition: all 0.2s;
-      box-sizing: border-box;
-
-      &:focus {
-        outline: none;
-        border-color: #0284c7;
-        box-shadow: 0 0 0 1px #0284c7;
-      }
-      
-      &::placeholder {
-        color: #94a3b8;
-      }
-    }
-  }
-}
-
-.form-actions-row {
+.login-page-wrapper {
   display: flex;
-  justify-content: space-between;
-  align-items: center;
-  margin-bottom: 2rem;
-  font-size: 0.8125rem;
+  flex-direction: column;
+  min-height: 100vh;
+  width: 100%;
+  font-family: 'Inter', system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+  background-color: #f0f2f5;
+}
 
-  .remember-me {
+/* Common Header */
+.top-navbar {
+  height: 60px;
+  background-color: #ffffff;
+  border-bottom: 1px solid #e2e8f0;
+  display: flex;
+  align-items: center;
+  justify-content: flex-start;
+  padding: 0 2rem;
+  z-index: 100;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+
+  .nav-left {
     display: flex;
     align-items: center;
-    gap: 8px;
-    color: #3f4850;
-    cursor: pointer;
-
-    input[type="checkbox"] {
-      width: 16px;
-      height: 16px;
-      accent-color: #0284c7;
-      cursor: pointer;
+    gap: 12px;
+    
+    .nav-logo {
+      height: 40px;
+      width: auto;
+      border-radius: 4px;
+      object-fit: contain;
     }
-  }
-
-  .forgot-link {
-    color: #0284c7;
-    text-decoration: none;
-    font-weight: 600;
-
-    &:hover {
-      text-decoration: underline;
-      color: #0369a1;
+    
+    .nav-title {
+      font-weight: 700;
+      color: #0b1c30;
+      font-size: 1.05rem;
     }
   }
 }
 
-.btn-primary {
-  width: 100%;
-  height: 40px;
-  background-color: #0284c7;
-  color: #ffffff;
-  border: none;
-  border-radius: 4px;
-  font-size: 0.9375rem;
-  font-weight: 600;
-  cursor: pointer;
-  transition: background-color 0.2s;
+.login-content-container {
+  flex: 1;
   display: flex;
   align-items: center;
   justify-content: center;
-  gap: 8px;
-
-  &:hover {
-    background-color: #0369a1;
-  }
+  padding: 2rem;
 }
 
-.ad-badge {
-  margin-top: 1.5rem;
-  padding-top: 1.5rem;
-  border-top: 1px solid #f1f5f9;
-  color: #94a3b8;
-  font-size: 0.75rem;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  gap: 6px;
-}
+/* Colors for HSMSI */
+$primary-blue: #0056b3;
+$text-dark: #333333;
+$text-light: #666666;
 
-.support-footer {
-  position: absolute;
-  bottom: 2rem;
-  color: #64748b;
-  font-size: 0.75rem;
+.copyright-text {
   text-align: center;
+  font-size: 0.75rem;
+  color: $text-light;
+  margin-top: 2rem;
+}
+
+/* DESIGN 1: Medigraph Replica */
+.layout-d1 {
+  display: flex;
   width: 100%;
-  left: 0;
+  max-width: 1100px;
+  min-height: 580px;
+  background: #ffffff;
+  border-radius: 16px;
+  overflow: hidden;
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+  
+  .image-side {
+    flex: 1.2;
+    background: url('/assets/hospital_santa_maria_del_socorro_ica.jpeg') center/cover no-repeat;
+    position: relative;
+    min-height: 250px;
+  }
+  
+  .form-side {
+    flex: 1;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 3rem 2.5rem;
+    
+    .form-container {
+      width: 100%;
+      max-width: 360px;
+      
+      .login-title {
+        font-size: 1.8rem;
+        font-weight: 700;
+        color: $text-dark;
+        margin-bottom: 0.5rem;
+      }
+      
+      .login-subtitle {
+        color: $text-light;
+        font-size: 0.9rem;
+        margin-bottom: 2rem;
+      }
+      
+      .form-group {
+        margin-bottom: 1.2rem;
+        
+        label {
+          display: block;
+          font-size: 0.85rem;
+          font-weight: 600;
+          margin-bottom: 0.5rem;
+          color: $text-dark;
+        }
+        
+        input {
+          width: 100%;
+          padding: 0.75rem 1rem;
+          border: 1px solid #ddd;
+          border-radius: 8px;
+          box-sizing: border-box;
+          font-size: 0.95rem;
+          outline: none;
+          transition: border-color 0.2s, box-shadow 0.2s;
+          
+          &:focus {
+            border-color: $primary-blue;
+            box-shadow: 0 0 0 3px rgba($primary-blue, 0.15);
+          }
+        }
+        
+        .password-input {
+          position: relative;
+          display: flex;
+          align-items: center;
+          
+          input {
+            padding-right: 2.75rem;
+          }
+          
+          .eye-icon {
+            position: absolute;
+            right: 12px;
+            top: 50%;
+            transform: translateY(-50%);
+            cursor: pointer;
+            user-select: none;
+            font-size: 1.1rem;
+            line-height: 1;
+            opacity: 0.75;
+            transition: opacity 0.2s;
+            
+            &:hover {
+              opacity: 1;
+            }
+          }
+        }
+      }
+      
+      .forgot-link-container {
+        text-align: right;
+        margin-bottom: 1.5rem;
+        
+        .forgot-link {
+          color: $primary-blue;
+          text-decoration: none;
+          font-size: 0.85rem;
+          font-weight: 600;
+          
+          &:hover {
+            text-decoration: underline;
+          }
+        }
+      }
+      
+      .btn-primary {
+        width: 100%;
+        padding: 0.85rem;
+        background: $primary-blue;
+        color: #ffffff;
+        border: none;
+        border-radius: 8px;
+        font-weight: 600;
+        font-size: 0.95rem;
+        cursor: pointer;
+        transition: background-color 0.2s, box-shadow 0.2s;
+        
+        &:hover {
+          background: color.adjust($primary-blue, $lightness: -8%);
+          box-shadow: 0 4px 12px rgba($primary-blue, 0.25);
+        }
+      }
+    }
+  }
+}
+
+/* Responsiveness (Regla de Oro: Desktop, Tablet, Mobile) */
+@media (max-width: 900px) {
+  .top-navbar {
+    padding: 0 1rem;
+    
+    .nav-title {
+      font-size: 0.95rem;
+    }
+  }
+
+  .login-content-container {
+    padding: 1rem;
+  }
+
+  .layout-d1 {
+    flex-direction: column;
+    max-width: 480px;
+    min-height: auto;
+    
+    .image-side {
+      min-height: 200px;
+      height: 200px;
+      flex: none;
+    }
+    
+    .form-side {
+      padding: 2rem 1.5rem;
+    }
+  }
+}
+
+@media (max-width: 480px) {
+  .top-navbar {
+    .nav-left {
+      gap: 8px;
+      
+      .nav-logo {
+        height: 32px;
+      }
+      
+      .nav-title {
+        font-size: 0.85rem;
+      }
+    }
+  }
+
+  .login-content-container {
+    padding: 0.5rem;
+  }
+
+  .layout-d1 {
+    border-radius: 12px;
+    
+    .image-side {
+      min-height: 160px;
+      height: 160px;
+    }
+    
+    .form-side {
+      padding: 1.5rem 1rem;
+      
+      .form-container {
+        .login-title {
+          font-size: 1.5rem;
+        }
+      }
+    }
+  }
 }
