@@ -2,7 +2,7 @@
   <div class="tarjeta-grafico__header">
     <div class="tarjeta-grafico__titulos">
       <h3 class="tarjeta-grafico__titulo">Tendencia de Incidentes por Servicio Clínico</h3>
-      <p class="tarjeta-grafico__subtitulo">Monitoreo en tiempo real de solicitudes de soporte técnico en áreas asistenciales</p>
+      <p class="tarjeta-grafico__subtitulo">Monitoreo en tiempo real de los 5 servicios asistenciales con mayor demanda</p>
     </div>
 
     <!-- Selector de Período -->
@@ -31,63 +31,56 @@
     </div>
   </div>
 
-  <!-- Lista de Barras de Distribución Asistencial -->
-  <div class="tarjeta-grafico__barras">
-    @for (t of tendencias(); track t.servicio) {
-      <div class="fila-servicio">
-        <div class="fila-servicio__info">
-          <div class="servicio-nombre-wrapper">
-            <app-icono 
-              [nombre]="t.statIncidentes > 0 ? 'emergency' : 'local_hospital'" 
-              tamano="xs" 
-              [class.icono--stat]="t.statIncidentes > 0"
-              class="servicio-icono">
-            </app-icono>
-            <span class="servicio-nombre">{{ t.servicio }}</span>
-          </div>
-
-          <div class="servicio-conteo">
-            <strong class="total-casos">{{ t.totalIncidentes }} incidentes</strong>
-            @if (t.statIncidentes > 0) {
-              <span class="conteo-stat">({{ t.statIncidentes }} STAT)</span>
-            }
-          </div>
-        </div>
-
-        <div class="fila-servicio__track" aria-hidden="true">
-          <div 
-            class="fila-servicio__progreso" 
-            [style.width.%]="t.porcentaje"
-            [class.progreso--critico]="t.statIncidentes > 0">
-            @if (t.statIncidentes > 0) {
-              <span class="progreso-segmento-stat" [style.width.%]="(t.statIncidentes / t.totalIncidentes) * 100"></span>
-            }
-          </div>
-        </div>
-      </div>
-    }
-  </div>
-
-  <!-- Tabla accesible en details para lectores de pantalla -->
-  <details class="tabla-accesible">
-    <summary>Ver datos tabulares de incidentes por servicio clínico</summary>
-    <table>
-      <thead>
-        <tr>
-          <th>Servicio Clínico</th>
-          <th>Total Incidentes</th>
-          <th>Incidentes STAT</th>
-        </tr>
-      </thead>
-      <tbody>
-        @for (t of tendencias(); track t.servicio) {
-          <tr>
-            <td>{{ t.servicio }}</td>
-            <td>{{ t.totalIncidentes }}</td>
-            <td>{{ t.statIncidentes }}</td>
-          </tr>
+  <!-- Contenido: Gráfico Circular Donut SVG y Leyenda de los 5 primeros -->
+  <div class="tarjeta-grafico__cuerpo-circular">
+    <!-- Donut SVG -->
+    <div class="donut-container">
+      <svg viewBox="0 0 160 160" class="donut-svg" role="img" aria-label="Gráfico circular de incidentes por servicio clínico">
+        <!-- Círculo de pista base de fondo -->
+        <circle 
+          cx="80" 
+          cy="80" 
+          r="65" 
+          class="donut-pista" />
+        
+        <!-- Segmentos de colores calculados -->
+        @for (seg of segmentosDonut(); track seg.servicio) {
+          <circle 
+            cx="80" 
+            cy="80" 
+            r="65" 
+            class="donut-segmento"
+            [style.stroke]="seg.color"
+            [style.stroke-dasharray]="seg.strokeDasharray"
+            [style.stroke-dashoffset]="seg.strokeDashoffset" />
         }
-      </tbody>
-    </table>
-  </details>
+      </svg>
+
+      <!-- Texto Central del Donut -->
+      <div class="donut-texto-centro">
+        <span class="donut-total-numero">{{ totalIncidentes() }}</span>
+        <span class="donut-total-label">Incidentes</span>
+      </div>
+    </div>
+
+    <!-- Leyenda Detallada con Etiquetas de Datos -->
+    <div class="leyenda-servicios">
+      @for (seg of segmentosDonut(); track seg.servicio) {
+        <div class="item-leyenda">
+          <div class="item-leyenda__indicador" [style.background-color]="seg.color"></div>
+          
+          <div class="item-leyenda__contenido">
+            <span class="servicio-nombre">{{ seg.servicio }}</span>
+            <div class="servicio-datos">
+              <span class="servicio-casos"><strong>{{ seg.casos }}</strong> casos</span>
+              <span class="servicio-porcentaje">{{ seg.porcentaje }}%</span>
+              @if (seg.stat > 0) {
+                <span class="badge-stat">{{ seg.stat }} STAT</span>
+              }
+            </div>
+          </div>
+        </div>
+      }
+    </div>
+  </div>
 </div>

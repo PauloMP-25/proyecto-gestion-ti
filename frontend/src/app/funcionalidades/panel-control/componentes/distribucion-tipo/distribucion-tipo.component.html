@@ -1,28 +1,35 @@
-<div class="tarjeta-distribucion" role="region" aria-label="Distribución por Tipo de Falla">
+<div class="tarjeta-distribucion" role="region" aria-label="Fallas por Activo de Infraestructura CMDB">
   <div class="tarjeta-distribucion__header">
-    <h3 class="tarjeta-distribucion__titulo">Fallas por Activo CMDB (TipoCI)</h3>
-    <p class="tarjeta-distribucion__subtitulo">Tabla ELEMENTO_CONFIGURACION · Software, Red, PC, Impresoras</p>
+    <div class="tarjeta-distribucion__titulos">
+      <h3 class="tarjeta-distribucion__titulo">Fallas por Activo de Infraestructura CMDB</h3>
+      <p class="tarjeta-distribucion__subtitulo">Distribución de incidentes según equipamiento y servicios tecnológicos</p>
+    </div>
+    <span class="badge-total-activos">39 Casos CMDB</span>
   </div>
 
-  <div class="tarjeta-distribucion__lista">
+  <div class="tarjeta-distribucion__barras-grid">
     @for (item of distribucion(); track item.categoria) {
-      <div class="item-distribucion">
-        <div class="item-distribucion__cabecera">
+      <div class="fila-barra-cmdb">
+        <div class="fila-barra-cmdb__info">
           <div class="categoria-info">
-            <app-icono [nombre]="item.icono" tamano="sm" class="categoria-icono"></app-icono>
-            <div>
-              <strong class="categoria-titulo">{{ item.categoria }}</strong>
+            <app-icono [nombre]="item.icono" tamano="xs" class="categoria-icono"></app-icono>
+            <div class="categoria-textos">
+              <span class="categoria-titulo">{{ item.categoria }}</span>
               <span class="categoria-ejemplo">{{ item.ejemplo }}</span>
             </div>
           </div>
+
           <div class="categoria-metrica">
+            <span class="categoria-casos"><strong>{{ item.casos }}</strong> casos</span>
             <span class="categoria-pct">{{ item.porcentaje }}%</span>
-            <span class="categoria-casos">{{ item.casos }} casos</span>
           </div>
         </div>
 
-        <div class="item-distribucion__track" aria-hidden="true">
-          <div class="item-distribucion__barra" [style.width.%]="item.porcentaje"></div>
+        <div class="fila-barra-cmdb__track" aria-hidden="true">
+          <div 
+            class="fila-barra-cmdb__progreso" 
+            [style.width.%]="item.porcentaje">
+          </div>
         </div>
       </div>
     }

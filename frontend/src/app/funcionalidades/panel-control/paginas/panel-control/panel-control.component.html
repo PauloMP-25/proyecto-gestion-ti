@@ -83,28 +83,28 @@
     </div>
   }
 
-  <!-- PESTAÑA 2: Gráficos de Gestión ITIL (Mínimo 4 gráficos basados en la BD) -->
+  <!-- PESTAÑA 2: Gráficos de Gestión ITIL (4 Cuadrantes según BD ITIL v4) -->
   @if (pestanaActiva() === 'graficos') {
     <div class="pestana-contenido" role="tabpanel" aria-label="Gráficos y Analítica ITIL">
       <div class="grid-cuatro-graficos">
-        <!-- Gráfico 1: Incidentes por Área Hospitalaria (TICKET + AREA) -->
+        <!-- 1. Tendencia de Incidentes por Servicio Clínico (Gráfico Circular Donut) -->
         <div class="cuadrante-grafico">
           <app-grafico-por-servicio></app-grafico-por-servicio>
         </div>
 
-        <!-- Gráfico 2: Matriz de Prioridad Impacto × Urgencia (TICKET.Prioridad) -->
+        <!-- 2. Fallas por Activo CMDB (Gráfico de Barras) -->
+        <div class="cuadrante-grafico">
+          <app-distribucion-tipo></app-distribucion-tipo>
+        </div>
+
+        <!-- 3. Matriz de Prioridad ITIL v4 (Impacto × Urgencia) -->
         <div class="cuadrante-grafico">
           <app-grafico-prioridades></app-grafico-prioridades>
         </div>
 
-        <!-- Gráfico 3: Monitoreo de Niveles de Servicio SLA (TICKET.EstadoSLA) -->
+        <!-- 4. Monitoreo de Niveles de Servicio SLA (EstadoSLA) -->
         <div class="cuadrante-grafico">
           <app-grafico-sla-cumplimiento></app-grafico-sla-cumplimiento>
-        </div>
-
-        <!-- Gráfico 4: Fallas por Elemento de Configuración CMDB (ELEMENTO_CONFIGURACION) -->
-        <div class="cuadrante-grafico">
-          <app-distribucion-tipo></app-distribucion-tipo>
         </div>
       </div>
     </div>
