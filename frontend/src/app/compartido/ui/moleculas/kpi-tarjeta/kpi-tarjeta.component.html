@@ -2,27 +2,14 @@
   class="kpi-flip-container" 
   [class.kpi--cumple]="kpi().estado === 'CUMPLE'"
   [class.kpi--riesgo]="kpi().estado === 'EN_RIESGO'"
-  [class.kpi--incumple]="kpi().estado === 'INCUMPLE'"
-  [class.sin-rotacion]="mostrarFormula()">
+  [class.kpi--incumple]="kpi().estado === 'INCUMPLE'">
   
   <div class="kpi-flip-card">
-    <!-- CARA FRONTAL: Métricas Principales -->
+    <!-- CARA FRONTAL: Métricas Principales (Sin icono de información) -->
     <div class="kpi-cara kpi-cara--frontal">
       <!-- Cabecera de la Tarjeta Frontal -->
       <div class="kpi-tarjeta__header">
         <h3 class="kpi-tarjeta__titulo">{{ kpi().titulo }}</h3>
-
-        <!-- Botón de Fórmula Accesible en esquina superior derecha -->
-        <div class="kpi-tarjeta__info-popover-container" (click)="$event.stopPropagation()">
-          <button 
-            type="button" 
-            class="kpi-tarjeta__btn-info" 
-            (click)="toggleFormula($event)"
-            [attr.aria-expanded]="mostrarFormula()"
-            [attr.aria-label]="'Ver fórmula de cálculo para ' + kpi().titulo">
-            <app-icono nombre="info" tamano="xs"></app-icono>
-          </button>
-        </div>
       </div>
 
       <!-- Valor Central y Meta -->
@@ -58,14 +45,9 @@
           <span class="kpi-tarjeta__meta-label">Meta oficial: <strong>{{ kpi().comparador }} {{ kpi().meta }}</strong></span>
         </div>
       </div>
-
-      <div class="kpi-tarjeta__hint-giro" aria-hidden="true">
-        <app-icono nombre="flip_to_back" tamano="xs"></app-icono>
-        <span>Pasa el cursor para ver qué significa</span>
-      </div>
     </div>
 
-    <!-- CARA TRASERA: Descripción Breve y Significado -->
+    <!-- CARA TRASERA: Descripción Breve y Significado (Visible al voltear) -->
     <div class="kpi-cara kpi-cara--trasera">
       <div class="trasera-header">
         <span class="trasera-codigo">{{ kpi().codigo }}</span>
@@ -76,41 +58,20 @@
         <p class="trasera-descripcion">
           {{ kpi().descripcion ?? 'Indicador clave de calidad y servicio asistencial ITIL v4.' }}
         </p>
+        @if (kpi().formula) {
+          <div class="trasera-formula">
+            <code>{{ kpi().formula }}</code>
+          </div>
+        }
       </div>
 
       <div class="trasera-footer">
         <div class="trasera-meta-badge">
-          <span class="trasera-meta-label">Meta objetivo:</span>
+          <span class="trasera-meta-label">Meta:</span>
           <strong>{{ kpi().comparador }} {{ kpi().meta }}</strong>
         </div>
-
-        <button 
-          type="button" 
-          class="btn-ver-formula-trasera" 
-          (click)="toggleFormula($event)">
-          <app-icono nombre="functions" tamano="xs"></app-icono>
-          <span>Ver fórmula</span>
-        </button>
       </div>
     </div>
   </div>
-
-  <!-- Popover Flotante de Fórmula (Independiente del flip) -->
-  @if (mostrarFormula()) {
-    <div class="kpi-popover" role="dialog" aria-modal="false" (click)="$event.stopPropagation()">
-      <div class="kpi-popover__header">
-        <strong>Fórmula de Cálculo ({{ kpi().codigo }})</strong>
-        <button type="button" class="kpi-popover__btn-cerrar" (click)="cerrarFormula()" aria-label="Cerrar detalle">
-          <app-icono nombre="close" tamano="xs"></app-icono>
-        </button>
-      </div>
-      <p class="kpi-popover__formula"><code>{{ kpi().formula }}</code></p>
-      <div class="kpi-popover__meta">
-        <span>Meta requerida: <strong>{{ kpi().comparador }} {{ kpi().meta }}</strong></span>
-        @if (kpi().alcance) {
-          <small class="kpi-popover__alcance">{{ kpi().alcance }}</small>
-        }
-      </div>
-    </div>
-  }
 </div>
+

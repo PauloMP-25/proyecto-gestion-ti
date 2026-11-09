@@ -83,35 +83,8 @@
     margin: 0;
     text-align: center;
     width: 100%;
-    padding: 0 24px;
+    padding: 0;
     box-sizing: border-box;
-  }
-
-  &__info-popover-container {
-    position: absolute;
-    right: 0;
-    top: 50%;
-    transform: translateY(-50%);
-    z-index: 10;
-  }
-
-  &__btn-info {
-    background: transparent;
-    border: none;
-    color: var(--texto-secundario, #94a3b8);
-    cursor: pointer;
-    padding: 4px;
-    border-radius: 50%;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    transition: color 0.15s, background-color 0.15s;
-
-    &:hover, &:focus-visible {
-      color: var(--primario-guinda, #701c1c);
-      background-color: rgba(112, 28, 28, 0.08);
-      outline: none;
-    }
   }
 
   &__cuerpo {
@@ -132,20 +105,25 @@
   .valor-agrupado {
     display: flex;
     align-items: baseline;
-    gap: 4px;
+    gap: 6px;
   }
 
   &__valor {
-    font-size: 1.85rem;
-    font-weight: 800;
+    font-family: 'Inter', system-ui, -apple-system, BlinkMacSystemFont, sans-serif;
+    font-feature-settings: 'tnum' 1;
+    font-variant-numeric: tabular-nums;
+    font-size: 1.55rem;
+    font-weight: 700;
     line-height: 1;
-    letter-spacing: -0.02em;
+    letter-spacing: -0.015em;
     color: var(--texto-principal, #0b1c30);
   }
 
   &__unidad {
-    font-size: 1rem;
+    font-family: 'Inter', system-ui, -apple-system, BlinkMacSystemFont, sans-serif;
+    font-size: 0.92rem;
     font-weight: 600;
+    margin-left: 2px;
     color: var(--texto-secundario, #64748b);
   }
 
@@ -197,18 +175,6 @@
       border-color: var(--sla-venc-border, #dc2626);
     }
   }
-
-  &__hint-giro {
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    gap: 4px;
-    font-size: 0.68rem;
-    color: var(--texto-secundario, #94a3b8);
-    opacity: 0.8;
-    margin-top: 4px;
-    text-align: center;
-  }
 }
 
 /* ESTILOS DE LA CARA TRASERA */
@@ -241,21 +207,38 @@
 
 .trasera-cuerpo {
   margin: auto 0;
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
 
   .trasera-descripcion {
-    font-size: 0.82rem;
-    line-height: 1.45;
+    font-size: 0.78rem;
+    line-height: 1.35;
     color: var(--texto-principal, #1e293b);
     margin: 0;
+  }
+
+  .trasera-formula {
+    code {
+      display: block;
+      background: rgba(112, 28, 28, 0.04);
+      padding: 4px 6px;
+      border-radius: var(--radio-sm, 4px);
+      font-size: 0.68rem;
+      color: var(--primario-guinda, #701c1c);
+      line-height: 1.25;
+      border: 1px dashed rgba(112, 28, 28, 0.2);
+      word-break: break-word;
+    }
   }
 }
 
 .trasera-footer {
   display: flex;
-  justify-content: space-between;
+  justify-content: center;
   align-items: center;
   border-top: 1px solid var(--borde-tarjeta, #e2e8f0);
-  padding-top: 6px;
+  padding-top: 5px;
   font-size: 0.74rem;
 
   .trasera-meta-badge {
@@ -264,101 +247,5 @@
       color: var(--texto-principal, #0f172a);
     }
   }
-
-  .btn-ver-formula-trasera {
-    background: transparent;
-    border: none;
-    color: var(--primario-guinda, #701c1c);
-    font-weight: 600;
-    font-size: 0.74rem;
-    cursor: pointer;
-    display: inline-flex;
-    align-items: center;
-    gap: 3px;
-    padding: 2px 4px;
-    border-radius: 4px;
-
-    &:hover {
-      text-decoration: underline;
-      background-color: rgba(112, 28, 28, 0.05);
-    }
-  }
 }
 
-/* POPOVER FLOTANTE DE FÓRMULA ACCESIBLE */
-.kpi-popover {
-  position: absolute;
-  top: calc(100% + 8px);
-  right: 0;
-  z-index: 100;
-  width: 270px;
-  background: var(--fondo-tarjeta, #ffffff);
-  border: 1px solid var(--borde-tarjeta, #cbd5e1);
-  border-radius: var(--radio-md, 8px);
-  box-shadow: 0 10px 25px rgba(0, 0, 0, 0.18);
-  padding: var(--espacio-3, 12px);
-  font-size: 0.8rem;
-  color: var(--texto-principal, #0f172a);
-  animation: popover-fade 0.15s ease-out;
-
-  &__header {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    margin-bottom: 6px;
-    padding-bottom: 4px;
-    border-bottom: 1px solid var(--borde-tarjeta, #e2e8f0);
-  }
-
-  &__btn-cerrar {
-    background: transparent;
-    border: none;
-    cursor: pointer;
-    color: var(--texto-secundario, #94a3b8);
-    display: flex;
-    padding: 2px;
-
-    &:hover {
-      color: var(--texto-principal, #0f172a);
-    }
-  }
-
-  &__formula {
-    margin: 6px 0;
-    code {
-      display: block;
-      background: var(--fondo-aplicacion, #f8fafc);
-      padding: 6px 8px;
-      border-radius: 4px;
-      font-size: 0.74rem;
-      color: var(--primario-guinda, #701c1c);
-      line-height: 1.35;
-      border: 1px solid var(--borde-tarjeta, #e2e8f0);
-    }
-  }
-
-  &__meta {
-    display: flex;
-    flex-direction: column;
-    gap: 2px;
-    font-size: 0.75rem;
-    color: var(--texto-secundario, #475569);
-  }
-
-  &__alcance {
-    font-size: 0.7rem;
-    color: var(--texto-secundario, #64748b);
-    font-style: italic;
-  }
-}
-
-@keyframes popover-fade {
-  from {
-    opacity: 0;
-    transform: translateY(-4px);
-  }
-  to {
-    opacity: 1;
-    transform: translateY(0);
-  }
-}

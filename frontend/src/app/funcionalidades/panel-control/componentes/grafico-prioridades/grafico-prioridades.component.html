@@ -1,0 +1,46 @@
+<div class="card-grafico" role="region" aria-label="Distribución por Matriz de Prioridad ITIL">
+  <div class="card-grafico__header">
+    <div class="card-grafico__titulos">
+      <h3 class="card-grafico__titulo">Matriz de Prioridad ITIL v4</h3>
+      <p class="card-grafico__subtitulo">Impacto × Urgencia (Tabla TICKET · Hospital Santa María del Socorro)</p>
+    </div>
+    <span class="badge-total-casos">26 Activos</span>
+  </div>
+
+  <div class="card-grafico__cuerpo">
+    <!-- Visualizador de barra apilada segmental -->
+    <div class="barra-apilada-segmental">
+      @for (p of prioridades; track p.codigo) {
+        <div 
+          class="segmento-barra" 
+          [class]="'segmento--' + p.colorClase"
+          [style.width.%]="p.porcentaje"
+          [title]="p.codigo + ': ' + p.casos + ' casos (' + p.porcentaje + '%)'">
+        </div>
+      }
+    </div>
+
+    <!-- Lista de filas descriptivas de prioridad -->
+    <div class="lista-prioridades">
+      @for (p of prioridades; track p.codigo) {
+        <div class="fila-prioridad">
+          <div class="fila-prioridad__izq">
+            <span class="tag-prioridad" [class]="'tag--' + p.colorClase">
+              {{ p.codigo }}
+            </span>
+            <div class="fila-prioridad__textos">
+              <span class="nombre-prioridad">{{ p.nombre }}</span>
+              <span class="desc-prioridad">{{ p.descripcion }}</span>
+            </div>
+          </div>
+
+          <div class="fila-prioridad__der">
+            <span class="casos-prioridad"><strong>{{ p.casos }}</strong> casos</span>
+            <span class="porcentaje-prioridad">{{ p.porcentaje }}%</span>
+            <span class="sla-prioridad">SLA: {{ p.slaMaximo }}</span>
+          </div>
+        </div>
+      }
+    </div>
+  </div>
+</div>

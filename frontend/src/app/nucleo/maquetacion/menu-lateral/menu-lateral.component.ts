@@ -82,7 +82,7 @@ export class MenuLateralComponent {
           {
             encabezado: 'Jefatura y Operaciones N2',
             items: [
-              { titulo: 'Dashboard Gerencial (7 KPIs)', ruta: '/panel-control', icono: 'insights' },
+              { titulo: 'Panel de Control', ruta: '/panel-control', icono: 'dashboard' },
               { 
                 titulo: 'Incidentes Críticos (P1/P2)', 
                 ruta: '/incidentes/criticos', 

@@ -1,17 +1,46 @@
 <div class="dashboard-contenedor">
-  <!-- Cabecera de la Consola Operativa -->
+  <!-- Cabecera de Navegación por Pestañas (En lugar del título duplicado) -->
   <header class="consola-header">
     <div class="consola-header__izq">
-      <nav class="breadcrumb-nav" aria-label="Ruta de navegación">
-        <span class="breadcrumb-item">Red de Salud Ica</span>
-        <app-icono nombre="chevron_right" tamano="xs" class="breadcrumb-sep"></app-icono>
-        <span class="breadcrumb-item">Consola Operativa Nivel {{ rolActual() === RolUsuario.ADMINISTRADOR ? '2' : '1' }}</span>
-        <app-icono nombre="chevron_right" tamano="xs" class="breadcrumb-sep"></app-icono>
-        <span class="breadcrumb-item breadcrumb-item--activo">Mesa de Ayuda TI</span>
-      </nav>
+      <nav class="nav-pestanas" role="tablist" aria-label="Secciones del Panel de Control">
+        <button 
+          type="button" 
+          role="tab"
+          class="tab-btn" 
+          [class.tab-btn--activo]="pestanaActiva() === 'metricas'"
+          (click)="seleccionarPestana('metricas')"
+          [attr.aria-selected]="pestanaActiva() === 'metricas'">
+          <app-icono nombre="speed" tamano="xs"></app-icono>
+          <span class="tab-btn__numero">1</span>
+          <span class="tab-btn__texto">Métricas & Monitoreo SLA</span>
+        </button>
 
-      <h1 class="consola-titulo">Centro de Control de Infraestructura y Soporte 24/7</h1>
-      <p class="consola-subtitulo">Hospital Santa María del Socorro · Monitoreo continuo de servicios y niveles de servicio ITIL v4</p>
+        <button 
+          type="button" 
+          role="tab"
+          class="tab-btn" 
+          [class.tab-btn--activo]="pestanaActiva() === 'graficos'"
+          (click)="seleccionarPestana('graficos')"
+          [attr.aria-selected]="pestanaActiva() === 'graficos'">
+          <app-icono nombre="analytics" tamano="xs"></app-icono>
+          <span class="tab-btn__numero">2</span>
+          <span class="tab-btn__texto">Gráficos de Gestión ITIL</span>
+          <span class="tab-btn__badge">4 analíticas</span>
+        </button>
+
+        <button 
+          type="button" 
+          role="tab"
+          class="tab-btn" 
+          [class.tab-btn--activo]="pestanaActiva() === 'cola'"
+          (click)="seleccionarPestana('cola')"
+          [attr.aria-selected]="pestanaActiva() === 'cola'">
+          <app-icono nombre="inbox" tamano="xs"></app-icono>
+          <span class="tab-btn__numero">3</span>
+          <span class="tab-btn__texto">Cola Activa de Incidentes</span>
+          <span class="tab-btn__badge badge--alerta">{{ ticketsFiltrados().length }}</span>
+        </button>
+      </nav>
     </div>
 
     <div class="consola-header__der">
@@ -20,61 +49,99 @@
           type="button" 
           class="btn-refrescar" 
           (click)="refrescar()" 
-          title="Sincronizar métricas HL7/FHIR">
+          title="Actualizar datos del panel">
           <app-icono nombre="sync" tamano="xs"></app-icono>
-          <span>Sincronizado</span>
+          <span>Actualizar</span>
         </button>
 
         <app-boton 
-          variante="peligro" 
-          icono="emergency"
-          ariaLabel="Registrar nuevo incidente crítico STAT">
-          + Nuevo Ticket STAT
+          variante="primario" 
+          icono="add"
+          ariaLabel="Registrar nuevo incidente">
+          + Nuevo Incidente
         </app-boton>
       </div>
     </div>
   </header>
 
-  <!-- SECCIÓN 1: Zona A - Métricas y KPIs ITIL v4 -->
-  <section class="seccion-dashboard" aria-label="Indicadores Clave de Desempeño">
-    <app-kpi-panel [kpis]="kpis()" [rol]="rolActual()"></app-kpi-panel>
-  </section>
+  <!-- CONTENIDO DE LAS PESTAÑAS -->
 
-  <!-- SECCIÓN 2: Zona Gráfica Asistencial (Inspirado en diseño Stitch aprobado) -->
-  <section class="seccion-graficos" aria-label="Visualización de Tendencias y Distribución">
-    <div class="grid-graficos">
-      <div class="columna-grafico-principal">
-        <app-grafico-por-servicio></app-grafico-por-servicio>
-      </div>
-      <div class="columna-grafico-secundaria">
-        <app-distribucion-tipo></app-distribucion-tipo>
+  <!-- PESTAÑA 1: Métricas y Cronómetro de Atención en Vivo -->
+  @if (pestanaActiva() === 'metricas') {
+    <div class="pestana-contenido" role="tabpanel" aria-label="Métricas y Cronómetro SLA">
+      <!-- 4 Métricas Esenciales ITIL v4 -->
+      <section class="seccion-kpis" aria-label="Indicadores Operativos Clave">
+        <app-kpi-panel [kpis]="kpis()" [rol]="rolActual()"></app-kpi-panel>
+      </section>
+
+      <!-- Cronómetro y Reloj de Ticket en Atención -->
+      <section class="seccion-cronometro" aria-label="Cronómetro de Atención y SLA">
+        <app-reloj-ticket-activo
+          [ticket]="ticketEnAtencion()"
+          [ticketsDisponibles]="ticketsFiltrados()"
+          (alSeleccionarOtroTicket)="onSeleccionarTicket($event)"
+          (alResolverTicket)="onResolverTicket($event)"
+          (alEscalarTicket)="onEscalarTicket($event)">
+        </app-reloj-ticket-activo>
+      </section>
+    </div>
+  }
+
+  <!-- PESTAÑA 2: Gráficos de Gestión ITIL (Mínimo 4 gráficos basados en la BD) -->
+  @if (pestanaActiva() === 'graficos') {
+    <div class="pestana-contenido" role="tabpanel" aria-label="Gráficos y Analítica ITIL">
+      <div class="grid-cuatro-graficos">
+        <!-- Gráfico 1: Incidentes por Área Hospitalaria (TICKET + AREA) -->
+        <div class="cuadrante-grafico">
+          <app-grafico-por-servicio></app-grafico-por-servicio>
+        </div>
+
+        <!-- Gráfico 2: Matriz de Prioridad Impacto × Urgencia (TICKET.Prioridad) -->
+        <div class="cuadrante-grafico">
+          <app-grafico-prioridades></app-grafico-prioridades>
+        </div>
+
+        <!-- Gráfico 3: Monitoreo de Niveles de Servicio SLA (TICKET.EstadoSLA) -->
+        <div class="cuadrante-grafico">
+          <app-grafico-sla-cumplimiento></app-grafico-sla-cumplimiento>
+        </div>
+
+        <!-- Gráfico 4: Fallas por Elemento de Configuración CMDB (ELEMENTO_CONFIGURACION) -->
+        <div class="cuadrante-grafico">
+          <app-distribucion-tipo></app-distribucion-tipo>
+        </div>
       </div>
     </div>
-  </section>
+  }
 
-  <!-- SECCIÓN 3: Zona B - Bandeja de Cola Activa de Incidentes & Triage -->
-  <section class="seccion-bandeja" aria-label="Cola Activa de Incidentes y Solicitudes">
-    <div class="bandeja-header">
-      <div class="bandeja-titulos">
-        <h2 class="bandeja-titulo">Cola Activa de Incidentes & Triage Clínico</h2>
-        <p class="bandeja-subtitulo">Monitoreo en vivo según categorización ITIL v4 y criticidad asistencial hospitalaria</p>
-      </div>
+  <!-- PESTAÑA 3: Cola Activa de Incidentes -->
+  @if (pestanaActiva() === 'cola') {
+    <div class="pestana-contenido" role="tabpanel" aria-label="Cola Activa de Incidentes y Triage">
+      <section class="seccion-bandeja">
+        <div class="bandeja-header">
+          <div class="bandeja-titulos">
+            <h2 class="bandeja-titulo">Cola Activa de Incidentes & Triage Clínico</h2>
+            <p class="bandeja-subtitulo">Monitoreo en vivo según categorización ITIL v4 y criticidad asistencial hospitalaria</p>
+          </div>
 
-      <div class="bandeja-controles">
-        <app-buscador-filtros
-          [opcionesFiltro]="opcionesFiltro"
-          [filtroActivoId]="filtroChipActivo()"
-          (alBuscar)="onBuscar($event)"
-          (alSeleccionarFiltro)="onSeleccionarChip($event)">
-        </app-buscador-filtros>
-      </div>
+          <div class="bandeja-controles">
+            <app-buscador-filtros
+              [opcionesFiltro]="opcionesFiltro"
+              [filtroActivoId]="filtroChipActivo()"
+              (alBuscar)="onBuscar($event)"
+              (alSeleccionarFiltro)="onSeleccionarChip($event)">
+            </app-buscador-filtros>
+          </div>
+        </div>
+
+        <!-- Tabla interactiva con conmutación móvil automática -->
+        <app-tabla-tickets
+          [tickets]="ticketsFiltrados()"
+          (alSeleccionarTicket)="onSeleccionarTicket($event)"
+          (alAtenderTicket)="onAtenderTicket($event)">
+        </app-tabla-tickets>
+      </section>
     </div>
-
-    <!-- Tabla con conmutación móvil automática -->
-    <app-tabla-tickets
-      [tickets]="ticketsFiltrados()"
-      (alSeleccionarTicket)="onSeleccionarTicket($event)"
-      (alAtenderTicket)="onAtenderTicket($event)">
-    </app-tabla-tickets>
-  </section>
+  }
 </div>
+

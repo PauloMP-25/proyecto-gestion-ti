@@ -27,17 +27,17 @@
 
 .lienzo-vista {
   flex: 1;
-  padding: var(--space-4);
+  padding: 8px var(--space-4, 16px) var(--space-4, 16px);
   max-width: 1440px;
   width: 100%;
   margin: 0 auto;
   box-sizing: border-box;
 
   @media (min-width: 768px) {
-    padding: var(--space-6);
+    padding: 12px var(--space-6, 24px) var(--space-6, 24px);
   }
 
   @media (min-width: 1280px) {
-    padding: var(--space-8);
+    padding: 12px var(--space-6, 24px) var(--space-6, 24px);
   }
 }
