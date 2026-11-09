@@ -1,1 +1,8 @@
-<p>sla-insignia works!</p>
+<span class="insignia-sla" [ngClass]="config().clase">
+  @if (mostrarIcono()) {
+    <app-icono [nombre]="config().icono" tamano="xs" class="insignia-sla__icono"></app-icono>
+  }
+  <span class="insignia-sla__texto">
+    {{ texto() ?? config().textoDefault }}
+  </span>
+</span>
