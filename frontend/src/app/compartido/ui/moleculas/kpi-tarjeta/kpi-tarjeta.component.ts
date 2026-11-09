@@ -1,4 +1,4 @@
-import { Component, ChangeDetectionStrategy, input, signal } from '@angular/core';
+import { Component, ChangeDetectionStrategy, input } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { KpiIndicador } from '../../../../funcionalidades/panel-control/modelos/kpi.model';
 import { IconoComponent } from '../../atomos/icono/icono.component';
@@ -13,13 +13,5 @@ import { IconoComponent } from '../../atomos/icono/icono.component';
 })
 export class KpiTarjetaComponent {
   readonly kpi = input.required<KpiIndicador>();
-  readonly mostrarFormula = signal<boolean>(false);
-
-  toggleFormula(): void {
-    this.mostrarFormula.update(v => !v);
-  }
-
-  cerrarFormula(): void {
-    this.mostrarFormula.set(false);
-  }
 }
+

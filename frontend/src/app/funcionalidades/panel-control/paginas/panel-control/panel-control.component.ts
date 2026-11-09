@@ -9,9 +9,14 @@ import { TablaTicketsComponent } from '../../../../compartido/ui/organismos/tabl
 import { BuscadorFiltrosComponent, FiltroOpcion } from '../../../../compartido/ui/moleculas/buscador-filtros/buscador-filtros.component';
 import { GraficoPorServicioComponent } from '../../componentes/grafico-por-servicio/grafico-por-servicio.component';
 import { DistribucionTipoComponent } from '../../componentes/distribucion-tipo/distribucion-tipo.component';
+import { GraficoPrioridadesComponent } from '../../componentes/grafico-prioridades/grafico-prioridades.component';
+import { GraficoSlaCumplimientoComponent } from '../../componentes/grafico-sla-cumplimiento/grafico-sla-cumplimiento.component';
+import { RelojTicketActivoComponent } from '../../componentes/reloj-ticket-activo/reloj-ticket-activo.component';
 import { BotonComponent } from '../../../../compartido/ui/atomos/boton/boton.component';
 import { IconoComponent } from '../../../../compartido/ui/atomos/icono/icono.component';
 import { TicketResumen } from '../../../../compartido/modelos/ticket-resumen.model';
+
+export type TipoPestanaPanel = 'metricas' | 'graficos' | 'cola';
 
 @Component({
   selector: 'app-panel-control',
@@ -24,6 +29,9 @@ import { TicketResumen } from '../../../../compartido/modelos/ticket-resumen.mod
     BuscadorFiltrosComponent,
     GraficoPorServicioComponent,
     DistribucionTipoComponent,
+    GraficoPrioridadesComponent,
+    GraficoSlaCumplimientoComponent,
+    RelojTicketActivoComponent,
     BotonComponent,
     IconoComponent,
   ],
@@ -43,7 +51,11 @@ export class PanelControlComponent {
   readonly ticketsFiltrados = this.panelService.ticketsFiltrados;
   readonly filtroChipActivo = this.panelService.filtroChip;
 
-  readonly ticketSeleccionado = signal<TicketResumen | null>(null);
+  // Navegación por pestañas
+  readonly pestanaActiva = signal<TipoPestanaPanel>('metricas');
+
+  // Ticket en atención activa para el cronómetro de la Pestaña 1
+  readonly ticketEnAtencion = signal<TicketResumen | null>(null);
 
   readonly opcionesFiltro: FiltroOpcion[] = [
     { id: 'todos', etiqueta: 'Todos los activos', conteo: 26 },
@@ -52,6 +64,18 @@ export class PanelControlComponent {
     { id: 'sin_asignar', etiqueta: 'Sin asignar', conteo: 1, icono: 'person_off' },
     { id: 'escalados', etiqueta: 'Escalados N2', conteo: 2, icono: 'escalator_warning' },
   ];
+
+  constructor() {
+    // Inicializar el ticket en atención con el primer ticket crítico de la cola si existe
+    const tickets = this.panelService.ticketsFiltrados();
+    if (tickets.length > 0) {
+      this.ticketEnAtencion.set(tickets[0]);
+    }
+  }
+
+  seleccionarPestana(pestana: TipoPestanaPanel): void {
+    this.pestanaActiva.set(pestana);
+  }
 
   onBuscar(texto: string): void {
     this.panelService.filtroTexto.set(texto);
@@ -62,14 +86,27 @@ export class PanelControlComponent {
   }
 
   onSeleccionarTicket(ticket: TicketResumen): void {
-    this.ticketSeleccionado.set(ticket);
+    this.ticketEnAtencion.set(ticket);
   }
 
   onAtenderTicket(ticket: TicketResumen): void {
-    this.ticketSeleccionado.set(ticket);
+    this.ticketEnAtencion.set(ticket);
+    // Cambiar automáticamente a la Pestaña 1 para ver el cronómetro en vivo
+    this.pestanaActiva.set('metricas');
+  }
+
+  onResolverTicket(ticket: TicketResumen): void {
+    // Al resolver, actualizamos datos del panel
+    this.panelService.refrescarDatos();
+  }
+
+  onEscalarTicket(ticket: TicketResumen): void {
+    // Hook de escalamiento N1 -> N2
+    console.log('Escalando ticket a Nivel 2:', ticket.codigo);
   }
 
   refrescar(): void {
     this.panelService.refrescarDatos();
   }
 }
+

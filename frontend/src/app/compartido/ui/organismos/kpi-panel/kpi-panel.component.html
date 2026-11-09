@@ -1,8 +1,5 @@
-<div class="kpi-panel-grid" role="region" aria-label="Métricas e Indicadores ITIL v4 de Mesa de Ayuda">
+<div class="kpi-panel-grid" role="region" aria-label="Métricas e Indicadores Esenciales de Service Desk">
   @for (kpi of kpis(); track kpi.id) {
-    <!-- Si es Practicante, solo mostramos los 3 KPIs operativos (Cumplimiento SLA, TPR, FCR) y carga de tickets -->
-    @if (rol() === RolUsuario.ADMINISTRADOR || (rol() === RolUsuario.PRACTICANTE && (kpi.codigo === 'KPI-01' || kpi.codigo === 'KPI-02' || kpi.codigo === 'KPI-03' || kpi.codigo === 'KPI-04' || kpi.codigo === 'KPI-05'))) {
-      <app-kpi-tarjeta [kpi]="kpi"></app-kpi-tarjeta>
-    }
+    <app-kpi-tarjeta [kpi]="kpi"></app-kpi-tarjeta>
   }
 </div>

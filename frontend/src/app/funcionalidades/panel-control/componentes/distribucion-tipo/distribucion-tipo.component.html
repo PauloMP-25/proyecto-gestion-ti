@@ -1,30 +1,26 @@
-<div class="tarjeta-distribucion" role="region" aria-label="Distribución por Tipo de Falla">
+<div class="tarjeta-distribucion" role="region" aria-label="Fallas por Activo de Infraestructura CMDB">
   <div class="tarjeta-distribucion__header">
-    <h3 class="tarjeta-distribucion__titulo">Distribución por Tipo</h3>
-    <p class="tarjeta-distribucion__subtitulo">Clasificación taxonómica de tickets activos</p>
+    <div class="tarjeta-distribucion__titulos">
+      <h3 class="tarjeta-distribucion__titulo">Fallas por Activo de Infraestructura CMDB</h3>
+      <p class="tarjeta-distribucion__subtitulo">Top {{ topSeleccionado }} elementos de configuración con mayor volumen de incidentes</p>
+    </div>
+    <div class="selector-dropdown-wrapper">
+      <label for="select-top-activos" class="sr-only">Seleccionar límite de activos</label>
+      <select 
+        id="select-top-activos"
+        class="select-top"
+        [ngModel]="topSeleccionado"
+        (ngModelChange)="cambiarTop($event)"
+        aria-label="Seleccionar Top de Activos CMDB">
+        <option [ngValue]="5">Top 5 activos</option>
+        <option [ngValue]="8">Top 8 activos</option>
+        <option [ngValue]="10">Top 10 activos</option>
+      </select>
+    </div>
   </div>
 
-  <div class="tarjeta-distribucion__lista">
-    @for (item of distribucion(); track item.categoria) {
-      <div class="item-distribucion">
-        <div class="item-distribucion__cabecera">
-          <div class="categoria-info">
-            <app-icono [nombre]="item.icono" tamano="sm" class="categoria-icono"></app-icono>
-            <div>
-              <strong class="categoria-titulo">{{ item.categoria }}</strong>
-              <span class="categoria-ejemplo">{{ item.ejemplo }}</span>
-            </div>
-          </div>
-          <div class="categoria-metrica">
-            <span class="categoria-pct">{{ item.porcentaje }}%</span>
-            <span class="categoria-casos">{{ item.casos }} casos</span>
-          </div>
-        </div>
-
-        <div class="item-distribucion__track" aria-hidden="true">
-          <div class="item-distribucion__barra" [style.width.%]="item.porcentaje"></div>
-        </div>
-      </div>
-    }
+  <!-- Contenedor del Gráfico de Barras Chart.js estilo Excel/Power BI -->
+  <div class="tarjeta-distribucion__chart-container">
+    <canvas #canvasBarras></canvas>
   </div>
 </div>

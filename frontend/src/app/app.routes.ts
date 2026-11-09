@@ -16,6 +16,14 @@ export const routes: Routes = [
         path: 'panel-control',
         loadChildren: () => import('./funcionalidades/panel-control/panel-control.routes').then(m => m.PANEL_CONTROL_ROUTES),
       },
+      {
+        path: 'administracion/matriz-prioridad',
+        loadComponent: () => import('./funcionalidades/sla/paginas/sla-configuracion/sla-configuracion.component').then(m => m.SlaConfiguracionComponent),
+      },
+      {
+        path: 'sla/configuracion',
+        loadComponent: () => import('./funcionalidades/sla/paginas/sla-configuracion/sla-configuracion.component').then(m => m.SlaConfiguracionComponent),
+      },
       // Rutas protegidas dentro del Shell:
       // solicitudes, incidentes, cmdb, administracion, etc.
     ]

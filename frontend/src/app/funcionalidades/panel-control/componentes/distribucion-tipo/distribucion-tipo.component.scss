@@ -4,105 +4,93 @@
 }
 
 .tarjeta-distribucion {
-  background-color: var(--fondo-tarjeta, #ffffff);
+  background: var(--fondo-tarjeta, #ffffff);
   border: 1px solid var(--borde-tarjeta, #e2e8f0);
   border-radius: var(--radio-lg, 12px);
-  padding: var(--espacio-4, 16px) var(--espacio-6, 24px);
+  padding: var(--espacio-4, 16px);
   box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05);
   display: flex;
   flex-direction: column;
-  gap: var(--espacio-4, 16px);
   height: 100%;
+  box-sizing: border-box;
 
-  &__titulo {
-    font-size: 1.05rem;
-    font-weight: 700;
-    color: var(--texto-principal, #0b1c30);
-    margin: 0 0 4px 0;
-    letter-spacing: -0.01em;
+  &__header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: var(--espacio-2, 8px);
+    gap: 8px;
+    flex-wrap: wrap;
   }
 
-  &__subtitulo {
-    font-size: 0.82rem;
-    color: var(--texto-secundario, #64748b);
+  &__titulo {
+    font-size: 0.95rem;
+    font-weight: 700;
+    color: var(--texto-principal, #0b1c30);
     margin: 0;
   }
 
-  &__lista {
-    display: flex;
-    flex-direction: column;
-    gap: var(--espacio-4, 16px);
+  &__subtitulo {
+    font-size: 0.72rem;
+    color: var(--texto-secundario, #64748b);
+    margin: 2px 0 0 0;
   }
+}
 
-  .item-distribucion {
-    display: flex;
-    flex-direction: column;
-    gap: 6px;
+/* SELECTOR COMPACTO TIPO DROPDOWN */
+.selector-dropdown-wrapper {
+  display: flex;
+  align-items: center;
 
-    &__cabecera {
-      display: flex;
-      justify-content: space-between;
-      align-items: flex-start;
-      gap: 8px;
+  .select-top {
+    padding: 4px 10px;
+    border-radius: var(--radio-md, 6px);
+    border: 1px solid var(--borde-tarjeta, #cbd5e1);
+    background-color: var(--fondo-aplicacion, #f8fafc);
+    color: var(--texto-principal, #0f172a);
+    font-family: inherit;
+    font-size: 0.75rem;
+    font-weight: 600;
+    outline: none;
+    cursor: pointer;
+    transition: border-color 0.15s ease, background-color 0.15s ease;
+
+    &:hover {
+      border-color: var(--primario-guinda, #701c1c);
+      background-color: var(--fondo-tarjeta, #ffffff);
     }
 
-    .categoria-info {
-      display: flex;
-      align-items: flex-start;
-      gap: 10px;
-    }
-
-    .categoria-icono {
-      color: var(--primario-guinda, #701c1c);
-      background-color: rgba(112, 28, 28, 0.06);
-      padding: 6px;
-      border-radius: var(--radio-md, 8px);
-      flex-shrink: 0;
-    }
-
-    .categoria-titulo {
-      display: block;
-      font-size: 0.86rem;
-      font-weight: 700;
-      color: var(--texto-principal, #0f172a);
-    }
-
-    .categoria-ejemplo {
-      display: block;
-      font-size: 0.74rem;
-      color: var(--texto-secundario, #64748b);
-    }
-
-    .categoria-metrica {
-      text-align: right;
-      display: flex;
-      flex-direction: column;
-      align-items: flex-end;
-    }
-
-    .categoria-pct {
-      font-size: 0.95rem;
-      font-weight: 800;
-      color: var(--texto-principal, #0f172a);
-    }
-
-    .categoria-casos {
-      font-size: 0.72rem;
-      color: var(--texto-secundario, #94a3b8);
-    }
-
-    &__track {
-      width: 100%;
-      height: 6px;
-      background-color: var(--fondo-aplicacion, #f1f5f9);
-      border-radius: var(--radio-full, 9999px);
-      overflow: hidden;
-    }
-
-    &__barra {
-      height: 100%;
-      background: linear-gradient(90deg, var(--primario-guinda, #701c1c) 0%, #0056b3 100%);
-      border-radius: var(--radio-full, 9999px);
+    &:focus {
+      border-color: var(--primario-guinda, #701c1c);
+      box-shadow: 0 0 0 2px rgba(112, 28, 28, 0.12);
     }
   }
 }
+
+.sr-only {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+  white-space: nowrap;
+  border-width: 0;
+}
+
+/* CONTENEDOR CHART.JS */
+.tarjeta-distribucion__chart-container {
+  position: relative;
+  width: 100%;
+  height: 220px;
+  min-height: 200px;
+  margin: auto 0;
+
+  canvas {
+    display: block;
+    width: 100%;
+    height: 100%;
+  }
+}
+
