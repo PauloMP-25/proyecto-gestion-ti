@@ -71,35 +71,6 @@
       </div>
     </div>
 
-    <!-- Badge Dinámico del Rol Activo -->
-    <div class="badge-rol-wrapper">
-      <!-- Rol USUARIO_FINAL -->
-      <ng-container *ngIf="usuario.rol === RolUsuario.USUARIO_FINAL">
-        <span class="badge-rol badge-usuario-final">
-          <span class="material-symbols-outlined icono-rol">person</span>
-          <span class="etiqueta-rol">Usuario Final</span>
-          <span class="separador-punto" *ngIf="usuario.areaProcedencia">·</span>
-          <span class="area-procedencia" *ngIf="usuario.areaProcedencia">{{ usuario.areaProcedencia }}</span>
-        </span>
-      </ng-container>
-
-      <!-- Rol PRACTICANTE (Nivel 1) -->
-      <ng-container *ngIf="usuario.rol === RolUsuario.PRACTICANTE">
-        <span class="badge-rol badge-practicante">
-          <span class="material-symbols-outlined icono-rol">support_agent</span>
-          <span class="etiqueta-rol">Soporte Técnico Nivel 1</span>
-        </span>
-      </ng-container>
-
-      <!-- Rol ADMINISTRADOR (Nivel 2 / Jefatura) -->
-      <ng-container *ngIf="usuario.rol === RolUsuario.ADMINISTRADOR">
-        <span class="badge-rol badge-administrador">
-          <span class="material-symbols-outlined icono-rol">shield_person</span>
-          <span class="etiqueta-rol">Soporte N2 / Jefatura TI</span>
-        </span>
-      </ng-container>
-    </div>
-
     <!-- Perfil del Usuario y Menú desplegable -->
     <div class="perfil-menu-container">
       <button 
