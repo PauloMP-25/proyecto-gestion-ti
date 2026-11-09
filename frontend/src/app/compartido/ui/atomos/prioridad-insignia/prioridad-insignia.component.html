@@ -1,0 +1,10 @@
+<span 
+  class="insignia-prioridad" 
+  [ngClass]="config().clase"
+  [class.insignia-prioridad--compacto]="compacto()"
+  [attr.title]="config().texto">
+  <app-icono [nombre]="config().icono" tamano="xs" class="insignia-prioridad__icono"></app-icono>
+  <span class="insignia-prioridad__texto">
+    {{ compacto() ? config().codigo : config().texto }}
+  </span>
+</span>

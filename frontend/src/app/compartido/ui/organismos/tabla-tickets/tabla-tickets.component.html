@@ -1,0 +1,184 @@
+<div class="contenedor-tabla">
+  <!-- Vista de Escritorio / Tablet: Tabla Clásica -->
+  <div class="vista-escritorio">
+    <table class="tabla-hsms" role="table">
+      <thead>
+        <tr>
+          <th scope="col">Ticket</th>
+          <th scope="col">Asunto & Activo Afectado</th>
+          <th scope="col">Área Clínica</th>
+          <th scope="col">Prioridad</th>
+          <th scope="col">Estado</th>
+          <th scope="col">SLA Restante</th>
+          <th scope="col">Responsable</th>
+          <th scope="col" class="th-acciones">Acción</th>
+        </tr>
+      </thead>
+      <tbody>
+        @for (t of ticketsPaginados(); track t.id) {
+          <tr 
+            class="fila-ticket" 
+            [class.fila--critico-stat]="t.esCriticoStat"
+            (click)="alSeleccionarTicket.emit(t)">
+            <td class="td-codigo">
+              <span class="codigo-ticket">{{ t.codigo }}</span>
+              @if (t.esCriticoStat) {
+                <span class="badge-stat">STAT</span>
+              }
+            </td>
+            <td class="td-asunto">
+              <span class="asunto-titulo">{{ t.titulo }}</span>
+              @if (t.activoAfectado) {
+                <div class="activo-info">
+                  <span class="activo-nombre">{{ t.activoAfectado.nombre }}</span>
+                  @if (t.activoAfectado.ip) {
+                    <span class="activo-ip">{{ t.activoAfectado.ip }}</span>
+                  }
+                </div>
+              }
+            </td>
+            <td class="td-area">
+              <span class="area-badge">{{ t.areaClinica }}</span>
+            </td>
+            <td>
+              <app-prioridad-insignia [prioridad]="t.prioridad"></app-prioridad-insignia>
+            </td>
+            <td>
+              <app-estado-etiqueta [estado]="t.estado"></app-estado-etiqueta>
+            </td>
+            <td class="td-sla">
+              <app-temporizador-sla [sla]="t.slaResolucion"></app-temporizador-sla>
+            </td>
+            <td class="td-responsable">
+              <div class="responsable-box">
+                <span class="responsable-nombre">{{ t.responsable?.nombre ?? 'Sin asignar' }}</span>
+                <app-nivel-insignia [nivel]="t.nivelActual"></app-nivel-insignia>
+              </div>
+            </td>
+            <td class="td-acciones" (click)="$event.stopPropagation()">
+              <app-boton 
+                variante="outline" 
+                tamano="sm" 
+                icono="arrow_forward"
+                (alHacerClick)="alAtenderTicket.emit(t)">
+                Ver
+              </app-boton>
+            </td>
+          </tr>
+        } @empty {
+          <tr>
+            <td colspan="8" class="td-vacia">
+              <div class="estado-vacio-tabla">
+                <app-icono nombre="inbox" tamano="lg"></app-icono>
+                <p>No se encontraron tickets con los filtros seleccionados.</p>
+              </div>
+            </td>
+          </tr>
+        }
+      </tbody>
+    </table>
+  </div>
+
+  <!-- Vista Móvil: Tarjetas Apiladas (Cero Scroll Horizontal) -->
+  <div class="vista-movil" role="feed" aria-label="Lista de tickets para dispositivos móviles">
+    @for (t of ticketsPaginados(); track t.id) {
+      <div 
+        class="tarjeta-ticket-movil"
+        [class.tarjeta--critico-stat]="t.esCriticoStat"
+        (click)="alSeleccionarTicket.emit(t)">
+        <div class="tarjeta-ticket-movil__header">
+          <div class="header-left">
+            <span class="codigo-ticket">{{ t.codigo }}</span>
+            @if (t.esCriticoStat) {
+              <span class="badge-stat">STAT</span>
+            }
+          </div>
+          <app-prioridad-insignia [prioridad]="t.prioridad" [compacto]="true"></app-prioridad-insignia>
+        </div>
+
+        <h4 class="tarjeta-ticket-movil__titulo">{{ t.titulo }}</h4>
+
+        <div class="tarjeta-ticket-movil__detalles">
+          <div class="detalle-fila">
+            <span class="detalle-label">Área:</span>
+            <span class="detalle-valor area-badge">{{ t.areaClinica }}</span>
+          </div>
+          @if (t.activoAfectado) {
+            <div class="detalle-fila">
+              <span class="detalle-label">Activo:</span>
+              <span class="detalle-valor activo-texto">{{ t.activoAfectado.nombre }} ({{ t.activoAfectado.ip }})</span>
+            </div>
+          }
+          <div class="detalle-fila">
+            <span class="detalle-label">Estado:</span>
+            <app-estado-etiqueta [estado]="t.estado"></app-estado-etiqueta>
+          </div>
+        </div>
+
+        <div class="tarjeta-ticket-movil__sla">
+          <span class="detalle-label">SLA Restante:</span>
+          <app-temporizador-sla [sla]="t.slaResolucion"></app-temporizador-sla>
+        </div>
+
+        <div class="tarjeta-ticket-movil__footer">
+          <div class="responsable-box">
+            <span class="responsable-nombre">{{ t.responsable?.nombre ?? 'Sin asignar' }}</span>
+            <app-nivel-insignia [nivel]="t.nivelActual"></app-nivel-insignia>
+          </div>
+          <app-boton 
+            variante="primario" 
+            tamano="sm" 
+            icono="arrow_forward"
+            (alHacerClick)="alAtenderTicket.emit(t)">
+            Gestionar
+          </app-boton>
+        </div>
+      </div>
+    } @empty {
+      <div class="estado-vacio-tabla">
+        <app-icono nombre="inbox" tamano="lg"></app-icono>
+        <p>No se encontraron tickets con los filtros seleccionados.</p>
+      </div>
+    }
+  </div>
+
+  <!-- Paginación Accesible -->
+  @if (totalPaginas() > 1) {
+    <div class="tabla-paginacion" role="navigation" aria-label="Paginación de tickets">
+      <span class="paginacion-info">
+        Página {{ paginaActual() }} de {{ totalPaginas() }} ({{ tickets().length }} tickets)
+      </span>
+      <div class="paginacion-botones">
+        <button 
+          type="button" 
+          class="btn-pag" 
+          [disabled]="paginaActual() === 1"
+          (click)="irAPagina(paginaActual() - 1)"
+          aria-label="Página anterior">
+          <app-icono nombre="chevron_left" tamano="xs"></app-icono>
+          <span>Anterior</span>
+        </button>
+
+        @for (pag of [].constructor(totalPaginas()); track $index; let i = $index) {
+          <button 
+            type="button" 
+            class="btn-pag-num"
+            [class.btn-pag-num--activo]="paginaActual() === i + 1"
+            (click)="irAPagina(i + 1)">
+            {{ i + 1 }}
+          </button>
+        }
+
+        <button 
+          type="button" 
+          class="btn-pag" 
+          [disabled]="paginaActual() === totalPaginas()"
+          (click)="irAPagina(paginaActual() + 1)"
+          aria-label="Página siguiente">
+          <span>Siguiente</span>
+          <app-icono nombre="chevron_right" tamano="xs"></app-icono>
+        </button>
+      </div>
+    </div>
+  }
+</div>

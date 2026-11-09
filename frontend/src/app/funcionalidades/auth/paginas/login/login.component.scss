@@ -1,5 +1,3 @@
-@use "sass:color";
-
 :host {
   display: block;
   min-height: 100vh;
@@ -11,21 +9,21 @@
   flex-direction: column;
   min-height: 100vh;
   width: 100%;
-  font-family: 'Inter', system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
-  background-color: #f0f2f5;
+  font-family: var(--fuente-principal, 'Inter', system-ui, sans-serif);
+  background-color: var(--fondo-aplicacion, #f4f6f9);
 }
 
-/* Common Header */
+/* Navbar Superior Institucional */
 .top-navbar {
   height: 60px;
-  background-color: #ffffff;
-  border-bottom: 1px solid #e2e8f0;
+  background-color: var(--fondo-tarjeta, #ffffff);
+  border-bottom: 1px solid var(--borde-tarjeta, #e2e8f0);
   display: flex;
   align-items: center;
   justify-content: flex-start;
   padding: 0 2rem;
   z-index: 100;
-  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05);
 
   .nav-left {
     display: flex;
@@ -33,16 +31,17 @@
     gap: 12px;
     
     .nav-logo {
-      height: 40px;
+      height: 38px;
       width: auto;
-      border-radius: 4px;
+      border-radius: var(--radio-sm, 4px);
       object-fit: contain;
     }
     
     .nav-title {
       font-weight: 700;
-      color: #0b1c30;
+      color: var(--texto-principal, #0b1c30);
       font-size: 1.05rem;
+      letter-spacing: -0.01em;
     }
   }
 }
@@ -55,34 +54,51 @@
   padding: 2rem;
 }
 
-/* Colors for HSMSI */
-$primary-blue: #0056b3;
-$text-dark: #333333;
-$text-light: #666666;
+/* Alerta de Error Accesible */
+.alerta-error {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 10px 14px;
+  background-color: var(--sla-venc-bg, #fee2e2);
+  color: var(--sla-venc-text, #7f1d1d);
+  border: 1px solid var(--sla-venc-border, #dc2626);
+  border-radius: var(--radio-md, 8px);
+  font-size: 0.85rem;
+  font-weight: 500;
+  margin-bottom: 1.25rem;
 
-.copyright-text {
-  text-align: center;
-  font-size: 0.75rem;
-  color: $text-light;
-  margin-top: 2rem;
+  .material-symbols-outlined {
+    font-size: 1.2rem;
+    flex-shrink: 0;
+  }
 }
 
-/* DESIGN 1: Medigraph Replica */
+/* Tarjeta Medigraph Institucional */
 .layout-d1 {
   display: flex;
   width: 100%;
-  max-width: 1100px;
-  min-height: 580px;
-  background: #ffffff;
-  border-radius: 16px;
+  max-width: 1080px;
+  min-height: 560px;
+  background: var(--fondo-tarjeta, #ffffff);
+  border-radius: var(--radio-lg, 16px);
   overflow: hidden;
-  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+  box-shadow: 0 10px 30px rgba(11, 28, 48, 0.08);
+  border: 1px solid var(--borde-tarjeta, #e2e8f0);
   
   .image-side {
     flex: 1.2;
     background: url('/assets/hospital_santa_maria_del_socorro_ica.jpeg') center/cover no-repeat;
     position: relative;
     min-height: 250px;
+
+    &::after {
+      content: '';
+      position: absolute;
+      inset: 0;
+      background: linear-gradient(180deg, rgba(11, 28, 48, 0.1) 0%, rgba(11, 28, 48, 0.45) 100%);
+      pointer-events: none;
+    }
   }
   
   .form-side {
@@ -97,68 +113,104 @@ $text-light: #666666;
       max-width: 360px;
       
       .login-title {
-        font-size: 1.8rem;
-        font-weight: 700;
-        color: $text-dark;
-        margin-bottom: 0.5rem;
+        font-size: 1.75rem;
+        font-weight: 800;
+        color: var(--texto-principal, #0b1c30);
+        margin-bottom: 0.35rem;
+        letter-spacing: -0.02em;
       }
       
       .login-subtitle {
-        color: $text-light;
-        font-size: 0.9rem;
-        margin-bottom: 2rem;
+        color: var(--texto-secundario, #64748b);
+        font-size: 0.88rem;
+        margin-bottom: 1.75rem;
+        line-height: 1.4;
       }
       
       .form-group {
-        margin-bottom: 1.2rem;
+        margin-bottom: 1.25rem;
         
         label {
           display: block;
           font-size: 0.85rem;
           font-weight: 600;
-          margin-bottom: 0.5rem;
-          color: $text-dark;
+          margin-bottom: 0.45rem;
+          color: var(--texto-principal, #1e293b);
         }
         
-        input {
-          width: 100%;
-          padding: 0.75rem 1rem;
-          border: 1px solid #ddd;
-          border-radius: 8px;
-          box-sizing: border-box;
-          font-size: 0.95rem;
-          outline: none;
-          transition: border-color 0.2s, box-shadow 0.2s;
-          
-          &:focus {
-            border-color: $primary-blue;
-            box-shadow: 0 0 0 3px rgba($primary-blue, 0.15);
-          }
-        }
-        
-        .password-input {
+        .input-con-icono {
           position: relative;
           display: flex;
           align-items: center;
-          
-          input {
-            padding-right: 2.75rem;
-          }
-          
-          .eye-icon {
+
+          .input-prefix-icon {
             position: absolute;
-            right: 12px;
-            top: 50%;
-            transform: translateY(-50%);
-            cursor: pointer;
-            user-select: none;
-            font-size: 1.1rem;
-            line-height: 1;
-            opacity: 0.75;
-            transition: opacity 0.2s;
-            
+            left: 12px;
+            color: var(--texto-secundario, #94a3b8);
+            font-size: 1.2rem;
+            pointer-events: none;
+            transition: color 0.2s ease;
+          }
+
+          input {
+            width: 100%;
+            height: var(--touch-min, 44px);
+            padding: 0 1rem 0 2.5rem;
+            background-color: var(--fondo-tarjeta, #ffffff);
+            border: 1px solid var(--borde-tarjeta, #cbd5e1);
+            border-radius: var(--radio-md, 8px);
+            box-sizing: border-box;
+            font-size: 0.92rem;
+            color: var(--texto-principal, #0f172a);
+            outline: none;
+            transition: border-color 0.2s, box-shadow 0.2s, transform 0.15s;
+
+            /* Anulación radical de autofill celeste */
+            &:-webkit-autofill,
+            &:-webkit-autofill:hover, 
+            &:-webkit-autofill:focus, 
+            &:-webkit-autofill:active {
+              -webkit-box-shadow: 0 0 0 1000px #ffffff inset !important;
+              -webkit-text-fill-color: #0f172a !important;
+              transition: background-color 5000s ease-in-out 0s;
+            }
+
             &:hover {
-              opacity: 1;
+              border-color: var(--primario-guinda-hover, #8a1f1f);
+            }
+            
+            &:focus {
+              border-color: var(--primario-guinda, #701c1c);
+              box-shadow: 0 0 0 3px rgba(112, 28, 28, 0.15);
+              + .input-prefix-icon {
+                color: var(--primario-guinda, #701c1c);
+              }
+            }
+          }
+
+          .btn-icono-ojo {
+            position: absolute;
+            right: 8px;
+            background: transparent;
+            border: none;
+            cursor: pointer;
+            padding: 6px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: var(--texto-secundario, #64748b);
+            border-radius: 4px;
+            min-height: var(--touch-min, 44px);
+            min-width: 36px;
+            transition: color 0.2s, background-color 0.2s;
+
+            &:hover, &:focus-visible {
+              color: var(--primario-guinda, #701c1c);
+              outline: none;
+            }
+
+            .material-symbols-outlined {
+              font-size: 1.25rem;
             }
           }
         }
@@ -169,39 +221,66 @@ $text-light: #666666;
         margin-bottom: 1.5rem;
         
         .forgot-link {
-          color: $primary-blue;
+          color: var(--primario-guinda, #701c1c);
           text-decoration: none;
           font-size: 0.85rem;
           font-weight: 600;
           
           &:hover {
             text-decoration: underline;
+            color: var(--primario-guinda-hover, #8a1f1f);
           }
         }
       }
       
       .btn-primary {
         width: 100%;
-        padding: 0.85rem;
-        background: $primary-blue;
+        height: var(--touch-min, 44px);
+        background: var(--primario-guinda, #701c1c);
         color: #ffffff;
         border: none;
-        border-radius: 8px;
+        border-radius: var(--radio-md, 8px);
         font-weight: 600;
         font-size: 0.95rem;
         cursor: pointer;
-        transition: background-color 0.2s, box-shadow 0.2s;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        gap: 8px;
+        transition: background-color 0.2s, box-shadow 0.2s, transform 0.15s;
         
         &:hover {
-          background: color.adjust($primary-blue, $lightness: -8%);
-          box-shadow: 0 4px 12px rgba($primary-blue, 0.25);
+          background: var(--primario-guinda-hover, #8a1f1f);
+          box-shadow: 0 4px 14px rgba(112, 28, 28, 0.28);
+          transform: translateY(-1px);
         }
+
+        &:active {
+          transform: translateY(0);
+        }
+
+        &:focus-visible {
+          outline: 3px solid var(--sla-alerta-border, #d97706);
+          outline-offset: 2px;
+        }
+
+        .material-symbols-outlined {
+          font-size: 1.2rem;
+        }
+      }
+
+      .copyright-text {
+        text-align: center;
+        font-size: 0.75rem;
+        color: var(--texto-secundario, #94a3b8);
+        margin-top: 2rem;
+        line-height: 1.4;
       }
     }
   }
 }
 
-/* Responsiveness (Regla de Oro: Desktop, Tablet, Mobile) */
+/* Responsividad Total (Regla de Oro: Desktop, Tablet, Mobile) */
 @media (max-width: 900px) {
   .top-navbar {
     padding: 0 1rem;
@@ -212,7 +291,7 @@ $text-light: #666666;
   }
 
   .login-content-container {
-    padding: 1rem;
+    padding: 1.25rem;
   }
 
   .layout-d1 {
@@ -221,8 +300,8 @@ $text-light: #666666;
     min-height: auto;
     
     .image-side {
-      min-height: 200px;
-      height: 200px;
+      min-height: 180px;
+      height: 180px;
       flex: none;
     }
     
@@ -248,15 +327,15 @@ $text-light: #666666;
   }
 
   .login-content-container {
-    padding: 0.5rem;
+    padding: 0.75rem;
   }
 
   .layout-d1 {
-    border-radius: 12px;
+    border-radius: var(--radio-md, 8px);
     
     .image-side {
-      min-height: 160px;
-      height: 160px;
+      min-height: 140px;
+      height: 140px;
     }
     
     .form-side {
@@ -264,7 +343,7 @@ $text-light: #666666;
       
       .form-container {
         .login-title {
-          font-size: 1.5rem;
+          font-size: 1.4rem;
         }
       }
     }

@@ -1,0 +1,29 @@
+<div class="buscador-filtros">
+  <!-- Input de búsqueda -->
+  <div class="buscador-filtros__input-wrapper">
+    <app-icono nombre="search" tamano="sm" class="buscador-filtros__icono-lupa"></app-icono>
+    <input 
+      type="search" 
+      class="buscador-filtros__input"
+      [placeholder]="placeholder()"
+      [(ngModel)]="busquedaTexto"
+      (input)="onInput()"
+      aria-label="Buscar tickets en la bandeja">
+    <kbd class="buscador-filtros__shortcut" aria-hidden="true">Ctrl + K</kbd>
+  </div>
+
+  <!-- Barra de Chips de Filtro -->
+  @if (opcionesFiltro().length > 0) {
+    <div class="buscador-filtros__chips" role="toolbar" aria-label="Filtros rápidos de tickets">
+      @for (opc of opcionesFiltro(); track opc.id) {
+        <app-chip-filtro
+          [etiqueta]="opc.etiqueta"
+          [conteo]="opc.conteo"
+          [icono]="opc.icono"
+          [activo]="filtroActivoId() === opc.id"
+          (alHacerClick)="onSeleccionarChip(opc.id)">
+        </app-chip-filtro>
+      }
+    </div>
+  }
+</div>

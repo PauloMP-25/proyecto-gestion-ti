@@ -1,0 +1,93 @@
+<div class="tarjeta-grafico" role="region" aria-label="Tendencia de Incidentes por Servicio Clínico">
+  <div class="tarjeta-grafico__header">
+    <div class="tarjeta-grafico__titulos">
+      <h3 class="tarjeta-grafico__titulo">Tendencia de Incidentes por Servicio Clínico</h3>
+      <p class="tarjeta-grafico__subtitulo">Monitoreo en tiempo real de solicitudes de soporte técnico en áreas asistenciales</p>
+    </div>
+
+    <!-- Selector de Período -->
+    <div class="selector-periodo" role="group" aria-label="Selector de rango temporal">
+      <button 
+        type="button" 
+        class="btn-periodo"
+        [class.btn-periodo--activo]="periodo() === 'hoy'"
+        (click)="cambiarPeriodo('hoy')">
+        Hoy
+      </button>
+      <button 
+        type="button" 
+        class="btn-periodo"
+        [class.btn-periodo--activo]="periodo() === '7d'"
+        (click)="cambiarPeriodo('7d')">
+        7D
+      </button>
+      <button 
+        type="button" 
+        class="btn-periodo"
+        [class.btn-periodo--activo]="periodo() === '30d'"
+        (click)="cambiarPeriodo('30d')">
+        30D
+      </button>
+    </div>
+  </div>
+
+  <!-- Lista de Barras de Distribución Asistencial -->
+  <div class="tarjeta-grafico__barras">
+    @for (t of tendencias(); track t.servicio) {
+      <div class="fila-servicio">
+        <div class="fila-servicio__info">
+          <div class="servicio-nombre-wrapper">
+            <app-icono 
+              [nombre]="t.statIncidentes > 0 ? 'emergency' : 'local_hospital'" 
+              tamano="xs" 
+              [class.icono--stat]="t.statIncidentes > 0"
+              class="servicio-icono">
+            </app-icono>
+            <span class="servicio-nombre">{{ t.servicio }}</span>
+          </div>
+
+          <div class="servicio-conteo">
+            <strong class="total-casos">{{ t.totalIncidentes }} incidentes</strong>
+            @if (t.statIncidentes > 0) {
+              <span class="conteo-stat">({{ t.statIncidentes }} STAT)</span>
+            }
+          </div>
+        </div>
+
+        <div class="fila-servicio__track" aria-hidden="true">
+          <div 
+            class="fila-servicio__progreso" 
+            [style.width.%]="t.porcentaje"
+            [class.progreso--critico]="t.statIncidentes > 0">
+            @if (t.statIncidentes > 0) {
+              <span class="progreso-segmento-stat" [style.width.%]="(t.statIncidentes / t.totalIncidentes) * 100"></span>
+            }
+          </div>
+        </div>
+      </div>
+    }
+  </div>
+
+  <!-- Tabla accesible en details para lectores de pantalla -->
+  <details class="tabla-accesible">
+    <summary>Ver datos tabulares de incidentes por servicio clínico</summary>
+    <table>
+      <thead>
+        <tr>
+          <th>Servicio Clínico</th>
+          <th>Total Incidentes</th>
+          <th>Incidentes STAT</th>
+        </tr>
+      </thead>
+      <tbody>
+        @for (t of tendencias(); track t.servicio) {
+          <tr>
+            <td>{{ t.servicio }}</td>
+            <td>{{ t.totalIncidentes }}</td>
+            <td>{{ t.statIncidentes }}</td>
+          </tr>
+        }
+      </tbody>
+    </table>
+  </details>
+</div>

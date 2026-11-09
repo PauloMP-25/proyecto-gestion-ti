@@ -1,0 +1,33 @@
+<button
+  [type]="tipo()"
+  class="btn"
+  [class.btn--primario]="variante() === 'primario'"
+  [class.btn--secundario]="variante() === 'secundario'"
+  [class.btn--exito]="variante() === 'exito'"
+  [class.btn--peligro]="variante() === 'peligro'"
+  [class.btn--outline]="variante() === 'outline'"
+  [class.btn--fantasma]="variante() === 'fantasma'"
+  [class.btn--sm]="tamano() === 'sm'"
+  [class.btn--md]="tamano() === 'md'"
+  [class.btn--lg]="tamano() === 'lg'"
+  [class.btn--cargando]="cargando()"
+  [disabled]="deshabilitado() || cargando()"
+  [attr.aria-label]="ariaLabel() ?? null"
+  (click)="onClick($event)">
+  
+  @if (cargando()) {
+    <span class="spinner" aria-hidden="true"></span>
+  } @else {
+    @if (icono()) {
+      <app-icono [nombre]="icono()!" tamano="sm" class="btn__icono-izq"></app-icono>
+    }
+
+    <span class="btn__texto">
+      <ng-content></ng-content>
+    </span>
+
+    @if (iconoDerecha()) {
+      <app-icono [nombre]="iconoDerecha()!" tamano="sm" class="btn__icono-der"></app-icono>
+    }
+  }
+</button>

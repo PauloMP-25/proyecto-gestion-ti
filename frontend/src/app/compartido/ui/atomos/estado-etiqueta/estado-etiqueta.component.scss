@@ -1,0 +1,58 @@
+:host {
+  display: inline-flex;
+}
+
+.etiqueta-estado {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--espacio-1, 4px);
+  padding: 3px 8px;
+  border-radius: var(--radio-sm, 4px);
+  font-size: 0.76rem;
+  font-weight: 600;
+  line-height: 1;
+  white-space: nowrap;
+  border: 1px solid transparent;
+
+  &__punto {
+    width: 6px;
+    height: 6px;
+    border-radius: 50%;
+    background-color: currentColor;
+  }
+
+  &.estado--nuevo {
+    background-color: #f3e8ff;
+    color: #6b21a8;
+    border-color: #d8b4fe;
+  }
+
+  &.estado--asignado {
+    background-color: #e0f2fe;
+    color: #0369a1;
+    border-color: #7dd3fc;
+  }
+
+  &.estado--en-proceso {
+    background-color: var(--sla-alerta-bg, #fef3c7);
+    color: var(--sla-alerta-text, #78350f);
+    border-color: var(--sla-alerta-border, #d97706);
+  }
+
+  &.estado--resuelto {
+    background-color: var(--sla-ok-bg, #e8f5e9);
+    color: var(--sla-ok-text, #113e14);
+    border-color: var(--sla-ok-border, #1b5e20);
+  }
+
+  &.estado--cerrado {
+    background-color: var(--fondo-aplicacion, #f1f5f9);
+    color: var(--texto-secundario, #475569);
+    border-color: var(--borde-tarjeta, #cbd5e1);
+  }
+
+  &.estado--default {
+    background-color: var(--fondo-aplicacion, #f1f5f9);
+    color: var(--texto-secundario, #475569);
+  }
+}

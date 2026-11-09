@@ -1,175 +1,86 @@
-<div class="panel-contenedor" *ngIf="usuarioActual() as usuario">
-  
-  <!-- Encabezado de Bienvenida Dinámico -->
-  <header class="panel-header">
-    <div class="header-titulos">
-      <h1 class="titulo-bienvenida">
-        Bienvenido/a, {{ usuario.nombreCompleto }}
-      </h1>
-      <p class="subtitulo-contexto">
-        <span *ngIf="usuario.rol === RolUsuario.USUARIO_FINAL">
-          Área Asistencial: <strong>{{ usuario.areaProcedencia }}</strong> · Portal de Autoservicio y Soporte TI
-        </span>
-        <span *ngIf="usuario.rol === RolUsuario.PRACTICANTE">
-          Turno de Guardia Nivel 1 · Mesa de Ayuda Central (Anexo 2400)
-        </span>
-        <span *ngIf="usuario.rol === RolUsuario.ADMINISTRADOR">
-          Oficina de Estadística e Informática · Monitor Gerencial ITIL v4 (Capítulo IX)
-        </span>
-      </p>
+<div class="dashboard-contenedor">
+  <!-- Cabecera de la Consola Operativa -->
+  <header class="consola-header">
+    <div class="consola-header__izq">
+      <nav class="breadcrumb-nav" aria-label="Ruta de navegación">
+        <span class="breadcrumb-item">Red de Salud Ica</span>
+        <app-icono nombre="chevron_right" tamano="xs" class="breadcrumb-sep"></app-icono>
+        <span class="breadcrumb-item">Consola Operativa Nivel {{ rolActual() === RolUsuario.ADMINISTRADOR ? '2' : '1' }}</span>
+        <app-icono nombre="chevron_right" tamano="xs" class="breadcrumb-sep"></app-icono>
+        <span class="breadcrumb-item breadcrumb-item--activo">Mesa de Ayuda TI</span>
+      </nav>
+
+      <h1 class="consola-titulo">Centro de Control de Infraestructura y Soporte 24/7</h1>
+      <p class="consola-subtitulo">Hospital Santa María del Socorro · Monitoreo continuo de servicios y niveles de servicio ITIL v4</p>
+    </div>
+
+    <div class="consola-header__der">
+      <!-- Badge de Estado de Servidores Clínicos -->
+      <div class="badge-servidores" role="status">
+        <span class="badge-servidores__punto" aria-hidden="true"></span>
+        <span class="badge-servidores__texto">Servidores Clínicos: Operativos (HIS/SIS, UCI)</span>
+      </div>
+
+      <div class="acciones-header">
+        <button 
+          type="button" 
+          class="btn-refrescar" 
+          (click)="refrescar()" 
+          title="Sincronizar métricas HL7/FHIR">
+          <app-icono nombre="sync" tamano="xs"></app-icono>
+          <span>Sincronizado</span>
+        </button>
+
+        <app-boton 
+          variante="peligro" 
+          icono="emergency"
+          ariaLabel="Registrar nuevo incidente crítico STAT">
+          + Nuevo Ticket STAT
+        </app-boton>
+      </div>
     </div>
   </header>
 
-  <!-- 1. VISTA DASHBOARD: USUARIO_FINAL -->
-  <section class="seccion-rol" *ngIf="usuario.rol === RolUsuario.USUARIO_FINAL">
-    <div class="tarjetas-resumen-grid">
-      <div class="card-hospital stat-card">
-        <span class="material-symbols-outlined icono-stat color-p4">receipt_long</span>
-        <div class="stat-info">
-          <span class="stat-numero">1</span>
-          <span class="stat-label">Ticket en Proceso</span>
-        </div>
-      </div>
-      <div class="card-hospital stat-card">
-        <span class="material-symbols-outlined icono-stat color-exito">task_alt</span>
-        <div class="stat-info">
-          <span class="stat-numero">4</span>
-          <span class="stat-label">Tickets Resueltos</span>
-        </div>
-      </div>
-      <div class="card-hospital stat-card">
-        <span class="material-symbols-outlined icono-stat color-guinda">menu_book</span>
-        <div class="stat-info">
-          <span class="stat-numero">18</span>
-          <span class="stat-label">Guías Rápidas</span>
-        </div>
-      </div>
-    </div>
+  <!-- SECCIÓN 1: Zona A - Métricas y KPIs ITIL v4 -->
+  <section class="seccion-dashboard" aria-label="Indicadores Clave de Desempeño">
+    <app-kpi-panel [kpis]="kpis()" [rol]="rolActual()"></app-kpi-panel>
+  </section>
 
-    <!-- Acceso Rápido Asistencial -->
-    <div class="card-hospital accion-rapida-banner">
-      <div class="banner-contenido">
-        <h3>¿Presenta alguna interrupción en sus equipos o sistemas de salud?</h3>
-        <p>Reporte incidentes en Historia Clínica Electrónica, impresoras de recetas o conectividad de red de inmediato.</p>
-        <button type="button" class="btn-primary">
-          <span class="material-symbols-outlined">add_circle</span>
-          Registrar Nuevo Incidente o Solicitud
-        </button>
+  <!-- SECCIÓN 2: Zona Gráfica Asistencial (Inspirado en diseño Stitch aprobado) -->
+  <section class="seccion-graficos" aria-label="Visualización de Tendencias y Distribución">
+    <div class="grid-graficos">
+      <div class="columna-grafico-principal">
+        <app-grafico-por-servicio></app-grafico-por-servicio>
+      </div>
+      <div class="columna-grafico-secundaria">
+        <app-distribucion-tipo></app-distribucion-tipo>
       </div>
     </div>
   </section>
 
-  <!-- 2. VISTA DASHBOARD: PRACTICANTE (Soporte N1) -->
-  <section class="seccion-rol" *ngIf="usuario.rol === RolUsuario.PRACTICANTE">
-    <div class="tarjetas-resumen-grid">
-      <div class="card-hospital stat-card">
-        <span class="material-symbols-outlined icono-stat color-p1">warning</span>
-        <div class="stat-info">
-          <span class="stat-numero">2</span>
-          <span class="stat-label">Incidentes P1 Críticos</span>
-        </div>
+  <!-- SECCIÓN 3: Zona B - Bandeja de Cola Activa de Incidentes & Triage -->
+  <section class="seccion-bandeja" aria-label="Cola Activa de Incidentes y Solicitudes">
+    <div class="bandeja-header">
+      <div class="bandeja-titulos">
+        <h2 class="bandeja-titulo">Cola Activa de Incidentes & Triage Clínico</h2>
+        <p class="bandeja-subtitulo">Monitoreo en vivo según categorización ITIL v4 y criticidad asistencial hospitalaria</p>
       </div>
-      <div class="card-hospital stat-card">
-        <span class="material-symbols-outlined icono-stat color-p2">inbox</span>
-        <div class="stat-info">
-          <span class="stat-numero">7</span>
-          <span class="stat-label">Bandeja General N1</span>
-        </div>
-      </div>
-      <div class="card-hospital stat-card">
-        <span class="material-symbols-outlined icono-stat color-p4">assignment_ind</span>
-        <div class="stat-info">
-          <span class="stat-numero">3</span>
-          <span class="stat-label">Asignados a Mí</span>
-        </div>
-      </div>
-      <div class="card-hospital stat-card">
-        <span class="material-symbols-outlined icono-stat color-exito">check_circle</span>
-        <div class="stat-info">
-          <span class="stat-numero">74%</span>
-          <span class="stat-label">FCR Hoy (Resolución N1)</span>
-        </div>
+
+      <div class="bandeja-controles">
+        <app-buscador-filtros
+          [opcionesFiltro]="opcionesFiltro"
+          [filtroActivoId]="filtroChipActivo()"
+          (alBuscar)="onBuscar($event)"
+          (alSeleccionarFiltro)="onSeleccionarChip($event)">
+        </app-buscador-filtros>
       </div>
     </div>
 
-    <!-- Lista de atención prioritaria -->
-    <div class="card-hospital tabla-prioritaria-card">
-      <h3 class="card-titulo">Cola de Atención Inmediata con Semáforo SLA</h3>
-      <div class="ticket-muestra">
-        <div class="ticket-cabecera">
-          <span class="badge-prioridad p1">P1 - Crítica</span>
-          <span class="badge-sla alerta"><span class="dot"></span> SLA Restante: 25 min</span>
-        </div>
-        <h4 class="ticket-titulo">Fallo de red en Sala de Operaciones y Emergencia</h4>
-        <p class="ticket-meta">Reportado por: Lic. Juan Pérez (Enfermería) hace 35 minutos</p>
-      </div>
-    </div>
+    <!-- Tabla con conmutación móvil automática -->
+    <app-tabla-tickets
+      [tickets]="ticketsFiltrados()"
+      (alSeleccionarTicket)="onSeleccionarTicket($event)"
+      (alAtenderTicket)="onAtenderTicket($event)">
+    </app-tabla-tickets>
   </section>
-
-  <!-- 3. VISTA DASHBOARD: ADMINISTRADOR (Jefatura TI - 7 KPIs) -->
-  <section class="seccion-rol" *ngIf="usuario.rol === RolUsuario.ADMINISTRADOR">
-    <div class="kpis-header">
-      <h2 class="subtitulo-seccion">Indicadores Clave de Gestión ITIL v4 (Capítulo IX)</h2>
-    </div>
-
-    <div class="tarjetas-resumen-grid kpis-grid">
-      <!-- KPI 1 -->
-      <div class="card-hospital stat-card">
-        <div class="stat-info">
-          <span class="stat-meta">KPI 1 · Cumplimiento SLA</span>
-          <span class="stat-numero color-exito">94.8%</span>
-          <span class="stat-meta-sub">Meta: &ge; 90%</span>
-        </div>
-      </div>
-      <!-- KPI 2 -->
-      <div class="card-hospital stat-card">
-        <div class="stat-info">
-          <span class="stat-meta">KPI 2 · TPR (Tiempo 1ª Resp.)</span>
-          <span class="stat-numero">14 min</span>
-          <span class="stat-meta-sub">Meta: &le; 20 min</span>
-        </div>
-      </div>
-      <!-- KPI 3 -->
-      <div class="card-hospital stat-card">
-        <div class="stat-info">
-          <span class="stat-meta">KPI 3 · MTTR (Tiempo Resol.)</span>
-          <span class="stat-numero">1.8 h</span>
-          <span class="stat-meta-sub">Meta: &le; 2.5 h</span>
-        </div>
-      </div>
-      <!-- KPI 4 -->
-      <div class="card-hospital stat-card">
-        <div class="stat-info">
-          <span class="stat-meta">KPI 4 · FCR (Res. N1)</span>
-          <span class="stat-numero">76.2%</span>
-          <span class="stat-meta-sub">Meta: &ge; 70%</span>
-        </div>
-      </div>
-      <!-- KPI 5 -->
-      <div class="card-hospital stat-card">
-        <div class="stat-info">
-          <span class="stat-meta">KPI 5 · Tasa Recurrencia</span>
-          <span class="stat-numero">4.1%</span>
-          <span class="stat-meta-sub">Meta: &le; 5%</span>
-        </div>
-      </div>
-      <!-- KPI 6 -->
-      <div class="card-hospital stat-card">
-        <div class="stat-info">
-          <span class="stat-meta">KPI 6 · Disponibilidad Red</span>
-          <span class="stat-numero color-exito">99.4%</span>
-          <span class="stat-meta-sub">Meta: &ge; 99%</span>
-        </div>
-      </div>
-      <!-- KPI 7 -->
-      <div class="card-hospital stat-card">
-        <div class="stat-info">
-          <span class="stat-meta">KPI 7 · CSAT Asistencial</span>
-          <span class="stat-numero color-guinda">4.8/5</span>
-          <span class="stat-meta-sub">Meta: &ge; 4.2</span>
-        </div>
-      </div>
-    </div>
-  </section>
-
 </div>

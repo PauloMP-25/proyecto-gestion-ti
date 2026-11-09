@@ -1,0 +1,14 @@
+<button 
+  type="button" 
+  class="chip" 
+  [class.chip--activo]="activo()"
+  [attr.aria-pressed]="activo()"
+  (click)="onClick()">
+  @if (icono()) {
+    <app-icono [nombre]="icono()!" tamano="xs" class="chip__icono"></app-icono>
+  }
+  <span class="chip__etiqueta">{{ etiqueta() }}</span>
+  @if (conteo() !== undefined) {
+    <span class="chip__conteo">{{ conteo() }}</span>
+  }
+</button>

@@ -1,8 +1,8 @@
 <div class="login-page-wrapper">
-  <!-- Top Navbar Header -->
+  <!-- Top Navbar Header Institucional -->
   <header class="top-navbar">
     <div class="nav-left">
-      <img src="/assets/logo.ico" alt="Logo Hospital Santa María del Socorro" class="nav-logo">
+      <img src="assets/logo.ico" alt="Escudo Oficial del Hospital Santa María del Socorro" class="nav-logo">
       <span class="nav-title">Hospital Santa María del Socorro de Ica</span>
     </div>
   </header>
@@ -12,39 +12,68 @@
       <div class="image-side" aria-hidden="true"></div>
       <div class="form-side">
         <div class="form-container">
-          <h1 class="login-title">Mesa de Ayuda</h1>
-          <p class="login-subtitle">Acceda a su cuenta institucional</p>
+          <h1 class="login-title">Mesa de Ayuda TI</h1>
+          <p class="login-subtitle">Acceda a la consola operativa y de servicios</p>
+
+          @if (errorMensaje()) {
+            <div class="alerta-error" role="alert" aria-live="assertive">
+              <span class="material-symbols-outlined" aria-hidden="true">error</span>
+              <span>{{ errorMensaje() }}</span>
+            </div>
+          }
           
           <form class="login-form" (submit)="$event.preventDefault(); login()">
             <div class="form-group">
-              <label for="usuario">Usuario</label>
-              <input id="usuario" type="text" placeholder="Ingrese su usuario" autocomplete="username">
-            </div>
-            <div class="form-group">
-              <label for="password">Contraseña</label>
-              <div class="password-input">
+              <label for="usuario">Usuario Institucional</label>
+              <div class="input-con-icono">
+                <span class="material-symbols-outlined input-prefix-icon" aria-hidden="true">person</span>
                 <input 
-                  id="password" 
-                  [type]="mostrarPassword ? 'text' : 'password'" 
-                  placeholder="Ingrese su contraseña"
-                  autocomplete="current-password">
-                <span 
-                  class="eye-icon" 
-                  (click)="toggleMostrarPassword()" 
-                  (keydown.enter)="toggleMostrarPassword()"
-                  tabindex="0"
-                  role="button"
-                  [attr.aria-label]="mostrarPassword ? 'Ocultar contraseña' : 'Ver contraseña'">
-                  {{ mostrarPassword ? '🙈' : '👁️' }}
-                </span>
+                  id="usuario" 
+                  name="usuario"
+                  type="text" 
+                  [ngModel]="usuario()" 
+                  (ngModelChange)="usuario.set($event)"
+                  placeholder="admin / practicante / usuario" 
+                  autocomplete="username"
+                  required>
               </div>
             </div>
-            <div class="forgot-link-container">
-              <a href="#" class="forgot-link">¿Olvidó su contraseña?</a>
+
+            <div class="form-group">
+              <label for="password">Contraseña</label>
+              <div class="password-input input-con-icono">
+                <span class="material-symbols-outlined input-prefix-icon" aria-hidden="true">lock</span>
+                <input 
+                  id="password" 
+                  name="password"
+                  [type]="mostrarPassword() ? 'text' : 'password'" 
+                  [ngModel]="password()" 
+                  (ngModelChange)="password.set($event)"
+                  placeholder="Ingrese su contraseña"
+                  autocomplete="current-password"
+                  required>
+                <button 
+                  type="button"
+                  class="btn-icono-ojo" 
+                  (click)="toggleMostrarPassword()" 
+                  [attr.aria-label]="mostrarPassword() ? 'Ocultar contraseña' : 'Ver contraseña'">
+                  <span class="material-symbols-outlined" aria-hidden="true">
+                    {{ mostrarPassword() ? 'visibility_off' : 'visibility' }}
+                  </span>
+                </button>
+              </div>
             </div>
-            <button type="submit" class="btn-primary">Iniciar Sesión</button>
+
+            <div class="forgot-link-container">
+              <a href="#" (click)="$event.preventDefault()" class="forgot-link">¿Olvidó su contraseña?</a>
+            </div>
+
+            <button type="submit" class="btn-primary">
+              <span>Iniciar Sesión</span>
+              <span class="material-symbols-outlined" aria-hidden="true">login</span>
+            </button>
             
-            <p class="copyright-text">© 2026 Hospital Santa María del Socorro. Todos los derechos reservados.</p>
+            <p class="copyright-text">© 2026 Hospital Santa María del Socorro · Oficina de Estadística e Informática</p>
           </form>
         </div>
       </div>
