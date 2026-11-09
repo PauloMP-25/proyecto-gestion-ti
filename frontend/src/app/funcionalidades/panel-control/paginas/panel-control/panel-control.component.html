@@ -1,0 +1,136 @@
+<div class="dashboard-contenedor">
+  <!-- Cabecera de Navegación por Pestañas (En lugar del título duplicado) -->
+  <header class="consola-header">
+    <div class="consola-header__izq">
+      <nav class="nav-pestanas" role="tablist" aria-label="Secciones del Panel de Control">
+        <button 
+          type="button" 
+          role="tab"
+          class="tab-btn" 
+          [class.tab-btn--activo]="pestanaActiva() === 'metricas'"
+          (click)="seleccionarPestana('metricas')"
+          [attr.aria-selected]="pestanaActiva() === 'metricas'">
+          <span class="tab-btn__numero">1</span>
+          <span class="tab-btn__texto">Métricas & Monitoreo SLA</span>
+        </button>
+
+        <button 
+          type="button" 
+          role="tab"
+          class="tab-btn" 
+          [class.tab-btn--activo]="pestanaActiva() === 'graficos'"
+          (click)="seleccionarPestana('graficos')"
+          [attr.aria-selected]="pestanaActiva() === 'graficos'">
+          <span class="tab-btn__numero">2</span>
+          <span class="tab-btn__texto">Gráficos de Gestión ITIL</span>
+        </button>
+
+        <button 
+          type="button" 
+          role="tab"
+          class="tab-btn" 
+          [class.tab-btn--activo]="pestanaActiva() === 'cola'"
+          (click)="seleccionarPestana('cola')"
+          [attr.aria-selected]="pestanaActiva() === 'cola'">
+          <span class="tab-btn__numero">3</span>
+          <span class="tab-btn__texto">Cola Activa de Incidentes</span>
+          <span class="tab-btn__numero tab-btn__numero--conteo">10</span>
+        </button>
+      </nav>
+    </div>
+
+    <div class="consola-header__der">
+      <div class="acciones-header">
+        <button 
+          type="button" 
+          class="btn-refrescar" 
+          (click)="refrescar()" 
+          title="Actualizar datos del panel">
+          <app-icono nombre="sync" tamano="xs"></app-icono>
+          <span>Actualizar</span>
+        </button>
+
+        <app-boton 
+          variante="primario" 
+          icono="add"
+          ariaLabel="Registrar nuevo incidente">
+          + Nuevo Incidente
+        </app-boton>
+      </div>
+    </div>
+  </header>
+
+  <!-- CONTENIDO DE LAS PESTAÑAS -->
+
+  <!-- PESTAÑA 1: Métricas y Cronómetro de Atención en Vivo -->
+  @if (pestanaActiva() === 'metricas') {
+    <div class="pestana-contenido" role="tabpanel" aria-label="Métricas y Cronómetro SLA">
+      <!-- 4 Métricas Esenciales ITIL v4 -->
+      <section class="seccion-kpis" aria-label="Indicadores Operativos Clave">
+        <app-kpi-panel [kpis]="kpis()" [rol]="rolActual()"></app-kpi-panel>
+      </section>
+
+      <!-- Cronómetro y Reloj de Ticket en Atención -->
+      <section class="seccion-cronometro" aria-label="Cronómetro de Atención y SLA">
+        <app-reloj-ticket-activo
+          [ticket]="ticketEnAtencion()"
+          [ticketsDisponibles]="ticketsFiltrados()"
+          (alSeleccionarOtroTicket)="onSeleccionarTicket($event)"
+          (alResolverTicket)="onResolverTicket($event)"
+          (alEscalarTicket)="onEscalarTicket($event)">
+        </app-reloj-ticket-activo>
+      </section>
+    </div>
+  }
+
+  <!-- PESTAÑA 2: Gráficos de Gestión ITIL (4 Cuadrantes según BD ITIL v4) -->
+  @if (pestanaActiva() === 'graficos') {
+    <div class="pestana-contenido" role="tabpanel" aria-label="Gráficos y Analítica ITIL">
+      <div class="grid-cuatro-graficos">
+        <!-- 1. Tendencia de Incidentes por Servicio Clínico (Gráfico Circular Donut) -->
+        <div class="cuadrante-grafico">
+          <app-grafico-por-servicio></app-grafico-por-servicio>
+        </div>
+
+        <!-- 2. Fallas por Activo CMDB (Gráfico de Barras) -->
+        <div class="cuadrante-grafico">
+          <app-distribucion-tipo></app-distribucion-tipo>
+        </div>
+
+        <!-- 3. Matriz de Prioridad ITIL v4 (Impacto × Urgencia) -->
+        <div class="cuadrante-grafico">
+          <app-grafico-prioridades></app-grafico-prioridades>
+        </div>
+
+        <!-- 4. Monitoreo de Niveles de Servicio SLA (EstadoSLA) -->
+        <div class="cuadrante-grafico">
+          <app-grafico-sla-cumplimiento></app-grafico-sla-cumplimiento>
+        </div>
+      </div>
+    </div>
+  }
+
+  <!-- PESTAÑA 3: Cola Activa de Incidentes -->
+  @if (pestanaActiva() === 'cola') {
+    <div class="pestana-contenido" role="tabpanel" aria-label="Cola Activa de Incidentes">
+      <section class="seccion-bandeja">
+        <div class="bandeja-controles">
+          <app-buscador-filtros
+            [opcionesFiltro]="opcionesFiltro"
+            [filtroActivoId]="filtroChipActivo()"
+            (alBuscar)="onBuscar($event)"
+            (alSeleccionarFiltro)="onSeleccionarChip($event)">
+          </app-buscador-filtros>
+        </div>
+
+        <!-- Tabla interactiva con conmutación móvil automática -->
+        <app-tabla-tickets
+          [tickets]="ticketsFiltrados()"
+          (alSeleccionarTicket)="onSeleccionarTicket($event)"
+          (alAtenderTicket)="onAtenderTicket($event)">
+        </app-tabla-tickets>
+      </section>
+    </div>
+  }
+</div>
+

@@ -1,0 +1,16 @@
+<div class="shell-layout">
+  <!-- Barra Superior Fija -->
+  <app-barra-superior></app-barra-superior>
+
+  <div class="cuerpo-aplicacion">
+    <!-- Menú Lateral Dinámico por Rol -->
+    <app-menu-lateral></app-menu-lateral>
+
+    <!-- Contenedor Principal de Contenido con Scroll Independiente -->
+    <main class="area-contenido" role="main">
+      <div class="lienzo-vista">
+        <router-outlet></router-outlet>
+      </div>
+    </main>
+  </div>
+</div>

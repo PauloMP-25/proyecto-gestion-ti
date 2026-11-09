@@ -1,0 +1,47 @@
+/* ==========================================================================
+   TIPOGRAFÍA Y ESCALA - HOSPITAL SANTA MARÍA DEL SOCORRO (HSMSI)
+   ========================================================================== */
+
+:root {
+  --font-family-base: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+  --font-family-heading: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+
+  /* Escala tipográfica */
+  --font-size-xs: 0.75rem;    /* 12px - Badges, timestamps */
+  --font-size-sm: 0.875rem;   /* 14px - Labels, metadatos, tabla */
+  --font-size-base: 1rem;     /* 16px - Cuerpo de texto, inputs */
+  --font-size-lg: 1.125rem;   /* 18px - Subtítulos de sección */
+  --font-size-xl: 1.25rem;    /* 20px - Títulos de modales y tarjetas */
+  --font-size-2xl: 1.5rem;    /* 24px - Títulos de página / vista */
+  --font-size-3xl: 1.875rem;  /* 30px - Login y pantallas principales */
+
+  /* Pesos de fuente */
+  --font-weight-regular: 400;
+  --font-weight-medium: 500;
+  --font-weight-semibold: 600;
+  --font-weight-bold: 700;
+
+  /* Alturas de línea */
+  --line-height-tight: 1.25;
+  --line-height-normal: 1.5;
+  --line-height-relaxed: 1.625;
+}
+
+body {
+  font-family: var(--font-family-base);
+  font-size: var(--font-size-base);
+  font-weight: var(--font-weight-regular);
+  line-height: var(--line-height-normal);
+  color: var(--color-text-main);
+  background-color: var(--color-bg-app);
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+h1, h2, h3, h4, h5, h6 {
+  font-family: var(--font-family-heading);
+  color: var(--color-text-main);
+  font-weight: var(--font-weight-semibold);
+  line-height: var(--line-height-tight);
+  margin-top: 0;
+}

@@ -1,0 +1,20 @@
+<div class="temporizador-sla">
+  <div class="temporizador-sla__insignia">
+    <app-sla-insignia 
+      [estado]="estadoSevero()" 
+      [texto]="sla().fechaVencimiento | tiempoRestante: relojServidor.ahora()">
+    </app-sla-insignia>
+  </div>
+
+  @if (mostrarBarra()) {
+    <div class="temporizador-sla__progreso" aria-hidden="true">
+      <div 
+        class="temporizador-sla__barra"
+        [class.barra--ok]="estadoSevero() === 'A_TIEMPO'"
+        [class.barra--alerta]="estadoSevero() === 'ALERTA'"
+        [class.barra--vencida]="estadoSevero() === 'INCUMPLIDO'"
+        [style.width.%]="porcentajeConsumido()">
+      </div>
+    </div>
+  }
+</div>

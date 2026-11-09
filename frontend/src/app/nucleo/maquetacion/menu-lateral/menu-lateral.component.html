@@ -1,0 +1,74 @@
+<!-- Backdrop para cerrar en móvil al dar tap fuera -->
+<div 
+  class="sidebar-backdrop" 
+  [class.abierto]="sidebarAbierto()" 
+  (click)="cerrarSidebarMovil()">
+</div>
+
+<aside 
+  class="menu-lateral" 
+  [class.movil-abierto]="sidebarAbierto()"
+  [class.colapsado]="sidebarColapsado()">
+
+  <div class="sidebar-header-movil">
+    <div class="hospital-marca-mini">
+      <img src="assets/logo_hsmsi.jpeg" alt="Logo HSMSI" class="logo-mini" />
+      <span class="marca-texto">Mesa de Ayuda TI</span>
+    </div>
+    <button 
+      type="button" 
+      class="btn-cerrar-movil" 
+      (click)="cerrarSidebarMovil()" 
+      aria-label="Cerrar menú">
+      <span class="material-symbols-outlined">close</span>
+    </button>
+  </div>
+
+  <nav class="sidebar-nav">
+    @for (seccion of seccionesMenu(); track seccion.encabezado) {
+      <div class="seccion-grupo">
+        @if (seccion.encabezado && !sidebarColapsado()) {
+          <h3 class="seccion-titulo">{{ seccion.encabezado }}</h3>
+        }
+
+        <ul class="lista-items">
+          @for (item of seccion.items; track item.ruta) {
+            <li class="item-fila">
+              <a 
+                [routerLink]="item.ruta" 
+                routerLinkActive="activo"
+                [routerLinkActiveOptions]="{ exact: item.ruta === '/panel-control' }"
+                class="enlace-menu"
+                [title]="item.titulo"
+                (click)="cerrarSidebarMovil()">
+                
+                <span class="material-symbols-outlined item-icono">{{ item.icono }}</span>
+                
+                <span class="item-etiqueta" [class.oculto-colapsado]="sidebarColapsado()">
+                  {{ item.titulo }}
+                </span>
+
+                @if (item.badge && !sidebarColapsado()) {
+                  <span class="item-badge" [class]="item.badgeTipo || 'info'">
+                    {{ item.badge }}
+                  </span>
+                }
+              </a>
+            </li>
+          }
+        </ul>
+      </div>
+    }
+  </nav>
+
+  <!-- Pie del menú lateral -->
+  <div class="sidebar-footer" [class.oculto-colapsado]="sidebarColapsado()">
+    <div class="sla-soporte-info">
+      <span class="material-symbols-outlined icono-help">headset_mic</span>
+      <div class="soporte-detalles">
+        <span class="titulo-soporte">Mesa de Ayuda TI</span>
+        <span class="anexo-soporte">Anexo interno: 2400</span>
+      </div>
+    </div>
+  </div>
+</aside>

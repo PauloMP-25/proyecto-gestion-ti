@@ -1,0 +1,251 @@
+:host {
+  display: block;
+  width: 100%;
+}
+
+.kpi-flip-container {
+  position: relative;
+  width: 100%;
+  height: 100%;
+  min-height: 150px;
+  perspective: 1000px;
+
+  /* Al pasar el cursor, gira 180 grados mostrando el reverso */
+  &:hover:not(.sin-rotacion) .kpi-flip-card {
+    transform: rotateY(180deg);
+  }
+}
+
+.kpi-flip-card {
+  position: relative;
+  width: 100%;
+  height: 100%;
+  min-height: 150px;
+  transform-style: preserve-3d;
+  transition: transform 0.55s cubic-bezier(0.4, 0, 0.2, 1);
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05);
+  border-radius: var(--radio-lg, 12px);
+
+  &:hover {
+    box-shadow: 0 6px 18px rgba(11, 28, 48, 0.09);
+  }
+}
+
+/* CARAS GENERALES DE LA TARJETA */
+.kpi-cara {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  border-radius: var(--radio-lg, 12px);
+  padding: var(--espacio-4, 16px);
+  box-sizing: border-box;
+  backface-visibility: hidden;
+  -webkit-backface-visibility: hidden;
+  border: 1px solid var(--borde-tarjeta, #e2e8f0);
+  background-color: var(--fondo-tarjeta, #ffffff);
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+
+  /* CARA FRONTAL */
+  &--frontal {
+    transform: rotateY(0deg);
+    z-index: 2;
+  }
+
+  /* CARA TRASERA */
+  &--trasera {
+    transform: rotateY(180deg);
+    background: linear-gradient(145deg, var(--fondo-tarjeta, #ffffff) 0%, var(--fondo-aplicacion, #f8fafc) 100%);
+    border-color: var(--primario-guinda, #701c1c);
+    z-index: 1;
+  }
+}
+
+/* ESTILOS DE LA CARA FRONTAL */
+.kpi-tarjeta {
+  &__header {
+    position: relative;
+    width: 100%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    min-height: 28px;
+  }
+
+  &__titulo {
+    font-size: 0.82rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.04em;
+    color: var(--texto-secundario, #64748b);
+    margin: 0;
+    text-align: center;
+    width: 100%;
+    padding: 0;
+    box-sizing: border-box;
+  }
+
+  &__cuerpo {
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+    margin: auto 0;
+    width: 100%;
+  }
+
+  &__valor-fila {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    width: 100%;
+  }
+
+  .valor-agrupado {
+    display: flex;
+    align-items: baseline;
+    gap: 6px;
+  }
+
+  &__valor {
+    font-family: 'Inter', system-ui, -apple-system, BlinkMacSystemFont, sans-serif;
+    font-feature-settings: 'tnum' 1;
+    font-variant-numeric: tabular-nums;
+    font-size: 1.55rem;
+    font-weight: 700;
+    line-height: 1;
+    letter-spacing: -0.015em;
+    color: var(--texto-principal, #0b1c30);
+  }
+
+  &__unidad {
+    font-family: 'Inter', system-ui, -apple-system, BlinkMacSystemFont, sans-serif;
+    font-size: 0.92rem;
+    font-weight: 600;
+    margin-left: 2px;
+    color: var(--texto-secundario, #64748b);
+  }
+
+  &__meta-fila {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    font-size: 0.78rem;
+    text-align: center;
+  }
+
+  &__meta-label {
+    color: var(--texto-secundario, #64748b);
+
+    strong {
+      color: var(--texto-principal, #0f172a);
+      font-weight: 700;
+    }
+  }
+
+  &__badge-estado {
+    display: inline-flex;
+    align-items: center;
+    gap: 4px;
+    padding: 4px 10px;
+    border-radius: var(--radio-full, 9999px);
+    font-size: 0.75rem;
+    font-weight: 700;
+    letter-spacing: 0.03em;
+    text-transform: uppercase;
+    border: 1px solid transparent;
+    line-height: 1;
+
+    &.badge--cumple {
+      background-color: var(--sla-ok-bg, #e8f5e9);
+      color: var(--sla-ok-text, #113e14);
+      border-color: var(--sla-ok-border, #1b5e20);
+    }
+
+    &.badge--riesgo {
+      background-color: var(--sla-alerta-bg, #fef3c7);
+      color: var(--sla-alerta-text, #78350f);
+      border-color: var(--sla-alerta-border, #d97706);
+    }
+
+    &.badge--incumple {
+      background-color: var(--sla-venc-bg, #fee2e2);
+      color: var(--sla-venc-text, #7f1d1d);
+      border-color: var(--sla-venc-border, #dc2626);
+    }
+  }
+}
+
+/* ESTILOS DE LA CARA TRASERA */
+.trasera-header {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  border-bottom: 1px solid var(--borde-tarjeta, #e2e8f0);
+  padding-bottom: 6px;
+
+  .trasera-codigo {
+    padding: 1px 5px;
+    background-color: rgba(112, 28, 28, 0.08);
+    color: var(--primario-guinda, #701c1c);
+    border-radius: var(--radio-sm, 4px);
+    font-size: 0.7rem;
+    font-weight: 700;
+  }
+
+  .trasera-titulo {
+    font-size: 0.78rem;
+    font-weight: 700;
+    color: var(--texto-principal, #0f172a);
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+}
+
+.trasera-cuerpo {
+  margin: auto 0;
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+
+  .trasera-descripcion {
+    font-size: 0.78rem;
+    line-height: 1.35;
+    color: var(--texto-principal, #1e293b);
+    margin: 0;
+  }
+
+  .trasera-formula {
+    code {
+      display: block;
+      background: rgba(112, 28, 28, 0.04);
+      padding: 4px 6px;
+      border-radius: var(--radio-sm, 4px);
+      font-size: 0.68rem;
+      color: var(--primario-guinda, #701c1c);
+      line-height: 1.25;
+      border: 1px dashed rgba(112, 28, 28, 0.2);
+      word-break: break-word;
+    }
+  }
+}
+
+.trasera-footer {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  border-top: 1px solid var(--borde-tarjeta, #e2e8f0);
+  padding-top: 5px;
+  font-size: 0.74rem;
+
+  .trasera-meta-badge {
+    color: var(--texto-secundario, #475569);
+    strong {
+      color: var(--texto-principal, #0f172a);
+    }
+  }
+}
+

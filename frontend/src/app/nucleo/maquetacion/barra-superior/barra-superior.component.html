@@ -1,0 +1,115 @@
+<header class="barra-superior">
+  <!-- Izquierda: Botón Hamburguesa + Logo HSMSI e Identidad -->
+  <div class="seccion-izquierda">
+    <button 
+      type="button" 
+      class="btn-icono hamburguesa" 
+      (click)="alternarSidebar()" 
+      aria-label="Alternar menú lateral"
+      title="Alternar menú lateral">
+      <span class="material-symbols-outlined">menu</span>
+    </button>
+
+    <div class="identidad-institucional">
+      <img src="assets/logo_hsmsi.jpeg" alt="Logo Hospital Santa María del Socorro" class="logo-hospital" />
+      <div class="textos-marca">
+        <span class="marca-titulo">Hospital Santa María del Socorro</span>
+        <span class="marca-subtitulo">Service Desk ITIL v4 · Mesa de Ayuda</span>
+      </div>
+    </div>
+  </div>
+
+  <!-- Centro / Derecha: Contexto Dinámico del Usuario y Acciones -->
+  <div class="seccion-derecha" *ngIf="usuarioActual() as usuario">
+    
+    <!-- Selector rápido de rol (Ideal para validación y desarrollo ágil) -->
+    <div class="rol-switcher-container">
+      <button 
+        type="button" 
+        class="btn-cambiar-rol" 
+        (click)="alternarSelectorRol()" 
+        title="Cambiar rol activo para pruebas">
+        <span class="material-symbols-outlined icono-swap">swap_horiz</span>
+        <span class="texto-cambiar-rol">Simular Rol</span>
+      </button>
+
+      <div class="dropdown-selector-rol" *ngIf="selectorRolAbierto()">
+        <div class="dropdown-header">Seleccionar Rol RBAC</div>
+        <button 
+          type="button" 
+          class="opcion-rol" 
+          [class.seleccionada]="usuario.rol === RolUsuario.USUARIO_FINAL"
+          (click)="cambiarRol(RolUsuario.USUARIO_FINAL)">
+          <span class="material-symbols-outlined">person</span>
+          <div class="info-rol">
+            <strong>Usuario Final</strong>
+            <span>Personal Asistencial / Médico</span>
+          </div>
+        </button>
+        <button 
+          type="button" 
+          class="opcion-rol" 
+          [class.seleccionada]="usuario.rol === RolUsuario.PRACTICANTE"
+          (click)="cambiarRol(RolUsuario.PRACTICANTE)">
+          <span class="material-symbols-outlined">support_agent</span>
+          <div class="info-rol">
+            <strong>Practicante N1</strong>
+            <span>Mesa de Ayuda / FCR</span>
+          </div>
+        </button>
+        <button 
+          type="button" 
+          class="opcion-rol" 
+          [class.seleccionada]="usuario.rol === RolUsuario.ADMINISTRADOR"
+          (click)="cambiarRol(RolUsuario.ADMINISTRADOR)">
+          <span class="material-symbols-outlined">admin_panel_settings</span>
+          <div class="info-rol">
+            <strong>Administrador TI</strong>
+            <span>Soporte N2 / Jefatura</span>
+          </div>
+        </button>
+      </div>
+    </div>
+
+    <!-- Perfil del Usuario y Menú desplegable -->
+    <div class="perfil-menu-container">
+      <button 
+        type="button" 
+        class="btn-perfil" 
+        (click)="alternarMenuUsuario()" 
+        aria-expanded="menuUsuarioAbierto()"
+        aria-haspopup="true">
+        <div class="avatar-circulo" [attr.data-rol]="usuario.rol">
+          {{ obtenerIniciales(usuario.nombreCompleto) }}
+        </div>
+        <div class="perfil-info">
+          <span class="perfil-nombre">{{ usuario.nombreCompleto }}</span>
+          <span class="perfil-cargo">{{ usuario.cargo || 'Colaborador HSMSI' }}</span>
+        </div>
+        <span class="material-symbols-outlined flecha-desplegable">expand_more</span>
+      </button>
+
+      <!-- Menú Desplegable de Usuario -->
+      <div class="dropdown-perfil" *ngIf="menuUsuarioAbierto()">
+        <div class="dropdown-usuario-resumen">
+          <p class="resumen-nombre">{{ usuario.nombreCompleto }}</p>
+          <p class="resumen-correo">{{ usuario.correo }}</p>
+          <span class="resumen-rol">{{ usuario.cargo }}</span>
+        </div>
+        
+        <div class="dropdown-divisor"></div>
+
+        <a routerLink="/panel-control" class="dropdown-item" (click)="menuUsuarioAbierto.set(false)">
+          <span class="material-symbols-outlined">dashboard</span>
+          <span>Panel de Inicio</span>
+        </a>
+
+        <button type="button" class="dropdown-item item-logout" (click)="cerrarSesion()">
+          <span class="material-symbols-outlined">logout</span>
+          <span>Cerrar Sesión</span>
+        </button>
+      </div>
+    </div>
+
+  </div>
+</header>

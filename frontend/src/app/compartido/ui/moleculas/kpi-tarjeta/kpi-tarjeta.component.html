@@ -1,0 +1,77 @@
+<div 
+  class="kpi-flip-container" 
+  [class.kpi--cumple]="kpi().estado === 'CUMPLE'"
+  [class.kpi--riesgo]="kpi().estado === 'EN_RIESGO'"
+  [class.kpi--incumple]="kpi().estado === 'INCUMPLE'">
+  
+  <div class="kpi-flip-card">
+    <!-- CARA FRONTAL: Métricas Principales (Sin icono de información) -->
+    <div class="kpi-cara kpi-cara--frontal">
+      <!-- Cabecera de la Tarjeta Frontal -->
+      <div class="kpi-tarjeta__header">
+        <h3 class="kpi-tarjeta__titulo">{{ kpi().titulo }}</h3>
+      </div>
+
+      <!-- Valor Central y Meta -->
+      <div class="kpi-tarjeta__cuerpo">
+        <div class="kpi-tarjeta__valor-fila">
+          <div class="valor-agrupado">
+            <span class="kpi-tarjeta__valor">{{ kpi().valor }}</span>
+            @if (kpi().unidad) {
+              <span class="kpi-tarjeta__unidad">{{ kpi().unidad }}</span>
+            }
+          </div>
+
+          <!-- Badge de Estado (CUMPLE, EN RIESGO, INCUMPLE) al lado del valor -->
+          <span 
+            class="kpi-tarjeta__badge-estado"
+            [class.badge--cumple]="kpi().estado === 'CUMPLE'"
+            [class.badge--riesgo]="kpi().estado === 'EN_RIESGO'"
+            [class.badge--incumple]="kpi().estado === 'INCUMPLE'">
+            @if (kpi().estado === 'CUMPLE') {
+              <app-icono nombre="check_circle" tamano="xs"></app-icono>
+              <span>Cumple</span>
+            } @else if (kpi().estado === 'EN_RIESGO') {
+              <app-icono nombre="warning" tamano="xs"></app-icono>
+              <span>En riesgo</span>
+            } @else {
+              <app-icono nombre="cancel" tamano="xs"></app-icono>
+              <span>Incumple</span>
+            }
+          </span>
+        </div>
+
+        <div class="kpi-tarjeta__meta-fila">
+          <span class="kpi-tarjeta__meta-label">Meta oficial: <strong>{{ kpi().comparador }} {{ kpi().meta }}</strong></span>
+        </div>
+      </div>
+    </div>
+
+    <!-- CARA TRASERA: Descripción Breve y Significado (Visible al voltear) -->
+    <div class="kpi-cara kpi-cara--trasera">
+      <div class="trasera-header">
+        <span class="trasera-codigo">{{ kpi().codigo }}</span>
+        <span class="trasera-titulo">{{ kpi().titulo }}</span>
+      </div>
+
+      <div class="trasera-cuerpo">
+        <p class="trasera-descripcion">
+          {{ kpi().descripcion ?? 'Indicador clave de calidad y servicio asistencial ITIL v4.' }}
+        </p>
+        @if (kpi().formula) {
+          <div class="trasera-formula">
+            <code>{{ kpi().formula }}</code>
+          </div>
+        }
+      </div>
+
+      <div class="trasera-footer">
+        <div class="trasera-meta-badge">
+          <span class="trasera-meta-label">Meta:</span>
+          <strong>{{ kpi().comparador }} {{ kpi().meta }}</strong>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
