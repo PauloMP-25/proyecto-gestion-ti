@@ -3,9 +3,8 @@ import { authGuard } from './nucleo/guardias/auth.guard';
 import { MaquetacionPrincipalComponent } from './nucleo/maquetacion/maquetacion-principal/maquetacion-principal.component';
 
 export const routes: Routes = [
-  { path: '', redirectTo: '/auth/login', pathMatch: 'full' },
   {
-    path: 'auth',
+    path: '',
     loadChildren: () => import('./funcionalidades/auth/auth.routes').then(m => m.AUTH_ROUTES)
   },
   {
@@ -17,9 +16,9 @@ export const routes: Routes = [
         path: 'panel-control',
         loadChildren: () => import('./funcionalidades/panel-control/panel-control.routes').then(m => m.PANEL_CONTROL_ROUTES),
       },
-      // Rutas futuras protegidas dentro del Shell:
+      // Rutas protegidas dentro del Shell:
       // solicitudes, incidentes, cmdb, administracion, etc.
     ]
   },
-  { path: '**', redirectTo: '/auth/login' }
+  { path: '**', redirectTo: '' }
 ];
