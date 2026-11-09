@@ -1,0 +1,160 @@
+.panel-contenedor {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-6);
+}
+
+.panel-header {
+  border-bottom: 1px solid var(--color-border-subtle);
+  padding-bottom: var(--space-4);
+
+  .titulo-bienvenida {
+    font-size: var(--font-size-2xl);
+    font-weight: var(--font-weight-bold);
+    color: var(--color-text-main);
+    margin: 0 0 var(--space-1) 0;
+  }
+
+  .subtitulo-contexto {
+    font-size: var(--font-size-sm);
+    color: var(--color-text-muted);
+    margin: 0;
+
+    strong {
+      color: var(--color-primary-base);
+    }
+  }
+}
+
+.seccion-rol {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-6);
+}
+
+.tarjetas-resumen-grid {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: var(--space-4);
+
+  @media (min-width: 640px) {
+    grid-template-columns: repeat(2, 1fr);
+  }
+
+  @media (min-width: 1024px) {
+    grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+  }
+
+  &.kpis-grid {
+    grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+  }
+}
+
+.stat-card {
+  display: flex;
+  align-items: center;
+  gap: var(--space-4);
+  padding: var(--space-5);
+  transition: transform var(--transition-fast), box-shadow var(--transition-fast);
+
+  &:hover {
+    transform: translateY(-2px);
+    box-shadow: var(--shadow-md);
+  }
+
+  .icono-stat {
+    font-size: 36px;
+    padding: var(--space-2);
+    border-radius: var(--radius-md);
+    background-color: var(--color-bg-app);
+
+    &.color-p1 { color: var(--color-p1-base); background-color: var(--color-p1-bg); }
+    &.color-p2 { color: var(--color-p2-base); background-color: var(--color-p2-bg); }
+    &.color-p4 { color: var(--color-p4-base); background-color: var(--color-p4-bg); }
+    &.color-exito { color: var(--color-secondary-base); background-color: var(--color-secondary-light); }
+    &.color-guinda { color: var(--color-primary-base); background-color: var(--color-primary-light); }
+  }
+
+  .stat-info {
+    display: flex;
+    flex-direction: column;
+
+    .stat-meta {
+      font-size: 11px;
+      font-weight: var(--font-weight-semibold);
+      color: var(--color-text-muted);
+      text-transform: uppercase;
+    }
+
+    .stat-numero {
+      font-size: var(--font-size-2xl);
+      font-weight: var(--font-weight-bold);
+      color: var(--color-text-main);
+      line-height: 1.2;
+
+      &.color-exito { color: var(--color-secondary-base); }
+      &.color-guinda { color: var(--color-primary-base); }
+    }
+
+    .stat-label {
+      font-size: var(--font-size-sm);
+      color: var(--color-text-muted);
+      font-weight: var(--font-weight-medium);
+    }
+
+    .stat-meta-sub {
+      font-size: 11px;
+      color: var(--color-text-muted);
+      margin-top: 2px;
+    }
+  }
+}
+
+.accion-rapida-banner {
+  background: linear-gradient(135deg, var(--color-bg-warm) 0%, #ffffff 100%);
+  border-left: 4px solid var(--color-primary-base);
+
+  h3 {
+    font-size: var(--font-size-lg);
+    margin-bottom: var(--space-2);
+    color: var(--color-primary-base);
+  }
+
+  p {
+    font-size: var(--font-size-sm);
+    color: var(--color-text-muted);
+    margin-bottom: var(--space-4);
+  }
+}
+
+.tabla-prioritaria-card {
+  .card-titulo {
+    font-size: var(--font-size-lg);
+    margin-bottom: var(--space-4);
+  }
+
+  .ticket-muestra {
+    padding: var(--space-4);
+    background-color: var(--color-bg-app);
+    border: 1px solid var(--color-border-subtle);
+    border-radius: var(--radius-md);
+
+    .ticket-cabecera {
+      display: flex;
+      align-items: center;
+      gap: var(--space-2);
+      margin-bottom: var(--space-2);
+    }
+
+    .ticket-titulo {
+      font-size: var(--font-size-base);
+      margin: 0 0 var(--space-1) 0;
+    }
+
+    .ticket-meta {
+      font-size: var(--font-size-xs);
+      color: var(--color-text-muted);
+      margin: 0;
+    }
+  }
+}

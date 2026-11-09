@@ -1,0 +1,43 @@
+.shell-layout {
+  display: flex;
+  flex-direction: column;
+  min-height: 100vh;
+  width: 100%;
+  background-color: var(--color-bg-app);
+  overflow-x: hidden;
+}
+
+.cuerpo-aplicacion {
+  display: flex;
+  flex: 1;
+  position: relative;
+  min-height: calc(100vh - 64px);
+  width: 100%;
+}
+
+.area-contenido {
+  flex: 1;
+  min-width: 0; // Previene overflow en Flexbox
+  display: flex;
+  flex-direction: column;
+  overflow-y: auto;
+  overflow-x: hidden;
+  height: calc(100vh - 64px);
+}
+
+.lienzo-vista {
+  flex: 1;
+  padding: var(--space-4);
+  max-width: 1440px;
+  width: 100%;
+  margin: 0 auto;
+  box-sizing: border-box;
+
+  @media (min-width: 768px) {
+    padding: var(--space-6);
+  }
+
+  @media (min-width: 1280px) {
+    padding: var(--space-8);
+  }
+}

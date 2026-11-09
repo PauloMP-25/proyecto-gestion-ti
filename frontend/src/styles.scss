@@ -1,1 +1,19 @@
-/* You can add global styles to this file, and also import other style files */
+/* ==========================================================================
+   ESTILOS GLOBALES - HOSPITAL SANTA MARÍA DEL SOCORRO (HSMSI)
+   ========================================================================== */
+
+@use './estilos/tokens';
+@use './estilos/tipografia';
+@use './estilos/utilidades';
+
+/* Reset y caja de modelo */
+*, *::before, *::after {
+  box-sizing: border-box;
+}
+
+html, body {
+  margin: 0;
+  padding: 0;
+  height: 100%;
+  width: 100%;
+}
