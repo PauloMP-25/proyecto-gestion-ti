@@ -1,98 +1,123 @@
 <div 
-  class="kpi-tarjeta" 
+  class="kpi-flip-container" 
   [class.kpi--cumple]="kpi().estado === 'CUMPLE'"
   [class.kpi--riesgo]="kpi().estado === 'EN_RIESGO'"
-  [class.kpi--incumple]="kpi().estado === 'INCUMPLE'">
+  [class.kpi--incumple]="kpi().estado === 'INCUMPLE'"
+  [class.sin-rotacion]="mostrarFormula()">
   
-  <!-- Cabecera de la Tarjeta -->
-  <div class="kpi-tarjeta__header">
-    <div class="kpi-tarjeta__titulos">
-      <h3 class="kpi-tarjeta__titulo">{{ kpi().titulo }}</h3>
-      @if (kpi().subtitulo) {
-        <span class="kpi-tarjeta__subtitulo">{{ kpi().subtitulo }}</span>
-      }
-    </div>
+  <div class="kpi-flip-card">
+    <!-- CARA FRONTAL: Métricas Principales -->
+    <div class="kpi-cara kpi-cara--frontal">
+      <!-- Cabecera de la Tarjeta Frontal -->
+      <div class="kpi-tarjeta__header">
+        <div class="kpi-tarjeta__titulos">
+          <h3 class="kpi-tarjeta__titulo">{{ kpi().titulo }}</h3>
+        </div>
 
-    <!-- Botón de Fórmula Accesible -->
-    <div class="kpi-tarjeta__info-popover-container">
-      <button 
-        type="button" 
-        class="kpi-tarjeta__btn-info" 
-        (click)="toggleFormula()"
-        (keydown.escape)="cerrarFormula()"
-        [attr.aria-expanded]="mostrarFormula()"
-        [attr.aria-label]="'Ver fórmula y detalles técnicos de ' + kpi().titulo">
-        <app-icono nombre="info" tamano="xs"></app-icono>
-      </button>
+        <!-- Botón de Fórmula Accesible -->
+        <div class="kpi-tarjeta__info-popover-container" (click)="$event.stopPropagation()">
+          <button 
+            type="button" 
+            class="kpi-tarjeta__btn-info" 
+            (click)="toggleFormula($event)"
+            [attr.aria-expanded]="mostrarFormula()"
+            [attr.aria-label]="'Ver fórmula de cálculo para ' + kpi().titulo">
+            <app-icono nombre="info" tamano="xs"></app-icono>
+          </button>
+        </div>
+      </div>
 
-      @if (mostrarFormula()) {
-        <div class="kpi-popover" role="dialog" aria-modal="false">
-          <div class="kpi-popover__header">
-            <strong>Fórmula ITIL v4 ({{ kpi().codigo }})</strong>
-            <button type="button" class="kpi-popover__btn-cerrar" (click)="cerrarFormula()" aria-label="Cerrar detalle">
-              <app-icono nombre="close" tamano="xs"></app-icono>
-            </button>
-          </div>
-          <p class="kpi-popover__formula"><code>{{ kpi().formula }}</code></p>
-          <div class="kpi-popover__meta">
-            <span>Meta estándar: <strong>{{ kpi().comparador }} {{ kpi().meta }}</strong></span>
-            @if (kpi().alcance) {
-              <small class="kpi-popover__alcance">{{ kpi().alcance }}</small>
+      <!-- Valor Central y Meta -->
+      <div class="kpi-tarjeta__cuerpo">
+        <div class="kpi-tarjeta__valor-fila">
+          <span class="kpi-tarjeta__valor">{{ kpi().valor }}</span>
+          @if (kpi().unidad) {
+            <span class="kpi-tarjeta__unidad">{{ kpi().unidad }}</span>
+          }
+
+          @if (kpi().tendenciaTexto) {
+            <span 
+              class="kpi-tarjeta__tendencia"
+              [class.tendencia--positiva]="kpi().tendenciaPositiva"
+              [class.tendencia--negativa]="!kpi().tendenciaPositiva">
+              {{ kpi().tendenciaTexto }}
+            </span>
+          }
+        </div>
+
+        <div class="kpi-tarjeta__meta-fila">
+          <span class="kpi-tarjeta__meta-label">Meta: {{ kpi().comparador }} {{ kpi().meta }}</span>
+          <span 
+            class="kpi-tarjeta__badge-estado"
+            [class.badge--cumple]="kpi().estado === 'CUMPLE'"
+            [class.badge--riesgo]="kpi().estado === 'EN_RIESGO'"
+            [class.badge--incumple]="kpi().estado === 'INCUMPLE'">
+            @if (kpi().estado === 'CUMPLE') {
+              <app-icono nombre="check_circle" tamano="xs"></app-icono>
+              <span>Cumple</span>
+            } @else if (kpi().estado === 'EN_RIESGO') {
+              <app-icono nombre="warning" tamano="xs"></app-icono>
+              <span>En riesgo</span>
+            } @else {
+              <app-icono nombre="cancel" tamano="xs"></app-icono>
+              <span>Incumple</span>
             }
-          </div>
+          </span>
         </div>
-      }
+      </div>
+
+      <div class="kpi-tarjeta__hint-giro" aria-hidden="true">
+        <app-icono nombre="flip_to_back" tamano="xs"></app-icono>
+        <span>Pasa el cursor para ver qué significa</span>
+      </div>
+    </div>
+
+    <!-- CARA TRASERA: Descripción Breve y Significado -->
+    <div class="kpi-cara kpi-cara--trasera">
+      <div class="trasera-header">
+        <span class="trasera-codigo">{{ kpi().codigo }}</span>
+        <span class="trasera-titulo">{{ kpi().titulo }}</span>
+      </div>
+
+      <div class="trasera-cuerpo">
+        <p class="trasera-descripcion">
+          {{ kpi().descripcion ?? 'Indicador clave de calidad y servicio asistencial ITIL v4.' }}
+        </p>
+      </div>
+
+      <div class="trasera-footer">
+        <div class="trasera-meta-badge">
+          <span class="trasera-meta-label">Meta objetivo:</span>
+          <strong>{{ kpi().comparador }} {{ kpi().meta }}</strong>
+        </div>
+
+        <button 
+          type="button" 
+          class="btn-ver-formula-trasera" 
+          (click)="toggleFormula($event)">
+          <app-icono nombre="functions" tamano="xs"></app-icono>
+          <span>Ver fórmula</span>
+        </button>
+      </div>
     </div>
   </div>
 
-  <!-- Valor Central y Meta -->
-  <div class="kpi-tarjeta__cuerpo">
-    <div class="kpi-tarjeta__valor-fila">
-      <span class="kpi-tarjeta__valor">{{ kpi().valor }}</span>
-      @if (kpi().unidad) {
-        <span class="kpi-tarjeta__unidad">{{ kpi().unidad }}</span>
-      }
-
-      @if (kpi().tendenciaTexto) {
-        <span 
-          class="kpi-tarjeta__tendencia"
-          [class.tendencia--positiva]="kpi().tendenciaPositiva"
-          [class.tendencia--negativa]="!kpi().tendenciaPositiva">
-          {{ kpi().tendenciaTexto }}
-        </span>
-      }
-    </div>
-
-    <div class="kpi-tarjeta__meta-fila">
-      <span class="kpi-tarjeta__meta-label">Meta: {{ kpi().comparador }} {{ kpi().meta }}</span>
-      <span 
-        class="kpi-tarjeta__badge-estado"
-        [class.badge--cumple]="kpi().estado === 'CUMPLE'"
-        [class.badge--riesgo]="kpi().estado === 'EN_RIESGO'"
-        [class.badge--incumple]="kpi().estado === 'INCUMPLE'">
-        @if (kpi().estado === 'CUMPLE') {
-          <app-icono nombre="check_circle" tamano="xs"></app-icono>
-          <span>Cumple</span>
-        } @else if (kpi().estado === 'EN_RIESGO') {
-          <app-icono nombre="warning" tamano="xs"></app-icono>
-          <span>En riesgo</span>
-        } @else {
-          <app-icono nombre="cancel" tamano="xs"></app-icono>
-          <span>Incumple</span>
+  <!-- Popover Flotante de Fórmula (Independiente del flip) -->
+  @if (mostrarFormula()) {
+    <div class="kpi-popover" role="dialog" aria-modal="false" (click)="$event.stopPropagation()">
+      <div class="kpi-popover__header">
+        <strong>Fórmula de Cálculo ({{ kpi().codigo }})</strong>
+        <button type="button" class="kpi-popover__btn-cerrar" (click)="cerrarFormula()" aria-label="Cerrar detalle">
+          <app-icono nombre="close" tamano="xs"></app-icono>
+        </button>
+      </div>
+      <p class="kpi-popover__formula"><code>{{ kpi().formula }}</code></p>
+      <div class="kpi-popover__meta">
+        <span>Meta requerida: <strong>{{ kpi().comparador }} {{ kpi().meta }}</strong></span>
+        @if (kpi().alcance) {
+          <small class="kpi-popover__alcance">{{ kpi().alcance }}</small>
         }
-      </span>
-    </div>
-  </div>
-
-  <!-- Desglose asistencial inferior opcional -->
-  @if (kpi().desglose && kpi().desglose!.length > 0) {
-    <div class="kpi-tarjeta__desglose">
-      @for (item of kpi().desglose!; track item.etiqueta) {
-        <div class="desglose-item" [class.desglose-item--destacado]="item.destacado">
-          <span class="desglose-item__valor" [style.color]="item.color">{{ item.valor }}</span>
-          <span class="desglose-item__etiqueta">{{ item.etiqueta }}</span>
-        </div>
-      }
+      </div>
     </div>
   }
 </div>

@@ -21,6 +21,7 @@ export interface KpiIndicador {
   tendenciaPositiva?: boolean;
   formula: string;
   alcance?: string;
+  descripcion?: string;
   desglose?: DesgloseKpi[];
 }
 

@@ -81,6 +81,7 @@ export class PanelControlService {
       tendenciaPositiva: true,
       formula: '(tickets resueltos a tiempo / tickets cerrados) × 100',
       alcance: 'Compromiso institucional de atención asistencial',
+      descripcion: 'Porcentaje de tickets resueltos dentro del tiempo comprometido con las áreas hospitalarias.',
     },
     {
       id: 'kpi-02',
@@ -95,6 +96,7 @@ export class PanelControlService {
       tendenciaPositiva: false,
       formula: 'Total de tickets en estado NUEVO, ASIGNADO y EN_PROCESO',
       alcance: 'Carga viva en guardia 24/7',
+      descripcion: 'Total de solicitudes e incidentes activos pendientes de atención técnica en la guardia.',
     },
     {
       id: 'kpi-03',
@@ -109,6 +111,7 @@ export class PanelControlService {
       tendenciaPositiva: true,
       formula: 'Σ(hora asignación − hora registro) / tickets atendidos',
       alcance: 'Tiempo máximo de tolerancia: 15 min en áreas críticas',
+      descripcion: 'Tiempo promedio que demora el equipo de TI en tomar el ticket tras ser reportado.',
     },
     {
       id: 'kpi-04',
@@ -122,6 +125,7 @@ export class PanelControlService {
       tendenciaTexto: 'Tasa 94.2%',
       tendenciaPositiva: true,
       formula: 'Total tickets en estado RESUELTO durante el día calendario',
+      descripcion: 'Cantidad de casos técnicos solucionados satisfactoriamente en el transcurso del día.',
     },
     {
       id: 'kpi-05',
@@ -135,6 +139,7 @@ export class PanelControlService {
       tendenciaTexto: '+7.4% sobre meta',
       tendenciaPositiva: true,
       formula: '(resueltos por N1 en 1er contacto / total atendidos por N1) × 100',
+      descripcion: 'Proporción de incidentes resueltos inmediatamente por Nivel 1 sin derivar a especialistas.',
     },
     {
       id: 'kpi-06',
@@ -149,6 +154,7 @@ export class PanelControlService {
       tendenciaPositiva: true,
       formula: '((tiempo total − indisponibilidad) / tiempo total) × 100',
       alcance: 'Alcance: servicios críticos 24/7 (HIS, Laboratorio, Farmacia, Triaje)',
+      descripcion: 'Operatividad continua de sistemas asistenciales esenciales: HIS, Triaje y Farmacia.',
     },
     {
       id: 'kpi-07',
@@ -162,6 +168,7 @@ export class PanelControlService {
       tendenciaTexto: '+6.2% vs objetivo',
       tendenciaPositiva: true,
       formula: '(encuestas positivas / encuestas respondidas) × 100',
+      descripcion: 'Calificación favorable otorgada por el personal médico y administrativo sobre la atención.',
     },
   ]);
 
