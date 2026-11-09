@@ -40,8 +40,9 @@ public class SecurityConfig {
 
             .authorizeHttpRequests(auth -> auth
 
-                // Login público
-                .requestMatchers("/api/auth/login").permitAll()
+                // Login público y creación pública de tickets por IP
+                .requestMatchers("/api/auth/login", "/api/tickets").permitAll()
+                .requestMatchers(org.springframework.http.HttpMethod.POST, "/api/tickets").permitAll()
 
                 // Solo usuarios con ROLE_TECNICO
                 .requestMatchers("/api/tecnicos/**")
