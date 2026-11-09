@@ -74,4 +74,11 @@
   height: 220px;
   min-height: 200px;
   margin: auto 0;
+
+  canvas {
+    display: block;
+    width: 100% !important;
+    height: 100% !important;
+  }
 }
+

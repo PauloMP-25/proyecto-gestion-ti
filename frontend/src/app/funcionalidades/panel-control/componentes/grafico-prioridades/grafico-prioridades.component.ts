@@ -1,5 +1,7 @@
-import { Component, ChangeDetectionStrategy } from '@angular/core';
+import { Component, ChangeDetectionStrategy, inject } from '@angular/core';
 import { CommonModule } from '@angular/common';
+import { Router } from '@angular/router';
+import { IconoComponent } from '../../../../compartido/ui/atomos/icono/icono.component';
 
 export interface PrioridadMetrica {
   codigo: string;
@@ -14,12 +16,17 @@ export interface PrioridadMetrica {
 @Component({
   selector: 'app-grafico-prioridades',
   standalone: true,
-  imports: [CommonModule],
+  imports: [CommonModule, IconoComponent],
   templateUrl: './grafico-prioridades.component.html',
   styleUrl: './grafico-prioridades.component.scss',
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class GraficoPrioridadesComponent {
+  private router = inject(Router);
+
+  irAConfiguracionMatriz(): void {
+    this.router.navigate(['/administracion/matriz-prioridad']);
+  }
   readonly prioridades: PrioridadMetrica[] = [
     {
       codigo: 'P1',

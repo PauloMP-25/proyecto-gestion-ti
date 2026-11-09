@@ -151,10 +151,9 @@ export class GraficoPorServicioComponent implements AfterViewInit, OnDestroy {
 
                 return data.labels.map((label, i) => {
                   const val = dataset.data[i] as number;
-                  const pct = Math.round((val / total) * 100);
                   const color = (dataset.backgroundColor as string[])[i];
                   return {
-                    text: `${label} (${val} · ${pct}%)`,
+                    text: `${label} (${val} casos)`,
                     fillStyle: color,
                     strokeStyle: color,
                     lineWidth: 0,

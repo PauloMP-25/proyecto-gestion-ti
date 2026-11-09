@@ -2,9 +2,16 @@
   <div class="card-grafico__header">
     <div class="card-grafico__titulos">
       <h3 class="card-grafico__titulo">Matriz de Prioridad ITIL v4</h3>
-      <p class="card-grafico__subtitulo">Impacto × Urgencia (Tabla TICKET · Hospital Santa María del Socorro)</p>
+      <p class="card-grafico__subtitulo">Clasificación de severidad según impacto clínico y urgencia asistencial</p>
     </div>
-    <span class="badge-total-casos">26 Activos</span>
+    <button 
+      type="button" 
+      class="btn-config-matriz" 
+      (click)="irAConfiguracionMatriz()" 
+      title="Configurar parámetros de la matriz de impacto y urgencia">
+      <app-icono nombre="settings" tamano="xs"></app-icono>
+      <span>Configurar Matriz</span>
+    </button>
   </div>
 
   <div class="card-grafico__cuerpo">

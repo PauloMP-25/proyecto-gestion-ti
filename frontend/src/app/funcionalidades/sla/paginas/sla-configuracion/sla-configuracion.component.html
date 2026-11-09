@@ -1,1 +1,137 @@
-<p>sla-configuracion works!</p>
+<div class="config-matriz-contenedor">
+  <!-- Cabecera Superior -->
+  <header class="config-header">
+    <div class="config-header__izq">
+      <button type="button" class="btn-volver" (click)="volverAlPanel()" title="Volver al Panel de Control">
+        <app-icono nombre="arrow_back" tamano="sm"></app-icono>
+        <span>Volver al Panel de Control</span>
+      </button>
+      <div class="titulos-seccion">
+        <h1 class="titulo-principal">Configuración de Matriz de Prioridad ITIL v4</h1>
+        <p class="subtitulo-principal">
+          Hospital Santa María del Socorro · Reglas de Impacto Asistencial, Urgencia y Parámetros de Escalamiento SLA
+        </p>
+      </div>
+    </div>
+
+    <div class="config-header__der">
+      <app-boton variante="primario" icono="save" (click)="guardarConfiguracion()">
+        Guardar Matriz
+      </app-boton>
+    </div>
+  </header>
+
+  <!-- Banner de éxito al guardar -->
+  @if (guardadoExitoso()) {
+    <div class="alerta-exito" role="alert">
+      <app-icono nombre="check_circle" tamano="sm"></app-icono>
+      <span>Parámetros de la matriz de prioridad y tiempos SLA actualizados y sincronizados con éxito.</span>
+    </div>
+  }
+
+  <!-- Grid de Configuración -->
+  <div class="grid-configuracion">
+    <!-- Cuadrante 1: Matriz Visual 3x3 Impacto vs Urgencia -->
+    <section class="tarjeta-config" aria-label="Matriz de Clasificación">
+      <div class="tarjeta-config__header">
+        <h2 class="tarjeta-config__titulo">Matriz de Decisión (Impacto × Urgencia)</h2>
+        <span class="badge-itil">ITIL v4 Service Desk</span>
+      </div>
+      <p class="tarjeta-config__desc">
+        La prioridad se deriva automáticamente al cruzar el impacto asistencial hospitalario con la urgencia técnica reportada.
+      </p>
+
+      <div class="tabla-matriz-wrapper">
+        <table class="tabla-matriz">
+          <thead>
+            <tr>
+              <th class="th-vacio"></th>
+              <th colspan="3" class="th-urgencia">URGENCIA TÉCNICA</th>
+            </tr>
+            <tr>
+              <th class="th-impacto">IMPACTO ASISTENCIAL</th>
+              <th>Alta (Afecta Servicio)</th>
+              <th>Media (Degradación)</th>
+              <th>Baja (Sin Afectación)</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td class="td-impacto-label"><strong>Alto</strong> (Vital / Múltiples Áreas)</td>
+              <td><span class="tag-prioridad tag--p1-critica">P1 · Crítica</span></td>
+              <td><span class="tag-prioridad tag--p2-alta">P2 · Alta</span></td>
+              <td><span class="tag-prioridad tag--p3-media">P3 · Media</span></td>
+            </tr>
+            <tr>
+              <td class="td-impacto-label"><strong>Medio</strong> (Área Asistencial)</td>
+              <td><span class="tag-prioridad tag--p2-alta">P2 · Alta</span></td>
+              <td><span class="tag-prioridad tag--p3-media">P3 · Media</span></td>
+              <td><span class="tag-prioridad tag--p4-baja">P4 · Baja</span></td>
+            </tr>
+            <tr>
+              <td class="td-impacto-label"><strong>Bajo</strong> (Estación Individual)</td>
+              <td><span class="tag-prioridad tag--p3-media">P3 · Media</span></td>
+              <td><span class="tag-prioridad tag--p4-baja">P4 · Baja</span></td>
+              <td><span class="tag-prioridad tag--p4-baja">P4 · Baja</span></td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </section>
+
+    <!-- Cuadrante 2: Tiempos Máximos Pactados de SLA -->
+    <section class="tarjeta-config" aria-label="Tiempos de Nivel de Servicio">
+      <div class="tarjeta-config__header">
+        <h2 class="tarjeta-config__titulo">Umbrales de SLA por Prioridad</h2>
+        <span class="badge-itil">SLA Hospitalario</span>
+      </div>
+      <p class="tarjeta-config__desc">
+        Tiempos máximos de primera respuesta y resolución técnica definitiva pactados con las jefaturas médicas.
+      </p>
+
+      <div class="lista-reglas-sla">
+        @for (regla of reglasSLA; track regla.prioridad) {
+          <div class="tarjeta-regla" [class]="'tarjeta-regla--' + regla.colorClase">
+            <div class="tarjeta-regla__header">
+              <span class="tag-prioridad" [class]="'tag--' + regla.colorClase">
+                {{ regla.prioridad }}
+              </span>
+              <div class="tarjeta-regla__titulos">
+                <span class="regla-nombre">{{ regla.nombre }}</span>
+                <span class="regla-horario">
+                  {{ regla.aplicaHorarioLaboral ? 'Horario Laboral (07:00 - 19:00)' : 'Disponibilidad Continua 24/7' }}
+                </span>
+              </div>
+            </div>
+
+            <div class="tarjeta-regla__inputs">
+              <div class="campo-tiempo">
+                <label>Tiempo de Respuesta:</label>
+                <div class="input-con-unidad">
+                  <input type="number" [(ngModel)]="regla.tiempoRespuestaMin" min="5" step="5" />
+                  <span>min</span>
+                </div>
+              </div>
+
+              <div class="campo-tiempo">
+                <label>Tiempo de Resolución:</label>
+                <div class="input-con-unidad">
+                  <input type="number" [(ngModel)]="regla.tiempoResolucionMin" min="15" step="15" />
+                  <span>min</span>
+                </div>
+              </div>
+
+              <div class="campo-tiempo">
+                <label>Alerta Jefatura:</label>
+                <div class="input-con-unidad">
+                  <input type="number" [(ngModel)]="regla.notificarJefaturaMin" min="10" step="5" />
+                  <span>min</span>
+                </div>
+              </div>
+            </div>
+          </div>
+        }
+      </div>
+    </section>
+  </div>
+</div>
