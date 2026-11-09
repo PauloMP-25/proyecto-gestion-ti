@@ -11,13 +11,13 @@ import { Router } from '@angular/router';
 })
 export class LoginComponent {
   private router = inject(Router);
-  public activeDesign: number = 1;
+  public mostrarPassword = false;
 
-  login() {
+  login(): void {
     this.router.navigate(['/panel-control']);
   }
 
-  setDesign(designNumber: number) {
-    this.activeDesign = designNumber;
+  toggleMostrarPassword(): void {
+    this.mostrarPassword = !this.mostrarPassword;
   }
 }
