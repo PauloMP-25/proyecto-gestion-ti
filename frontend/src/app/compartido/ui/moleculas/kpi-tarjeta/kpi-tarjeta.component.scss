@@ -66,15 +66,12 @@
 /* ESTILOS DE LA CARA FRONTAL */
 .kpi-tarjeta {
   &__header {
+    position: relative;
+    width: 100%;
     display: flex;
-    justify-content: space-between;
-    align-items: flex-start;
-    gap: var(--espacio-2, 8px);
-  }
-
-  &__titulos {
-    display: flex;
-    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    min-height: 28px;
   }
 
   &__titulo {
@@ -84,10 +81,17 @@
     letter-spacing: 0.04em;
     color: var(--texto-secundario, #64748b);
     margin: 0;
+    text-align: center;
+    width: 100%;
+    padding: 0 24px;
+    box-sizing: border-box;
   }
 
   &__info-popover-container {
-    position: relative;
+    position: absolute;
+    right: 0;
+    top: 50%;
+    transform: translateY(-50%);
     z-index: 10;
   }
 
@@ -113,14 +117,22 @@
   &__cuerpo {
     display: flex;
     flex-direction: column;
-    gap: 4px;
+    gap: 6px;
     margin: auto 0;
+    width: 100%;
   }
 
   &__valor-fila {
     display: flex;
+    justify-content: space-between;
+    align-items: center;
+    width: 100%;
+  }
+
+  .valor-agrupado {
+    display: flex;
     align-items: baseline;
-    gap: 6px;
+    gap: 4px;
   }
 
   &__valor {
@@ -137,63 +149,65 @@
     color: var(--texto-secundario, #64748b);
   }
 
-  &__tendencia {
-    font-size: 0.74rem;
-    font-weight: 600;
-    padding: 2px 6px;
-    border-radius: var(--radio-full, 9999px);
-    margin-left: auto;
-
-    &.tendencia--positiva {
-      background-color: var(--sla-ok-bg, #e8f5e9);
-      color: var(--sla-ok-text, #113e14);
-    }
-
-    &.tendencia--negativa {
-      background-color: var(--sla-venc-bg, #fee2e2);
-      color: var(--sla-venc-text, #7f1d1d);
-    }
-  }
-
   &__meta-fila {
     display: flex;
-    justify-content: space-between;
+    justify-content: center;
     align-items: center;
-    font-size: 0.76rem;
+    font-size: 0.78rem;
+    text-align: center;
   }
 
   &__meta-label {
     color: var(--texto-secundario, #64748b);
+
+    strong {
+      color: var(--texto-principal, #0f172a);
+      font-weight: 700;
+    }
   }
 
   &__badge-estado {
     display: inline-flex;
     align-items: center;
-    gap: 3px;
-    font-size: 0.72rem;
+    gap: 4px;
+    padding: 4px 10px;
+    border-radius: var(--radio-full, 9999px);
+    font-size: 0.75rem;
     font-weight: 700;
+    letter-spacing: 0.03em;
+    text-transform: uppercase;
+    border: 1px solid transparent;
+    line-height: 1;
 
     &.badge--cumple {
-      color: var(--sla-ok-border, #1b5e20);
+      background-color: var(--sla-ok-bg, #e8f5e9);
+      color: var(--sla-ok-text, #113e14);
+      border-color: var(--sla-ok-border, #1b5e20);
     }
 
     &.badge--riesgo {
-      color: var(--sla-alerta-border, #d97706);
+      background-color: var(--sla-alerta-bg, #fef3c7);
+      color: var(--sla-alerta-text, #78350f);
+      border-color: var(--sla-alerta-border, #d97706);
     }
 
     &.badge--incumple {
-      color: var(--sla-venc-border, #dc2626);
+      background-color: var(--sla-venc-bg, #fee2e2);
+      color: var(--sla-venc-text, #7f1d1d);
+      border-color: var(--sla-venc-border, #dc2626);
     }
   }
 
   &__hint-giro {
     display: flex;
     align-items: center;
+    justify-content: center;
     gap: 4px;
     font-size: 0.68rem;
     color: var(--texto-secundario, #94a3b8);
     opacity: 0.8;
     margin-top: 4px;
+    text-align: center;
   }
 }
 
@@ -201,6 +215,7 @@
 .trasera-header {
   display: flex;
   align-items: center;
+  justify-content: center;
   gap: 6px;
   border-bottom: 1px solid var(--borde-tarjeta, #e2e8f0);
   padding-bottom: 6px;

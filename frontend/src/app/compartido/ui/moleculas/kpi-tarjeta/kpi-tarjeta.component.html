@@ -10,11 +10,9 @@
     <div class="kpi-cara kpi-cara--frontal">
       <!-- Cabecera de la Tarjeta Frontal -->
       <div class="kpi-tarjeta__header">
-        <div class="kpi-tarjeta__titulos">
-          <h3 class="kpi-tarjeta__titulo">{{ kpi().titulo }}</h3>
-        </div>
+        <h3 class="kpi-tarjeta__titulo">{{ kpi().titulo }}</h3>
 
-        <!-- Botón de Fórmula Accesible -->
+        <!-- Botón de Fórmula Accesible en esquina superior derecha -->
         <div class="kpi-tarjeta__info-popover-container" (click)="$event.stopPropagation()">
           <button 
             type="button" 
@@ -30,23 +28,14 @@
       <!-- Valor Central y Meta -->
       <div class="kpi-tarjeta__cuerpo">
         <div class="kpi-tarjeta__valor-fila">
-          <span class="kpi-tarjeta__valor">{{ kpi().valor }}</span>
-          @if (kpi().unidad) {
-            <span class="kpi-tarjeta__unidad">{{ kpi().unidad }}</span>
-          }
+          <div class="valor-agrupado">
+            <span class="kpi-tarjeta__valor">{{ kpi().valor }}</span>
+            @if (kpi().unidad) {
+              <span class="kpi-tarjeta__unidad">{{ kpi().unidad }}</span>
+            }
+          </div>
 
-          @if (kpi().tendenciaTexto) {
-            <span 
-              class="kpi-tarjeta__tendencia"
-              [class.tendencia--positiva]="kpi().tendenciaPositiva"
-              [class.tendencia--negativa]="!kpi().tendenciaPositiva">
-              {{ kpi().tendenciaTexto }}
-            </span>
-          }
-        </div>
-
-        <div class="kpi-tarjeta__meta-fila">
-          <span class="kpi-tarjeta__meta-label">Meta: {{ kpi().comparador }} {{ kpi().meta }}</span>
+          <!-- Badge de Estado (CUMPLE, EN RIESGO, INCUMPLE) al lado del valor -->
           <span 
             class="kpi-tarjeta__badge-estado"
             [class.badge--cumple]="kpi().estado === 'CUMPLE'"
@@ -63,6 +52,10 @@
               <span>Incumple</span>
             }
           </span>
+        </div>
+
+        <div class="kpi-tarjeta__meta-fila">
+          <span class="kpi-tarjeta__meta-label">Meta oficial: <strong>{{ kpi().comparador }} {{ kpi().meta }}</strong></span>
         </div>
       </div>
 
