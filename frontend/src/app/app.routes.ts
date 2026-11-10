@@ -24,6 +24,15 @@ export const routes: Routes = [
         path: 'sla/configuracion',
         loadComponent: () => import('./funcionalidades/sla/paginas/sla-configuracion/sla-configuracion.component').then(m => m.SlaConfiguracionComponent),
       },
+      {
+        path: 'solicitudes',
+        loadChildren: () => import('./funcionalidades/solicitudes/solicitudes.routes').then(m => m.SOLICITUDES_ROUTES),
+      },
+      {
+        path: 'incidentes/nuevo',
+        redirectTo: 'solicitudes/nuevo',
+        pathMatch: 'full',
+      },
       // Rutas protegidas dentro del Shell:
       // solicitudes, incidentes, cmdb, administracion, etc.
     ]

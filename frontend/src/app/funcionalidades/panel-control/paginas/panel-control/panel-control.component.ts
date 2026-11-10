@@ -1,6 +1,6 @@
 import { Component, ChangeDetectionStrategy, inject, signal } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { RouterModule } from '@angular/router';
+import { Router, RouterModule } from '@angular/router';
 import { AuthService } from '../../../../nucleo/auth/auth.service';
 import { RolUsuario } from '../../../../nucleo/modelos/rol.enum';
 import { PanelControlService } from '../../servicios/panel-control.service';
@@ -42,6 +42,11 @@ export type TipoPestanaPanel = 'metricas' | 'graficos' | 'cola';
 export class PanelControlComponent {
   private authService = inject(AuthService);
   private panelService = inject(PanelControlService);
+  private router = inject(Router);
+
+  onNuevoIncidente(): void {
+    this.router.navigate(['/solicitudes/nuevo']);
+  }
 
   readonly usuarioActual = this.authService.usuarioActual;
   readonly rolActual = this.authService.rolActual;

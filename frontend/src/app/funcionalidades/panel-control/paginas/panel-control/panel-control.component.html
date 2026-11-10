@@ -16,18 +16,18 @@
 
         <button 
           type="button" 
-          role="tab"
+          role="tab" 
           class="tab-btn" 
           [class.tab-btn--activo]="pestanaActiva() === 'graficos'"
           (click)="seleccionarPestana('graficos')"
           [attr.aria-selected]="pestanaActiva() === 'graficos'">
           <span class="tab-btn__numero">2</span>
-          <span class="tab-btn__texto">Gráficos de Gestión ITIL</span>
+          <span class="tab-btn__texto">Gráficos de Atención</span>
         </button>
 
         <button 
           type="button" 
-          role="tab"
+          role="tab" 
           class="tab-btn" 
           [class.tab-btn--activo]="pestanaActiva() === 'cola'"
           (click)="seleccionarPestana('cola')"
@@ -53,7 +53,8 @@
         <app-boton 
           variante="primario" 
           icono="add"
-          ariaLabel="Registrar nuevo incidente">
+          ariaLabel="Registrar nuevo incidente"
+          (click)="onNuevoIncidente()">
           + Nuevo Incidente
         </app-boton>
       </div>
@@ -65,7 +66,7 @@
   <!-- PESTAÑA 1: Métricas y Cronómetro de Atención en Vivo -->
   @if (pestanaActiva() === 'metricas') {
     <div class="pestana-contenido" role="tabpanel" aria-label="Métricas y Cronómetro SLA">
-      <!-- 4 Métricas Esenciales ITIL v4 -->
+      <!-- 4 Métricas Esenciales -->
       <section class="seccion-kpis" aria-label="Indicadores Operativos Clave">
         <app-kpi-panel [kpis]="kpis()" [rol]="rolActual()"></app-kpi-panel>
       </section>
@@ -83,9 +84,9 @@
     </div>
   }
 
-  <!-- PESTAÑA 2: Gráficos de Gestión ITIL (4 Cuadrantes según BD ITIL v4) -->
+  <!-- PESTAÑA 2: Gráficos de Atención (4 Cuadrantes) -->
   @if (pestanaActiva() === 'graficos') {
-    <div class="pestana-contenido" role="tabpanel" aria-label="Gráficos y Analítica ITIL">
+    <div class="pestana-contenido" role="tabpanel" aria-label="Gráficos y Estadísticas de Atención">
       <div class="grid-cuatro-graficos">
         <!-- 1. Tendencia de Incidentes por Servicio Clínico (Gráfico Circular Donut) -->
         <div class="cuadrante-grafico">
@@ -97,7 +98,7 @@
           <app-distribucion-tipo></app-distribucion-tipo>
         </div>
 
-        <!-- 3. Matriz de Prioridad ITIL v4 (Impacto × Urgencia) -->
+        <!-- 3. Matriz de Prioridad Hospitalaria (Impacto × Urgencia) -->
         <div class="cuadrante-grafico">
           <app-grafico-prioridades></app-grafico-prioridades>
         </div>
