@@ -1,3 +1,4 @@
+
 package com.hospital.servicedesk.entities;
 
 import jakarta.persistence.*;
@@ -67,8 +68,9 @@ public class Ticket {
     @Column(name = "ip_origen", length = 15)
     private String ipOrigen;
 
-    @Column(name = "fecha_creacion", nullable = false, insertable = false, updatable = false)
-    private LocalDateTime fechaCreacion;
+    @Column(name = "fecha_creacion", nullable = false)
+    @Builder.Default
+    private LocalDateTime fechaCreacion = LocalDateTime.now();
 
     @Column(name = "fecha_limite_resolucion")
     private LocalDateTime fechaLimiteResolucion;
@@ -78,3 +80,4 @@ public class Ticket {
     @Builder.Default
     private EstadoSLA estadoSla = EstadoSLA.DENTRO_TIEMPO;
 }
+

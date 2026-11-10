@@ -1,3 +1,4 @@
+
 package com.hospital.servicedesk.services.impl;
 
 import com.hospital.servicedesk.dtos.TicketDTOs.*;
@@ -26,6 +27,7 @@ public class TicketServiceImpl implements TicketService {
     private final HistorialAsignacionIpRepository ipRepo;
     private final HistorialTicketRepository auditRepo;
     private final UsuarioRepository userRepo;
+    private final ElementoConfiguracionRepository ciRepo;
 
     @Override
     @Transactional
@@ -37,7 +39,7 @@ public class TicketServiceImpl implements TicketService {
             if (assignment.isPresent()) { ci = assignment.get().getElementoConfiguracion(); if (ci != null) area = ci.getArea(); }
         }
         if (area == null) {
-            area = areaRepo.findAll().stream().findFirst().orElseThrow(() -> new ResponseStatusException(HttpStatus.BAD_REQUEST, "No hay áreas configuradas en el sistema"));
+            area = areaRepo.findAll().stream().findFirst().orElseThrow(() -> new ResponseStatusException(HttpStatus.BAD_REQUEST, "No hay áreas configuradas"));
         }
 
         Prioridad pri = calcPri(req.getImpacto(), req.getUrgencia());
@@ -62,7 +64,7 @@ public class TicketServiceImpl implements TicketService {
         HistorialTicket audit = HistorialTicket.builder()
                 .ticket(ticket)
                 .accion("CREACION")
-                .detalle("Ticket creado exitosamente desde IP: " + clientIp)
+                .detalle("Ticket creado desde IP: " + clientIp)
                 .fechaAccion(LocalDateTime.now())
                 .build();
         auditRepo.save(audit);
@@ -76,9 +78,20 @@ public class TicketServiceImpl implements TicketService {
     }
 
     @Override
+    public List<TicketResponse> getMisTickets(String userEmail) {
+        return tRepo.findAll().stream().map(this::map).collect(Collectors.toList());
+    }
+
+    @Override
     public TicketResponse getTicketById(Integer id) {
         Ticket t = tRepo.findById(id).orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Ticket no encontrado"));
         return map(t);
+    }
+
+    @Override
+    public List<Object> getHistorialTicket(Integer id) {
+        Ticket t = tRepo.findById(id).orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Ticket no encontrado"));
+        return auditRepo.findByTicketIdTicket(id).stream().map(h -> (Object) h).collect(Collectors.toList());
     }
 
     @Override
@@ -86,7 +99,6 @@ public class TicketServiceImpl implements TicketService {
     public TicketResponse assignTicket(Integer id, AssignRequest req, String userEmail) {
         Ticket t = tRepo.findById(id).orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Ticket no encontrado"));
         Usuario tech = userRepo.findById(req.getTecnicoId()).orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Técnico no encontrado"));
-
         t.setTecnicoAsignado(tech);
         t.setEstado(EstadoTicket.EN_PROGRESO);
         t = tRepo.save(t);
@@ -99,6 +111,87 @@ public class TicketServiceImpl implements TicketService {
                 .build();
         auditRepo.save(audit);
 
+        return map(t);
+    }
+
+    @Override
+    @Transactional
+    public TicketResponse tomarTicket(Integer id, String userEmail) {
+        Ticket t = tRepo.findById(id).orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Ticket no encontrado"));
+        if (userEmail != null) {
+            userRepo.findByCorreo(userEmail).ifPresent(t::setTecnicoAsignado);
+        }
+        t.setEstado(EstadoTicket.EN_PROGRESO);
+        t = tRepo.save(t);
+        return map(t);
+    }
+
+    @Override
+    @Transactional
+    public TicketResponse iniciarTicket(Integer id) {
+        Ticket t = tRepo.findById(id).orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Ticket no encontrado"));
+        t.setEstado(EstadoTicket.EN_PROGRESO);
+        t = tRepo.save(t);
+        return map(t);
+    }
+
+    @Override
+    @Transactional
+    public TicketResponse escalarTicket(Integer id, Map<String, Object> req) {
+        Ticket t = tRepo.findById(id).orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Ticket no encontrado"));
+        t.setEstado(EstadoTicket.ESCALADO);
+        t = tRepo.save(t);
+        return map(t);
+    }
+
+    @Override
+    @Transactional
+    public TicketResponse resolverTicket(Integer id, Map<String, Object> req) {
+        Ticket t = tRepo.findById(id).orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Ticket no encontrado"));
+        t.setEstado(EstadoTicket.RESUELTO);
+        t = tRepo.save(t);
+        return map(t);
+    }
+
+    @Override
+    @Transactional
+    public TicketResponse cerrarTicket(Integer id) {
+        Ticket t = tRepo.findById(id).orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Ticket no encontrado"));
+        t.setEstado(EstadoTicket.CERRADO);
+        t = tRepo.save(t);
+        return map(t);
+    }
+
+    @Override
+    @Transactional
+    public TicketResponse reabrirTicket(Integer id, Map<String, Object> req) {
+        Ticket t = tRepo.findById(id).orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Ticket no encontrado"));
+        t.setEstado(EstadoTicket.ABIERTO);
+        t = tRepo.save(t);
+        return map(t);
+    }
+
+    @Override
+    @Transactional
+    public TicketResponse registrarConformidad(Integer id, Map<String, Object> req) {
+        return getTicketById(id);
+    }
+
+    @Override
+    @Transactional
+    public TicketResponse registrarEncuesta(Integer id, Map<String, Object> req) {
+        return getTicketById(id);
+    }
+
+    @Override
+    @Transactional
+    public TicketResponse vincularEquipo(Integer id, Map<String, Object> req) {
+        Ticket t = tRepo.findById(id).orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Ticket no encontrado"));
+        if (req.get("idCi") != null) {
+            Integer idCi = (Integer) req.get("idCi");
+            ciRepo.findById(idCi).ifPresent(t::setElementoConfiguracion);
+            t = tRepo.save(t);
+        }
         return map(t);
     }
 
@@ -154,3 +247,4 @@ public class TicketServiceImpl implements TicketService {
                 .build();
     }
 }
+

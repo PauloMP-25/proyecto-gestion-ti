@@ -1,3 +1,4 @@
+
 package com.hospital.servicedesk.controllers;
 
 import com.hospital.servicedesk.services.IndicadoresService;
@@ -18,4 +19,10 @@ public class IndicadoresController {
     public ResponseEntity<Map<String, Object>> getKpis() {
         return ResponseEntity.ok(indicadoresService.getKpis());
     }
+
+    @GetMapping("/tickets-por-area")
+    public ResponseEntity<Map<String, Object>> getTicketsPorArea() {
+        return ResponseEntity.ok(Map.of("Emergencia", 10, "UCI", 5, "Pediatría", 8));
+    }
 }
+

@@ -1,3 +1,4 @@
+
 package com.hospital.servicedesk.controllers;
 
 import com.hospital.servicedesk.entities.PrestamoEquipo;
@@ -22,6 +23,11 @@ public class PrestamoEquipoController {
         return ResponseEntity.ok(prestamoService.getAllPrestamos());
     }
 
+    @GetMapping("/vencidos")
+    public ResponseEntity<List<PrestamoEquipo>> getPrestamosVencidos() {
+        return ResponseEntity.ok(List.of());
+    }
+
     @GetMapping("/{id}")
     public ResponseEntity<PrestamoEquipo> getPrestamoById(@PathVariable Integer id) {
         return ResponseEntity.ok(prestamoService.getPrestamoById(id));
@@ -43,3 +49,4 @@ public class PrestamoEquipoController {
         return ResponseEntity.ok(prestamoService.devolverPrestamo(id));
     }
 }
+
