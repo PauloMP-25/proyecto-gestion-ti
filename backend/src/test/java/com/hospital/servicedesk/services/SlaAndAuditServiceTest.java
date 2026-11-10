@@ -1,3 +1,4 @@
+
 package com.hospital.servicedesk.services;
 
 import com.hospital.servicedesk.dtos.TicketDTOs.*;
@@ -90,7 +91,8 @@ class SlaAndAuditServiceTest {
         ));
         when(ticketRepository.save(any(Ticket.class))).thenReturn(existingTicket);
 
-        TicketResponse response = ticketService.assignTicket(5, 2, "admin@hospital.com");
+        AssignRequest assignReq = AssignRequest.builder().tecnicoId(2).build();
+        TicketResponse response = ticketService.assignTicket(5, assignReq, "admin@hospital.com");
 
         assertNotNull(response);
         assertEquals("EN_PROGRESO", response.getEstado());
@@ -112,3 +114,4 @@ class SlaAndAuditServiceTest {
         }
     }
 }
+

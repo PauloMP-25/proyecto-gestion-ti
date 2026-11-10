@@ -1,3 +1,4 @@
+
 package com.hospital.servicedesk.entities;
 
 import jakarta.persistence.*;
@@ -21,4 +22,8 @@ public class Area {
 
     @Column(name = "nombre", nullable = false, length = 80)
     private String nombre;
+
+    @Column(name = "anexo", length = 20)
+    private String anexo;
 }
+
