@@ -11,6 +11,7 @@ import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
+import java.util.Map;
 
 @RestController
 @RequestMapping("/api/tickets")
@@ -37,49 +38,26 @@ public class TicketController {
         return ResponseEntity.ok(ticketService.getTicketById(id));
     }
 
+    @GetMapping("/contexto-cliente")
+    public ResponseEntity<Map<String, Object>> getContextoCliente(HttpServletRequest httpRequest) {
+        String clientIp = extractClientIp(httpRequest);
+        return ResponseEntity.ok(ticketService.getContextoCliente(clientIp));
+    }
+
     @PutMapping("/{id}/asignar")
     public ResponseEntity<TicketResponse> assignTicket(
             @PathVariable Integer id,
             @Valid @RequestBody AssignRequest request,
             Authentication authentication) {
-        String email = authentication != null ? authentication.getName() : null;
-        return ResponseEntity.ok(ticketService.assignTicket(id, request.getTecnicoId(), email));
-    }
-
-    @PutMapping("/{id}/resolver")
-    public ResponseEntity<TicketResponse> resolveTicket(
-            @PathVariable Integer id,
-            @Valid @RequestBody ResolveRequest request,
-            Authentication authentication) {
-        String email = authentication != null ? authentication.getName() : null;
-        return ResponseEntity.ok(ticketService.resolveTicket(id, request.getSolucion(), email));
-    }
-
-    @PutMapping("/{id}/cerrar")
-    public ResponseEntity<TicketResponse> closeTicket(
-            @PathVariable Integer id,
-            Authentication authentication) {
-        String email = authentication != null ? authentication.getName() : null;
-        return ResponseEntity.ok(ticketService.closeTicket(id, email));
-    }
-
-    @GetMapping("/{id}/auditoria")
-    public ResponseEntity<List<HistorialTicketResponse>> getTicketAudit(@PathVariable Integer id) {
-        return ResponseEntity.ok(ticketService.getTicketAudit(id));
+        String userEmail = authentication != null ? authentication.getName() : null;
+        return ResponseEntity.ok(ticketService.assignTicket(id, request, userEmail));
     }
 
     private String extractClientIp(HttpServletRequest request) {
         String xfHeader = request.getHeader("X-Forwarded-For");
-        if (xfHeader == null || xfHeader.isEmpty() || "unknown".equalsIgnoreCase(xfHeader)) {
-            xfHeader = request.getHeader("X-Real-IP");
+        if (xfHeader == null || xfHeader.isEmpty()) {
+            return request.getRemoteAddr();
         }
-        if (xfHeader == null || xfHeader.isEmpty() || "unknown".equalsIgnoreCase(xfHeader)) {
-            xfHeader = request.getRemoteAddr();
-        }
-        if (xfHeader != null && xfHeader.contains(",")) {
-            xfHeader = xfHeader.split(",")[0].trim();
-        }
-        return xfHeader;
+        return xfHeader.split(",")[0];
     }
 }
-

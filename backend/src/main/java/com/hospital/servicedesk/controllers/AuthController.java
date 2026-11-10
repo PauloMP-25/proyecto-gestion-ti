@@ -28,17 +28,17 @@ public class AuthController {
     private final JwtService jwtService;
 
     @PostMapping("/login")
-    public ResponseEntity<?> loginTecnico(@Valid @RequestBody LoginRequest request) {
+    public ResponseEntity<?> login(@Valid @RequestBody LoginRequest request) {
         try {
             Usuario usuario = usuarioRepository.findByCorreo(request.getCorreo())
                     .orElseThrow(() -> new ResponseStatusException(
                             HttpStatus.UNAUTHORIZED,
                             "Credenciales inválidas"));
 
-            if (!"TECNICO".equalsIgnoreCase(usuario.getRol()) || usuario.getNivelSoporte() == null) {
+            if (usuario.getActivo() != null && !usuario.getActivo()) {
                 throw new ResponseStatusException(
                         HttpStatus.FORBIDDEN,
-                        "Acceso denegado: El inicio de sesión está habilitado únicamente para personal técnico");
+                        "Usuario inactivo en el sistema");
             }
 
             Authentication authentication = authenticationManager.authenticate(
@@ -60,10 +60,32 @@ public class AuthController {
         } catch (BadCredentialsException e) {
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED)
                     .body(Map.of("message", "Correo o contraseña incorrectos"));
+        } catch (ResponseStatusException e) {
+            return ResponseEntity.status(e.getStatusCode())
+                    .body(Map.of("message", e.getReason()));
         } catch (Exception e) {
-            e.printStackTrace(); // Imprime la excepción en la consola de tu IDE
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
-                    .body(Map.of("message", "Error interno: " + e.getMessage()));
+                    .body(Map.of("message", "Error interno en el servidor de autenticación"));
         }
+    }
+
+    @GetMapping("/me")
+    public ResponseEntity<?> getCurrentUser(Authentication authentication) {
+        if (authentication == null || !authentication.isAuthenticated()) {
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(Map.of("message", "No autenticado"));
+        }
+        String correo = authentication.getName();
+        Usuario usuario = usuarioRepository.findByCorreo(correo)
+                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Usuario no encontrado"));
+        
+        return ResponseEntity.ok(Map.of(
+                "idUsuario", usuario.getIdUsuario(),
+                "nombres", usuario.getNombres(),
+                "apellidos", usuario.getApellidos(),
+                "correo", usuario.getCorreo(),
+                "rol", usuario.getRol(),
+                "nivelSoporte", usuario.getNivelSoporte() != null ? usuario.getNivelSoporte() : "",
+                "activo", usuario.getActivo()
+        ));
     }
 }
