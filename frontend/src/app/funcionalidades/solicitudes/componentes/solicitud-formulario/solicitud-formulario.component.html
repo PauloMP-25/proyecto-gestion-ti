@@ -1,1 +1,239 @@
-<p>solicitud-formulario works!</p>
+<form [formGroup]="formulario" (ngSubmit)="enviar()" class="formulario-ticket" novalidate>
+  
+  <!-- 1. Tipo de Ticket: Incidente vs Solicitud -->
+  <section class="seccion-form" aria-label="Tipo de Registro">
+    <div class="selector-tipo-grid">
+      <button 
+        type="button" 
+        class="card-tipo" 
+        [class.card-tipo--activo]="tipoSeleccionado() === 'incidente'"
+        (click)="seleccionarTipo('incidente')">
+        <div class="card-tipo__icono card-tipo__icono--incidente">
+          <app-icono nombre="report_problem" tamano="md"></app-icono>
+        </div>
+        <div class="card-tipo__textos">
+          <strong class="card-tipo__titulo">Incidente / Falla Asistencial</strong>
+          <span class="card-tipo__desc">Interrupción de un servicio médico, error de sistema o equipo averiado.</span>
+        </div>
+      </button>
+
+      <button 
+        type="button" 
+        class="card-tipo" 
+        [class.card-tipo--activo]="tipoSeleccionado() === 'solicitud'"
+        (click)="seleccionarTipo('solicitud')">
+        <div class="card-tipo__icono card-tipo__icono--solicitud">
+          <app-icono nombre="assignment" tamano="md"></app-icono>
+        </div>
+        <div class="card-tipo__textos">
+          <strong class="card-tipo__titulo">Requerimiento de Servicio</strong>
+          <span class="card-tipo__desc">Nueva instalación de software, accesos a sistemas, cables o insumos.</span>
+        </div>
+      </button>
+    </div>
+  </section>
+
+  <!-- 2. Contexto de Estación Detectada (Molécula contexto-equipo) -->
+  <section class="seccion-form" aria-label="Contexto de Ubicación">
+    <app-contexto-equipo 
+      [contexto]="contextoEquipo()" 
+      (alModificarContexto)="onContextoModificado($event)">
+    </app-contexto-equipo>
+  </section>
+
+  <!-- 3. Selección de Categoría Hospitalaria -->
+  <section class="seccion-form" aria-label="Categoría del Problema">
+    <label class="label-seccion">Categoría del Servicio Afectado:</label>
+    <div class="grid-categorias">
+      @for (cat of categorias; track cat.id) {
+        <button 
+          type="button" 
+          class="card-categoria" 
+          [class.card-categoria--activa]="categoriaSeleccionadaId() === cat.id"
+          (click)="seleccionarCategoria(cat.id)">
+          <div class="card-categoria__icono">
+            <app-icono [nombre]="cat.icono" tamano="sm"></app-icono>
+          </div>
+          <div class="card-categoria__textos">
+            <strong class="card-categoria__nombre">{{ cat.nombre }}</strong>
+            <p class="card-categoria__desc">{{ cat.descripcion }}</p>
+          </div>
+        </button>
+      }
+    </div>
+  </section>
+
+  <!-- 4. Título y Descripción -->
+  <section class="seccion-form" aria-label="Detalles del Problema">
+    <div class="campo-grupo">
+      <div class="campo-header">
+        <label for="campo-titulo" class="label-campo">
+          Asunto o Título Corto: <span class="asterisco">*</span>
+        </label>
+        <span class="contador-caracteres">
+          {{ formulario.get('titulo')?.value?.length || 0 }}/150
+        </span>
+      </div>
+      <input 
+        id="campo-titulo"
+        type="text"
+        formControlName="titulo"
+        class="input-texto"
+        [class.input-texto--error]="formulario.get('titulo')?.touched && formulario.get('titulo')?.invalid"
+        placeholder="Ej. Impresora SIS de Admisión trabada con ticket de paciente" />
+      @if (formulario.get('titulo')?.touched && formulario.get('titulo')?.hasError('required')) {
+        <span class="mensaje-error">El asunto del ticket es obligatorio.</span>
+      }
+      @if (formulario.get('titulo')?.touched && formulario.get('titulo')?.hasError('minlength')) {
+        <span class="mensaje-error">El asunto debe tener al menos 10 caracteres claros.</span>
+      }
+    </div>
+
+    <div class="campo-grupo">
+      <div class="campo-header">
+        <label for="campo-descripcion" class="label-campo">
+          Descripción Detallada de la Falla: <span class="asterisco">*</span>
+        </label>
+        <span class="contador-caracteres">
+          {{ formulario.get('descripcion')?.value?.length || 0 }}/2000
+        </span>
+      </div>
+      <textarea 
+        id="campo-descripcion"
+        formControlName="descripcion"
+        rows="4"
+        class="input-textarea"
+        [class.input-textarea--error]="formulario.get('descripcion')?.touched && formulario.get('descripcion')?.invalid"
+        placeholder="Describa el comportamiento observado, mensajes de error en pantalla o desde cuándo ocurre...">
+      </textarea>
+      @if (formulario.get('descripcion')?.touched && formulario.get('descripcion')?.hasError('required')) {
+        <span class="mensaje-error">La descripción técnica es obligatoria para el diagnóstico.</span>
+      }
+      @if (formulario.get('descripcion')?.touched && formulario.get('descripcion')?.hasError('minlength')) {
+        <span class="mensaje-error">Por favor describa con al menos 20 caracteres para guiar al técnico.</span>
+      }
+    </div>
+  </section>
+
+  <!-- 5. Evaluación de Impacto Asistencial x Urgencia Médica y Cálculo de Prioridad SLA -->
+  <section class="seccion-form seccion-form--sla" aria-label="Evaluación de Criticidad y Prioridad">
+    <h4 class="subtitulo-seccion">Triage de Criticidad e Impacto Asistencial</h4>
+    <p class="p-aclaratorio">
+      La prioridad y el tiempo de respuesta garantizado por el Hospital se determinan mediante la combinación de impacto y urgencia.
+    </p>
+
+    <div class="grid-impacto-urgencia">
+      <!-- Selector Impacto -->
+      <div class="columna-evaluacion">
+        <span class="eval-titulo">¿A cuántos afecta? (Impacto Asistencial)</span>
+        <div class="opciones-botones">
+          <button 
+            type="button" 
+            class="btn-opcion"
+            [class.btn-opcion--activo]="impactoSeleccionado() === 'ALTO'"
+            (click)="seleccionarImpacto('ALTO')">
+            <span class="btn-opcion__nombre">Alto</span>
+            <span class="btn-opcion__detalle">Servicio Vital (Emergencia/UCI) o múltiples áreas</span>
+          </button>
+
+          <button 
+            type="button" 
+            class="btn-opcion"
+            [class.btn-opcion--activo]="impactoSeleccionado() === 'MEDIO'"
+            (click)="seleccionarImpacto('MEDIO')">
+            <span class="btn-opcion__nombre">Medio</span>
+            <span class="btn-opcion__detalle">Afecta a toda un área o módulo clínico</span>
+          </button>
+
+          <button 
+            type="button" 
+            class="btn-opcion"
+            [class.btn-opcion--activo]="impactoSeleccionado() === 'BAJO'"
+            (click)="seleccionarImpacto('BAJO')">
+            <span class="btn-opcion__nombre">Bajo</span>
+            <span class="btn-opcion__detalle">Afecta solo a mi estación o usuario individual</span>
+          </button>
+        </div>
+      </div>
+
+      <!-- Selector Urgencia -->
+      <div class="columna-evaluacion">
+        <span class="eval-titulo">¿La atención médica está detenida? (Urgencia)</span>
+        <div class="opciones-botones">
+          <button 
+            type="button" 
+            class="btn-opcion"
+            [class.btn-opcion--activo]="urgenciaSeleccionada() === 'ALTA'"
+            (click)="seleccionarUrgencia('ALTA')">
+            <span class="btn-opcion__nombre">Alta</span>
+            <span class="btn-opcion__detalle">Atención paralizada; no hay alternativa posible</span>
+          </button>
+
+          <button 
+            type="button" 
+            class="btn-opcion"
+            [class.btn-opcion--activo]="urgenciaSeleccionada() === 'MEDIA'"
+            (click)="seleccionarUrgencia('MEDIA')">
+            <span class="btn-opcion__nombre">Media</span>
+            <span class="btn-opcion__detalle">Operación degradada con alternativa temporal</span>
+          </button>
+
+          <button 
+            type="button" 
+            class="btn-opcion"
+            [class.btn-opcion--activo]="urgenciaSeleccionada() === 'BAJA'"
+            (click)="seleccionarUrgencia('BAJA')">
+            <span class="btn-opcion__nombre">Baja</span>
+            <span class="btn-opcion__detalle">No urgente; puede programarse sin detener pacientes</span>
+          </button>
+        </div>
+      </div>
+    </div>
+
+    <!-- Caja de Cálculo Reactivo de SLA Garantizado -->
+    <div class="caja-calculo-sla" [class]="'caja-calculo-sla--' + slaEstimado().colorClase">
+      <div class="caja-calculo-sla__icono">
+        <app-icono nombre="speed" tamano="md"></app-icono>
+      </div>
+      <div class="caja-calculo-sla__info">
+        <div class="sla-badge-row">
+          <span class="tag-prioridad-calculada" [class]="'tag--' + slaEstimado().colorClase">
+            {{ slaEstimado().prioridadNombre }}
+          </span>
+          <span class="sla-acuerdo-text">Acuerdo de Nivel de Servicio Hospitalario (SLA)</span>
+        </div>
+        <div class="sla-tiempos-grid">
+          <div class="tiempo-item">
+            <span class="tiempo-item__label">Tiempo de Primera Respuesta:</span>
+            <strong class="tiempo-item__valor">{{ slaEstimado().textoRespuesta }}</strong>
+          </div>
+          <div class="tiempo-item">
+            <span class="tiempo-item__label">Tiempo Máximo de Resolución:</span>
+            <strong class="tiempo-item__valor">{{ slaEstimado().textoResolucion }}</strong>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Botones de Acción -->
+  <footer class="footer-acciones">
+    <button type="button" class="btn-cancelar" (click)="cancelar()" [disabled]="guardando()">
+      Cancelar
+    </button>
+
+    <button 
+      type="submit" 
+      class="btn-enviar" 
+      [disabled]="formulario.invalid || guardando()">
+      @if (guardando()) {
+        <app-icono nombre="sync" tamano="xs" class="animar-giro"></app-icono>
+        <span>Registrando solicitud...</span>
+      } @else {
+        <app-icono nombre="send" tamano="xs"></app-icono>
+        <span>Registrar Ticket en Mesa de Ayuda</span>
+      }
+    </button>
+  </footer>
+
+</form>

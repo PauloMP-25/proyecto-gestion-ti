@@ -85,7 +85,7 @@
           </div>
           <div class="tiempo-card__pie">
             @if (minutosPausadosTotal() > 0) {
-              <span>Minutos pausados ITIL: <strong>{{ minutosPausadosTotal() }}m</strong></span>
+              <span>Minutos en pausa: <strong>{{ minutosPausadosTotal() }}m</strong></span>
             } @else {
               <span>Atención continua sin interrupciones</span>
             }
@@ -114,7 +114,7 @@
         </div>
       </div>
 
-      <!-- BARRA DE PROGRESO DEL SLA ITIL V4 -->
+      <!-- BARRA DE PROGRESO DEL SLA HOSPITALARIO -->
       @let porcentajeConsumido = calcularPorcentajeSLA(60);
       <div class="reloj-sla-barra-container">
         <div class="sla-barra-info">

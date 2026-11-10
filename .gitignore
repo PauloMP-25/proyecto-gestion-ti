@@ -69,3 +69,9 @@ documentos-base/
 dist/
 /coverage/
 /out-tsc/
+
+# Java / Maven (ajuste local de versión)
+backend/pom.xml
+
+# Agentes y configuraciones locales
+.agents/
