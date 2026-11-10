@@ -1,0 +1,26 @@
+<div class="tarjeta-grafico" role="region" aria-label="Tendencia de Incidentes por Servicio Clínico">
+  <div class="tarjeta-grafico__header">
+    <div class="tarjeta-grafico__titulos">
+      <h3 class="tarjeta-grafico__titulo">Tendencia de Incidentes por Servicio Clínico</h3>
+      <p class="tarjeta-grafico__subtitulo">Top 5 servicios asistenciales con mayor demanda de soporte</p>
+    </div>
+
+    <!-- Filtro desplegable compacto en un solo botón selector -->
+    <div class="selector-dropdown-wrapper">
+      <select 
+        class="select-periodo" 
+        [ngModel]="periodoValor"
+        (ngModelChange)="cambiarPeriodo($event)"
+        aria-label="Filtrar período de incidentes por servicio clínico">
+        <option value="hoy">Hoy (Turno actual)</option>
+        <option value="7d">Últimos 7 días</option>
+        <option value="30d">Últimos 30 días</option>
+      </select>
+    </div>
+  </div>
+
+  <!-- Contenedor del Gráfico Circular Chart.js con etiquetas internas y leyenda derecha -->
+  <div class="tarjeta-grafico__chart-container">
+    <canvas #canvasCircular></canvas>
+  </div>
+</div>

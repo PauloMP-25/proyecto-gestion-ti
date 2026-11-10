@@ -63,3 +63,15 @@ Thumbs.db
 
 # Project specific
 documentos-base/
+
+# Angular
+.angular/
+dist/
+/coverage/
+/out-tsc/
+
+# Java / Maven (ajuste local de versión)
+backend/pom.xml
+
+# Agentes y configuraciones locales
+.agents/

@@ -1,0 +1,13 @@
+<span 
+  class="material-symbols-outlined icono" 
+  [class.icono--xs]="tamano() === 'xs'"
+  [class.icono--sm]="tamano() === 'sm'"
+  [class.icono--md]="tamano() === 'md'"
+  [class.icono--lg]="tamano() === 'lg'"
+  [class.icono--xl]="tamano() === 'xl'"
+  [class.icono--relleno]="relleno()"
+  [attr.aria-hidden]="!etiqueta()"
+  [attr.role]="etiqueta() ? 'img' : null"
+  [attr.aria-label]="etiqueta() ?? null">
+  {{ nombre() }}
+</span>

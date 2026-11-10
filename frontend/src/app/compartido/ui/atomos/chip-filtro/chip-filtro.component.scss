@@ -1,0 +1,59 @@
+:host {
+  display: inline-flex;
+}
+
+.chip {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--espacio-1, 4px);
+  min-height: 36px;
+  padding: 0 var(--espacio-3, 12px);
+  border-radius: var(--radio-full, 9999px);
+  background-color: var(--fondo-tarjeta, #ffffff);
+  border: 1px solid var(--borde-tarjeta, #cbd5e1);
+  color: var(--texto-secundario, #475569);
+  font-family: inherit;
+  font-size: 0.82rem;
+  font-weight: 500;
+  cursor: pointer;
+  user-select: none;
+  white-space: nowrap;
+  transition: all 0.15s ease;
+
+  &:hover {
+    border-color: var(--primario-guinda, #701c1c);
+    color: var(--primario-guinda, #701c1c);
+  }
+
+  &:focus-visible {
+    outline: 2px solid var(--primario-guinda, #701c1c);
+    outline-offset: 2px;
+  }
+
+  &--activo {
+    background-color: var(--primario-guinda, #701c1c);
+    color: #ffffff;
+    border-color: var(--primario-guinda, #701c1c);
+    font-weight: 600;
+
+    .chip__conteo {
+      background-color: rgba(255, 255, 255, 0.25);
+      color: #ffffff;
+    }
+
+    &:hover {
+      background-color: var(--primario-guinda-hover, #8a1f1f);
+      color: #ffffff;
+    }
+  }
+
+  &__conteo {
+    padding: 1px 6px;
+    border-radius: var(--radio-full, 9999px);
+    background-color: var(--fondo-aplicacion, #f1f5f9);
+    color: var(--texto-principal, #0f172a);
+    font-size: 0.74rem;
+    font-weight: 700;
+    margin-left: 2px;
+  }
+}

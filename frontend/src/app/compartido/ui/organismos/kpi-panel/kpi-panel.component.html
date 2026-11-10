@@ -1,0 +1,5 @@
+<div class="kpi-panel-grid" role="region" aria-label="Métricas e Indicadores Esenciales de Service Desk">
+  @for (kpi of kpis(); track kpi.id) {
+    <app-kpi-tarjeta [kpi]="kpi"></app-kpi-tarjeta>
+  }
+</div>

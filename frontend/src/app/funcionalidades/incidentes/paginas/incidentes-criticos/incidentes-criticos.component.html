@@ -1,0 +1,57 @@
+<div class="criticos-contenedor">
+  <!-- Encabezado: título + acciones globales de la vista -->
+  <header class="consola-header">
+    <div class="consola-header__izq">
+      <div class="titulo-vista">
+        <h1 class="titulo-vista__texto">Incidentes Críticos</h1>
+        <span class="titulo-vista__conteo">
+          {{ totalActivos() }} {{ totalActivos() === 1 ? 'incidente activo' : 'incidentes activos' }}
+        </span>
+      </div>
+    </div>
+
+    <div class="consola-header__der">
+      <div class="acciones-header">
+        <span class="ultima-actualizacion" aria-live="polite">
+          Actualizado {{ ultimaActualizacion() | date: 'HH:mm:ss' }}
+        </span>
+
+        <button
+          type="button"
+          class="btn-refrescar"
+          (click)="actualizar()"
+          title="Actualizar la bandeja de incidentes">
+          <app-icono nombre="sync" tamano="xs"></app-icono>
+          <span>Actualizar</span>
+        </button>
+
+        <app-boton
+          variante="primario"
+          icono="add"
+          ariaLabel="Registrar nuevo incidente"
+          (alHacerClick)="nuevoIncidente()">
+          Nuevo Incidente
+        </app-boton>
+      </div>
+    </div>
+  </header>
+
+  <section class="seccion-bandeja" aria-label="Bandeja de incidentes críticos">
+    <div class="bandeja-controles">
+      <app-buscador-filtros
+        placeholder="Buscar por código de ticket, asunto o dirección IP..."
+        [opcionesFiltro]="opcionesFiltro()"
+        [filtroActivoId]="filtroActivo()"
+        (alBuscar)="onBuscar($event)"
+        (alSeleccionarFiltro)="onSeleccionarFiltro($event)">
+      </app-buscador-filtros>
+    </div>
+
+    <!-- Columnas: Ticket · Asunto & Activo · Área Clínica · Prioridad · Estado · SLA Restante · Responsable -->
+    <app-tabla-tickets
+      [tickets]="tickets()"
+      (alSeleccionarTicket)="verTicket($event)"
+      (alAtenderTicket)="verTicket($event)">
+    </app-tabla-tickets>
+  </section>
+</div>

@@ -1,0 +1,171 @@
+/* ==========================================================================
+   CLASES UTILITARIAS Y COMPONENTES BASE - DESIGN SYSTEM HSMSI
+   ========================================================================== */
+
+/* Botones del Design System */
+.btn-primary {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: var(--space-2);
+  padding: 0.625rem 1.25rem;
+  background-color: var(--color-primary-base);
+  color: var(--color-text-inverse);
+  font-family: var(--font-family-base);
+  font-size: var(--font-size-sm);
+  font-weight: var(--font-weight-semibold);
+  border: 1px solid transparent;
+  border-radius: var(--radius-md);
+  cursor: pointer;
+  transition: background-color var(--transition-fast), box-shadow var(--transition-fast);
+  text-decoration: none;
+  min-height: 40px;
+
+  &:hover:not(:disabled) {
+    background-color: var(--color-primary-hover);
+    box-shadow: var(--shadow-sm);
+  }
+
+  &:active:not(:disabled) {
+    background-color: var(--color-primary-active);
+  }
+
+  &:focus-visible {
+    outline: 2px solid var(--color-primary-base);
+    outline-offset: 2px;
+  }
+
+  &:disabled {
+    opacity: 0.55;
+    cursor: not-allowed;
+  }
+}
+
+.btn-secondary {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: var(--space-2);
+  padding: 0.625rem 1.25rem;
+  background-color: var(--color-secondary-base);
+  color: var(--color-text-inverse);
+  font-family: var(--font-family-base);
+  font-size: var(--font-size-sm);
+  font-weight: var(--font-weight-semibold);
+  border: 1px solid transparent;
+  border-radius: var(--radius-md);
+  cursor: pointer;
+  transition: background-color var(--transition-fast);
+  min-height: 40px;
+
+  &:hover:not(:disabled) {
+    background-color: var(--color-secondary-hover);
+  }
+
+  &:active:not(:disabled) {
+    background-color: var(--color-secondary-active);
+  }
+}
+
+.btn-outline {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: var(--space-2);
+  padding: 0.625rem 1.25rem;
+  background-color: var(--color-surface-card);
+  color: var(--color-text-main);
+  font-family: var(--font-family-base);
+  font-size: var(--font-size-sm);
+  font-weight: var(--font-weight-medium);
+  border: 1px solid var(--color-border-subtle);
+  border-radius: var(--radius-md);
+  cursor: pointer;
+  transition: background-color var(--transition-fast), border-color var(--transition-fast);
+  min-height: 40px;
+
+  &:hover:not(:disabled) {
+    background-color: var(--color-surface-hover);
+    border-color: var(--color-border-strong);
+  }
+}
+
+/* Tarjetas y Contenedores */
+.card-hospital {
+  background-color: var(--color-surface-card);
+  border: 1px solid var(--color-border-subtle);
+  border-radius: var(--radius-lg);
+  box-shadow: var(--shadow-card);
+  padding: var(--space-6);
+}
+
+/* Insignias Semánticas de Prioridad ITIL (Doble codificación WCAG AAA) */
+.badge-prioridad {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-1);
+  padding: 0.25rem 0.625rem;
+  font-size: var(--font-size-xs);
+  font-weight: var(--font-weight-semibold);
+  border-radius: var(--radius-full);
+  line-height: 1;
+
+  &.p1 {
+    background-color: var(--color-p1-bg);
+    color: var(--color-p1-text);
+    border: 1px solid var(--color-p1-border);
+  }
+
+  &.p2 {
+    background-color: var(--color-p2-bg);
+    color: var(--color-p2-text);
+    border: 1px solid var(--color-p2-border);
+  }
+
+  &.p3 {
+    background-color: var(--color-p3-bg);
+    color: var(--color-p3-text);
+    border: 1px solid var(--color-p3-border);
+  }
+
+  &.p4 {
+    background-color: var(--color-p4-bg);
+    color: var(--color-p4-text);
+    border: 1px solid var(--color-p4-border);
+  }
+}
+
+/* Insignias de SLA */
+.badge-sla {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.375rem;
+  padding: 0.25rem 0.625rem;
+  font-size: var(--font-size-xs);
+  font-weight: var(--font-weight-semibold);
+  border-radius: var(--radius-full);
+
+  .dot {
+    width: 6px;
+    height: 6px;
+    border-radius: 50%;
+  }
+
+  &.a-tiempo {
+    background-color: var(--color-sla-a-tiempo-bg);
+    color: var(--color-sla-a-tiempo-text);
+    .dot { background-color: var(--color-sla-a-tiempo-dot); }
+  }
+
+  &.alerta {
+    background-color: var(--color-sla-alerta-bg);
+    color: var(--color-sla-alerta-text);
+    .dot { background-color: var(--color-sla-alerta-dot); }
+  }
+
+  &.incumplido {
+    background-color: var(--color-sla-incumplido-bg);
+    color: var(--color-sla-incumplido-text);
+    .dot { background-color: var(--color-sla-incumplido-dot); }
+  }
+}

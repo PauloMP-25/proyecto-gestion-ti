@@ -16,7 +16,6 @@ erDiagram
         VARCHAR(100) Correo UK
         VARBINARY(256) ContrasenaHash
         VARCHAR(30) Rol
-        VARCHAR(20) NivelSoporte "NULL"
         INT IdArea FK
         BIT Activo
         DATETIME2(0) FechaCreacion
@@ -59,7 +58,6 @@ erDiagram
         VARCHAR(10) Urgencia
         VARCHAR(10) Prioridad
         VARCHAR(20) Estado
-        VARCHAR(20) NivelSoporteActual
         INT IdUsuarioSolicitante FK
         INT IdUsuarioAsignado FK "NULL"
         INT IdCI FK "NULL"
@@ -79,8 +77,8 @@ erDiagram
     ESCALAMIENTO {
         INT IdEscalamiento PK
         INT IdTicket FK
-        VARCHAR(20) NivelOrigen
-        VARCHAR(20) NivelDestino
+        VARCHAR(30) RolOrigen
+        VARCHAR(30) RolDestino
         INT IdUsuarioOrigen FK
         INT IdUsuarioDestino FK "NULL"
         VARCHAR(300) Motivo
@@ -123,6 +121,28 @@ erDiagram
         INT IdTicket PK_FK
         INT IdErrorConocido PK_FK
     }
+    PROBLEMA {
+        INT IdProblema PK
+        VARCHAR(150) Titulo
+        VARCHAR(20) Estado
+        DATETIME2(0) FechaCreacion
+    }
+    CONFIGURACION_SLA {
+        INT IdConfiguracion PK
+        VARCHAR(10) Impacto
+        VARCHAR(10) Urgencia
+        VARCHAR(10) PrioridadResultante
+        INT MinutosRespuesta
+        INT MinutosResolucion
+    }
+    PRESTAMO_EQUIPO {
+        INT IdPrestamo PK
+        INT IdCI FK
+        INT IdUsuarioReceptor FK
+        INT IdUsuarioTecnico FK
+        DATETIME2(0) FechaPrestamo
+        DATETIME2(0) FechaDevolucion "NULL"
+    }
 
     AREA ||--o{ USUARIO : "ubica"
     AREA ||--o{ ELEMENTO_CONFIGURACION : "ubica"
@@ -143,6 +163,9 @@ erDiagram
     USUARIO ||--o{ ERROR_CONOCIDO : "crea"
     TICKET ||--o{ TICKET_ERROR_CONOCIDO : "vincula"
     ERROR_CONOCIDO ||--o{ TICKET_ERROR_CONOCIDO : "vincula"
+    PROBLEMA ||--o{ TICKET : "agrupa"
+    ELEMENTO_CONFIGURACION ||--o{ PRESTAMO_EQUIPO : "es prestado"
+    USUARIO ||--o{ PRESTAMO_EQUIPO : "recibe/entrega"
 ```
  
 ### 1.1 Diagrama Lógico (Sin Atributos)
@@ -168,6 +191,9 @@ erDiagram
     USUARIO ||--o{ ERROR_CONOCIDO : "crea"
     TICKET ||--o{ TICKET_ERROR_CONOCIDO : "vincula"
     ERROR_CONOCIDO ||--o{ TICKET_ERROR_CONOCIDO : "vincula"
+    PROBLEMA ||--o{ TICKET : "agrupa"
+    ELEMENTO_CONFIGURACION ||--o{ PRESTAMO_EQUIPO : "es prestado"
+    USUARIO ||--o{ PRESTAMO_EQUIPO : "recibe/entrega"
 ```
  
 ---
@@ -189,7 +215,19 @@ Con la lógica fuera de la base de datos, el criterio de eficiencia cambia de en
  
 ---
  
-## 3. Diccionario de Datos Optimizado (12 tablas núcleo)
+## 3. Matriz de Roles y Permisos (RBAC)
+
+De acuerdo con las decisiones de diseño, el acceso al sistema se rige mediante un control de acceso basado en roles (RBAC). Estos valores se almacenan en el campo `Rol` de la tabla `USUARIO`:
+
+| Rol | Nivel | Responsabilidades y Permisos (Alcance) |
+|---|---|---|
+| **USUARIO_FINAL** | Básico | **(Ej. Médicos, Enfermeras, Administrativos)**<br>- **Permisos:** Crear tickets de incidentes/peticiones, interactuar y hacer seguimiento solo de sus propios tickets, y acceder al módulo público (autoayuda) de la Base de Conocimiento (KEDB).<br>- **Restricciones:** No pueden ver tickets de terceros, editar configuraciones ni inventarios. |
+| **PRACTICANTE** | Operativo | **(Ej. Practicantes, Técnicos de Soporte)**<br>- **Permisos:** Atender, asignar y resolver tickets que lleguen a la bandeja. Escalar tickets a Administrador. Enlazar activos dinámicamente en la CMDB y registrar préstamos temporales. Tienen permiso para publicar artículos de conocimiento **directamente** (sin aprobación previa) en la KEDB.<br>- **Restricciones:** No pueden alterar reglas de SLA ni ver reportes gerenciales (Dashboard). |
+| **ADMINISTRADOR** | Gestión | **(Ej. Ingenieros o Jefe de TI)**<br>- **Permisos:** Acceso y control total. Únicos autorizados a usar el Panel de Configuración de SLA (modificar tiempos, urgencia/impacto). Acceso al Dashboard de indicadores, KPIs y exportación a PDF. Administración completa de usuarios y áreas. Analizar y gestionar Problemas (incidentes agrupados). Modificar configuraciones avanzadas en la CMDB. |
+
+---
+ 
+## 4. Diccionario de Datos Optimizado (15 tablas núcleo)
  
 ### 3.1 USUARIO
 | Campo | Tipo | Notas |
@@ -199,8 +237,7 @@ Con la lógica fuera de la base de datos, el criterio de eficiencia cambia de en
 | Apellidos | VARCHAR(80) | |
 | Correo | VARCHAR(100) UNIQUE | |
 | ContrasenaHash | VARBINARY(256) | Hash (bcrypt/SHA-256), nunca texto plano |
-| Rol | VARCHAR(30) CHECK | `ENUM Rol`: `USUARIO_FINAL`, `SERVICE_DESK_N1`, `SOPORTE_N2_ESPECIALISTA`, `ADMINISTRADOR` |
-| NivelSoporte | VARCHAR(20) NULL CHECK | `ENUM NivelSoporte`: `N1`, `N2`, `ESPECIALISTA`; NULL si el rol no es de soporte |
+| Rol | VARCHAR(30) CHECK | `ENUM Rol`: `USUARIO_FINAL`, `PRACTICANTE`, `ADMINISTRADOR` |
 | IdArea | INT FK → Area | |
 | Activo | BIT DEFAULT 1 | |
 | FechaCreacion | DATETIME2(0) | |
@@ -260,7 +297,6 @@ Con la lógica fuera de la base de datos, el criterio de eficiencia cambia de en
 | Urgencia | VARCHAR(10) CHECK | `ENUM NivelUrgencia`: `ALTO`, `MEDIO`, `BAJO` |
 | Prioridad | VARCHAR(10) CHECK | `ENUM Prioridad`: `CRITICA`, `ALTA`, `MEDIA`, `BAJA` — calculada por el Backend vía matriz Impacto×Urgencia en código |
 | Estado | VARCHAR(20) CHECK | `ENUM EstadoTicket`: `NUEVO`, `ASIGNADO`, `EN_PROCESO`, `ESCALADO`, `RESUELTO`, `CERRADO`, `REABIERTO` |
-| NivelSoporteActual | VARCHAR(20) CHECK | `ENUM NivelSoporte`: `N1`, `N2`, `ESPECIALISTA` |
 | IdUsuarioSolicitante | INT FK → Usuario | |
 | IdUsuarioAsignado | INT NULL FK → Usuario | |
 | IdCI | INT NULL FK → ElementoConfiguracion | |
@@ -282,8 +318,8 @@ Con la lógica fuera de la base de datos, el criterio de eficiencia cambia de en
 |---|---|
 | IdEscalamiento | INT PK IDENTITY |
 | IdTicket | INT FK → Ticket |
-| NivelOrigen | VARCHAR(20) CHECK — `ENUM NivelSoporte` |
-| NivelDestino | VARCHAR(20) CHECK — `ENUM NivelSoporte` |
+| RolOrigen | VARCHAR(30) CHECK — `ENUM Rol` |
+| RolDestino | VARCHAR(30) CHECK — `ENUM Rol` |
 | IdUsuarioOrigen | INT FK → Usuario |
 | IdUsuarioDestino | INT NULL FK → Usuario |
 | Motivo | VARCHAR(300) |
@@ -329,6 +365,34 @@ Con la lógica fuera de la base de datos, el criterio de eficiencia cambia de en
 | IdTicket | INT PK, FK → Ticket |
 | IdErrorConocido | INT PK, FK → ErrorConocido |
  
+### 3.13 PROBLEMA
+| Campo | Tipo | Notas |
+|---|---|---|
+| IdProblema | INT PK IDENTITY | |
+| Titulo | VARCHAR(150) | |
+| Estado | VARCHAR(20) CHECK | `ENUM EstadoProblema` |
+| FechaCreacion | DATETIME2(0) | |
+
+### 3.14 CONFIGURACION_SLA
+| Campo | Tipo | Notas |
+|---|---|---|
+| IdConfiguracion | INT PK IDENTITY | Tabla de control para panel de UI |
+| Impacto | VARCHAR(10) CHECK | `ENUM NivelImpacto` |
+| Urgencia | VARCHAR(10) CHECK | `ENUM NivelUrgencia` |
+| PrioridadResultante | VARCHAR(10) CHECK | `ENUM Prioridad` |
+| MinutosRespuesta | INT | |
+| MinutosResolucion | INT | |
+
+### 3.15 PRESTAMO_EQUIPO
+| Campo | Tipo | Notas |
+|---|---|---|
+| IdPrestamo | INT PK IDENTITY | Registro de préstamo temporal de un activo |
+| IdCI | INT FK → ElementoConfiguracion | Equipo prestado |
+| IdUsuarioReceptor | INT FK → Usuario | Quien recibe el equipo temporal |
+| IdUsuarioTecnico | INT FK → Usuario | Quien registra el préstamo |
+| FechaPrestamo | DATETIME2(0) | |
+| FechaDevolucion | DATETIME2(0) NULL | |
+
 ---
  
 ## 4. Lista Exhaustiva de Relaciones
@@ -345,7 +409,7 @@ Con la lógica fuera de la base de datos, el criterio de eficiencia cambia de en
 | 8 | `ELEMENTO_CONFIGURACION "1" \|\|--o{ "0..*" HISTORIAL_ASIGNACION_IP` | 1:N | Un equipo recibe múltiples IPs en su historial. |
 | 9 | `DIRECCION_IP "1" \|\|--o{ "0..*" HISTORIAL_ASIGNACION_IP` | 1:N | Una IP tiene múltiples registros de historial (reasignaciones). |
 | 10 | `USUARIO "1" \|\|--o{ "0..*" HISTORIAL_ASIGNACION_IP` | 1:N | **(asigna / libera):** Un usuario asigna o libera múltiples IPs; cada registro tiene un asignador obligatorio y un liberador opcional. |
-| 11 | `TICKET "1" \|\|--o{ "0..*" ESCALAMIENTO` | 1:N | Un ticket puede generar múltiples saltos de escalamiento. |
+| 11 | `TICKET "1" \|\|--o{ "0..*" ESCALAMIENTO` | 1:N | Un ticket puede generar múltiples saltos de escalamiento (ej. de Practicante a Administrador). |
 | 12 | `USUARIO "1" \|\|--o{ "0..*" ESCALAMIENTO` | 1:N | **(origina / recibe):** Un usuario origina o recibe múltiples escalamientos; el origen es obligatorio, el destino es opcional al inicio. |
 | 13 | `TICKET "1" \|\|--o{ "0..*" SOLUCION_TICKET` | 1:N | Un ticket tiene múltiples intentos de solución documentados. |
 | 14 | `USUARIO "1" \|\|--o{ "0..*" SOLUCION_TICKET` | 1:N | Un usuario redacta múltiples soluciones. |
@@ -376,7 +440,7 @@ Las 12 tablas que se conservan son, sin excepción, aquellas que almacenan **dat
 ## 6. Justificación Individual de cada Tabla Núcleo
  
 ### 6.1 USUARIO
-- **Función:** Almacena a todo actor del sistema (solicitantes, técnicos N1/N2/Especialista, administradores) con sus credenciales, rol y ubicación organizacional.
+- **Función:** Almacena a todo actor del sistema (usuarios finales, practicantes, administradores) con sus credenciales, rol y ubicación organizacional.
 - **Ventajas:** Es la única fuente de verdad sobre "quién hizo qué" en todo el sistema; al centralizar identidad y rol en una sola tabla, cualquier otra tabla que necesite referenciar a una persona (Ticket, Escalamiento, HistorialTicket, HistorialAsignacionIP, ErrorConocido) lo hace con una simple FK entera, evitando duplicar datos de identidad.
 - **Por qué se eligió esta tabla:** Es un dato transaccional por naturaleza (el personal del hospital cambia: ingresos, bajas, cambios de área) — no puede vivir como constante en el Backend, a diferencia del `ENUM Rol` que sí describe los valores posibles pero no las personas reales.
 - **Cumplimiento ITIL v4:** Sustenta la práctica de **Gestión de Seguridad de la Información**, garantizando que cada acción sobre un servicio quede atribuida a una identidad verificable — requisito base de cualquier práctica ITIL de gestión de servicios.
@@ -411,9 +475,9 @@ Las 12 tablas que se conservan son, sin excepción, aquellas que almacenan **dat
 - **Por qué se eligió esta tabla:** Es, por definición, el dato transaccional más importante del sistema — cada ticket es un hecho único e irrepetible del negocio (no una regla), por lo que debe persistirse íntegramente, mientras que las etiquetas de clasificación (Impacto, Urgencia, Prioridad, Estado) se guardan como `VARCHAR` validado por `ENUM` del Backend.
 - **Cumplimiento ITIL v4:** Es la implementación directa de las prácticas de **Gestión de Incidentes**, **Gestión de Solicitudes de Servicio** y **Gestión de Niveles de Servicio (SLM)** — el núcleo funcional exigido por el proyecto.
 ### 6.8 ESCALAMIENTO
-- **Función:** Registra cada evento de escalamiento de un ticket entre niveles de soporte (N1→N2→Especialista), con origen, destino, responsables y motivo.
-- **Ventajas:** Al guardar cada escalamiento como fila independiente (no como campo mutable en `Ticket`), un mismo ticket puede escalar múltiples veces sin perder el rastro de escalamientos previos; permite evaluar desempeño por nivel de soporte.
-- **Por qué se eligió esta tabla:** Es un evento transaccional (ocurre en un momento específico y no se repite igual dos veces), a diferencia de los niveles de soporte en sí (`N1`, `N2`, `ESPECIALISTA`), que sí son un conjunto fijo y por eso viven como `ENUM`.
+- **Función:** Registra cada evento de escalamiento de un ticket entre roles (ej. Practicante → Administrador), con origen, destino, responsables y motivo.
+- **Ventajas:** Al guardar cada escalamiento como fila independiente (no como campo mutable en `Ticket`), un mismo ticket puede escalar múltiples veces sin perder el rastro de escalamientos previos; permite evaluar desempeño por rol.
+- **Por qué se eligió esta tabla:** Es un evento transaccional (ocurre en un momento específico y no se repite igual dos veces), a diferencia de los roles en sí (`PRACTICANTE`, `ADMINISTRADOR`), que sí son un conjunto fijo y por eso viven como `ENUM`.
 - **Cumplimiento ITIL v4:** Implementa el **escalamiento funcional y jerárquico** descrito en la práctica de Gestión de Incidentes de ITIL v4.
 ### 6.9 SOLUCION_TICKET
 - **Función:** Documenta las soluciones aplicadas a un ticket, permitiendo múltiples intentos y marcando cuál fue la solución final.

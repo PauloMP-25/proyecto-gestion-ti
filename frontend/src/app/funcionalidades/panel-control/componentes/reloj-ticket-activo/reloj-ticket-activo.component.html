@@ -1,0 +1,192 @@
+<div class="reloj-modulo" role="region" aria-label="Cronómetro de Atención y Monitoreo de SLA en Vivo">
+  @if (ticket(); as t) {
+    <!-- ENCABEZADO DEL TICKET EN ATENCIÓN -->
+    <div class="reloj-header">
+      <div class="ticket-info-principal">
+        <div class="ticket-etiquetas">
+          <span class="badge-codigo">{{ t.codigo }}</span>
+          
+          <span 
+            class="badge-prioridad"
+            [class.badge--p1]="t.prioridad === 'P1'"
+            [class.badge--p2]="t.prioridad === 'P2'"
+            [class.badge--p3]="t.prioridad === 'P3'"
+            [class.badge--p4]="t.prioridad === 'P4'">
+            @if (t.prioridad === 'P1') {
+              <app-icono nombre="emergency" tamano="xs"></app-icono>
+            }
+            {{ t.prioridad }} STAT
+          </span>
+
+          <span class="badge-estado">
+            <span class="punto-latente"></span>
+            {{ t.estado === 'EN_PROCESO' ? 'EN PROCESO' : t.estado }}
+          </span>
+
+          @if (pausado()) {
+            <span class="badge-pausa">
+              <app-icono nombre="pause" tamano="xs"></app-icono>
+              PAUSADO (Espera tercero)
+            </span>
+          }
+        </div>
+
+        <h3 class="ticket-titulo">{{ t.titulo }}</h3>
+        
+        <div class="ticket-metadatos">
+          <span class="meta-item">
+            <app-icono nombre="local_hospital" tamano="xs"></app-icono>
+            <strong>Área:</strong> {{ t.areaClinica }}
+          </span>
+
+          @if (t.activoAfectado) {
+            <span class="meta-item">
+              <app-icono nombre="lan" tamano="xs"></app-icono>
+              <strong>Activo CMDB:</strong> {{ t.activoAfectado.nombre }} ({{ t.activoAfectado.ip }})
+            </span>
+          }
+
+          <span class="meta-item">
+            <app-icono nombre="person" tamano="xs"></app-icono>
+            <strong>Atiende:</strong> {{ t.responsable?.nombre ?? 'Técnico de Turno N1' }}
+          </span>
+        </div>
+      </div>
+
+      <!-- SELECTOR RÁPIDO DE TICKETS ACTIVOS -->
+      <div class="selector-tickets-rapido">
+        <label for="select-ticket-activo" class="label-selector">Cambiar ticket activo:</label>
+        <select 
+          id="select-ticket-activo" 
+          class="select-ticket"
+          [value]="t.id"
+          (change)="onSeleccionarTicket($any($event.target).value ? ticketsDisponibles()[$any($event.target).selectedIndex] : t)">
+          @for (item of ticketsDisponibles(); track item.id) {
+            <option [value]="item.id" [selected]="item.id === t.id">
+              {{ item.codigo }} · [{{ item.prioridad }}] {{ item.titulo | slice:0:35 }}...
+            </option>
+          }
+        </select>
+      </div>
+    </div>
+
+    <!-- PANEL DIGITAL CENTRAL DEL CRONÓMETRO -->
+    <div class="reloj-cuerpo">
+      <div class="reloj-grid-tiempos">
+        <!-- TIEMPO TRANSCURRIDO DE ATENCIÓN EN VIVO -->
+        <div class="tiempo-card tiempo-card--transcurrido">
+          <div class="tiempo-card__header">
+            <app-icono nombre="timer" tamano="xs"></app-icono>
+            <span>Tiempo de Atención en Vivo</span>
+          </div>
+          <div class="tiempo-card__display">
+            <span class="reloj-digitos">{{ formatearTiempo(segundosTranscurridos()) }}</span>
+            <span class="reloj-subtexto">segundos transcurridos</span>
+          </div>
+          <div class="tiempo-card__pie">
+            @if (minutosPausadosTotal() > 0) {
+              <span>Minutos en pausa: <strong>{{ minutosPausadosTotal() }}m</strong></span>
+            } @else {
+              <span>Atención continua sin interrupciones</span>
+            }
+          </div>
+        </div>
+
+        <!-- TIEMPO RESTANTE DE SLA (COMPROMISO DE RESOLUCIÓN) -->
+        @let slaData = obtenerSlaRestante(t);
+        <div 
+          class="tiempo-card tiempo-card--sla"
+          [class.tiempo-card--alerta]="!slaData.vencido && slaData.segundos < 900"
+          [class.tiempo-card--vencido]="slaData.vencido">
+          <div class="tiempo-card__header">
+            <app-icono nombre="alarm" tamano="xs"></app-icono>
+            <span>Ventana de SLA Restante</span>
+          </div>
+          <div class="tiempo-card__display">
+            <span class="reloj-digitos reloj-digitos--sla">{{ slaData.texto }}</span>
+            <span class="reloj-subtexto">
+              {{ slaData.vencido ? 'Tiempo de SLA Excedido' : 'para vencimiento pactado' }}
+            </span>
+          </div>
+          <div class="tiempo-card__pie">
+            <span>Objetivo límite: <strong>P1 ≤ 60 min</strong> (Triage Inmediato)</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- BARRA DE PROGRESO DEL SLA HOSPITALARIO -->
+      @let porcentajeConsumido = calcularPorcentajeSLA(60);
+      <div class="reloj-sla-barra-container">
+        <div class="sla-barra-info">
+          <span>CONSUMO DE TIEMPO DE SLA: <strong>{{ porcentajeConsumido }}%</strong></span>
+          <span 
+            class="sla-estado-tag"
+            [class.tag--ok]="porcentajeConsumido < 80"
+            [class.tag--alerta]="porcentajeConsumido >= 80 && porcentajeConsumido < 100"
+            [class.tag--vencido]="porcentajeConsumido >= 100">
+            @if (porcentajeConsumido < 80) {
+              A Tiempo (En norma)
+            } @else if (porcentajeConsumido < 100) {
+              Alerta (Riesgo de incumplimiento)
+            } @else {
+              Incumplido (SLA Vencido)
+            }
+          </span>
+        </div>
+
+        <div class="sla-barra-pista">
+          <div 
+            class="sla-barra-progreso"
+            [style.width.%]="porcentajeConsumido"
+            [class.progreso--alerta]="porcentajeConsumido >= 80 && porcentajeConsumido < 100"
+            [class.progreso--vencido]="porcentajeConsumido >= 100">
+          </div>
+        </div>
+      </div>
+
+      <!-- BOTONES DE ACCIÓN OPERATIVA SOBRE EL TICKET -->
+      <div class="reloj-acciones">
+        <button 
+          type="button" 
+          class="btn-control-reloj btn-control--pausar" 
+          (click)="togglePausa()"
+          [attr.aria-pressed]="pausado()">
+          <app-icono [nombre]="pausado() ? 'play_arrow' : 'pause'" tamano="xs"></app-icono>
+          <span>{{ pausado() ? 'Reanudar Reloj' : 'Pausar Reloj (Espera de tercero)' }}</span>
+        </button>
+
+        <button 
+          type="button" 
+          class="btn-control-reloj btn-control--escalar"
+          (click)="onEscalar()">
+          <app-icono nombre="trending_up" tamano="xs"></app-icono>
+          <span>Escalar a Nivel 2</span>
+        </button>
+
+        <button 
+          type="button" 
+          class="btn-control-reloj btn-control--resolver"
+          (click)="onResolver()">
+          <app-icono nombre="check_circle" tamano="xs"></app-icono>
+          <span>Finalizar y Resolver Ticket</span>
+        </button>
+      </div>
+    </div>
+  } @else {
+    <!-- VISTA CUANDO NO HAY TICKET SELECCIONADO -->
+    <div class="reloj-vacio">
+      <div class="reloj-vacio__icono">
+        <app-icono nombre="timer" tamano="md"></app-icono>
+      </div>
+      <h4>No hay ticket activo en el cronómetro</h4>
+      <p>Seleccione un ticket de la Cola Activa para iniciar la atención y el cronómetro de SLA en vivo.</p>
+      @if (ticketsDisponibles().length > 0) {
+        <app-boton 
+          variante="primario" 
+          (click)="onSeleccionarTicket(ticketsDisponibles()[0])">
+          Atender ticket prioritario: {{ ticketsDisponibles()[0].codigo }}
+        </app-boton>
+      }
+    </div>
+  }
+</div>

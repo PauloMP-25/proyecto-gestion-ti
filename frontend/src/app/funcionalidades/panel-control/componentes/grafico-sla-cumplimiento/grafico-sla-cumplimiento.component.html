@@ -1,0 +1,44 @@
+<div class="card-grafico" role="region" aria-label="Monitoreo de Cumplimiento de Niveles de Servicio SLA">
+  <div class="card-grafico__header">
+    <div class="card-grafico__titulos">
+      <h3 class="card-grafico__titulo">MONITOREO DE SLAs</h3>
+      <p class="card-grafico__subtitulo">Cumplimiento de compromisos de respuesta y resolución técnica pactados</p>
+    </div>
+    <span class="badge-sla-meta">Meta Global: ≥ 90%</span>
+  </div>
+
+  <div class="card-grafico__cuerpo">
+    <!-- Visualizador Donut / Barra Circular o Segmentada de Rendimiento -->
+    <div class="barra-sla-segmental">
+      @for (d of desgloses; track d.estado) {
+        <div 
+          class="segmento-sla" 
+          [class]="'segmento--' + d.colorClase"
+          [style.width.%]="d.porcentaje"
+          [title]="d.etiqueta + ': ' + d.casos + ' casos (' + d.porcentaje + '%)'">
+        </div>
+      }
+    </div>
+
+    <!-- Lista de tarjetas de estado de SLA -->
+    <div class="lista-sla-estados">
+      @for (d of desgloses; track d.estado) {
+        <div class="item-sla" [class]="'item-sla--' + d.colorClase">
+          <div class="item-sla__icono">
+            <app-icono [nombre]="d.icono" tamano="xs"></app-icono>
+          </div>
+
+          <div class="item-sla__cuerpo">
+            <span class="item-sla__etiqueta">{{ d.etiqueta }}</span>
+            <p class="item-sla__descripcion">{{ d.descripcion }}</p>
+          </div>
+
+          <div class="item-sla__metricas">
+            <span class="item-sla__porcentaje">{{ d.porcentaje }}%</span>
+            <span class="item-sla__conteo"><strong>{{ d.casos }}</strong> casos</span>
+          </div>
+        </div>
+      }
+    </div>
+  </div>
+</div>

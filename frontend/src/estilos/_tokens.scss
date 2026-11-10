@@ -1,0 +1,165 @@
+/* ==========================================================================
+   DESIGN TOKENS - HOSPITAL SANTA MARÍA DEL SOCORRO (HSMSI)
+   Normativa: ITIL v4 Service Desk / Accesibilidad WCAG 2.1 AAA
+   Estructura: 01. Primitivos | 02. Semánticos | 03. SLA | 04. Espaciado/Touch | 05. Noche
+   ========================================================================== */
+
+:root {
+  /* -------------------------------------------------------------------------
+     1. Colores Primarios e Institucionales (Isologo HSMSI)
+     ------------------------------------------------------------------------- */
+  --color-primary-base: #701c1c;      /* Guinda Institucional (Contraste 8.2:1 con blanco) */
+  --color-primary-hover: #521414;     /* Hover botones primarios (Contraste 11.4:1) */
+  --color-primary-active: #380e0e;    /* Active o seleccionado (Contraste 15.1:1) */
+  --color-primary-light: #fdf2f2;     /* Superficie / Fondo tarjeta seleccionada */
+  --color-primary-focus-ring: rgba(112, 28, 28, 0.25);
+
+  /* -------------------------------------------------------------------------
+     2. Colores Secundarios y de Éxito (Verde Esperanza del Isologo)
+     ------------------------------------------------------------------------- */
+  --color-secondary-base: #1b5e20;    /* Verde Éxito / Resuelto (Contraste 7.1:1 AAA) */
+  --color-secondary-hover: #113e14;   /* Hover en botones de resolución */
+  --color-secondary-active: #0a260c;   /* Estado presionado */
+  --color-secondary-light: #e8f5e9;   /* Fondo notificaciones éxito */
+
+  /* -------------------------------------------------------------------------
+     3. Colores Neutros y Arquitectónicos (Fachada Hospital Ica)
+     ------------------------------------------------------------------------- */
+  --color-bg-app: #f8fafc;            /* Fondo base de la aplicación (Slate 50) */
+  --color-bg-warm: #faf6f0;           /* Crema cálido de fachada / Paneles hospitalarios */
+  --color-surface-card: #ffffff;      /* Tarjetas de tickets, modales, paneles */
+  --color-surface-hover: #f1f5f9;     /* Hover en filas de tablas y listas */
+  --color-border-subtle: #e2e8f0;     /* Divisores de tabla y bordes de inputs */
+  --color-border-strong: #cbd5e1;     /* Bordes con foco o destacados */
+
+  /* Textos (Con ratios superiores a 7.0:1) */
+  --color-text-main: #0f172a;         /* Títulos, encabezados, cuerpo (Contraste 16.1:1) */
+  --color-text-muted: #475569;        /* Metadatos, timestamps (Contraste 7.0:1) */
+  --color-text-inverse: #ffffff;      /* Texto sobre guinda o fondos oscuros */
+
+  /* -------------------------------------------------------------------------
+     4. Matriz Semántica de Severidad ITIL (Tickets P1 a P4)
+     ------------------------------------------------------------------------- */
+  /* P1 - Crítica (Emergencia Asistencial / STAT) */
+  --color-p1-base: #dc2626;
+  --color-p1-bg: #fee2e2;
+  --color-p1-text: #7f1d1d;
+  --color-p1-border: #fca5a5;
+
+  /* P2 - Alta */
+  --color-p2-base: #ea580c;
+  --color-p2-bg: #ffedd5;
+  --color-p2-text: #7c2d12;
+  --color-p2-border: #fdba74;
+
+  /* P3 - Media */
+  --color-p3-base: #d97706;
+  --color-p3-bg: #fef3c7;
+  --color-p3-text: #78350f;
+  --color-p3-border: #fcd34d;
+
+  /* P4 - Baja (Solicitudes de Servicio / Rutinarios) */
+  --color-p4-base: #2563eb;
+  --color-p4-bg: #dbeafe;
+  --color-p4-text: #1e3a8a;
+  --color-p4-border: #93c5fd;
+
+  /* -------------------------------------------------------------------------
+     5. Semaforización de Acuerdos de Nivel de Servicio (SLA) — Claude Spec §3.2
+     ------------------------------------------------------------------------- */
+  --sla-ok-bg: #e8f5e9;
+  --sla-ok-text: #113e14;
+  --sla-ok-border: #1b5e20;
+  --color-sla-a-tiempo-bg: var(--sla-ok-bg);
+  --color-sla-a-tiempo-text: var(--sla-ok-text);
+  --color-sla-a-tiempo-dot: #16a34a;
+
+  --sla-alerta-bg: #fef3c7;
+  --sla-alerta-text: #78350f;
+  --sla-alerta-border: #d97706;
+  --color-sla-alerta-bg: var(--sla-alerta-bg);
+  --color-sla-alerta-text: var(--sla-alerta-text);
+  --color-sla-alerta-dot: #ca8a04;
+
+  --sla-venc-bg: #fee2e2;
+  --sla-venc-text: #7f1d1d;
+  --sla-venc-border: #dc2626;
+  --color-sla-incumplido-bg: var(--sla-venc-bg);
+  --color-sla-incumplido-text: var(--sla-venc-text);
+  --color-sla-incumplido-dot: #dc2626;
+
+  /* -------------------------------------------------------------------------
+     6. Espaciado y Dimensionamiento (Escalas Oficiales 4px y Touch Target)
+     ------------------------------------------------------------------------- */
+  --espacio-1: 4px;
+  --espacio-2: 8px;
+  --espacio-3: 12px;
+  --espacio-4: 16px;
+  --espacio-5: 20px;
+  --espacio-6: 24px;
+  --espacio-8: 32px;
+
+  /* Aliases para compatibilidad */
+  --space-1: var(--espacio-1);
+  --space-2: var(--espacio-2);
+  --space-3: var(--espacio-3);
+  --space-4: var(--espacio-4);
+  --space-5: var(--espacio-5);
+  --space-6: var(--espacio-6);
+  --space-8: var(--espacio-8);
+
+  /* Touch Target Mínimo para Accesibilidad Móvil */
+  --touch-min: 44px;
+
+  /* -------------------------------------------------------------------------
+     7. Radios de Borde (Border Radius)
+     ------------------------------------------------------------------------- */
+  --radius-sm: 0.25rem; /* 4px */
+  --radius-md: 0.5rem;  /* 8px */
+  --radius-lg: 0.75rem; /* 12px */
+  --radius-xl: 1rem;    /* 16px */
+  --radius-full: 9999px;
+
+  /* -------------------------------------------------------------------------
+     8. Elevaciones y Sombras (Shadows)
+     ------------------------------------------------------------------------- */
+  --shadow-sm: 0 1px 2px 0 rgba(15, 23, 42, 0.05);
+  --shadow-md: 0 4px 6px -1px rgba(15, 23, 42, 0.07), 0 2px 4px -2px rgba(15, 23, 42, 0.05);
+  --shadow-lg: 0 10px 15px -3px rgba(15, 23, 42, 0.08), 0 4px 6px -4px rgba(15, 23, 42, 0.04);
+  --shadow-card: 0 1px 3px 0 rgba(15, 23, 42, 0.06), 0 1px 2px -1px rgba(15, 23, 42, 0.06);
+
+  /* -------------------------------------------------------------------------
+     9. Transiciones
+     ------------------------------------------------------------------------- */
+  --transition-fast: 150ms cubic-bezier(0.4, 0, 0.2, 1);
+  --transition-normal: 250ms cubic-bezier(0.4, 0, 0.2, 1);
+  --transition-slow: 350ms cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+/* ==========================================================================
+   MODO NOCHE / DARK THEME (Soporte Patrón 1 - reglas_diseño.md)
+   ========================================================================== */
+:root[data-tema='noche'] {
+  --color-bg-app: #0b1320;
+  --color-bg-warm: #111d2e;
+  --color-surface-card: #152238;
+  --color-surface-hover: #1e2f4a;
+  --color-border-subtle: #233754;
+  --color-border-strong: #334e73;
+
+  --color-text-main: #f1f5f9;
+  --color-text-muted: #94a3b8;
+  --color-text-inverse: #0b1320;
+
+  --sla-ok-bg: #064e3b;
+  --sla-ok-text: #a7f3d0;
+  --sla-ok-border: #059669;
+
+  --sla-alerta-bg: #78350f;
+  --sla-alerta-text: #fde68a;
+  --sla-alerta-border: #d97706;
+
+  --sla-venc-bg: #7f1d1d;
+  --sla-venc-text: #fecaca;
+  --sla-venc-border: #dc2626;
+}

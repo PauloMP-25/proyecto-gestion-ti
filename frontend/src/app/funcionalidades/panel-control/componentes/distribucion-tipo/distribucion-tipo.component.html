@@ -1,0 +1,26 @@
+<div class="tarjeta-distribucion" role="region" aria-label="Fallas por Activo de Infraestructura CMDB">
+  <div class="tarjeta-distribucion__header">
+    <div class="tarjeta-distribucion__titulos">
+      <h3 class="tarjeta-distribucion__titulo">Fallas por Activo de Infraestructura CMDB</h3>
+      <p class="tarjeta-distribucion__subtitulo">Top {{ topSeleccionado }} elementos de configuración con mayor volumen de incidentes</p>
+    </div>
+    <div class="selector-dropdown-wrapper">
+      <label for="select-top-activos" class="sr-only">Seleccionar límite de activos</label>
+      <select 
+        id="select-top-activos"
+        class="select-top"
+        [ngModel]="topSeleccionado"
+        (ngModelChange)="cambiarTop($event)"
+        aria-label="Seleccionar Top de Activos CMDB">
+        <option [ngValue]="5">Top 5 activos</option>
+        <option [ngValue]="8">Top 8 activos</option>
+        <option [ngValue]="10">Top 10 activos</option>
+      </select>
+    </div>
+  </div>
+
+  <!-- Contenedor del Gráfico de Barras Chart.js estilo Excel/Power BI -->
+  <div class="tarjeta-distribucion__chart-container">
+    <canvas #canvasBarras></canvas>
+  </div>
+</div>
