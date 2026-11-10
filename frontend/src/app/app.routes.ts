@@ -17,6 +17,10 @@ export const routes: Routes = [
         loadChildren: () => import('./funcionalidades/panel-control/panel-control.routes').then(m => m.PANEL_CONTROL_ROUTES),
       },
       {
+        path: 'incidentes',
+        loadChildren: () => import('./funcionalidades/incidentes/incidentes.routes').then(m => m.INCIDENTES_ROUTES),
+      },
+      {
         path: 'administracion/matriz-prioridad',
         loadComponent: () => import('./funcionalidades/sla/paginas/sla-configuracion/sla-configuracion.component').then(m => m.SlaConfiguracionComponent),
       },
