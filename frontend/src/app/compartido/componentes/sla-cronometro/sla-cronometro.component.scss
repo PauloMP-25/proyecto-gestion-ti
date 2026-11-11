@@ -1,0 +1,95 @@
+.sla-cronometro {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  flex-wrap: wrap;
+  padding: 8px 12px;
+  border-radius: var(--radius-md, 8px);
+  min-height: 44px;
+  border: 1.5px solid var(--sla-borde, #e2e8f0);
+  background: var(--sla-fondo, #f8fafc);
+  color: var(--sla-texto, #0f172a);
+  font-family: inherit;
+
+  &[data-sla='A_TIEMPO'] {
+    --sla-borde: var(--hsmsi-verde-salud, #1B5E20);
+    --sla-fondo: var(--secondary-light, #E8F5E9);
+    --sla-texto: var(--text-main, #0F172A);
+  }
+
+  &[data-sla='ALERTA'] {
+    --sla-borde: var(--p3-border, #F59E0B);
+    --sla-fondo: var(--p3-bg, #FEF3C7);
+    --sla-texto: var(--p3-text, #92400E);
+  }
+
+  &[data-sla='INCUMPLIDO'] {
+    --sla-borde: var(--p1-border, #EF4444);
+    --sla-fondo: var(--p1-bg, #FEE2E2);
+    --sla-texto: var(--p1-text, #991B1B);
+  }
+
+  .icono {
+    font-size: 20px;
+    width: 20px;
+    height: 20px;
+    color: var(--sla-borde);
+  }
+
+  .estado {
+    font-weight: 700;
+    font-size: 0.875rem;
+  }
+
+  .separador {
+    opacity: 0.5;
+  }
+
+  .tiempo {
+    font-variant-numeric: tabular-nums;
+    font-weight: 600;
+    font-size: 0.875rem;
+  }
+
+  .barra {
+    flex: 1 1 100%;
+    height: 6px;
+    border-radius: 4px;
+    background: rgba(0, 0, 0, 0.08);
+    overflow: hidden;
+    margin-top: 2px;
+  }
+
+  .relleno {
+    height: 100%;
+    background: var(--sla-borde);
+    transition: width 0.3s linear;
+  }
+
+  .porcentaje {
+    font-size: 0.75rem;
+    opacity: 0.8;
+  }
+
+  &.compacto {
+    padding: 4px 8px;
+    min-height: 32px;
+    gap: 6px;
+
+    .icono {
+      font-size: 16px;
+      width: 16px;
+      height: 16px;
+    }
+
+    .estado, .tiempo {
+      font-size: 0.75rem;
+    }
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .sla-cronometro .relleno {
+    transition: none;
+  }
+}

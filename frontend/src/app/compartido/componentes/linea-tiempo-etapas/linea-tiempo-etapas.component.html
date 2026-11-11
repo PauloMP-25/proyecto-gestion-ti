@@ -1,0 +1,35 @@
+<nav aria-label="Progreso de atención de la solicitud">
+  <ol class="linea-tiempo">
+    @for (e of etapasVista(); track e.clave; let i = $index) {
+      <li
+        class="paso"
+        [class.pasado]="e.esPasada"
+        [class.actual]="e.esActual"
+        [class.futuro]="e.esFutura"
+        [attr.aria-current]="e.esActual ? 'step' : null"
+      >
+        <div class="indicador" aria-hidden="true">
+          @if (e.esPasada) {
+            <app-icono nombre="check" tamano="sm" class="icono"></app-icono>
+          } @else if (e.esActual) {
+            <span class="punto-activo"></span>
+          } @else {
+            <span class="numero">{{ i + 1 }}</span>
+          }
+        </div>
+
+        <div class="contenido">
+          <div class="cabecera-paso">
+            <span class="titulo">{{ e.titulo }}</span>
+            @if (e.fechaIso) {
+              <time class="fecha" [attr.datetime]="e.fechaIso">
+                {{ e.fechaIso | date:'dd/MM HH:mm' }}
+              </time>
+            }
+          </div>
+          <p class="descripcion">{{ e.descripcion }}</p>
+        </div>
+      </li>
+    }
+  </ol>
+</nav>

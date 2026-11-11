@@ -1,0 +1,35 @@
+<div
+  class="calificacion-estrellas"
+  role="radiogroup"
+  aria-label="Calificación del servicio de atención recibido"
+  [class.deshabilitado]="deshabilitado()"
+  tabindex="0"
+>
+  <div class="grupo-estrellas">
+    @for (n of estrellas; track n) {
+      <button
+        type="button"
+        class="boton-estrella"
+        role="radio"
+        [attr.aria-checked]="valor() === n"
+        [attr.aria-label]="etiquetaEstrella(n)"
+        [disabled]="deshabilitado()"
+        (click)="seleccionar(n)"
+        (mouseenter)="hover(n)"
+        (mouseleave)="limpiarHover()"
+        (focus)="hover(n)"
+        (blur)="limpiarHover()"
+      >
+        <app-icono
+          class="icono-estrella"
+          [nombre]="(valorActivo() ?? 0) >= n ? 'star' : 'star_border'"
+          aria-hidden="true"
+        />
+      </button>
+    }
+  </div>
+
+  <p class="etiqueta-visible" aria-live="polite">
+    {{ textoVisible() }}
+  </p>
+</div>

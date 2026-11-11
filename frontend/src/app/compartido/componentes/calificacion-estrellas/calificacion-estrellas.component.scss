@@ -1,0 +1,86 @@
+.calificacion-estrellas {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 8px;
+  outline: none;
+  border-radius: var(--radius-md, 8px);
+  padding: 8px;
+  transition: box-shadow 0.2s ease;
+
+  &:focus-visible {
+    box-shadow: 0 0 0 3px rgba(112, 28, 28, 0.2);
+  }
+
+  &.deshabilitado {
+    opacity: 0.5;
+    pointer-events: none;
+  }
+}
+
+.grupo-estrellas {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 4px;
+}
+
+.boton-estrella {
+  width: 44px;
+  height: 44px;
+  min-width: 44px;
+  min-height: 44px;
+  padding: 0;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  background: transparent;
+  border: none;
+  cursor: pointer;
+  border-radius: 50%;
+  color: #CBD5E1; // Gris estrella vacía
+  transition: transform 0.15s cubic-bezier(0.4, 0, 0.2, 1), color 0.15s ease;
+
+  &:hover, &:focus-visible {
+    transform: scale(1.15);
+    outline: none;
+  }
+
+  .icono-estrella {
+    font-size: 32px;
+    width: 32px;
+    height: 32px;
+  }
+
+  &[aria-checked='true'],
+  &:hover,
+  .calificacion-estrellas:hover & {
+    color: #F59E0B; // Ámbar dorado estrella activa
+  }
+}
+
+// Resalta hasta la estrella hover/activa
+.grupo-estrellas:hover .boton-estrella {
+  color: #CBD5E1;
+
+  &:hover,
+  &:has(~ .boton-estrella:hover) {
+    color: #F59E0B;
+  }
+}
+
+.etiqueta-visible {
+  margin: 0;
+  font-size: 0.875rem;
+  font-weight: 600;
+  color: var(--text-main, #0F172A);
+  text-align: center;
+  min-height: 20px;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .boton-estrella {
+    transition: none;
+    transform: none !important;
+  }
+}

@@ -1,0 +1,21 @@
+@if (sla().fase !== 'COMPLETADO') {
+  <div
+    class="sla-cronometro"
+    [attr.data-sla]="sla().estado"
+    [class.compacto]="compacto()"
+    role="group"
+    [attr.aria-label]="etiquetaAccesible()"
+  >
+    <app-icono [nombre]="icono()" [tamano]="compacto() ? 'sm' : 'md'" class="icono" aria-hidden="true"></app-icono>
+    <span class="estado">{{ textoEstado() }}</span>
+    <span class="separador" aria-hidden="true">·</span>
+    <span class="tiempo">{{ sla().texto }}</span>
+
+    @if (!compacto()) {
+      <div class="barra" aria-hidden="true">
+        <div class="relleno" [style.width.%]="porcentaje()"></div>
+      </div>
+      <span class="porcentaje" aria-hidden="true">{{ porcentaje() }} % del tiempo</span>
+    }
+  </div>
+}
