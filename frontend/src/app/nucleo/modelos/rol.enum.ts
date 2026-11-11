@@ -3,3 +3,5 @@ export enum RolUsuario {
   PRACTICANTE = 'PRACTICANTE',
   ADMINISTRADOR = 'ADMINISTRADOR',
 }
+
+export { RolUsuario as Rol };
