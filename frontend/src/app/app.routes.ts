@@ -37,8 +37,11 @@ export const routes: Routes = [
         redirectTo: 'solicitudes/nuevo',
         pathMatch: 'full',
       },
-      // Rutas protegidas dentro del Shell:
-      // solicitudes, incidentes, cmdb, administracion, etc.
+      {
+        path: '403',
+        loadComponent: () => import('./funcionalidades/errores/paginas/acceso-denegado/acceso-denegado.component').then(m => m.AccesoDenegadoComponent),
+        title: 'Acceso denegado - Service Desk HSMSI',
+      },
     ]
   },
   { path: '**', redirectTo: '' }

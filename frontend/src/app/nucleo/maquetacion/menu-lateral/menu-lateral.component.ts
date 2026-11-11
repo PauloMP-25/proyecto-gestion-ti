@@ -46,7 +46,7 @@ export class MenuLateralComponent {
             items: [
               { titulo: 'Inicio / Panel', ruta: '/panel-control', icono: 'home' },
               { titulo: 'Registrar Nuevo Ticket', ruta: '/solicitudes/nuevo', icono: 'add_circle' },
-              { titulo: 'Mis Tickets Activos', ruta: '/solicitudes/mis-tickets', icono: 'receipt_long' },
+              { titulo: 'Mis Tickets Activos', ruta: '/incidentes/mis-tickets', icono: 'receipt_long' },
               { titulo: 'Base de Conocimiento', ruta: '/base-conocimiento', icono: 'menu_book' },
             ],
           },
@@ -58,14 +58,14 @@ export class MenuLateralComponent {
             encabezado: 'Mesa de Ayuda (Nivel 1)',
             items: [
               { titulo: 'Dashboard N1', ruta: '/panel-control', icono: 'speed' },
-              { 
-                titulo: 'Bandeja General Tickets', 
-                ruta: '/incidentes/bandeja', 
+              {
+                titulo: 'Bandeja General Tickets',
+                ruta: '/incidentes/bandeja',
                 icono: 'inbox',
                 badge: '12 Activos',
-                badgeTipo: 'info'
+                badgeTipo: 'info',
               },
-              { titulo: 'Tickets Asignados a Mí', ruta: '/incidentes/mis-asignaciones', icono: 'assignment_ind' },
+              { titulo: 'Tickets Asignados a Mí', ruta: '/incidentes/mis-tickets', icono: 'assignment_ind' },
             ],
           },
           {
@@ -83,13 +83,15 @@ export class MenuLateralComponent {
             encabezado: 'Jefatura y Operaciones N2',
             items: [
               { titulo: 'Panel de Control', ruta: '/panel-control', icono: 'dashboard' },
-              { 
-                titulo: 'Incidentes Críticos (P1/P2)', 
-                ruta: '/incidentes/criticos', 
+              { titulo: 'Bandeja de Tickets', ruta: '/incidentes/bandeja', icono: 'inbox' },
+              {
+                titulo: 'Incidentes Críticos (P1/P2)',
+                ruta: '/incidentes/criticos',
                 icono: 'warning',
                 badge: '2 P1',
-                badgeTipo: 'sla-incumplido'
+                badgeTipo: 'sla-incumplido',
               },
+              { titulo: 'Matriz de Prioridad', ruta: '/administracion/matriz-prioridad', icono: 'grid_on' },
             ],
           },
           {

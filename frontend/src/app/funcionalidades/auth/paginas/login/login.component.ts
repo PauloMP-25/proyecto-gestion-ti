@@ -45,7 +45,7 @@ export class LoginComponent {
     } else if ((user === 'usuario' || user === 'medico') && (pass === 'usuario' || pass === 'medico')) {
       this.errorMensaje.set(null);
       this.authService.cambiarRol(RolUsuario.USUARIO_FINAL);
-      this.router.navigate(['/inicio']);
+      this.router.navigate(['/solicitudes/nuevo']);
     } else {
       this.errorMensaje.set('Credenciales no válidas. Para pruebas use admin, practicante o usuario.');
     }

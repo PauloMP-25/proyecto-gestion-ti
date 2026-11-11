@@ -1,1 +1,48 @@
-<p>dialogo-resolver works!</p>
+<div class="dialogo-fondo" (click)="alCancelar.emit()">
+  <section
+    class="dialogo"
+    role="dialog"
+    aria-modal="true"
+    aria-labelledby="titulo-dialogo-resolver"
+    appDialogoAccesible
+    (alCerrar)="alCancelar.emit()"
+    (click)="$event.stopPropagation()">
+    <h2 class="dialogo__titulo" id="titulo-dialogo-resolver">Resolver ticket · {{ codigo() }}</h2>
+    <p class="dialogo__descripcion">
+      Describa la solución aplicada. El usuario podrá conformar, cerrar o reabrir el ticket.
+    </p>
+
+    <form [formGroup]="formulario" (ngSubmit)="confirmar()" novalidate>
+      <div class="dialogo__campo">
+        <label class="dialogo__label" for="resolver-solucion">Solución aplicada *</label>
+        <textarea
+          id="resolver-solucion"
+          class="dialogo__textarea"
+          formControlName="solucion"
+          rows="6"
+          maxlength="2000"
+          aria-describedby="resolver-solucion-error"
+          placeholder="Detalle el diagnóstico final y los pasos realizados…"></textarea>
+        <span class="dialogo__contador">{{ formulario.controls.solucion.value?.length }}/2000</span>
+        @if (formulario.controls.solucion.touched && formulario.controls.solucion.invalid) {
+          <span class="dialogo__error" id="resolver-solucion-error">
+            @if (formulario.controls.solucion.errors?.['required']) {
+              La solución es obligatoria.
+            } @else if (formulario.controls.solucion.errors?.['minlength']) {
+              La solución debe tener al menos 20 caracteres.
+            } @else {
+              Máximo 2000 caracteres.
+            }
+          </span>
+        }
+      </div>
+
+      <div class="dialogo__acciones">
+        <button type="button" class="dialogo__btn dialogo__btn--cancelar" (click)="alCancelar.emit()">Cancelar</button>
+        <button type="submit" class="dialogo__btn dialogo__btn--confirmar" [disabled]="procesando()">
+          {{ procesando() ? 'Resolviendo…' : 'Marcar como resuelto' }}
+        </button>
+      </div>
+    </form>
+  </section>
+</div>

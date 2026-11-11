@@ -18,11 +18,11 @@ export class TiempoRestantePipe implements PipeTransform {
       const transcurridoMs = Math.abs(diffMs);
       const minutosVencidos = Math.floor(transcurridoMs / (1000 * 60));
       if (minutosVencidos < 60) {
-        return `Vencido hace ${minutosVencidos}m`;
+        return `vencido hace ${minutosVencidos}m`;
       }
       const horasVencidas = Math.floor(minutosVencidos / 60);
       const minsResto = minutosVencidos % 60;
-      return `Vencido hace ${horasVencidas}h ${minsResto}m`;
+      return `vencido hace ${horasVencidas}h ${minsResto}m`;
     }
 
     const totalSegundos = Math.floor(diffMs / 1000);

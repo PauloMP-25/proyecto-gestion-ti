@@ -1,87 +1,37 @@
-<div class="crear-ticket-contenedor">
-  
-  @if (!ticketCreado()) {
-    <!-- Cabecera de Página -->
-    <header class="crear-ticket-header">
-      <div class="crear-ticket-header__izq">
-        <button type="button" class="btn-volver" (click)="volverAlPanel()" title="Volver al Panel de Control">
-          <app-icono nombre="arrow_back" tamano="xs"></app-icono>
-          <span>Volver al Panel de Control</span>
+<div class="pagina-crear">
+  <header class="pagina-crear__header">
+    <h1 class="pagina-crear__titulo">Registrar Incidente o Solicitud</h1>
+    <p class="pagina-crear__subtitulo">
+      Mesa de Ayuda · Hospital Santa María del Socorro
+    </p>
+  </header>
+
+  @if (ticketCreado(); as ticket) {
+    <section class="confirmacion" role="status" aria-live="polite">
+      <span class="material-symbols-outlined confirmacion__icono" aria-hidden="true">check_circle</span>
+      <h2 class="confirmacion__titulo">Registro exitoso</h2>
+      <p class="confirmacion__codigo">{{ ticket.codigo }}</p>
+      <p class="confirmacion__mensaje">
+        Su {{ ticket.tipo === 'INCIDENTE' ? 'incidente' : 'solicitud' }} fue registrado y será atendido
+        por el equipo de la Mesa de Ayuda. Guarde el código para futuras consultas.
+      </p>
+      <div class="confirmacion__acciones">
+        <button type="button" class="btn-secundario" (click)="registrarOtro()">
+          <span class="material-symbols-outlined" aria-hidden="true">add</span>
+          Registrar otro
         </button>
-        <div class="titulos-pagina">
-          <h1 class="titulo-principal">Registrar Incidente o Solicitud de Soporte TI</h1>
-          <p class="subtitulo-principal">
-            Hospital Santa María del Socorro · Centro de Atención y Soporte Técnico Asistencial
-          </p>
-        </div>
+        <a routerLink="/incidentes/mis-tickets" class="btn-primario">
+          <span class="material-symbols-outlined" aria-hidden="true">list_alt</span>
+          Ver mis tickets
+        </a>
       </div>
-    </header>
-
-    <!-- Formulario de Registro -->
-    <main class="crear-ticket-cuerpo">
-      <app-solicitud-formulario 
-        (alRegistrarExitoso)="onTicketRegistrado($event)"
-        (alCancelar)="volverAlPanel()">
-      </app-solicitud-formulario>
-    </main>
+    </section>
   } @else {
-    <!-- Pantalla de Confirmación de Ticket Registrado -->
-    <div class="pantalla-confirmacion" role="region" aria-label="Confirmación de Registro">
-      <div class="tarjeta-exito">
-        <div class="tarjeta-exito__icono">
-          <app-icono nombre="check_circle" tamano="lg"></app-icono>
-        </div>
-
-        <div class="tarjeta-exito__textos">
-          <span class="subtitulo-exito">¡Ticket Registrado Satisfactoriamente!</span>
-          <h2 class="codigo-ticket">{{ ticketCreado()?.codigo }}</h2>
-          <p class="mensaje-exito">
-            Su solicitud ha sido ingresada en la cola activa de la Mesa de Ayuda TI y priorizada bajo el acuerdo de nivel de servicio (SLA) institucional.
-          </p>
-        </div>
-
-        <!-- Ficha Resumen del Ticket -->
-        <div class="ficha-ticket-resumen">
-          <div class="fila-resumen">
-            <span class="label-resumen">Asunto:</span>
-            <strong class="valor-resumen">{{ ticketCreado()?.titulo }}</strong>
-          </div>
-
-          <div class="fila-resumen">
-            <span class="label-resumen">Prioridad Asignada:</span>
-            <span class="tag-prioridad-resumen" [class]="'tag--' + ticketCreado()?.slaEstimado?.colorClase">
-              {{ ticketCreado()?.slaEstimado?.prioridadNombre }}
-            </span>
-          </div>
-
-          <div class="fila-resumen">
-            <span class="label-resumen">Tiempo de Respuesta:</span>
-            <span class="valor-resumen valor-resumen--destacado">
-              {{ ticketCreado()?.slaEstimado?.textoRespuesta }}
-            </span>
-          </div>
-
-          <div class="fila-resumen">
-            <span class="label-resumen">Ubicación Asistencial:</span>
-            <span class="valor-resumen">
-              {{ ticketCreado()?.contextoEquipo?.area }} ({{ ticketCreado()?.contextoEquipo?.hostname }} · {{ ticketCreado()?.contextoEquipo?.ip }})
-            </span>
-          </div>
-        </div>
-
-        <!-- Botones de Acción Posterior -->
-        <div class="acciones-exito">
-          <button type="button" class="btn-otro" (click)="registrarOtro()">
-            <app-icono nombre="add" tamano="xs"></app-icono>
-            <span>Registrar otro ticket</span>
-          </button>
-
-          <app-boton variante="primario" icono="dashboard" (click)="volverAlPanel()">
-            Ir a la Cola del Panel
-          </app-boton>
-        </div>
-      </div>
+    <div class="pagina-crear__tarjeta">
+      <app-solicitud-formulario
+        (alRegistrarExitoso)="alRegistrar($event)"
+        (alCancelar)="cancelar()">
+      </app-solicitud-formulario>
     </div>
   }
-
 </div>

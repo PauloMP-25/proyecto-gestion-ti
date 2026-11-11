@@ -1,124 +1,184 @@
-import { Component, ChangeDetectionStrategy, inject, signal, output } from '@angular/core';
+import { Component, ChangeDetectionStrategy, DestroyRef, OnInit, computed, inject, output, signal } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
-import { SolicitudesService } from '../../servicios/solicitudes.service';
-import { 
-  CategoriaTicket, 
-  ContextoEquipoDetectado, 
-  EstimacionSLA, 
-  NivelImpacto, 
-  NivelUrgencia, 
-  NuevaSolicitudPayload, 
-  SolicitudRegistradaRespuesta, 
-  TipoTicket 
-} from '../../modelos/solicitud.model';
+import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
+import { Categoria, ContextoCliente, CrearTicketDto } from '../../../../compartido/modelos/ticket.dto';
+import { Impacto, TipoTicket, Urgencia } from '../../../../compartido/modelos/impacto-urgencia.enum';
+import { Ticket } from '../../../../compartido/modelos/ticket.model';
+import { TicketsService } from '../../../../compartido/servicios/tickets/tickets.service';
+import { ContextoClienteService } from '../../../../nucleo/servicios/contexto-cliente.service';
+import { PrioridadPreviaService } from '../../servicios/prioridad-previa.service';
 import { ContextoEquipoComponent } from '../../../../compartido/ui/moleculas/contexto-equipo/contexto-equipo.component';
+import { PrioridadInsigniaComponent } from '../../../../compartido/ui/atomos/prioridad-insignia/prioridad-insignia.component';
+import { EsqueletoComponent } from '../../../../compartido/ui/atomos/esqueleto/esqueleto.component';
 import { IconoComponent } from '../../../../compartido/ui/atomos/icono/icono.component';
+
+const CLAVE_BORRADOR = 'hsmsi_borrador_ticket';
+
+interface BorradorTicket {
+  tipo: TipoTicket;
+  idCategoria: number | null;
+  impacto: Impacto;
+  urgencia: Urgencia;
+  titulo: string;
+  descripcion: string;
+  anexoContacto: string;
+  hora: string;
+}
 
 @Component({
   selector: 'app-solicitud-formulario',
   standalone: true,
   imports: [
-    CommonModule, 
-    ReactiveFormsModule, 
-    ContextoEquipoComponent, 
-    IconoComponent
+    CommonModule,
+    ReactiveFormsModule,
+    ContextoEquipoComponent,
+    PrioridadInsigniaComponent,
+    EsqueletoComponent,
+    IconoComponent,
   ],
   templateUrl: './solicitud-formulario.component.html',
   styleUrl: './solicitud-formulario.component.scss',
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
-export class SolicitudFormularioComponent {
+export class SolicitudFormularioComponent implements OnInit {
   private fb = inject(FormBuilder);
-  private solicitudesService = inject(SolicitudesService);
+  private ticketsService = inject(TicketsService);
+  private contextoService = inject(ContextoClienteService);
+  private prioridadPrevia = inject(PrioridadPreviaService);
+  private destroyRef = inject(DestroyRef);
 
-  readonly alRegistrarExitoso = output<SolicitudRegistradaRespuesta>();
+  readonly alRegistrarExitoso = output<Ticket>();
   readonly alCancelar = output<void>();
 
-  readonly categorias: CategoriaTicket[] = this.solicitudesService.categorias;
+  readonly tipo = signal<TipoTicket>('INCIDENTE');
+  readonly impacto = signal<Impacto>('ALTO');
+  readonly urgencia = signal<Urgencia>('ALTA');
+  readonly contexto = signal<ContextoCliente | null>(null);
+  readonly categorias = signal<Categoria[]>([]);
+  readonly guardando = signal(false);
+  readonly horaBorrador = signal<string | null>(null);
 
-  // Estado del contexto detectado de la PC
-  contextoEquipo = signal<ContextoEquipoDetectado>(
-    this.solicitudesService.obtenerContextoDetectado()
-  );
+  readonly previa = computed(() => this.prioridadPrevia.calcular(this.impacto(), this.urgencia()));
 
-  tipoSeleccionado = signal<TipoTicket>('incidente');
-  categoriaSeleccionadaId = signal<string>('cat-software');
-  impactoSeleccionado = signal<NivelImpacto>('ALTO');
-  urgenciaSeleccionada = signal<NivelUrgencia>('ALTA');
-
-  guardando = signal<boolean>(false);
-
-  // SLA estimado calculado reactivamente
-  slaEstimado = signal<EstimacionSLA>(
-    this.solicitudesService.calcularPrioridadYSla('ALTO', 'ALTA')
-  );
-
-  formulario = this.fb.group({
-    titulo: ['', [Validators.required, Validators.minLength(10), Validators.maxLength(150)]],
-    descripcion: ['', [Validators.required, Validators.minLength(20), Validators.maxLength(2000)]],
+  readonly formulario = this.fb.group({
+    idCategoria: this.fb.control<number | null>(null, Validators.required),
+    titulo: this.fb.control('', [Validators.required, Validators.maxLength(150)]),
+    descripcion: this.fb.control('', [Validators.required, Validators.minLength(15), Validators.maxLength(2000)]),
+    anexoContacto: this.fb.control('', Validators.maxLength(10)),
   });
 
+  private ultimoBorrador = '';
+
+  constructor() {
+    const intervalo = setInterval(() => this.guardarBorrador(), 5000);
+    this.destroyRef.onDestroy(() => clearInterval(intervalo));
+  }
+
+  ngOnInit(): void {
+    this.restaurarBorrador();
+
+    this.contextoService.obtener().pipe(takeUntilDestroyed(this.destroyRef)).subscribe(c => {
+      this.contexto.set(c);
+      if (!this.formulario.controls.anexoContacto.value && c.anexo) {
+        this.formulario.controls.anexoContacto.setValue(c.anexo);
+      }
+    });
+
+    this.ticketsService.categorias().pipe(takeUntilDestroyed(this.destroyRef)).subscribe(lista => {
+      this.categorias.set(lista);
+      if (this.formulario.controls.idCategoria.value == null && lista.length > 0) {
+        this.formulario.controls.idCategoria.setValue(lista[0].id);
+      }
+    });
+  }
+
   seleccionarTipo(tipo: TipoTicket): void {
-    this.tipoSeleccionado.set(tipo);
-    this.recalcularSLA();
+    this.tipo.set(tipo);
   }
 
-  seleccionarCategoria(catId: string): void {
-    this.categoriaSeleccionadaId.set(catId);
+  seleccionarImpacto(impacto: Impacto): void {
+    this.impacto.set(impacto);
   }
 
-  seleccionarImpacto(impacto: NivelImpacto): void {
-    this.impactoSeleccionado.set(impacto);
-    this.recalcularSLA();
+  seleccionarUrgencia(urgencia: Urgencia): void {
+    this.urgencia.set(urgencia);
   }
 
-  seleccionarUrgencia(urgencia: NivelUrgencia): void {
-    this.urgenciaSeleccionada.set(urgencia);
-    this.recalcularSLA();
-  }
-
-  onContextoModificado(nuevoContexto: ContextoEquipoDetectado): void {
-    this.contextoEquipo.set(nuevoContexto);
-  }
-
-  private recalcularSLA(): void {
-    const sla = this.solicitudesService.calcularPrioridadYSla(
-      this.impactoSeleccionado(),
-      this.urgenciaSeleccionada()
-    );
-    this.slaEstimado.set(sla);
-  }
-
-  async enviar(): Promise<void> {
+  enviar(): void {
+    if (this.guardando()) return;
     if (this.formulario.invalid) {
       this.formulario.markAllAsTouched();
       return;
     }
-
     this.guardando.set(true);
-
-    const payload: NuevaSolicitudPayload = {
-      tipo: this.tipoSeleccionado(),
-      categoriaId: this.categoriaSeleccionadaId(),
-      titulo: this.formulario.value.titulo!.trim(),
-      descripcion: this.formulario.value.descripcion!.trim(),
-      impacto: this.impactoSeleccionado(),
-      urgencia: this.urgenciaSeleccionada(),
-      contextoEquipo: this.contextoEquipo(),
+    const valores = this.formulario.getRawValue();
+    const dto: CrearTicketDto = {
+      tipo: this.tipo(),
+      idCategoria: valores.idCategoria!,
+      impacto: this.impacto(),
+      urgencia: this.urgencia(),
+      titulo: valores.titulo!.trim(),
+      descripcion: valores.descripcion!.trim(),
+      anexoContacto: valores.anexoContacto!.trim() || undefined,
     };
-
-    try {
-      const respuesta = await this.solicitudesService.registrarSolicitud(payload);
-      this.alRegistrarExitoso.emit(respuesta);
-    } catch (err) {
-      console.error('Error al registrar ticket:', err);
-    } finally {
-      this.guardando.set(false);
-    }
+    this.ticketsService.crear(dto).pipe(takeUntilDestroyed(this.destroyRef)).subscribe({
+      next: ticket => {
+        localStorage.removeItem(CLAVE_BORRADOR);
+        this.alRegistrarExitoso.emit(ticket);
+      },
+      error: () => this.guardando.set(false),
+    });
   }
 
   cancelar(): void {
     this.alCancelar.emit();
+  }
+
+  private snapshot(): BorradorTicket {
+    const v = this.formulario.getRawValue();
+    return {
+      tipo: this.tipo(),
+      idCategoria: v.idCategoria,
+      impacto: this.impacto(),
+      urgencia: this.urgencia(),
+      titulo: v.titulo ?? '',
+      descripcion: v.descripcion ?? '',
+      anexoContacto: v.anexoContacto ?? '',
+      hora: '',
+    };
+  }
+
+  private guardarBorrador(): void {
+    if (this.guardando()) return;
+    const borrador = this.snapshot();
+    const hayContenido = borrador.titulo.trim() !== '' || borrador.descripcion.trim() !== '';
+    const serializado = JSON.stringify({ ...borrador, hora: '' });
+    if (!hayContenido || serializado === this.ultimoBorrador) return;
+    borrador.hora = new Date().toLocaleTimeString('es-PE', { hour: '2-digit', minute: '2-digit', hour12: false });
+    localStorage.setItem(CLAVE_BORRADOR, JSON.stringify(borrador));
+    this.ultimoBorrador = serializado;
+    this.horaBorrador.set(borrador.hora);
+  }
+
+  private restaurarBorrador(): void {
+    const crudo = localStorage.getItem(CLAVE_BORRADOR);
+    if (!crudo) return;
+    try {
+      const b: BorradorTicket = JSON.parse(crudo);
+      this.tipo.set(b.tipo);
+      this.impacto.set(b.impacto);
+      this.urgencia.set(b.urgencia);
+      this.formulario.patchValue({
+        idCategoria: b.idCategoria,
+        titulo: b.titulo,
+        descripcion: b.descripcion,
+        anexoContacto: b.anexoContacto,
+      });
+      this.ultimoBorrador = JSON.stringify({ ...b, hora: '' });
+      this.horaBorrador.set(b.hora);
+    } catch {
+      localStorage.removeItem(CLAVE_BORRADOR);
+    }
   }
 }

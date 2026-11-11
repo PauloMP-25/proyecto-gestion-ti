@@ -1,138 +1,32 @@
-<div class="tarjeta-contexto" [class.tarjeta-contexto--editando]="modoEdicion()">
+<div class="tarjeta-contexto">
   <div class="tarjeta-contexto__header">
-    <div class="tarjeta-contexto__titulo-grupo">
-      <div class="icono-radar" [class.icono-radar--auto]="contexto().detectadoAutomatico">
-        <app-icono [nombre]="contexto().detectadoAutomatico ? 'lan' : 'devices'" tamano="sm"></app-icono>
-      </div>
-      <div>
-        <h4 class="tarjeta-contexto__titulo">Contexto de Estación y Ubicación Asistencial</h4>
-        <p class="tarjeta-contexto__subtitulo">
-          {{ contexto().detectadoAutomatico ? 'Identificado por conexión en red LAN hospitalaria' : 'Modificado manualmente por el usuario' }}
-        </p>
-      </div>
-    </div>
-
-    <div class="tarjeta-contexto__acciones">
-      @if (contexto().detectadoAutomatico) {
-        <span class="badge-verificado">
-          <app-icono nombre="check_circle" tamano="xs"></app-icono>
-          <span>LAN Detectada</span>
-        </span>
-      } @else {
-        <span class="badge-manual">
-          <app-icono nombre="edit_note" tamano="xs"></app-icono>
-          <span>Manual</span>
-        </span>
-      }
-
-      @if (modoEdicionPermitido() && !modoEdicion()) {
-        <button 
-          type="button" 
-          class="btn-cambiar-equipo" 
-          (click)="activarEdicion()"
-          title="Modificar si reporta desde otra estación de trabajo">
-          <app-icono nombre="edit" tamano="xs"></app-icono>
-          <span>Cambiar equipo</span>
-        </button>
-      }
-    </div>
+    <app-icono nombre="lan" tamano="sm"></app-icono>
+    <h4 class="tarjeta-contexto__titulo">Equipo detectado por la red del hospital</h4>
   </div>
 
-  <!-- Vista Lectura: Detalles del Equipo detectado -->
-  @if (!modoEdicion()) {
-    <div class="grid-detalles-contexto">
-      <div class="item-contexto">
-        <span class="item-contexto__label">Nombre del Equipo (Hostname)</span>
-        <div class="item-contexto__valor">
-          <app-icono nombre="computer" tamano="xs"></app-icono>
-          <strong>{{ contexto().hostname }}</strong>
-        </div>
-      </div>
-
-      <div class="item-contexto">
-        <span class="item-contexto__label">Dirección IP Local</span>
-        <div class="item-contexto__valor">
-          <app-icono nombre="dns" tamano="xs"></app-icono>
-          <code>{{ contexto().ip }}</code>
-        </div>
-      </div>
-
-      <div class="item-contexto item-contexto--area">
-        <span class="item-contexto__label">Área / Servicio Clínico</span>
-        <div class="item-contexto__valor">
-          <app-icono nombre="local_hospital" tamano="xs"></app-icono>
-          <span>{{ contexto().area }}</span>
-        </div>
-      </div>
-
-      <div class="item-contexto">
-        <span class="item-contexto__label">Anexo Telefónico</span>
-        <div class="item-contexto__valor">
-          <app-icono nombre="call" tamano="xs"></app-icono>
-          <span>{{ contexto().anexo }}</span>
-        </div>
-      </div>
-    </div>
-  } @else {
-    <!-- Vista Edición: Formulario de Modificación de Contexto -->
-    <div class="formulario-edicion-contexto">
-      <div class="grid-campos-edicion">
-        <div class="campo-edicion">
-          <label for="ctx-hostname">Hostname / Código PC:</label>
-          <input 
-            id="ctx-hostname" 
-            type="text" 
-            [ngModel]="hostnameEditado()" 
-            (ngModelChange)="hostnameEditado.set($event)"
-            placeholder="Ej. HSP-EMG-02" />
-        </div>
-
-        <div class="campo-edicion">
-          <label for="ctx-ip">Dirección IP:</label>
-          <input 
-            id="ctx-ip" 
-            type="text" 
-            [ngModel]="ipEditada()" 
-            (ngModelChange)="ipEditada.set($event)"
-            placeholder="Ej. 10.20.4.15" />
-        </div>
-
-        <div class="campo-edicion campo-edicion--ancho">
-          <label for="ctx-area">Área Asistencial / Servicio:</label>
-          <select 
-            id="ctx-area" 
-            [ngModel]="areaEditada()" 
-            (ngModelChange)="areaEditada.set($event)">
-            @for (area of areasHospitalarias; track area) {
-              <option [value]="area">{{ area }}</option>
-            }
-          </select>
-        </div>
-
-        <div class="campo-edicion">
-          <label for="ctx-anexo">Anexo Telefónico:</label>
-          <input 
-            id="ctx-anexo" 
-            type="text" 
-            [ngModel]="anexoEditado()" 
-            (ngModelChange)="anexoEditado.set($event)"
-            placeholder="Ej. 2400" />
-        </div>
-      </div>
-
-      <div class="acciones-edicion">
-        <button type="button" class="btn-restablecer" (click)="restablecerAutomatico()">
-          Restablecer a detección LAN
-        </button>
-        <div class="grupo-botones-guardar">
-          <button type="button" class="btn-cancelar" (click)="cancelarEdicion()">
-            Cancelar
-          </button>
-          <button type="button" class="btn-aplicar" (click)="guardarEdicion()">
-            Aplicar Cambios
-          </button>
-        </div>
-      </div>
-    </div>
+  @if (!contexto().ipRegistrada) {
+    <p class="aviso-no-registrado" role="note">
+      <app-icono nombre="info" tamano="xs"></app-icono>
+      <span>No se identificó su equipo. El técnico lo vinculará al atenderlo.</span>
+    </p>
   }
+
+  <dl class="grid-detalles">
+    <div class="detalle">
+      <dt>Nombre del equipo (Hostname)</dt>
+      <dd><app-icono nombre="computer" tamano="xs"></app-icono> {{ contexto().hostname ?? 'No identificado' }}</dd>
+    </div>
+    <div class="detalle">
+      <dt>Dirección IP local</dt>
+      <dd><app-icono nombre="dns" tamano="xs"></app-icono> <code>{{ contexto().ip }}</code></dd>
+    </div>
+    <div class="detalle">
+      <dt>Área / Servicio</dt>
+      <dd><app-icono nombre="local_hospital" tamano="xs"></app-icono> {{ contexto().area ?? 'Por asignar' }}</dd>
+    </div>
+    <div class="detalle">
+      <dt>Anexo telefónico</dt>
+      <dd><app-icono nombre="call" tamano="xs"></app-icono> {{ contexto().anexo ?? '—' }}</dd>
+    </div>
+  </dl>
 </div>

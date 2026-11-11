@@ -1,1 +1,48 @@
-<p>dialogo-escalar works!</p>
+<div class="dialogo-fondo" (click)="alCancelar.emit()">
+  <section
+    class="dialogo"
+    role="dialog"
+    aria-modal="true"
+    aria-labelledby="titulo-dialogo-escalar"
+    appDialogoAccesible
+    (alCerrar)="alCancelar.emit()"
+    (click)="$event.stopPropagation()">
+    <h2 class="dialogo__titulo" id="titulo-dialogo-escalar">Escalar a especialista · {{ codigo() }}</h2>
+    <p class="dialogo__descripcion">
+      El ticket pasará de <strong>Nivel 1 (Mesa de Ayuda)</strong> a <strong>Nivel 2 (Especialista TI)</strong>.
+    </p>
+
+    <form [formGroup]="formulario" (ngSubmit)="confirmar()" novalidate>
+      <div class="dialogo__campo">
+        <label class="dialogo__label" for="escalar-motivo">Motivo del escalamiento *</label>
+        <textarea
+          id="escalar-motivo"
+          class="dialogo__textarea"
+          formControlName="motivo"
+          rows="4"
+          maxlength="300"
+          aria-describedby="escalar-motivo-error"
+          placeholder="Describa el diagnóstico realizado y por qué requiere un especialista…"></textarea>
+        <span class="dialogo__contador">{{ formulario.controls.motivo.value?.length }}/300</span>
+        @if (formulario.controls.motivo.touched && formulario.controls.motivo.invalid) {
+          <span class="dialogo__error" id="escalar-motivo-error">
+            @if (formulario.controls.motivo.errors?.['required']) {
+              El motivo es obligatorio.
+            } @else if (formulario.controls.motivo.errors?.['minlength']) {
+              El motivo debe tener al menos 20 caracteres.
+            } @else {
+              Máximo 300 caracteres.
+            }
+          </span>
+        }
+      </div>
+
+      <div class="dialogo__acciones">
+        <button type="button" class="dialogo__btn dialogo__btn--cancelar" (click)="alCancelar.emit()">Cancelar</button>
+        <button type="submit" class="dialogo__btn dialogo__btn--confirmar" [disabled]="procesando()">
+          {{ procesando() ? 'Escalando…' : 'Escalar a N2' }}
+        </button>
+      </div>
+    </form>
+  </section>
+</div>

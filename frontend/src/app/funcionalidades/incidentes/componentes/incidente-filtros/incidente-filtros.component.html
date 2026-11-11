@@ -1,1 +1,61 @@
-<p>incidente-filtros works!</p>
+<div class="filtros" role="search" aria-label="Filtros de tickets">
+  <div class="filtros__campo filtros__campo--texto">
+    <label class="filtros__label" for="filtro-texto">Buscar</label>
+    <input
+      id="filtro-texto"
+      type="search"
+      class="filtros__control"
+      placeholder="Código o título…"
+      [value]="texto()"
+      (input)="escribirTexto($any($event.target).value)" />
+  </div>
+
+  <div class="filtros__campo">
+    <label class="filtros__label" for="filtro-estado">Estado</label>
+    <select
+      id="filtro-estado"
+      class="filtros__control"
+      [value]="estado()"
+      (change)="cambiarEstado($any($event.target).value)">
+      <option value="">Todos</option>
+      @for (e of estados; track e) {
+        <option [value]="e">{{ etiquetaEstado(e) }}</option>
+      }
+    </select>
+  </div>
+
+  <div class="filtros__campo">
+    <label class="filtros__label" for="filtro-prioridad">Prioridad</label>
+    <select
+      id="filtro-prioridad"
+      class="filtros__control"
+      [value]="prioridad()"
+      (change)="cambiarPrioridad($any($event.target).value)">
+      <option value="">Todas</option>
+      @for (p of prioridades; track p) {
+        <option [value]="p">{{ etiquetaPrioridad(p) }}</option>
+      }
+    </select>
+  </div>
+
+  <div class="filtros__campo">
+    <label class="filtros__label" for="filtro-area">Área</label>
+    <select
+      id="filtro-area"
+      class="filtros__control"
+      [value]="idArea()"
+      (change)="cambiarArea($any($event.target).value)">
+      <option value="">Todas</option>
+      @for (a of areas(); track a.id) {
+        <option [value]="a.id">{{ a.nombre }}</option>
+      }
+    </select>
+  </div>
+
+  @if (estado() || prioridad() || idArea() !== '' || texto()) {
+    <button type="button" class="filtros__limpiar" (click)="limpiar()">
+      <span class="material-symbols-outlined" aria-hidden="true">filter_alt_off</span>
+      Limpiar
+    </button>
+  }
+</div>

@@ -5,4 +5,7 @@
   <span class="insignia-sla__texto">
     {{ texto() ?? config().textoDefault }}
   </span>
+  @if (limite(); as fechaLimite) {
+    <span class="insignia-sla__tiempo">· {{ fechaLimite | tiempoRestante: ahora() }}</span>
+  }
 </span>

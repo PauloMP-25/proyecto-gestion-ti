@@ -45,6 +45,18 @@
     border-color: var(--sla-ok-border, #1b5e20);
   }
 
+  &.estado--escalado {
+    background-color: var(--color-p2-bg);
+    color: var(--color-p2-text);
+    border-color: var(--color-p2-border);
+  }
+
+  &.estado--reabierto {
+    background-color: var(--color-p1-bg);
+    color: var(--color-p1-text);
+    border-color: var(--color-p1-border);
+  }
+
   &.estado--cerrado {
     background-color: var(--fondo-aplicacion, #f1f5f9);
     color: var(--texto-secundario, #475569);

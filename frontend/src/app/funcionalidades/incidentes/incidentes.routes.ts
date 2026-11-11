@@ -6,6 +6,30 @@ const ROLES_SOPORTE = [RolUsuario.PRACTICANTE, RolUsuario.ADMINISTRADOR];
 
 export const INCIDENTES_ROUTES: Routes = [
   {
+    path: '',
+    redirectTo: 'bandeja',
+    pathMatch: 'full',
+  },
+  {
+    path: 'bandeja',
+    loadComponent: () =>
+      import('./paginas/incidente-lista/incidente-lista.component').then(
+        (m) => m.IncidenteListaComponent,
+      ),
+    canActivate: [rolGuard],
+    data: { roles: ROLES_SOPORTE },
+    title: 'Bandeja de Tickets - Service Desk HSMSI',
+  },
+  {
+    path: 'mis-tickets',
+    loadComponent: () =>
+      import('./paginas/incidente-lista/incidente-lista.component').then(
+        (m) => m.IncidenteListaComponent,
+      ),
+    data: { modo: 'propios' },
+    title: 'Mis Tickets - Service Desk HSMSI',
+  },
+  {
     path: 'criticos',
     loadComponent: () =>
       import('./paginas/incidentes-criticos/incidentes-criticos.component').then(
@@ -16,12 +40,8 @@ export const INCIDENTES_ROUTES: Routes = [
   },
   {
     path: 'nuevo',
-    loadComponent: () =>
-      import('./paginas/incidente-crear/incidente-crear.component').then(
-        (m) => m.IncidenteCrearComponent,
-      ),
-    canActivate: [rolGuard],
-    data: { roles: ROLES_SOPORTE },
+    redirectTo: '/solicitudes/nuevo',
+    pathMatch: 'full',
   },
   {
     path: ':id',
@@ -29,7 +49,6 @@ export const INCIDENTES_ROUTES: Routes = [
       import('./paginas/incidente-detalle/incidente-detalle.component').then(
         (m) => m.IncidenteDetalleComponent,
       ),
-    canActivate: [rolGuard],
-    data: { roles: ROLES_SOPORTE },
+    title: 'Detalle de Ticket - Service Desk HSMSI',
   },
 ];

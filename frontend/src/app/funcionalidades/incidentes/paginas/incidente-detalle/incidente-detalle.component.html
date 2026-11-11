@@ -1,1 +1,195 @@
-<p>incidente-detalle works!</p>
+<div class="pagina-detalle">
+  <a [routerLink]="rutaVolver" class="pagina-detalle__volver">
+    <span class="material-symbols-outlined" aria-hidden="true">arrow_back</span>
+    Volver al listado
+  </a>
+
+  @if (cargando()) {
+    <div class="detalle-esqueleto" aria-label="Cargando ticket">
+      <app-esqueleto alto="40px" ancho="60%"></app-esqueleto>
+      <app-esqueleto alto="160px" radio="var(--radius-md, 8px)"></app-esqueleto>
+      <app-esqueleto alto="240px" radio="var(--radius-md, 8px)"></app-esqueleto>
+    </div>
+  } @else if (noEncontrado()) {
+    <app-estado-vacio icono="search_off" mensaje="No se encontró el ticket solicitado."></app-estado-vacio>
+  } @else if (ticket(); as t) {
+    <header class="detalle-header">
+      <div class="detalle-header__meta">
+        <span class="detalle-header__codigo">{{ t.codigo }}</span>
+        <span class="detalle-header__tipo">{{ t.tipo === 'INCIDENTE' ? 'Incidente' : 'Solicitud' }}</span>
+      </div>
+      <h1 class="detalle-header__titulo">{{ t.titulo }}</h1>
+      <div class="detalle-header__insignias">
+        <app-prioridad-insignia [prioridad]="t.prioridad"></app-prioridad-insignia>
+        <app-estado-etiqueta [estado]="t.estado"></app-estado-etiqueta>
+        <app-nivel-insignia [nivel]="t.nivelSoporte"></app-nivel-insignia>
+        <app-sla-insignia [estado]="t.estadoSla" [limite]="limiteSla()"></app-sla-insignia>
+      </div>
+    </header>
+
+    <div class="detalle-grid">
+      <div class="detalle-principal">
+        <section class="tarjeta-detalle" aria-labelledby="detalle-descripcion">
+          <h2 class="tarjeta-detalle__titulo" id="detalle-descripcion">Descripción</h2>
+          <p class="tarjeta-detalle__texto">{{ t.descripcion }}</p>
+        </section>
+
+        @if (contexto(); as ctx) {
+          <app-contexto-equipo [contexto]="ctx"></app-contexto-equipo>
+        }
+
+        <section class="tarjeta-detalle" aria-labelledby="detalle-historial">
+          <h2 class="tarjeta-detalle__titulo" id="detalle-historial">Línea de tiempo</h2>
+          <app-incidente-linea-tiempo [historial]="t.historial"></app-incidente-linea-tiempo>
+        </section>
+
+        @if (t.escalamientos.length > 0) {
+          <section class="tarjeta-detalle" aria-labelledby="detalle-escalamientos">
+            <h2 class="tarjeta-detalle__titulo" id="detalle-escalamientos">Escalamientos</h2>
+            <ul class="lista-registros">
+              @for (e of t.escalamientos; track $index) {
+                <li class="lista-registros__item">
+                  <div class="lista-registros__cabecera">
+                    <strong>{{ e.nivelOrigen }} → {{ e.nivelDestino }}</strong>
+                    <time [attr.datetime]="e.fecha">{{ e.fecha | date:'dd/MM/yyyy HH:mm' }}</time>
+                  </div>
+                  <p class="lista-registros__texto">{{ e.motivo }}</p>
+                  <p class="lista-registros__meta">
+                    Por {{ e.usuarioOrigen }}{{ e.usuarioDestino ? ' → ' + e.usuarioDestino : '' }}
+                  </p>
+                </li>
+              }
+            </ul>
+          </section>
+        }
+
+        @if (t.soluciones.length > 0) {
+          <section class="tarjeta-detalle" aria-labelledby="detalle-soluciones">
+            <h2 class="tarjeta-detalle__titulo" id="detalle-soluciones">Soluciones</h2>
+            <ul class="lista-registros">
+              @for (s of t.soluciones; track $index) {
+                <li class="lista-registros__item">
+                  <div class="lista-registros__cabecera">
+                    <strong>{{ s.usuario }}{{ s.esSolucionFinal ? ' · Solución final' : '' }}</strong>
+                    <time [attr.datetime]="s.fecha">{{ s.fecha | date:'dd/MM/yyyy HH:mm' }}</time>
+                  </div>
+                  <p class="lista-registros__texto">{{ s.descripcion }}</p>
+                </li>
+              }
+            </ul>
+          </section>
+        }
+      </div>
+
+      <aside class="detalle-lateral">
+        @if (acciones().length > 0) {
+          <section class="tarjeta-detalle tarjeta-detalle--acciones" aria-labelledby="detalle-acciones">
+            <h2 class="tarjeta-detalle__titulo" id="detalle-acciones">Acciones</h2>
+            <div class="acciones-botones">
+              @for (a of acciones(); track a.tipo) {
+                <button
+                  type="button"
+                  class="btn-accion"
+                  [class.btn-accion--destacada]="a.destacada"
+                  [disabled]="procesando()"
+                  (click)="ejecutar(a)">
+                  <span class="material-symbols-outlined" aria-hidden="true">{{ a.icono }}</span>
+                  {{ a.etiqueta }}
+                </button>
+              }
+            </div>
+          </section>
+        }
+
+        <section class="tarjeta-detalle" aria-labelledby="detalle-datos">
+          <h2 class="tarjeta-detalle__titulo" id="detalle-datos">Datos del ticket</h2>
+          <dl class="datos-lista">
+            <div><dt>Solicitante</dt><dd>{{ t.solicitante.nombre }}</dd></div>
+            <div><dt>Área</dt><dd>{{ t.area.nombre }}</dd></div>
+            <div><dt>Categoría</dt><dd>{{ t.categoria.nombre }}</dd></div>
+            <div><dt>Impacto</dt><dd>{{ impactoTexto(t) }}</dd></div>
+            <div><dt>Urgencia</dt><dd>{{ urgenciaTexto(t) }}</dd></div>
+            <div><dt>Anexo de contacto</dt><dd>{{ t.anexoContacto ?? '—' }}</dd></div>
+            <div><dt>Asignado a</dt><dd>{{ t.asignadoA?.nombre ?? 'Sin asignar' }}</dd></div>
+          </dl>
+        </section>
+
+        <section class="tarjeta-detalle" aria-labelledby="detalle-tiempos">
+          <h2 class="tarjeta-detalle__titulo" id="detalle-tiempos">Tiempos de atención</h2>
+          <dl class="datos-lista">
+            <div><dt>Registro</dt><dd>{{ t.fechaCreacion | date:'dd/MM/yyyy HH:mm' }}</dd></div>
+            @if (t.fechaLimiteRespuesta) {
+              <div><dt>Límite de respuesta</dt><dd>{{ t.fechaLimiteRespuesta | date:'dd/MM/yyyy HH:mm' }}</dd></div>
+            }
+            @if (t.fechaLimiteResolucion) {
+              <div><dt>Límite de resolución</dt><dd>{{ t.fechaLimiteResolucion | date:'dd/MM/yyyy HH:mm' }}</dd></div>
+            }
+            @if (t.fechaRespuestaReal) {
+              <div><dt>Primera respuesta</dt><dd>{{ t.fechaRespuestaReal | date:'dd/MM/yyyy HH:mm' }}</dd></div>
+            }
+            @if (t.fechaResolucionReal) {
+              <div><dt>Resolución</dt><dd>{{ t.fechaResolucionReal | date:'dd/MM/yyyy HH:mm' }}</dd></div>
+            }
+            @if (t.fechaCierre) {
+              <div><dt>Cierre</dt><dd>{{ t.fechaCierre | date:'dd/MM/yyyy HH:mm' }}</dd></div>
+            }
+          </dl>
+        </section>
+      </aside>
+    </div>
+
+    @switch (dialogo()) {
+      @case ('asignar') {
+        <app-dialogo-asignar
+          [codigo]="t.codigo"
+          [procesando]="procesando()"
+          (alConfirmar)="confirmarAsignar($event)"
+          (alCancelar)="cerrarDialogo()">
+        </app-dialogo-asignar>
+      }
+      @case ('iniciar') {
+        <app-dialogo-cambiar-estado
+          accion="iniciar"
+          [codigo]="t.codigo"
+          [procesando]="procesando()"
+          (alConfirmar)="confirmarCambioEstado($event)"
+          (alCancelar)="cerrarDialogo()">
+        </app-dialogo-cambiar-estado>
+      }
+      @case ('cerrar') {
+        <app-dialogo-cambiar-estado
+          accion="cerrar"
+          [codigo]="t.codigo"
+          [procesando]="procesando()"
+          (alConfirmar)="confirmarCambioEstado($event)"
+          (alCancelar)="cerrarDialogo()">
+        </app-dialogo-cambiar-estado>
+      }
+      @case ('reabrir') {
+        <app-dialogo-cambiar-estado
+          accion="reabrir"
+          [codigo]="t.codigo"
+          [procesando]="procesando()"
+          (alConfirmar)="confirmarCambioEstado($event)"
+          (alCancelar)="cerrarDialogo()">
+        </app-dialogo-cambiar-estado>
+      }
+      @case ('escalar') {
+        <app-dialogo-escalar
+          [codigo]="t.codigo"
+          [procesando]="procesando()"
+          (alConfirmar)="confirmarEscalamiento($event)"
+          (alCancelar)="cerrarDialogo()">
+        </app-dialogo-escalar>
+      }
+      @case ('resolver') {
+        <app-dialogo-resolver
+          [codigo]="t.codigo"
+          [procesando]="procesando()"
+          (alConfirmar)="confirmarResolucion($event)"
+          (alCancelar)="cerrarDialogo()">
+        </app-dialogo-resolver>
+      }
+    }
+  }
+</div>
