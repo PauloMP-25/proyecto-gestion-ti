@@ -62,39 +62,20 @@
 .tab-btn {
   display: inline-flex;
   align-items: center;
+  justify-content: center;
   gap: 8px;
   height: 38px;
-  padding: 0 14px;
+  padding: 0 16px;
   border: 1px solid transparent;
   border-radius: var(--radio-md, 8px);
   background: transparent;
   color: var(--texto-secundario, #64748b);
   font-family: inherit;
-  font-size: 0.84rem;
+  font-size: 0.86rem;
   font-weight: 600;
   cursor: pointer;
   white-space: nowrap;
   transition: all 0.18s ease-in-out;
-
-  &__numero {
-    display: inline-flex;
-    align-items: center;
-    justify-content: center;
-    min-width: 22px;
-    height: 22px;
-    padding: 0 5px;
-    border-radius: var(--radio-full, 9999px);
-    background-color: rgba(0, 0, 0, 0.06);
-    color: var(--texto-secundario, #475569);
-    font-size: 0.72rem;
-    font-weight: 700;
-
-    &--conteo {
-      margin-left: 2px;
-      background-color: rgba(112, 28, 28, 0.08);
-      color: var(--primario-guinda, #701c1c);
-    }
-  }
 
   &__texto {
     letter-spacing: -0.01em;
@@ -111,16 +92,6 @@
     color: var(--primario-guinda, #701c1c);
     border-color: rgba(112, 28, 28, 0.2);
     box-shadow: 0 2px 6px rgba(0, 0, 0, 0.06);
-
-    .tab-btn__numero {
-      background-color: var(--primario-guinda, #701c1c);
-      color: #ffffff;
-
-      &--conteo {
-        background-color: rgba(112, 28, 28, 0.14);
-        color: var(--primario-guinda, #701c1c);
-      }
-    }
   }
 }
 
@@ -197,34 +168,6 @@
   min-height: 280px;
 }
 
-/* PESTAÑA 3: BANDEJA DE COLA ACTIVA */
-.seccion-bandeja {
-  display: flex;
-  flex-direction: column;
-  gap: var(--espacio-4, 16px);
-  width: 100%;
-}
-
-.bandeja-header {
-  display: flex;
-  flex-direction: column;
-  gap: var(--espacio-3, 12px);
-
-  .bandeja-titulo {
-    font-size: 1.15rem;
-    font-weight: 800;
-    color: var(--texto-principal, #0b1c30);
-    margin: 0;
-    letter-spacing: -0.01em;
-  }
-
-  .bandeja-subtitulo {
-    font-size: 0.82rem;
-    color: var(--texto-secundario, #64748b);
-    margin: 2px 0 0 0;
-  }
-}
-
 /* ==========================================================
    RESPONSIVIDAD TOTAL (Desktop, Tablet, Mobile)
    ========================================================== */
@@ -259,14 +202,11 @@
   }
 
   .tab-btn {
-    padding: 0 10px;
-    font-size: 0.78rem;
+    padding: 0 12px;
+    font-size: 0.82rem;
 
     &__texto {
       display: inline-block;
-      max-width: 110px;
-      overflow: hidden;
-      text-overflow: ellipsis;
       white-space: nowrap;
     }
   }

@@ -10,8 +10,7 @@
           [class.tab-btn--activo]="pestanaActiva() === 'metricas'"
           (click)="seleccionarPestana('metricas')"
           [attr.aria-selected]="pestanaActiva() === 'metricas'">
-          <span class="tab-btn__numero">1</span>
-          <span class="tab-btn__texto">Métricas & Monitoreo SLA</span>
+          <span class="tab-btn__texto">Métricas y monitoreo SLA</span>
         </button>
 
         <button 
@@ -21,20 +20,7 @@
           [class.tab-btn--activo]="pestanaActiva() === 'graficos'"
           (click)="seleccionarPestana('graficos')"
           [attr.aria-selected]="pestanaActiva() === 'graficos'">
-          <span class="tab-btn__numero">2</span>
-          <span class="tab-btn__texto">Gráficos de Atención</span>
-        </button>
-
-        <button 
-          type="button" 
-          role="tab" 
-          class="tab-btn" 
-          [class.tab-btn--activo]="pestanaActiva() === 'cola'"
-          (click)="seleccionarPestana('cola')"
-          [attr.aria-selected]="pestanaActiva() === 'cola'">
-          <span class="tab-btn__numero">3</span>
-          <span class="tab-btn__texto">Cola Activa de Incidentes</span>
-          <span class="tab-btn__numero tab-btn__numero--conteo">10</span>
+          <span class="tab-btn__texto">Gráficos de atención</span>
         </button>
       </nav>
     </div>
@@ -108,29 +94,6 @@
           <app-grafico-sla-cumplimiento></app-grafico-sla-cumplimiento>
         </div>
       </div>
-    </div>
-  }
-
-  <!-- PESTAÑA 3: Cola Activa de Incidentes -->
-  @if (pestanaActiva() === 'cola') {
-    <div class="pestana-contenido" role="tabpanel" aria-label="Cola Activa de Incidentes">
-      <section class="seccion-bandeja">
-        <div class="bandeja-controles">
-          <app-buscador-filtros
-            [opcionesFiltro]="opcionesFiltro"
-            [filtroActivoId]="filtroChipActivo()"
-            (alBuscar)="onBuscar($event)"
-            (alSeleccionarFiltro)="onSeleccionarChip($event)">
-          </app-buscador-filtros>
-        </div>
-
-        <!-- Tabla interactiva con conmutación móvil automática -->
-        <app-tabla-tickets
-          [tickets]="ticketsFiltrados()"
-          (alSeleccionarTicket)="onSeleccionarTicket($event)"
-          (alAtenderTicket)="onAtenderTicket($event)">
-        </app-tabla-tickets>
-      </section>
     </div>
   }
 </div>
