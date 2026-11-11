@@ -166,6 +166,11 @@ export class PanelControlService {
     this.ultimaActualizacion.set(new Date());
   }
 
+  agregarTicket(nuevoTicket: TicketResumen): void {
+    this._tickets.update(lista => [nuevoTicket, ...lista]);
+    this.ultimaActualizacion.set(new Date());
+  }
+
   private generarTicketsIniciales(): TicketResumen[] {
     const ahora = Date.now();
     const crearFechaRelativa = (minutosRestantes: number, duracionTotalMinutos: number = 60) => {

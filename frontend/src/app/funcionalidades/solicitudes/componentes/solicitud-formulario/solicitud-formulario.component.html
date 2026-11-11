@@ -1,1 +1,163 @@
-<p>solicitud-formulario works!</p>
+<form [formGroup]="formulario" (ngSubmit)="enviar()" class="formulario-ticket" novalidate>
+
+  <!-- 1. Tipo de ticket -->
+  <section class="seccion-form" aria-label="Tipo de ticket">
+    <span class="label-seccion" id="label-tipo">¿Qué desea registrar?</span>
+    <div class="selector-tipo" role="group" aria-labelledby="label-tipo">
+      <button type="button" class="card-tipo" [class.card-tipo--activo]="tipo() === 'INCIDENTE'"
+        [attr.aria-pressed]="tipo() === 'INCIDENTE'" (click)="seleccionarTipo('INCIDENTE')">
+        <app-icono nombre="report_problem" tamano="md"></app-icono>
+        <span class="card-tipo__textos">
+          <strong>Incidente</strong>
+          <span>Algo falló o dejó de funcionar (equipo, sistema, red).</span>
+        </span>
+      </button>
+      <button type="button" class="card-tipo" [class.card-tipo--activo]="tipo() === 'SOLICITUD'"
+        [attr.aria-pressed]="tipo() === 'SOLICITUD'" (click)="seleccionarTipo('SOLICITUD')">
+        <app-icono nombre="assignment" tamano="md"></app-icono>
+        <span class="card-tipo__textos">
+          <strong>Solicitud</strong>
+          <span>Necesito algo nuevo (acceso, instalación, equipo de apoyo).</span>
+        </span>
+      </button>
+    </div>
+  </section>
+
+  <!-- 2. Contexto del equipo detectado -->
+  <section class="seccion-form" aria-label="Equipo detectado">
+    @if (contexto(); as ctx) {
+      <app-contexto-equipo [contexto]="ctx"></app-contexto-equipo>
+    } @else {
+      <app-esqueleto alto="7rem" radio="var(--radius-lg)"></app-esqueleto>
+    }
+  </section>
+
+  <!-- 3. Categoría -->
+  <section class="seccion-form">
+    <div class="campo-grupo">
+      <label for="campo-categoria" class="label-campo">Categoría <span class="asterisco">*</span></label>
+      <select id="campo-categoria" formControlName="idCategoria" class="input-texto"
+        [attr.aria-invalid]="formulario.controls.idCategoria.touched && formulario.controls.idCategoria.invalid"
+        aria-describedby="error-categoria">
+        <option [ngValue]="null" disabled>Seleccione una categoría</option>
+        @for (cat of categorias(); track cat.id) {
+          <option [ngValue]="cat.id">{{ cat.nombre }}</option>
+        }
+      </select>
+      @if (formulario.controls.idCategoria.touched && formulario.controls.idCategoria.hasError('required')) {
+        <span class="mensaje-error" id="error-categoria">Seleccione la categoría del servicio afectado.</span>
+      }
+    </div>
+  </section>
+
+  <!-- 4. Impacto y urgencia -->
+  <section class="seccion-form" aria-label="Impacto y urgencia">
+    <div class="grid-impacto-urgencia">
+      <div class="columna-evaluacion" role="group" aria-labelledby="label-impacto">
+        <span class="eval-titulo" id="label-impacto">Impacto: ¿a cuántos afecta?</span>
+        <div class="opciones-botones">
+          <button type="button" class="btn-opcion" [class.btn-opcion--activo]="impacto() === 'ALTO'" [attr.aria-pressed]="impacto() === 'ALTO'" (click)="seleccionarImpacto('ALTO')">
+            <strong>Alto</strong><span>Área crítica completa (Emergencia, UCI, Admisión)</span>
+          </button>
+          <button type="button" class="btn-opcion" [class.btn-opcion--activo]="impacto() === 'MEDIO'" [attr.aria-pressed]="impacto() === 'MEDIO'" (click)="seleccionarImpacto('MEDIO')">
+            <strong>Medio</strong><span>Afecta a todo un equipo o módulo</span>
+          </button>
+          <button type="button" class="btn-opcion" [class.btn-opcion--activo]="impacto() === 'BAJO'" [attr.aria-pressed]="impacto() === 'BAJO'" (click)="seleccionarImpacto('BAJO')">
+            <strong>Bajo</strong><span>Solo mi estación o usuario</span>
+          </button>
+        </div>
+      </div>
+      <div class="columna-evaluacion" role="group" aria-labelledby="label-urgencia">
+        <span class="eval-titulo" id="label-urgencia">Urgencia: ¿la atención está detenida?</span>
+        <div class="opciones-botones">
+          <button type="button" class="btn-opcion" [class.btn-opcion--activo]="urgencia() === 'ALTA'" [attr.aria-pressed]="urgencia() === 'ALTA'" (click)="seleccionarUrgencia('ALTA')">
+            <strong>Alta</strong><span>Atención paralizada, sin alternativa</span>
+          </button>
+          <button type="button" class="btn-opcion" [class.btn-opcion--activo]="urgencia() === 'MEDIA'" [attr.aria-pressed]="urgencia() === 'MEDIA'" (click)="seleccionarUrgencia('MEDIA')">
+            <strong>Media</strong><span>Operación degradada con alternativa</span>
+          </button>
+          <button type="button" class="btn-opcion" [class.btn-opcion--activo]="urgencia() === 'BAJA'" [attr.aria-pressed]="urgencia() === 'BAJA'" (click)="seleccionarUrgencia('BAJA')">
+            <strong>Baja</strong><span>Puede programarse sin detener la atención</span>
+          </button>
+        </div>
+      </div>
+    </div>
+
+    <div class="caja-previa" aria-live="polite">
+      <app-prioridad-insignia [prioridad]="previa().prioridad"></app-prioridad-insignia>
+      <div class="caja-previa__tiempos">
+        <span>Tiempo de atención estimado: respuesta en <strong>{{ previa().textoRespuesta }}</strong> · resolución en <strong>{{ previa().textoResolucion }}</strong></span>
+        <span class="caja-previa__nota">El equipo de la Mesa de Ayuda confirmará la prioridad final.</span>
+      </div>
+    </div>
+  </section>
+
+  <!-- 5. Título y descripción -->
+  <section class="seccion-form" aria-label="Detalle del ticket">
+    <div class="campo-grupo">
+      <div class="campo-header">
+        <label for="campo-titulo" class="label-campo">Título <span class="asterisco">*</span></label>
+        <span class="contador-caracteres">{{ formulario.controls.titulo.value?.length }}/150</span>
+      </div>
+      <input id="campo-titulo" type="text" formControlName="titulo" class="input-texto" maxlength="150"
+        placeholder="Ej. Sin red en la estación de triaje"
+        [class.input--error]="formulario.controls.titulo.touched && formulario.controls.titulo.invalid"
+        [attr.aria-invalid]="formulario.controls.titulo.touched && formulario.controls.titulo.invalid"
+        aria-describedby="error-titulo" />
+      @if (formulario.controls.titulo.touched && formulario.controls.titulo.hasError('required')) {
+        <span class="mensaje-error" id="error-titulo">El título es obligatorio.</span>
+      }
+      @if (formulario.controls.titulo.touched && formulario.controls.titulo.hasError('maxlength')) {
+        <span class="mensaje-error" id="error-titulo">El título no puede superar los 150 caracteres.</span>
+      }
+    </div>
+
+    <div class="campo-grupo">
+      <div class="campo-header">
+        <label for="campo-descripcion" class="label-campo">Descripción <span class="asterisco">*</span></label>
+        <span class="contador-caracteres">{{ formulario.controls.descripcion.value?.length }}/2000</span>
+      </div>
+      <textarea id="campo-descripcion" formControlName="descripcion" rows="4" class="input-texto input-textarea" maxlength="2000"
+        placeholder="Describa qué ocurre, desde cuándo y cualquier mensaje de error en pantalla..."
+        [class.input--error]="formulario.controls.descripcion.touched && formulario.controls.descripcion.invalid"
+        [attr.aria-invalid]="formulario.controls.descripcion.touched && formulario.controls.descripcion.invalid"
+        aria-describedby="error-descripcion"></textarea>
+      @if (formulario.controls.descripcion.touched && formulario.controls.descripcion.hasError('required')) {
+        <span class="mensaje-error" id="error-descripcion">La descripción es obligatoria.</span>
+      }
+      @if (formulario.controls.descripcion.touched && formulario.controls.descripcion.hasError('minlength')) {
+        <span class="mensaje-error" id="error-descripcion">Describa la falla con al menos 15 caracteres.</span>
+      }
+      @if (formulario.controls.descripcion.touched && formulario.controls.descripcion.hasError('maxlength')) {
+        <span class="mensaje-error" id="error-descripcion">La descripción no puede superar los 2000 caracteres.</span>
+      }
+    </div>
+
+    <div class="campo-grupo">
+      <label for="campo-anexo" class="label-campo">Anexo de contacto (opcional)</label>
+      <input id="campo-anexo" type="text" formControlName="anexoContacto" class="input-texto" maxlength="10"
+        placeholder="Ej. 2314" aria-describedby="ayuda-anexo" />
+      <span class="texto-ayuda" id="ayuda-anexo">Puede corregir el anexo detectado si reporta desde otra estación.</span>
+    </div>
+  </section>
+
+  @if (horaBorrador(); as hora) {
+    <p class="borrador-aviso" role="status">
+      <app-icono nombre="save" tamano="xs"></app-icono>
+      Borrador guardado a las {{ hora }}
+    </p>
+  }
+
+  <footer class="footer-acciones">
+    <button type="button" class="btn-cancelar" (click)="cancelar()" [disabled]="guardando()">Cancelar</button>
+    <button type="submit" class="btn-enviar" [disabled]="guardando()">
+      @if (guardando()) {
+        <app-icono nombre="sync" tamano="xs"></app-icono>
+        <span>Registrando...</span>
+      } @else {
+        <app-icono nombre="send" tamano="xs"></app-icono>
+        <span>Registrar ticket</span>
+      }
+    </button>
+  </footer>
+</form>

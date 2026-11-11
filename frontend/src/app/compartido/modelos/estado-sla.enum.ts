@@ -6,6 +6,6 @@ export enum EstadoSLA {
 
 export const EstadoSLAEtiquetas: Record<EstadoSLA, string> = {
   [EstadoSLA.A_TIEMPO]: 'A tiempo',
-  [EstadoSLA.ALERTA]: 'Alerta',
-  [EstadoSLA.INCUMPLIDO]: 'Vencido',
+  [EstadoSLA.ALERTA]: 'Próximo a vencer',
+  [EstadoSLA.INCUMPLIDO]: 'Incumplido',
 };

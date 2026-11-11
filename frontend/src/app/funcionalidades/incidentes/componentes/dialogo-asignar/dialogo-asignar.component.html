@@ -1,1 +1,46 @@
-<p>dialogo-asignar works!</p>
+<div class="dialogo-fondo" (click)="alCancelar.emit()">
+  <section
+    class="dialogo"
+    role="dialog"
+    aria-modal="true"
+    aria-labelledby="titulo-dialogo-asignar"
+    appDialogoAccesible
+    (alCerrar)="alCancelar.emit()"
+    (click)="$event.stopPropagation()">
+    <h2 class="dialogo__titulo" id="titulo-dialogo-asignar">Asignar ticket {{ codigo() }}</h2>
+    <p class="dialogo__descripcion">Seleccione el técnico que atenderá el ticket.</p>
+
+    <form [formGroup]="formulario" (ngSubmit)="confirmar()" novalidate>
+      <div class="dialogo__campo">
+        <label class="dialogo__label" for="asignar-tecnico">Técnico *</label>
+        <select id="asignar-tecnico" class="dialogo__input" formControlName="idTecnico">
+          <option [ngValue]="null" disabled>Seleccione un técnico…</option>
+          @for (t of tecnicos(); track t.id) {
+            <option [ngValue]="t.id">{{ t.nombreCompleto }} · {{ t.nivelSoporte }} · {{ t.ticketsAbiertos }} abiertos</option>
+          }
+        </select>
+        @if (formulario.controls.idTecnico.touched && formulario.controls.idTecnico.invalid) {
+          <span class="dialogo__error">Debe seleccionar un técnico.</span>
+        }
+      </div>
+
+      <div class="dialogo__campo">
+        <label class="dialogo__label" for="asignar-comentario">Comentario (opcional)</label>
+        <textarea
+          id="asignar-comentario"
+          class="dialogo__textarea"
+          formControlName="comentario"
+          maxlength="500"
+          rows="3"
+          placeholder="Instrucciones para el técnico…"></textarea>
+      </div>
+
+      <div class="dialogo__acciones">
+        <button type="button" class="dialogo__btn dialogo__btn--cancelar" (click)="alCancelar.emit()">Cancelar</button>
+        <button type="submit" class="dialogo__btn dialogo__btn--confirmar" [disabled]="procesando()">
+          {{ procesando() ? 'Asignando…' : 'Asignar' }}
+        </button>
+      </div>
+    </form>
+  </section>
+</div>

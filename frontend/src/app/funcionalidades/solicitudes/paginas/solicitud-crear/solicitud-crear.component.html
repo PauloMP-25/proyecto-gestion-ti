@@ -1,1 +1,37 @@
-<p>solicitud-crear works!</p>
+<div class="pagina-crear">
+  <header class="pagina-crear__header">
+    <h1 class="pagina-crear__titulo">Registrar Incidente o Solicitud</h1>
+    <p class="pagina-crear__subtitulo">
+      Mesa de Ayuda · Hospital Santa María del Socorro
+    </p>
+  </header>
+
+  @if (ticketCreado(); as ticket) {
+    <section class="confirmacion" role="status" aria-live="polite">
+      <span class="material-symbols-outlined confirmacion__icono" aria-hidden="true">check_circle</span>
+      <h2 class="confirmacion__titulo">Registro exitoso</h2>
+      <p class="confirmacion__codigo">{{ ticket.codigo }}</p>
+      <p class="confirmacion__mensaje">
+        Su {{ ticket.tipo === 'INCIDENTE' ? 'incidente' : 'solicitud' }} fue registrado y será atendido
+        por el equipo de la Mesa de Ayuda. Guarde el código para futuras consultas.
+      </p>
+      <div class="confirmacion__acciones">
+        <button type="button" class="btn-secundario" (click)="registrarOtro()">
+          <span class="material-symbols-outlined" aria-hidden="true">add</span>
+          Registrar otro
+        </button>
+        <a routerLink="/incidentes/mis-tickets" class="btn-primario">
+          <span class="material-symbols-outlined" aria-hidden="true">list_alt</span>
+          Ver mis tickets
+        </a>
+      </div>
+    </section>
+  } @else {
+    <div class="pagina-crear__tarjeta">
+      <app-solicitud-formulario
+        (alRegistrarExitoso)="alRegistrar($event)"
+        (alCancelar)="cancelar()">
+      </app-solicitud-formulario>
+    </div>
+  }
+</div>

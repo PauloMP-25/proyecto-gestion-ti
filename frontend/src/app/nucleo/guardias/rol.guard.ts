@@ -18,12 +18,8 @@ export const rolGuard: CanActivateFn = (route, state) => {
     return true;
   }
 
-  // Si no tiene permiso para la ruta
-  if (rolActual === RolUsuario.USUARIO_FINAL) {
-    router.navigate(['/inicio']);
-  } else {
-    router.navigate(['/panel-control']);
-  }
+  // Acceso indebido: página 403
+  router.navigate(['/403']);
 
   return false;
 };

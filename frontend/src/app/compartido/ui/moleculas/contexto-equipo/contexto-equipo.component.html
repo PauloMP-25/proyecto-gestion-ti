@@ -1,0 +1,32 @@
+<div class="tarjeta-contexto">
+  <div class="tarjeta-contexto__header">
+    <app-icono nombre="lan" tamano="sm"></app-icono>
+    <h4 class="tarjeta-contexto__titulo">Equipo detectado por la red del hospital</h4>
+  </div>
+
+  @if (!contexto().ipRegistrada) {
+    <p class="aviso-no-registrado" role="note">
+      <app-icono nombre="info" tamano="xs"></app-icono>
+      <span>No se identificó su equipo. El técnico lo vinculará al atenderlo.</span>
+    </p>
+  }
+
+  <dl class="grid-detalles">
+    <div class="detalle">
+      <dt>Nombre del equipo (Hostname)</dt>
+      <dd><app-icono nombre="computer" tamano="xs"></app-icono> {{ contexto().hostname ?? 'No identificado' }}</dd>
+    </div>
+    <div class="detalle">
+      <dt>Dirección IP local</dt>
+      <dd><app-icono nombre="dns" tamano="xs"></app-icono> <code>{{ contexto().ip }}</code></dd>
+    </div>
+    <div class="detalle">
+      <dt>Área / Servicio</dt>
+      <dd><app-icono nombre="local_hospital" tamano="xs"></app-icono> {{ contexto().area ?? 'Por asignar' }}</dd>
+    </div>
+    <div class="detalle">
+      <dt>Anexo telefónico</dt>
+      <dd><app-icono nombre="call" tamano="xs"></app-icono> {{ contexto().anexo ?? '—' }}</dd>
+    </div>
+  </dl>
+</div>

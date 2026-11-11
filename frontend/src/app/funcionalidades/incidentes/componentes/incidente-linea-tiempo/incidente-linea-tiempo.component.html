@@ -1,1 +1,17 @@
-<p>incidente-linea-tiempo works!</p>
+<ol class="linea-tiempo" aria-label="Historial del ticket">
+  @for (entrada of historial(); track $index) {
+    <li class="linea-tiempo__item">
+      <span class="linea-tiempo__punto" aria-hidden="true"></span>
+      <div class="linea-tiempo__contenido">
+        <app-estado-etiqueta [estado]="entrada.estadoNuevo"></app-estado-etiqueta>
+        <time class="linea-tiempo__fecha" [attr.datetime]="entrada.fecha">
+          {{ entrada.fecha | date:'dd/MM/yyyy HH:mm' }}
+        </time>
+        <p class="linea-tiempo__usuario">{{ entrada.usuario }}</p>
+        @if (entrada.comentario) {
+          <p class="linea-tiempo__comentario">{{ entrada.comentario }}</p>
+        }
+      </div>
+    </li>
+  }
+</ol>

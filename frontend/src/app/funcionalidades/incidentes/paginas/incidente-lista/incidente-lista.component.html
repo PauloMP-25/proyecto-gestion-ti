@@ -1,1 +1,119 @@
-<p>incidente-lista works!</p>
+<div class="pagina-lista">
+  <header class="pagina-lista__header">
+    <div>
+      <h1 class="pagina-lista__titulo">{{ titulo }}</h1>
+      @if (resultado(); as r) {
+        <p class="pagina-lista__conteo">{{ r.totalElementos }} ticket(s) en total</p>
+      }
+    </div>
+    <a routerLink="/solicitudes/nuevo" class="btn-nuevo">
+      <span class="material-symbols-outlined" aria-hidden="true">add_circle</span>
+      Registrar nuevo
+    </a>
+  </header>
+
+  @if (!modoPropios) {
+    <app-incidente-filtros (alCambiar)="alCambiarFiltros($event)"></app-incidente-filtros>
+  }
+
+  @if (cargando()) {
+    <div class="lista-esqueleto" aria-label="Cargando tickets">
+      @for (i of [1, 2, 3, 4]; track i) {
+        <app-esqueleto alto="64px" radio="var(--radius-md, 8px)"></app-esqueleto>
+      }
+    </div>
+  } @else if (resultado(); as r) {
+    @if (r.contenido.length === 0) {
+      <app-estado-vacio
+        icono="inbox"
+        [mensaje]="modoPropios ? 'Aún no ha registrado tickets.' : 'No se encontraron tickets con los filtros seleccionados.'">
+      </app-estado-vacio>
+    } @else {
+      <div class="tabla-contenedor">
+        <table class="tabla-tickets">
+          <caption class="sr-only">Listado de tickets</caption>
+          <thead>
+            <tr>
+              <th scope="col">Código</th>
+              <th scope="col">Título</th>
+              <th scope="col">Prioridad</th>
+              <th scope="col">Estado</th>
+              <th scope="col">Tiempo de atención</th>
+              <th scope="col">Área</th>
+              <th scope="col">Asignado a</th>
+            </tr>
+          </thead>
+          <tbody>
+            @for (t of r.contenido; track t.id) {
+              <tr (click)="abrirTicket(t.id)">
+                <td>
+                  <a [routerLink]="['/incidentes', t.id]" class="tabla-tickets__codigo" (click)="$event.stopPropagation()">
+                    {{ t.codigo }}
+                  </a>
+                </td>
+                <td class="tabla-tickets__titulo">
+                  {{ t.titulo }}
+                  @if (!modoPropios) {
+                    <span class="tabla-tickets__sub">{{ t.solicitante.nombre }}</span>
+                  }
+                </td>
+                <td><app-prioridad-insignia [prioridad]="t.prioridad" [compacto]="true"></app-prioridad-insignia></td>
+                <td><app-estado-etiqueta [estado]="t.estado"></app-estado-etiqueta></td>
+                <td><app-sla-insignia [estado]="t.estadoSla" [limite]="limiteSla(t)"></app-sla-insignia></td>
+                <td>{{ t.area.nombre }}</td>
+                <td>{{ t.asignadoA?.nombre ?? 'Sin asignar' }}</td>
+              </tr>
+            }
+          </tbody>
+        </table>
+      </div>
+
+      <div class="tarjetas-tickets">
+        @for (t of r.contenido; track t.id) {
+          <article class="tarjeta-ticket">
+            <header class="tarjeta-ticket__header">
+              <a [routerLink]="['/incidentes', t.id]" class="tarjeta-ticket__codigo">{{ t.codigo }}</a>
+              <app-prioridad-insignia [prioridad]="t.prioridad" [compacto]="true"></app-prioridad-insignia>
+            </header>
+            <h2 class="tarjeta-ticket__titulo">
+              <a [routerLink]="['/incidentes', t.id]">{{ t.titulo }}</a>
+            </h2>
+            <div class="tarjeta-ticket__insignias">
+              <app-estado-etiqueta [estado]="t.estado"></app-estado-etiqueta>
+              <app-sla-insignia [estado]="t.estadoSla" [limite]="limiteSla(t)"></app-sla-insignia>
+            </div>
+            <dl class="tarjeta-ticket__datos">
+              <div><dt>Área</dt><dd>{{ t.area.nombre }}</dd></div>
+              <div><dt>Asignado a</dt><dd>{{ t.asignadoA?.nombre ?? 'Sin asignar' }}</dd></div>
+              @if (!modoPropios) {
+                <div><dt>Solicitante</dt><dd>{{ t.solicitante.nombre }}</dd></div>
+              }
+            </dl>
+          </article>
+        }
+      </div>
+
+      @if (r.totalPaginas > 1) {
+        <nav class="paginacion" aria-label="Paginación de tickets">
+          <button
+            type="button"
+            class="paginacion__btn"
+            [disabled]="r.pagina === 0"
+            (click)="irAPagina(r.pagina - 1)">
+            <span class="material-symbols-outlined" aria-hidden="true">chevron_left</span>
+            Anterior
+          </button>
+          <span class="paginacion__info">Página {{ r.pagina + 1 }} de {{ r.totalPaginas }}</span>
+          <button
+            type="button"
+            class="paginacion__btn"
+            [disabled]="r.pagina >= r.totalPaginas - 1"
+            (click)="irAPagina(r.pagina + 1)">
+            Siguiente
+            <span class="material-symbols-outlined" aria-hidden="true">chevron_right</span>
+          </button>
+        </nav>
+      }
+    }
+  }
+</div>

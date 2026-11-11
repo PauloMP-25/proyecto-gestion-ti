@@ -6,8 +6,8 @@ export enum PrioridadTicket {
 }
 
 export const PrioridadEtiquetas: Record<PrioridadTicket, string> = {
-  [PrioridadTicket.P1]: 'P1 - Crítico',
-  [PrioridadTicket.P2]: 'P2 - Alto',
-  [PrioridadTicket.P3]: 'P3 - Medio',
-  [PrioridadTicket.P4]: 'P4 - Bajo',
+  [PrioridadTicket.P1]: 'P1 · Crítica',
+  [PrioridadTicket.P2]: 'P2 · Alta',
+  [PrioridadTicket.P3]: 'P3 · Media',
+  [PrioridadTicket.P4]: 'P4 · Baja',
 };

@@ -47,7 +47,7 @@ export class GraficoSlaCumplimientoComponent {
       porcentaje: 8,
       icono: 'cancel',
       colorClase: 'vencido',
-      descripcion: 'Superaron la ventana límite de resolución técnica ITIL.',
+      descripcion: 'Superaron la ventana límite de resolución técnica pactada.',
     },
   ];
 }

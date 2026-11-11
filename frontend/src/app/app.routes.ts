@@ -28,8 +28,15 @@ export const routes: Routes = [
         path: 'sla/configuracion',
         loadComponent: () => import('./funcionalidades/sla/paginas/sla-configuracion/sla-configuracion.component').then(m => m.SlaConfiguracionComponent),
       },
-      // Rutas protegidas dentro del Shell:
-      // solicitudes, incidentes, cmdb, administracion, etc.
+      {
+        path: 'solicitudes',
+        loadChildren: () => import('./funcionalidades/solicitudes/solicitudes.routes').then(m => m.SOLICITUDES_ROUTES),
+      },
+      {
+        path: '403',
+        loadComponent: () => import('./funcionalidades/errores/paginas/acceso-denegado/acceso-denegado.component').then(m => m.AccesoDenegadoComponent),
+        title: 'Acceso denegado - Service Desk HSMSI',
+      },
     ]
   },
   { path: '**', redirectTo: '' }

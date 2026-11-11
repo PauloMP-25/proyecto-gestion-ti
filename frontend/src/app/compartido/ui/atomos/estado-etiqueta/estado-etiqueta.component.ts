@@ -26,10 +26,14 @@ export class EstadoEtiquetaComponent {
         return 'estado--asignado';
       case EstadoTicket.EN_PROCESO:
         return 'estado--en-proceso';
+      case EstadoTicket.ESCALADO:
+        return 'estado--escalado';
       case EstadoTicket.RESUELTO:
         return 'estado--resuelto';
       case EstadoTicket.CERRADO:
         return 'estado--cerrado';
+      case EstadoTicket.REABIERTO:
+        return 'estado--reabierto';
       default:
         return 'estado--default';
     }

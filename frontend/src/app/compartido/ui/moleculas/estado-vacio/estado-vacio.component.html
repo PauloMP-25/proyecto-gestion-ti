@@ -1,1 +1,4 @@
-<p>estado-vacio works!</p>
+<div class="estado-vacio" role="status">
+  <app-icono [nombre]="icono()" tamano="xl" class="estado-vacio__icono"></app-icono>
+  <p class="estado-vacio__mensaje">{{ mensaje() }}</p>
+</div>

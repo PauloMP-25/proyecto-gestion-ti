@@ -1,0 +1,45 @@
+<div class="dialogo-fondo" (click)="alCancelar.emit()">
+  <section
+    class="dialogo"
+    role="dialog"
+    aria-modal="true"
+    aria-labelledby="titulo-dialogo-estado"
+    appDialogoAccesible
+    (alCerrar)="alCancelar.emit()"
+    (click)="$event.stopPropagation()">
+    <h2 class="dialogo__titulo" id="titulo-dialogo-estado">{{ config().titulo }} · {{ codigo() }}</h2>
+    <p class="dialogo__descripcion">{{ config().descripcion }}</p>
+
+    <form [formGroup]="formulario" (ngSubmit)="confirmar()" novalidate>
+      <div class="dialogo__campo">
+        <label class="dialogo__label" for="estado-texto">{{ config().etiqueta }}</label>
+        <textarea
+          id="estado-texto"
+          class="dialogo__textarea"
+          formControlName="texto"
+          rows="4"
+          maxlength="500"
+          [attr.aria-describedby]="esReabrir() ? 'estado-texto-error' : null"></textarea>
+        <span class="dialogo__contador">{{ formulario.controls.texto.value?.length }}/500</span>
+        @if (formulario.controls.texto.touched && formulario.controls.texto.invalid) {
+          <span class="dialogo__error" id="estado-texto-error">
+            @if (formulario.controls.texto.errors?.['required']) {
+              El motivo es obligatorio.
+            } @else if (formulario.controls.texto.errors?.['minlength']) {
+              El motivo debe tener al menos 10 caracteres.
+            } @else {
+              Máximo 500 caracteres.
+            }
+          </span>
+        }
+      </div>
+
+      <div class="dialogo__acciones">
+        <button type="button" class="dialogo__btn dialogo__btn--cancelar" (click)="alCancelar.emit()">Cancelar</button>
+        <button type="submit" class="dialogo__btn dialogo__btn--confirmar" [disabled]="procesando()">
+          {{ procesando() ? 'Procesando…' : config().confirmar }}
+        </button>
+      </div>
+    </form>
+  </section>
+</div>
