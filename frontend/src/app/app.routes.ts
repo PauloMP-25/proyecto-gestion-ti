@@ -1,5 +1,8 @@
 import { Routes } from '@angular/router';
 import { authGuard } from './nucleo/guardias/auth.guard';
+import { rolGuard } from './nucleo/guardias/rol.guard';
+import { inicioPorRolGuard } from './nucleo/guardias/inicio-por-rol.guard';
+import { RolUsuario } from './nucleo/modelos/rol.enum';
 import { MaquetacionPrincipalComponent } from './nucleo/maquetacion/maquetacion-principal/maquetacion-principal.component';
 
 export const routes: Routes = [
@@ -12,6 +15,30 @@ export const routes: Routes = [
     component: MaquetacionPrincipalComponent,
     canActivate: [authGuard],
     children: [
+      {
+        path: '',
+        pathMatch: 'full',
+        canActivate: [inicioPorRolGuard],
+        children: [],
+      },
+      {
+        path: 'portal',
+        canActivate: [rolGuard],
+        data: { roles: [RolUsuario.USUARIO_FINAL] },
+        loadChildren: () =>
+          import('./funcionalidades/portal-asistencial/portal-asistencial.routes').then(
+            (m) => m.PORTAL_ASISTENCIAL_ROUTES
+          ),
+      },
+      {
+        path: 'mi-turno',
+        canActivate: [rolGuard],
+        data: { roles: [RolUsuario.PRACTICANTE] },
+        loadChildren: () =>
+          import('./funcionalidades/mi-turno/mi-turno.routes').then(
+            (m) => m.MI_TURNO_ROUTES
+          ),
+      },
       {
         path: 'panel-control',
         loadChildren: () => import('./funcionalidades/panel-control/panel-control.routes').then(m => m.PANEL_CONTROL_ROUTES),

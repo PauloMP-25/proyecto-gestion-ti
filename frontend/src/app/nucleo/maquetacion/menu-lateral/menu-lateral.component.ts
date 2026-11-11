@@ -42,12 +42,12 @@ export class MenuLateralComponent {
       case RolUsuario.USUARIO_FINAL:
         return [
           {
-            encabezado: 'Atención y Autoservicio',
+            encabezado: 'Atención Asistencial',
             items: [
-              { titulo: 'Inicio / Panel', ruta: '/panel-control', icono: 'home' },
-              { titulo: 'Registrar Nuevo Ticket', ruta: '/solicitudes/nuevo', icono: 'add_circle' },
-              { titulo: 'Mis Tickets Activos', ruta: '/incidentes/mis-tickets', icono: 'receipt_long' },
-              { titulo: 'Base de Conocimiento', ruta: '/base-conocimiento', icono: 'menu_book' },
+              { titulo: 'Inicio', ruta: '/portal', icono: 'home' },
+              { titulo: 'Reportar un problema', ruta: '/solicitudes/nuevo', icono: 'add_circle' },
+              { titulo: 'Mis solicitudes', ruta: '/portal/mis-solicitudes', icono: 'receipt_long' },
+              { titulo: 'Ayuda rápida', ruta: '/portal/ayuda', icono: 'live_help' },
             ],
           },
         ];
@@ -55,24 +55,23 @@ export class MenuLateralComponent {
       case RolUsuario.PRACTICANTE:
         return [
           {
-            encabezado: 'Mesa de Ayuda (Nivel 1)',
+            encabezado: 'Mesa de Ayuda (Mi Turno)',
             items: [
-              { titulo: 'Dashboard N1', ruta: '/panel-control', icono: 'speed' },
+              { titulo: 'Mi turno', ruta: '/mi-turno', icono: 'schedule' },
+              { titulo: 'Consultar equipos y soluciones', ruta: '/mi-turno/consulta', icono: 'search' },
+              { titulo: 'Registrar para un tercero', ruta: '/solicitudes/nuevo', icono: 'add_circle' },
               {
-                titulo: 'Bandeja General Tickets',
+                titulo: 'Bandeja general',
                 ruta: '/incidentes/bandeja',
                 icono: 'inbox',
-                badge: '12 Activos',
-                badgeTipo: 'info',
               },
-              { titulo: 'Tickets Asignados a Mí', ruta: '/incidentes/mis-tickets', icono: 'assignment_ind' },
-            ],
-          },
-          {
-            encabezado: 'Resolución y Diagnóstico',
-            items: [
-              { titulo: 'Errores Conocidos (KEDB)', ruta: '/errores/kedb', icono: 'auto_stories' },
-              { titulo: 'Escalamiento a N2', ruta: '/escalamiento/pendientes', icono: 'trending_up' },
+              {
+                titulo: 'Incidentes críticos',
+                ruta: '/incidentes/criticos',
+                icono: 'warning',
+              },
+              { titulo: 'Monitor de compromisos', ruta: '/sla/metricas', icono: 'timer' },
+              { titulo: 'Panel de control', ruta: '/panel-control', icono: 'dashboard' },
             ],
           },
         ];

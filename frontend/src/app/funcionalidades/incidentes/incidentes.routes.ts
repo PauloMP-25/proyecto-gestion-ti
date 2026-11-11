@@ -1,5 +1,6 @@
 import { Routes } from '@angular/router';
 import { rolGuard } from '../../nucleo/guardias/rol.guard';
+import { redireccionMisTicketsGuard } from '../../nucleo/guardias/redireccion-mis-tickets.guard';
 import { RolUsuario } from '../../nucleo/modelos/rol.enum';
 
 const ROLES_SOPORTE = [RolUsuario.PRACTICANTE, RolUsuario.ADMINISTRADOR];
@@ -26,6 +27,7 @@ export const INCIDENTES_ROUTES: Routes = [
       import('./paginas/incidente-lista/incidente-lista.component').then(
         (m) => m.IncidenteListaComponent,
       ),
+    canActivate: [redireccionMisTicketsGuard],
     data: { modo: 'propios' },
     title: 'Mis Tickets - Service Desk HSMSI',
   },
