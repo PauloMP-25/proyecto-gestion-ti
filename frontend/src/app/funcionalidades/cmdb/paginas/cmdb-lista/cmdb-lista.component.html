@@ -160,8 +160,8 @@
         </div>
       </div>
 
-      <!-- TABLA DE ACTIVOS HOSPITALARIOS -->
-      <div class="tabla-contenedor">
+      <!-- VISTA TABLA PARA DESKTOP (>= 1024px) -->
+      <div class="tabla-contenedor vista-tabla">
         <table class="tabla-activos">
           <thead>
             <tr>
@@ -269,6 +269,102 @@
             }
           </tbody>
         </table>
+      </div>
+
+      <!-- VISTA TARJETAS PARA TABLET Y MÓVIL (< 1024px) -->
+      <div class="vista-tarjetas" aria-label="Lista de activos en formato móvil">
+        @for (item of activosFiltrados(); track item.id) {
+          <article class="tarjeta-activo-movil">
+            <header class="tarjeta-activo-movil__header">
+              <div class="activo-codigo-tipo">
+                <span class="icono-tipo-activo">
+                  <app-icono [nombre]="obtenerIconoTipo(item.tipo)" tamano="xs"></app-icono>
+                </span>
+                <div>
+                  <span class="badge-codigo-patrimonial">{{ item.codigoPatrimonial }}</span>
+                  <span class="tipo-texto">{{ item.tipo }}</span>
+                </div>
+              </div>
+
+              <span 
+                class="badge-estado-activo"
+                [class.estado--activo]="item.estado === 'ACTIVO'"
+                [class.estado--mantenimiento]="item.estado === 'EN_MANTENIMIENTO'"
+                [class.estado--baja]="item.estado === 'DADO_DE_BAJA'">
+                <span class="punto-estado"></span>
+                {{ item.estado === 'ACTIVO' ? 'Operativo' : (item.estado === 'EN_MANTENIMIENTO' ? 'En Mantenimiento' : 'De Baja') }}
+              </span>
+            </header>
+
+            <div class="tarjeta-activo-movil__cuerpo">
+              <h4 class="activo-nombre">{{ item.nombre }}</h4>
+              <span class="activo-hardware">{{ item.marca }} {{ item.modelo }} · S/N: {{ item.numeroSerie }}</span>
+
+              <div class="tarjeta-grid-datos">
+                <div class="dato-item">
+                  <span class="dato-label">IP Asignada:</span>
+                  <button 
+                    type="button" 
+                    class="chip-ip" 
+                    (click)="copiarIp(item.ip, $event)"
+                    title="Copiar IP">
+                    <app-icono nombre="content_copy" tamano="xs"></app-icono>
+                    <span>{{ item.ip }}</span>
+                  </button>
+                </div>
+
+                <div class="dato-item">
+                  <span class="dato-label">Hostname:</span>
+                  <span class="dato-val mono">{{ item.hostname }}</span>
+                </div>
+
+                <div class="dato-item">
+                  <span class="dato-label">Área Hospitalaria:</span>
+                  <span class="dato-val">{{ item.areaNombre }}</span>
+                </div>
+
+                <div class="dato-item">
+                  <span class="dato-label">Criticidad:</span>
+                  <span 
+                    class="badge-criticidad"
+                    [class.badge--vital]="item.criticidad === 'VITAL_STAT'"
+                    [class.badge--alta]="item.criticidad === 'ALTA'"
+                    [class.badge--media]="item.criticidad === 'MEDIA'"
+                    [class.badge--estandar]="item.criticidad === 'ESTANDAR'">
+                    @if (item.criticidad === 'VITAL_STAT') {
+                      <app-icono nombre="emergency" tamano="xs"></app-icono>
+                    }
+                    {{ item.criticidad === 'VITAL_STAT' ? 'VITAL STAT' : item.criticidad }}
+                  </span>
+                </div>
+              </div>
+            </div>
+
+            <footer class="tarjeta-activo-movil__pie">
+              <button 
+                type="button" 
+                class="btn-movil-accion" 
+                (click)="abrirModalEditar(item)">
+                <app-icono nombre="edit" tamano="xs"></app-icono>
+                <span>Editar Activo</span>
+              </button>
+
+              <button 
+                type="button" 
+                class="btn-movil-accion"
+                [class.btn-movil-accion--alerta]="item.estado === 'ACTIVO'"
+                (click)="toggleEstadoActivo(item)">
+                <app-icono [nombre]="item.estado === 'ACTIVO' ? 'build' : 'check'" tamano="xs"></app-icono>
+                <span>{{ item.estado === 'ACTIVO' ? 'Mantenimiento' : 'Habilitar' }}</span>
+              </button>
+            </footer>
+          </article>
+        } @empty {
+          <div class="celda-vacia">
+            <app-icono nombre="search_off" tamano="md"></app-icono>
+            <p>No se encontraron activos que coincidan con los filtros seleccionados.</p>
+          </div>
+        }
       </div>
     </section>
   }
