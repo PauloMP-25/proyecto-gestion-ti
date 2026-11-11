@@ -21,12 +21,13 @@ export const routes: Routes = [
         loadChildren: () => import('./funcionalidades/incidentes/incidentes.routes').then(m => m.INCIDENTES_ROUTES),
       },
       {
-        path: 'administracion/matriz-prioridad',
-        loadComponent: () => import('./funcionalidades/sla/paginas/sla-configuracion/sla-configuracion.component').then(m => m.SlaConfiguracionComponent),
+        path: 'sla',
+        loadChildren: () => import('./funcionalidades/sla/sla.routes').then(m => m.SLA_ROUTES),
       },
       {
-        path: 'sla/configuracion',
-        loadComponent: () => import('./funcionalidades/sla/paginas/sla-configuracion/sla-configuracion.component').then(m => m.SlaConfiguracionComponent),
+        path: 'administracion/matriz-prioridad',
+        redirectTo: 'sla/configuracion',
+        pathMatch: 'full',
       },
       {
         path: 'cmdb',

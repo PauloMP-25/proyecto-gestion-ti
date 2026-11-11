@@ -9,3 +9,5 @@ export const EstadoSLAEtiquetas: Record<EstadoSLA, string> = {
   [EstadoSLA.ALERTA]: 'Próximo a vencer',
   [EstadoSLA.INCUMPLIDO]: 'Incumplido',
 };
+
+export { EstadoSLA as EstadoSla };

@@ -22,6 +22,9 @@ export interface ReglaSLA {
   notificarJefaturaMin: number;
 }
 
+import { SlaService } from '../../servicios/sla.service';
+import { ReglaSlaConfiguracion } from '../../modelos/sla.model';
+
 @Component({
   selector: 'app-sla-configuracion',
   standalone: true,
@@ -32,10 +35,11 @@ export interface ReglaSLA {
 })
 export class SlaConfiguracionComponent {
   private router = inject(Router);
+  private slaService = inject(SlaService);
 
   guardadoExitoso = signal<boolean>(false);
 
-  // Matriz 3x3 ITIL v4 Impacto x Urgencia
+  // Matriz 3x3 Impacto x Urgencia hospitalaria
   readonly matriz: CeldaMatriz[][] = [
     [
       { impacto: 'Alto', urgencia: 'Alta', prioridad: 'P1', nombre: 'Crítica (STAT)' },
@@ -55,50 +59,14 @@ export class SlaConfiguracionComponent {
   ];
 
   // Acuerdos de Nivel de Servicio pactados con el Hospital
-  readonly reglasSLA: ReglaSLA[] = [
-    {
-      prioridad: 'P1',
-      nombre: 'Crítica (STAT)',
-      tiempoRespuestaMin: 15,
-      tiempoResolucionMin: 60,
-      colorClase: 'p1-critica',
-      aplicaHorarioLaboral: false, // 24/7 sin excepción
-      notificarJefaturaMin: 20,
-    },
-    {
-      prioridad: 'P2',
-      nombre: 'Alta',
-      tiempoRespuestaMin: 30,
-      tiempoResolucionMin: 120,
-      colorClase: 'p2-alta',
-      aplicaHorarioLaboral: false,
-      notificarJefaturaMin: 45,
-    },
-    {
-      prioridad: 'P3',
-      nombre: 'Media',
-      tiempoRespuestaMin: 60,
-      tiempoResolucionMin: 480,
-      colorClase: 'p3-media',
-      aplicaHorarioLaboral: true,
-      notificarJefaturaMin: 120,
-    },
-    {
-      prioridad: 'P4',
-      nombre: 'Baja',
-      tiempoRespuestaMin: 120,
-      tiempoResolucionMin: 1440,
-      colorClase: 'p4-baja',
-      aplicaHorarioLaboral: true,
-      notificarJefaturaMin: 360,
-    },
-  ];
+  readonly reglasSLA: ReglaSlaConfiguracion[] = JSON.parse(JSON.stringify(this.slaService.reglasSla()));
 
   volverAlPanel(): void {
     this.router.navigate(['/panel-control']);
   }
 
   guardarConfiguracion(): void {
+    this.slaService.actualizarReglasSla(this.reglasSLA);
     this.guardadoExitoso.set(true);
     setTimeout(() => {
       this.guardadoExitoso.set(false);

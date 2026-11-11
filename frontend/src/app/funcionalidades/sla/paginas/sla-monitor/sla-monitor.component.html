@@ -1,1 +1,259 @@
-<p>sla-monitor works!</p>
+<div class="sla-monitor-contenedor">
+  <!-- CABECERA -->
+  <header class="sla-monitor-header">
+    <div class="header-titular">
+      <div class="header-icono">
+        <app-icono nombre="timer" tamano="md"></app-icono>
+      </div>
+      <div>
+        <h1 class="header-titulo">Monitoreo y Control de Acuerdos de Nivel de Servicio (SLA)</h1>
+        <p class="header-subtitulo">
+          Hospital Santa María del Socorro · Cumplimiento de Tiempos de Respuesta y Resolución en Tiempo Real
+        </p>
+      </div>
+    </div>
+
+    <div class="header-acciones">
+      <button 
+        type="button" 
+        class="btn-configurar-sla" 
+        (click)="irAConfiguracion()">
+        <app-icono nombre="settings" tamano="xs"></app-icono>
+        <span>Configurar Matriz y Umbrales</span>
+      </button>
+    </div>
+  </header>
+
+  <!-- GRID DE KPIS GLOBALES -->
+  @let m = metricasGlobales();
+  <section class="kpi-grid" aria-label="Métricas Globales de SLA">
+    <div class="kpi-card kpi-card--destacado">
+      <div class="kpi-card__icono kpi-card__icono--cumplimiento">
+        <app-icono nombre="verified" tamano="sm"></app-icono>
+      </div>
+      <div class="kpi-card__info">
+        <span class="kpi-card__valor">{{ m.porcentajeCumplimientoGlobal }}%</span>
+        <span class="kpi-card__label">Cumplimiento General Hospitalario</span>
+      </div>
+    </div>
+
+    <div class="kpi-card">
+      <div class="kpi-card__icono kpi-card__icono--total">
+        <app-icono nombre="fact_check" tamano="sm"></app-icono>
+      </div>
+      <div class="kpi-card__info">
+        <span class="kpi-card__valor">{{ m.totalTicketsEvaluados }}</span>
+        <span class="kpi-card__label">Tickets Evaluados en el Mes</span>
+      </div>
+    </div>
+
+    <div class="kpi-card">
+      <div class="kpi-card__icono kpi-card__icono--ok">
+        <app-icono nombre="check_circle" tamano="sm"></app-icono>
+      </div>
+      <div class="kpi-card__info">
+        <span class="kpi-card__valor">{{ m.ticketsCumplidos }}</span>
+        <span class="kpi-card__label">Atendidos Dentro del Plazo</span>
+      </div>
+    </div>
+
+    <div class="kpi-card">
+      <div class="kpi-card__icono kpi-card__icono--alerta">
+        <app-icono nombre="warning" tamano="sm"></app-icono>
+      </div>
+      <div class="kpi-card__info">
+        <span class="kpi-card__valor">{{ m.ticketsEnAlerta }}</span>
+        <span class="kpi-card__label">En Riesgo (≤ 20% de tiempo)</span>
+      </div>
+    </div>
+
+    <div class="kpi-card">
+      <div class="kpi-card__icono kpi-card__icono--incumplido">
+        <app-icono nombre="error" tamano="sm"></app-icono>
+      </div>
+      <div class="kpi-card__info">
+        <span class="kpi-card__valor">{{ m.ticketsIncumplidos }}</span>
+        <span class="kpi-card__label">Compromisos Excedidos</span>
+      </div>
+    </div>
+  </section>
+
+  <!-- PANEL DE DOS COLUMNAS: CUMPLIMIENTO POR ÁREAS Y TIEMPOS PROMEDIO -->
+  <div class="grid-rendimiento-areas">
+    <!-- CUMPLIMIENTO POR ÁREAS CLÍNICAS -->
+    <section class="tarjeta-bloque" aria-label="Cumplimiento por Servicio Hospitalario">
+      <div class="tarjeta-bloque__header">
+        <h3 class="tarjeta-bloque__titulo">
+          <app-icono nombre="local_hospital" tamano="xs"></app-icono>
+          Cumplimiento de SLA por Servicio Clínico
+        </h3>
+        <span class="badge-indicador">Meta: ≥ 90%</span>
+      </div>
+      <p class="tarjeta-bloque__desc">
+        Monitoreo de compromisos de atención técnica en áreas asistenciales y de soporte del hospital.
+      </p>
+
+      <div class="lista-areas-sla">
+        @for (area of cumplimientoPorArea(); track area.idArea) {
+          <div class="area-item">
+            <div class="area-item__header">
+              <strong class="area-item__nombre">{{ area.areaNombre }}</strong>
+              <div class="area-item__metricas">
+                <span class="area-item__tickets">{{ area.cumplidos }} de {{ area.totalTickets }} a tiempo</span>
+                <span 
+                  class="area-item__porcentaje"
+                  [class.text--ok]="area.porcentajeCumplimiento >= 90"
+                  [class.text--alerta]="area.porcentajeCumplimiento >= 80 && area.porcentajeCumplimiento < 90"
+                  [class.text--incumplido]="area.porcentajeCumplimiento < 80">
+                  {{ area.porcentajeCumplimiento.toFixed(1) }}%
+                </span>
+              </div>
+            </div>
+
+            <div class="area-item__barra-pista">
+              <div 
+                class="area-item__progreso"
+                [style.width.%]="area.porcentajeCumplimiento"
+                [class.bg--ok]="area.porcentajeCumplimiento >= 90"
+                [class.bg--alerta]="area.porcentajeCumplimiento >= 80 && area.porcentajeCumplimiento < 90"
+                [class.bg--incumplido]="area.porcentajeCumplimiento < 80">
+              </div>
+            </div>
+          </div>
+        }
+      </div>
+    </section>
+
+    <!-- COMPROMISOS PACTADOS EN EL HOSPITAL -->
+    <section class="tarjeta-bloque" aria-label="Compromisos Oficiales de SLA">
+      <div class="tarjeta-bloque__header">
+        <h3 class="tarjeta-bloque__titulo">
+          <app-icono nombre="gavel" tamano="xs"></app-icono>
+          Tiempos Pactados de Atención Hospitalaria
+        </h3>
+        <span class="badge-indicador">Oficial HSMSI</span>
+      </div>
+      <p class="tarjeta-bloque__desc">
+        Límites máximos de primera respuesta y resolución definitiva acordados por nivel de prioridad.
+      </p>
+
+      <div class="resumen-reglas-grid">
+        @for (regla of reglasSla(); track regla.prioridad) {
+          <div class="regla-card" [class]="'regla-card--' + regla.colorClase">
+            <div class="regla-card__header">
+              <span class="badge-prioridad" [class]="'badge--' + regla.colorClase">
+                {{ regla.prioridad }}
+              </span>
+              <strong class="regla-card__nombre">{{ regla.nombre }}</strong>
+              <span class="regla-card__cobertura">
+                {{ regla.aplicaHorarioLaboral ? 'Horario Laboral' : '24/7 STAT' }}
+              </span>
+            </div>
+
+            <p class="regla-card__desc">{{ regla.descripcionHospitalaria }}</p>
+
+            <div class="regla-card__tiempos">
+              <div class="tiempo-col">
+                <span class="tiempo-label">Primera Respuesta:</span>
+                <strong class="tiempo-val">{{ regla.tiempoRespuestaMin }} min</strong>
+              </div>
+              <div class="tiempo-col">
+                <span class="tiempo-label">Resolución Máxima:</span>
+                <strong class="tiempo-val">
+                  {{ regla.tiempoResolucionMin < 60 ? regla.tiempoResolucionMin + ' min' : (regla.tiempoResolucionMin / 60) + ' horas' }}
+                </strong>
+              </div>
+            </div>
+          </div>
+        }
+      </div>
+    </section>
+  </div>
+
+  <!-- SECCIÓN TICKETS BAJO MONITOREO EN TIEMPO REAL -->
+  <section class="seccion-tickets-monitoreo" aria-label="Tickets en Atención Activa">
+    <div class="seccion-header">
+      <div class="seccion-titular">
+        <app-icono nombre="track_changes" tamano="xs"></app-icono>
+        <h2>Tickets Activos Bajo Cronómetro de SLA</h2>
+      </div>
+      <span class="contador-tickets">{{ ticketsBajoMonitoreo().length }} activos en seguimiento</span>
+    </div>
+
+    <div class="grid-tickets-monitoreo">
+      @for (ticket of ticketsBajoMonitoreo(); track ticket.id) {
+        <article class="ticket-monitoreo-card">
+          <header class="ticket-monitoreo-card__header">
+            <div class="ticket-badges">
+              <span class="badge-codigo">{{ ticket.codigo }}</span>
+              <span 
+                class="badge-prioridad"
+                [class.badge--p1-critica]="ticket.prioridad === 'P1'"
+                [class.badge--p2-alta]="ticket.prioridad === 'P2'"
+                [class.badge--p3-media]="ticket.prioridad === 'P3'"
+                [class.badge--p4-baja]="ticket.prioridad === 'P4'">
+                @if (ticket.prioridad === 'P1') {
+                  <app-icono nombre="emergency" tamano="xs"></app-icono>
+                }
+                {{ ticket.prioridad }}
+              </span>
+            </div>
+
+            <span 
+              class="badge-estado-sla"
+              [class.sla--ok]="ticket.estadoSla === 'A_TIEMPO'"
+              [class.sla--alerta]="ticket.estadoSla === 'ALERTA'"
+              [class.sla--incumplido]="ticket.estadoSla === 'INCUMPLIDO'">
+              <span class="punto-sla"></span>
+              {{ obtenerTextoEstado(ticket.estadoSla) }}
+            </span>
+          </header>
+
+          <h4 class="ticket-monitoreo-titulo">{{ ticket.titulo }}</h4>
+
+          <div class="ticket-metas">
+            <span class="meta-item">
+              <app-icono nombre="local_hospital" tamano="xs"></app-icono>
+              {{ ticket.areaClinica }}
+            </span>
+            <span class="meta-item">
+              <app-icono nombre="person" tamano="xs"></app-icono>
+              {{ ticket.tecnicoAsignado }}
+            </span>
+          </div>
+
+          <!-- BARRA DE CONSUMO DE SLA -->
+          <div class="consumo-sla">
+            <div class="consumo-sla__header">
+              <span>Tiempo Consumido: <strong>{{ ticket.minutosConsumidos }}m</strong> / {{ ticket.tiempoTotalMinutos }}m</span>
+              <strong class="consumo-sla__porc">{{ ticket.porcentajeConsumido }}%</strong>
+            </div>
+
+            <div class="consumo-sla__pista">
+              <div 
+                class="consumo-sla__barra"
+                [style.width.%]="ticket.porcentajeConsumido > 100 ? 100 : ticket.porcentajeConsumido"
+                [class]="obtenerClasePorcentaje(ticket.porcentajeConsumido)">
+              </div>
+            </div>
+
+            <div class="consumo-sla__pie">
+              @if (ticket.minutosRestantes > 0) {
+                <span>Ventana Restante: <strong>{{ ticket.minutosRestantes }} min</strong></span>
+              } @else {
+                <span class="text--incumplido"><strong>Excedido por {{ ticket.minutosConsumidos - ticket.tiempoTotalMinutos }} min</strong></span>
+              }
+            </div>
+          </div>
+
+          <footer class="ticket-monitoreo-card__pie">
+            <a [routerLink]="['/incidentes', ticket.id]" class="btn-ver-ticket">
+              <app-icono nombre="visibility" tamano="xs"></app-icono>
+              <span>Ver Incidente en Detalle</span>
+            </a>
+          </footer>
+        </article>
+      }
+    </div>
+  </section>
+</div>
