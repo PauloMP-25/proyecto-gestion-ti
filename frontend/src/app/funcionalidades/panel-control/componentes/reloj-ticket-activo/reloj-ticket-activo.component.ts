@@ -1,9 +1,11 @@
-import { Component, ChangeDetectionStrategy, input, output, signal, effect, OnDestroy } from '@angular/core';
+import { Component, ChangeDetectionStrategy, input, output, signal, effect, OnDestroy, inject, computed, ElementRef, HostListener } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { TicketResumen } from '../../../../compartido/modelos/ticket-resumen.model';
 import { IconoComponent } from '../../../../compartido/ui/atomos/icono/icono.component';
 import { BotonComponent } from '../../../../compartido/ui/atomos/boton/boton.component';
 import { PrioridadTicket } from '../../../../compartido/modelos/prioridad.enum';
+import { AuthService } from '../../../../nucleo/auth/auth.service';
+import { RolUsuario } from '../../../../nucleo/modelos/rol.enum';
 
 @Component({
   selector: 'app-reloj-ticket-activo',
@@ -14,12 +16,22 @@ import { PrioridadTicket } from '../../../../compartido/modelos/prioridad.enum';
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class RelojTicketActivoComponent implements OnDestroy {
+  private authService = inject(AuthService);
+  private elementRef = inject(ElementRef);
+
   readonly ticket = input<TicketResumen | null>(null);
   readonly ticketsDisponibles = input<TicketResumen[]>([]);
 
   readonly alSeleccionarOtroTicket = output<TicketResumen>();
   readonly alResolverTicket = output<TicketResumen>();
   readonly alEscalarTicket = output<TicketResumen>();
+
+  // Rol del usuario: Solo Nivel 1 (PRACTICANTE) escala a Nivel 2
+  readonly rolActual = this.authService.rolActual;
+  readonly puedeEscalar = computed(() => this.rolActual() === RolUsuario.PRACTICANTE);
+
+  // Estado del dropdown moderno de selección
+  readonly selectorAbierto = signal<boolean>(false);
 
   // Estados del reloj
   readonly segundosTranscurridos = signal<number>(1124); // Ej: 18m 44s
@@ -101,6 +113,33 @@ export class RelojTicketActivoComponent implements OnDestroy {
     const totalSegundos = minutosLimiteTotal * 60;
     const porcentaje = Math.round((this.segundosTranscurridos() / totalSegundos) * 100);
     return Math.min(100, Math.max(0, porcentaje));
+  }
+
+  toggleSelector(): void {
+    this.selectorAbierto.update(v => !v);
+  }
+
+  cerrarSelector(): void {
+    this.selectorAbierto.set(false);
+  }
+
+  seleccionarTicketDropdown(ticket: TicketResumen): void {
+    this.alSeleccionarOtroTicket.emit(ticket);
+    this.selectorAbierto.set(false);
+  }
+
+  @HostListener('document:click', ['$event'])
+  onClickDocument(event: MouseEvent): void {
+    if (this.selectorAbierto() && !this.elementRef.nativeElement.contains(event.target)) {
+      this.selectorAbierto.set(false);
+    }
+  }
+
+  @HostListener('document:keydown.escape')
+  onEscape(): void {
+    if (this.selectorAbierto()) {
+      this.selectorAbierto.set(false);
+    }
   }
 
   onSeleccionarTicket(ticket: TicketResumen): void {

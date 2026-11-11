@@ -53,20 +53,84 @@
         </div>
       </div>
 
-      <!-- SELECTOR RÁPIDO DE TICKETS ACTIVOS -->
-      <div class="selector-tickets-rapido">
-        <label for="select-ticket-activo" class="label-selector">Cambiar ticket activo:</label>
-        <select 
-          id="select-ticket-activo" 
-          class="select-ticket"
-          [value]="t.id"
-          (change)="onSeleccionarTicket($any($event.target).value ? ticketsDisponibles()[$any($event.target).selectedIndex] : t)">
-          @for (item of ticketsDisponibles(); track item.id) {
-            <option [value]="item.id" [selected]="item.id === t.id">
-              {{ item.codigo }} · [{{ item.prioridad }}] {{ item.titulo | slice:0:35 }}...
-            </option>
+      <!-- SELECTOR RÁPIDO Y MODERNO DE TICKETS ACTIVOS -->
+      <div class="selector-tickets-moderno">
+        <label id="label-ticket-activo" class="label-selector">Ticket en atención:</label>
+        
+        <div class="dropdown-ticket" [class.dropdown-ticket--abierto]="selectorAbierto()">
+          <button 
+            type="button"
+            class="dropdown-ticket__trigger"
+            (click)="toggleSelector()"
+            [attr.aria-expanded]="selectorAbierto()"
+            aria-haspopup="listbox"
+            aria-labelledby="label-ticket-activo">
+            <div class="trigger-contenido">
+              <span class="trigger-badge" [class.badge--p1]="t.prioridad === 'P1'" [class.badge--p2]="t.prioridad === 'P2'">
+                {{ t.codigo }}
+              </span>
+              <span class="trigger-titulo" [title]="t.titulo">{{ t.titulo }}</span>
+            </div>
+            <app-icono 
+              [nombre]="selectorAbierto() ? 'expand_less' : 'expand_more'" 
+              tamano="xs"
+              class="trigger-chevron">
+            </app-icono>
+          </button>
+
+          @if (selectorAbierto()) {
+            <div class="dropdown-ticket__menu" role="listbox" aria-labelledby="label-ticket-activo">
+              <div class="dropdown-ticket__menu-header">
+                <span>Tickets activos en cola ({{ ticketsDisponibles().length }})</span>
+              </div>
+              <ul class="dropdown-ticket__lista">
+                @for (item of ticketsDisponibles(); track item.id) {
+                  <li 
+                    role="option"
+                    [attr.aria-selected]="item.id === t.id"
+                    class="dropdown-ticket__item"
+                    [class.dropdown-ticket__item--activo]="item.id === t.id"
+                    (click)="seleccionarTicketDropdown(item)">
+                    <div class="item-cabecera">
+                      <span class="item-codigo">{{ item.codigo }}</span>
+                      <span 
+                        class="item-prioridad"
+                        [class.p1]="item.prioridad === 'P1'"
+                        [class.p2]="item.prioridad === 'P2'"
+                        [class.p3]="item.prioridad === 'P3'"
+                        [class.p4]="item.prioridad === 'P4'">
+                        {{ item.prioridad }}
+                      </span>
+                      @if (item.id === t.id) {
+                        <span class="item-en-atencion">
+                          <app-icono nombre="check" tamano="xs"></app-icono>
+                          En atención
+                        </span>
+                      }
+                    </div>
+                    <div class="item-titulo">{{ item.titulo }}</div>
+                    <div class="item-pie">
+                      <span class="item-area">
+                        <app-icono nombre="local_hospital" tamano="xs"></app-icono>
+                        {{ item.areaClinica }}
+                      </span>
+                      @if (item.slaResolucion?.tiempoRestanteMinutos !== undefined) {
+                        <span class="item-sla" [class.item-sla--vencido]="item.slaResolucion!.tiempoRestanteMinutos <= 0">
+                          <app-icono nombre="schedule" tamano="xs"></app-icono>
+                          {{ item.slaResolucion!.tiempoRestanteMinutos > 0 ? item.slaResolucion!.tiempoRestanteMinutos + 'm SLA' : 'SLA Vencido' }}
+                        </span>
+                      }
+                    </div>
+                  </li>
+                } @empty {
+                  <li class="dropdown-ticket__vacio">
+                    <span>No hay otros tickets en la cola</span>
+                  </li>
+                }
+              </ul>
+            </div>
           }
-        </select>
+        </div>
       </div>
     </div>
 
@@ -155,13 +219,15 @@
           <span>{{ pausado() ? 'Reanudar Reloj' : 'Pausar Reloj (Espera de tercero)' }}</span>
         </button>
 
-        <button 
-          type="button" 
-          class="btn-control-reloj btn-control--escalar"
-          (click)="onEscalar()">
-          <app-icono nombre="trending_up" tamano="xs"></app-icono>
-          <span>Escalar a Nivel 2</span>
-        </button>
+        @if (puedeEscalar()) {
+          <button 
+            type="button" 
+            class="btn-control-reloj btn-control--escalar"
+            (click)="onEscalar()">
+            <app-icono nombre="trending_up" tamano="xs"></app-icono>
+            <span>Escalar a Nivel 2</span>
+          </button>
+        }
 
         <button 
           type="button" 
