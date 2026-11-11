@@ -29,6 +29,10 @@ export const routes: Routes = [
         loadComponent: () => import('./funcionalidades/sla/paginas/sla-configuracion/sla-configuracion.component').then(m => m.SlaConfiguracionComponent),
       },
       {
+        path: 'cmdb',
+        loadChildren: () => import('./funcionalidades/cmdb/cmdb.routes').then(m => m.CMDB_ROUTES),
+      },
+      {
         path: 'solicitudes',
         loadChildren: () => import('./funcionalidades/solicitudes/solicitudes.routes').then(m => m.SOLICITUDES_ROUTES),
       },

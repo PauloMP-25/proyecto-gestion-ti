@@ -1,1 +1,471 @@
-<p>cmdb-lista works!</p>
+<div class="cmdb-contenedor">
+  <!-- ENCABEZADO PRINCIPAL DE LA VISTA -->
+  <header class="cmdb-header">
+    <div class="cmdb-header__titular">
+      <div class="cmdb-header__icono">
+        <app-icono nombre="lan" tamano="md"></app-icono>
+      </div>
+      <div>
+        <h1 class="cmdb-titulo">Gestión de Activos y Conectividad (CMDB)</h1>
+        <p class="cmdb-subtitulo">
+          Hospital Santa María del Socorro · Infraestructura de Red y Equipamiento Biomédico
+        </p>
+      </div>
+    </div>
+
+    <div class="cmdb-header__acciones">
+      <app-boton 
+        variante="primario" 
+        icono="add" 
+        (alHacerClick)="abrirModalNuevo()">
+        Nuevo Activo
+      </app-boton>
+    </div>
+  </header>
+
+  <!-- PESTAÑAS DE NAVEGACIÓN PRINCIPAL -->
+  <nav class="cmdb-pestanas" aria-label="Secciones de Activos y Red">
+    <button 
+      type="button"
+      class="pestana-boton"
+      [class.pestana-boton--activa]="pestanaActiva() === 'INVENTARIO'"
+      (click)="cambiarPestana('INVENTARIO')">
+      <app-icono nombre="devices" tamano="xs"></app-icono>
+      <span>Inventario de Activos y Equipos</span>
+      <span class="pestana-badge">{{ totalActivos() }}</span>
+    </button>
+
+    <button 
+      type="button"
+      class="pestana-boton"
+      [class.pestana-boton--activa]="pestanaActiva() === 'MATRIZ_IP'"
+      (click)="cambiarPestana('MATRIZ_IP')">
+      <app-icono nombre="hub" tamano="xs"></app-icono>
+      <span>Matriz de Trazabilidad y Subredes IP</span>
+      <span class="pestana-badge pestana-badge--destacado">{{ subredes().length }} VLANs</span>
+    </button>
+  </nav>
+
+  <!-- AVISO TEMPORAL DE COPIADO DE IP -->
+  @if (ipCopiada(); as ipTexto) {
+    <div class="alerta-copiado" role="status">
+      <app-icono nombre="check_circle" tamano="xs"></app-icono>
+      <span>Dirección IP <strong>{{ ipTexto }}</strong> copiada al portapapeles</span>
+    </div>
+  }
+
+  <!-- ======================================================== -->
+  <!-- CONTENIDO PESTAÑA 1: INVENTARIO DE ACTIVOS               -->
+  <!-- ======================================================== -->
+  @if (pestanaActiva() === 'INVENTARIO') {
+    <section class="seccion-inventario" aria-label="Inventario de Activos">
+      <!-- KPIS DE INFRAESTRUCTURA HOSPITALARIA -->
+      <div class="kpi-grid">
+        <div class="kpi-card">
+          <div class="kpi-card__icono kpi-card__icono--total">
+            <app-icono nombre="inventory_2" tamano="sm"></app-icono>
+          </div>
+          <div class="kpi-card__info">
+            <span class="kpi-card__valor">{{ totalActivos() }}</span>
+            <span class="kpi-card__label">Total Activos Registrados</span>
+          </div>
+        </div>
+
+        <div class="kpi-card">
+          <div class="kpi-card__icono kpi-card__icono--pc">
+            <app-icono nombre="computer" tamano="sm"></app-icono>
+          </div>
+          <div class="kpi-card__info">
+            <span class="kpi-card__valor">{{ totalComputadoras() }}</span>
+            <span class="kpi-card__label">Estaciones de Trabajo (PCs)</span>
+          </div>
+        </div>
+
+        <div class="kpi-card">
+          <div class="kpi-card__icono kpi-card__icono--impresora">
+            <app-icono nombre="print" tamano="sm"></app-icono>
+          </div>
+          <div class="kpi-card__info">
+            <span class="kpi-card__valor">{{ totalImpresoras() }}</span>
+            <span class="kpi-card__label">Impresoras Asistenciales</span>
+          </div>
+        </div>
+
+        <div class="kpi-card">
+          <div class="kpi-card__icono kpi-card__icono--servidor">
+            <app-icono nombre="dns" tamano="sm"></app-icono>
+          </div>
+          <div class="kpi-card__info">
+            <span class="kpi-card__valor">{{ totalServidoresYRed() }}</span>
+            <span class="kpi-card__label">Servidores y Core de Red</span>
+          </div>
+        </div>
+
+        <div class="kpi-card">
+          <div class="kpi-card__icono kpi-card__icono--operativo">
+            <app-icono nombre="check_circle" tamano="sm"></app-icono>
+          </div>
+          <div class="kpi-card__info">
+            <span class="kpi-card__valor">{{ porcentajeOperativos() }}%</span>
+            <span class="kpi-card__label">Disponibilidad Operativa</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- BARRA DE FILTROS Y BÚSQUEDA -->
+      <div class="barra-filtros">
+        <div class="buscador-caja">
+          <app-icono nombre="search" tamano="xs" class="buscador-icono"></app-icono>
+          <input 
+            type="text"
+            class="buscador-input"
+            placeholder="Buscar por código, IP, hostname, serie o servicio..."
+            [ngModel]="busquedaTexto()"
+            (ngModelChange)="busquedaTexto.set($event)" />
+        </div>
+
+        <div class="filtros-selectores">
+          <select 
+            class="filtro-select"
+            [ngModel]="filtroTipo()"
+            (ngModelChange)="filtroTipo.set($event)">
+            <option value="TODOS">Todos los tipos</option>
+            <option value="COMPUTADORA">Computadoras</option>
+            <option value="IMPRESORA">Impresoras</option>
+            <option value="SERVIDOR">Servidores</option>
+            <option value="RED">Equipos de Red</option>
+            <option value="BIOMEDICO">Equipos Biomédicos</option>
+          </select>
+
+          <select 
+            class="filtro-select"
+            [ngModel]="filtroCriticidad()"
+            (ngModelChange)="filtroCriticidad.set($event)">
+            <option value="TODOS">Cualquier criticidad</option>
+            <option value="VITAL_STAT">VITAL STAT</option>
+            <option value="ALTA">Alta</option>
+            <option value="MEDIA">Media</option>
+            <option value="ESTANDAR">Estándar</option>
+          </select>
+
+          <select 
+            class="filtro-select"
+            [ngModel]="filtroEstado()"
+            (ngModelChange)="filtroEstado.set($event)">
+            <option value="TODOS">Todos los estados</option>
+            <option value="ACTIVO">Operativo (Activo)</option>
+            <option value="EN_MANTENIMIENTO">En Mantenimiento</option>
+            <option value="DADO_DE_BAJA">Dado de Baja</option>
+          </select>
+        </div>
+      </div>
+
+      <!-- TABLA DE ACTIVOS HOSPITALARIOS -->
+      <div class="tabla-contenedor">
+        <table class="tabla-activos">
+          <thead>
+            <tr>
+              <th>Código Patrimonial</th>
+              <th>Activo / Nombre</th>
+              <th>Dirección IP & VLAN</th>
+              <th>Hostname & MAC</th>
+              <th>Área Clínica</th>
+              <th>Criticidad</th>
+              <th>Estado</th>
+              <th class="th-acciones">Acciones</th>
+            </tr>
+          </thead>
+          <tbody>
+            @for (item of activosFiltrados(); track item.id) {
+              <tr class="fila-activo">
+                <td>
+                  <span class="badge-codigo-patrimonial">{{ item.codigoPatrimonial }}</span>
+                </td>
+                <td>
+                  <div class="activo-nombre-celda">
+                    <span class="icono-tipo-activo" [title]="item.tipo">
+                      <app-icono [nombre]="obtenerIconoTipo(item.tipo)" tamano="xs"></app-icono>
+                    </span>
+                    <div>
+                      <strong class="activo-nombre">{{ item.nombre }}</strong>
+                      <span class="activo-hardware">{{ item.marca }} {{ item.modelo }}</span>
+                    </div>
+                  </div>
+                </td>
+                <td>
+                  <div class="celda-ip">
+                    <button 
+                      type="button" 
+                      class="chip-ip" 
+                      (click)="copiarIp(item.ip, $event)"
+                      title="Hacer clic para copiar IP">
+                      <app-icono nombre="content_copy" tamano="xs"></app-icono>
+                      <span>{{ item.ip }}</span>
+                    </button>
+                    <span class="tag-vlan">VLAN {{ item.vlanId }}</span>
+                  </div>
+                </td>
+                <td>
+                  <div class="celda-red-datos">
+                    <span class="hostname-texto">{{ item.hostname }}</span>
+                    <span class="mac-texto">{{ item.mac }}</span>
+                  </div>
+                </td>
+                <td>
+                  <span class="area-texto">{{ item.areaNombre }}</span>
+                  @if (item.ubicacionDetalle) {
+                    <span class="area-detalle">{{ item.ubicacionDetalle }}</span>
+                  }
+                </td>
+                <td>
+                  <span 
+                    class="badge-criticidad"
+                    [class.badge--vital]="item.criticidad === 'VITAL_STAT'"
+                    [class.badge--alta]="item.criticidad === 'ALTA'"
+                    [class.badge--media]="item.criticidad === 'MEDIA'"
+                    [class.badge--estandar]="item.criticidad === 'ESTANDAR'">
+                    @if (item.criticidad === 'VITAL_STAT') {
+                      <app-icono nombre="emergency" tamano="xs"></app-icono>
+                    }
+                    {{ item.criticidad === 'VITAL_STAT' ? 'VITAL STAT' : item.criticidad }}
+                  </span>
+                </td>
+                <td>
+                  <span 
+                    class="badge-estado-activo"
+                    [class.estado--activo]="item.estado === 'ACTIVO'"
+                    [class.estado--mantenimiento]="item.estado === 'EN_MANTENIMIENTO'"
+                    [class.estado--baja]="item.estado === 'DADO_DE_BAJA'">
+                    <span class="punto-estado"></span>
+                    {{ item.estado === 'ACTIVO' ? 'Operativo' : (item.estado === 'EN_MANTENIMIENTO' ? 'En Mantenimiento' : 'De Baja') }}
+                  </span>
+                </td>
+                <td class="td-acciones">
+                  <button 
+                    type="button" 
+                    class="btn-accion-icono" 
+                    (click)="abrirModalEditar(item)" 
+                    title="Editar datos del activo">
+                    <app-icono nombre="edit" tamano="xs"></app-icono>
+                  </button>
+
+                  <button 
+                    type="button" 
+                    class="btn-accion-icono"
+                    [class.btn-accion--alerta]="item.estado === 'ACTIVO'"
+                    (click)="toggleEstadoActivo(item)"
+                    [title]="item.estado === 'ACTIVO' ? 'Poner en Mantenimiento' : 'Habilitar Activo'">
+                    <app-icono [nombre]="item.estado === 'ACTIVO' ? 'build' : 'check'" tamano="xs"></app-icono>
+                  </button>
+                </td>
+              </tr>
+            } @empty {
+              <tr>
+                <td colspan="8" class="celda-vacia">
+                  <app-icono nombre="search_off" tamano="md"></app-icono>
+                  <p>No se encontraron activos que coincidan con los filtros seleccionados.</p>
+                </td>
+              </tr>
+            }
+          </tbody>
+        </table>
+      </div>
+    </section>
+  }
+
+  <!-- ======================================================== -->
+  <!-- CONTENIDO PESTAÑA 2: MATRIZ DE TRAZABILIDAD Y SUBREDES IP-->
+  <!-- ======================================================== -->
+  @if (pestanaActiva() === 'MATRIZ_IP') {
+    <section class="seccion-matriz-ip" aria-label="Matriz de Direccionamiento IP y Trazabilidad">
+      <!-- SELECTOR DE VLANS HOSPITALARIAS -->
+      <div class="selector-vlans">
+        <h3 class="selector-vlans__titulo">
+          <app-icono nombre="account_tree" tamano="xs"></app-icono>
+          Plan de Direccionamiento Hospitalario por Subredes (VLANs)
+        </h3>
+
+        <div class="vlan-cards-grid">
+          @for (sub of subredes(); track sub.vlanId) {
+            <button 
+              type="button" 
+              class="vlan-card"
+              [class.vlan-card--activa]="sub.vlanId === vlanSeleccionadaId()"
+              (click)="seleccionarVlan(sub.vlanId)">
+              <div class="vlan-card__header">
+                <span class="vlan-tag" [style.border-color]="sub.colorIdentificador" [style.color]="sub.colorIdentificador">
+                  VLAN {{ sub.vlanId }}
+                </span>
+                <span class="vlan-segmento">{{ sub.segmento }}</span>
+              </div>
+              <h4 class="vlan-card__nombre">{{ sub.nombre }}</h4>
+              <div class="vlan-card__metricas">
+                <span><strong>{{ sub.ipsOcupadas }}</strong> ocupadas</span>
+                <span><strong>{{ sub.ipsDisponibles }}</strong> libres</span>
+              </div>
+            </button>
+          }
+        </div>
+      </div>
+
+      <!-- DETALLE DE LA SUBRED SELECCIONADA -->
+      @if (subredActiva(); as sub) {
+        <div class="panel-subred-detalle">
+          <div class="subred-info-barra">
+            <div class="subred-info-item">
+              <span class="subred-info-label">Subred Activa:</span>
+              <strong class="subred-info-val">{{ sub.nombre }}</strong>
+            </div>
+            <div class="subred-info-item">
+              <span class="subred-info-label">Segmento:</span>
+              <span class="subred-info-val mono">{{ sub.segmento }}</span>
+            </div>
+            <div class="subred-info-item">
+              <span class="subred-info-label">Gateway:</span>
+              <span class="subred-info-val mono">{{ sub.gateway }}</span>
+            </div>
+            <div class="subred-info-item">
+              <span class="subred-info-label">Máscara:</span>
+              <span class="subred-info-val mono">{{ sub.mascara }}</span>
+            </div>
+          </div>
+
+          <!-- BARRA DE UTILIZACIÓN DE LA SUBRED -->
+          @let porcOcupado = (sub.ipsOcupadas / sub.totalIps) * 100;
+          @let porcReservado = (sub.ipsReservadas / sub.totalIps) * 100;
+          <div class="barra-ocupacion-container">
+            <div class="barra-ocupacion-header">
+              <span>Utilización de la Subred ({{ sub.ipsOcupadas }} de {{ sub.totalIps }} IPs asignadas)</span>
+              <span><strong>{{ (porcOcupado).toFixed(1) }}%</strong> en uso</span>
+            </div>
+            <div class="barra-ocupacion-pista">
+              <div class="porc-ocupadas" [style.width.%]="porcOcupado" title="IPs Asignadas a Activos"></div>
+              <div class="porc-reservadas" [style.width.%]="porcReservado" title="IPs Reservadas de Infraestructura"></div>
+            </div>
+          </div>
+
+          <!-- LEYENDA INTERACTIVA DE ESTADOS DE IP -->
+          <div class="leyenda-matriz">
+            <div class="leyenda-item">
+              <span class="leyenda-muestra muestra--libre"></span>
+              <span><strong>Disponible:</strong> Libre para asignación inmediata (Haga clic para registrar activo)</span>
+            </div>
+            <div class="leyenda-item">
+              <span class="leyenda-muestra muestra--ocupada"></span>
+              <span><strong>Ocupada:</strong> Asignada a Computadora, Impresora o Servidor (Haga clic para ver detalle)</span>
+            </div>
+            <div class="leyenda-item">
+              <span class="leyenda-muestra muestra--reservada"></span>
+              <span><strong>Reservada:</strong> Gateway, DNS y Enlaces de Infraestructura</span>
+            </div>
+          </div>
+
+          <!-- CUADRÍCULA DE TRAZABILIDAD DE DIRECCIONES IP -->
+          <div class="cuadricula-ips">
+            @for (nodo of matrizIpsActual(); track nodo.ip) {
+              <div 
+                class="nodo-ip"
+                [class.nodo-ip--libre]="nodo.estado === 'DISPONIBLE'"
+                [class.nodo-ip--ocupado]="nodo.estado === 'OCUPADA'"
+                [class.nodo-ip--reservado]="nodo.estado === 'RESERVADA'"
+                [class.nodo-ip--seleccionado]="ipSeleccionadaParaDetalle()?.ip === nodo.ip"
+                (click)="seleccionarIp(nodo)"
+                [title]="nodo.estado === 'OCUPADA' ? (nodo.activoAsignado?.nombre + ' (' + nodo.activoAsignado?.hostname + ')') : (nodo.estado === 'RESERVADA' ? nodo.descripcionUso : 'IP Libre: ' + nodo.ip)">
+                <span class="nodo-ip__octeto">.{{ nodo.octetoFinal }}</span>
+                
+                @if (nodo.estado === 'OCUPADA') {
+                  <span class="nodo-ip__icono">
+                    <app-icono [nombre]="nodo.activoAsignado?.tipo === 'IMPRESORA' ? 'print' : (nodo.activoAsignado?.tipo === 'SERVIDOR' ? 'dns' : (nodo.activoAsignado?.tipo === 'RED' ? 'router' : 'computer'))" tamano="xs"></app-icono>
+                  </span>
+                } @else if (nodo.estado === 'RESERVADA') {
+                  <span class="nodo-ip__icono">
+                    <app-icono nombre="lock" tamano="xs"></app-icono>
+                  </span>
+                }
+              </div>
+            }
+          </div>
+
+          <!-- DETALLE FLOTANTE / CARD DE LA IP SELECCIONADA -->
+          @if (ipSeleccionadaParaDetalle(); as det) {
+            <div class="drawer-ip-detalle">
+              <div class="drawer-header">
+                <div class="drawer-header__info">
+                  <app-icono [nombre]="det.estado === 'RESERVADA' ? 'lock' : 'check_circle'" tamano="xs"></app-icono>
+                  <span>Detalle de Trazabilidad: <strong>{{ det.ip }}</strong></span>
+                </div>
+                <button type="button" class="btn-cerrar-drawer" (click)="cerrarDetalleIp()">
+                  <app-icono nombre="close" tamano="xs"></app-icono>
+                </button>
+              </div>
+
+              @if (det.estado === 'OCUPADA' && det.activoAsignado; as act) {
+                <div class="drawer-cuerpo">
+                  <div class="drawer-activo-card">
+                    <div class="activo-card__tag">
+                      <span class="tag-tipo">{{ act.tipo }}</span>
+                      <span class="tag-codigo">{{ act.codigoPatrimonial }}</span>
+                    </div>
+
+                    <h4 class="activo-card__nombre">{{ act.nombre }}</h4>
+
+                    <div class="activo-card__grid">
+                      <div class="prop-item">
+                        <span class="prop-label">Hostname:</span>
+                        <strong class="prop-val mono">{{ act.hostname }}</strong>
+                      </div>
+                      <div class="prop-item">
+                        <span class="prop-label">Dirección MAC:</span>
+                        <span class="prop-val mono">{{ act.mac ?? 'N/D' }}</span>
+                      </div>
+                      <div class="prop-item">
+                        <span class="prop-label">Servicio Clínico:</span>
+                        <span class="prop-val">{{ act.areaNombre }}</span>
+                      </div>
+                      <div class="prop-item">
+                        <span class="prop-label">Subred:</span>
+                        <span class="prop-val mono">{{ det.vlanNombre }}</span>
+                      </div>
+                    </div>
+
+                    <div class="activo-card__acciones">
+                      <button 
+                        type="button" 
+                        class="btn-copiar-ip-rapido"
+                        (click)="copiarIp(det.ip)">
+                        <app-icono nombre="content_copy" tamano="xs"></app-icono>
+                        <span>Copiar Dirección IP</span>
+                      </button>
+                    </div>
+                  </div>
+                </div>
+              } @else if (det.estado === 'RESERVADA') {
+                <div class="drawer-cuerpo">
+                  <div class="drawer-reservada-card">
+                    <p class="reservada-desc">
+                      <strong>Uso de Infraestructura:</strong> {{ det.descripcionUso }}
+                    </p>
+                    <p class="reservada-nota">
+                      Esta dirección IP está protegida por la política de seguridad y enrutamiento del Hospital Santa María del Socorro.
+                    </p>
+                  </div>
+                </div>
+              }
+            </div>
+          }
+        </div>
+      }
+    </section>
+  }
+
+  <!-- MODAL DE FORMULARIO PARA REGISTRO Y EDICIÓN -->
+  @if (modalAbierto()) {
+    <app-activo-formulario-modal
+      [activoEditar]="activoEnEdicion()"
+      [ipPreseleccionada]="ipPreseleccionada()"
+      [vlanPreseleccionada]="vlanPreseleccionada()"
+      (alGuardar)="guardarActivo($event)"
+      (alCerrar)="cerrarModal()">
+    </app-activo-formulario-modal>
+  }
+</div>

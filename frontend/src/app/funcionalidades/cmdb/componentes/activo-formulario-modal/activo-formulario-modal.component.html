@@ -1,0 +1,256 @@
+<div class="modal-backdrop" (click)="cerrar()" role="presentation"></div>
+
+<div 
+  class="modal-dialog" 
+  role="dialog" 
+  aria-modal="true" 
+  aria-labelledby="modal-titulo">
+  
+  <header class="modal-header">
+    <div class="modal-header__info">
+      <div class="modal-header__icono">
+        <app-icono [nombre]="formulario.get('tipo')?.value === 'IMPRESORA' ? 'print' : (formulario.get('tipo')?.value === 'SERVIDOR' ? 'dns' : (formulario.get('tipo')?.value === 'RED' ? 'router' : 'computer'))" tamano="sm"></app-icono>
+      </div>
+      <div>
+        <h3 id="modal-titulo" class="modal-titulo">
+          {{ activoEditar() ? 'Editar Activo Tecnológico' : 'Registrar Nuevo Activo en CMDB' }}
+        </h3>
+        <p class="modal-subtitulo">
+          Inventario y asignación de red para el Hospital Santa María del Socorro
+        </p>
+      </div>
+    </div>
+    <button 
+      type="button" 
+      class="btn-cerrar" 
+      (click)="cerrar()" 
+      aria-label="Cerrar modal">
+      <app-icono nombre="close" tamano="xs"></app-icono>
+    </button>
+  </header>
+
+  <form [formGroup]="formulario" (ngSubmit)="guardar()" class="modal-cuerpo">
+    <!-- SECCIÓN 1: IDENTIFICACIÓN GENERAL -->
+    <div class="form-bloque">
+      <h4 class="form-bloque__titulo">
+        <app-icono nombre="badge" tamano="xs"></app-icono>
+        1. Identificación y Hardware
+      </h4>
+
+      <div class="form-grid-3">
+        <div class="campo-grupo">
+          <label for="codigoPatrimonial" class="campo-label">Código Patrimonial / Tag TI *</label>
+          <input 
+            id="codigoPatrimonial" 
+            type="text" 
+            formControlName="codigoPatrimonial" 
+            class="campo-input campo-input--mono" 
+            placeholder="Ej: ACT-PC-0110" />
+        </div>
+
+        <div class="campo-grupo campo-span-2">
+          <label for="nombre" class="campo-label">Nombre o Descripción del Activo *</label>
+          <input 
+            id="nombre" 
+            type="text" 
+            formControlName="nombre" 
+            class="campo-input" 
+            placeholder="Ej: Estación de Trabajo - Triaje Adultos 02" />
+        </div>
+      </div>
+
+      <div class="form-grid-4">
+        <div class="campo-grupo">
+          <label for="tipo" class="campo-label">Tipo de Activo *</label>
+          <select id="tipo" formControlName="tipo" class="campo-select">
+            @for (t of tiposActivo; track t) {
+              <option [value]="t">{{ t }}</option>
+            }
+          </select>
+        </div>
+
+        <div class="campo-grupo">
+          <label for="marca" class="campo-label">Marca *</label>
+          <input id="marca" type="text" formControlName="marca" class="campo-input" placeholder="Ej: HP / Epson / Cisco" />
+        </div>
+
+        <div class="campo-grupo">
+          <label for="modelo" class="campo-label">Modelo *</label>
+          <input id="modelo" type="text" formControlName="modelo" class="campo-input" placeholder="Ej: ProDesk 400 G7" />
+        </div>
+
+        <div class="campo-grupo">
+          <label for="numeroSerie" class="campo-label">N° de Serie *</label>
+          <input id="numeroSerie" type="text" formControlName="numeroSerie" class="campo-input campo-input--mono" placeholder="Ej: S/N MXL902" />
+        </div>
+      </div>
+    </div>
+
+    <!-- SECCIÓN 2: RED Y DIRECCIONAMIENTO IP -->
+    <div class="form-bloque">
+      <h4 class="form-bloque__titulo">
+        <app-icono nombre="lan" tamano="xs"></app-icono>
+        2. Configuración y Trazabilidad de Red (IP & Subred)
+      </h4>
+
+      <div class="form-grid-2">
+        <div class="campo-grupo">
+          <label for="vlanId" class="campo-label">Subred / VLAN Hospitalaria *</label>
+          <select id="vlanId" formControlName="vlanId" class="campo-select">
+            @for (sub of subredes(); track sub.vlanId) {
+              <option [value]="sub.vlanId">{{ sub.nombre }} ({{ sub.segmento }})</option>
+            }
+          </select>
+        </div>
+
+        <div class="campo-grupo">
+          <label for="ip" class="campo-label">Dirección IP Asignada *</label>
+          <input 
+            id="ip" 
+            type="text" 
+            formControlName="ip" 
+            class="campo-input campo-input--mono" 
+            placeholder="Ej: 192.168.10.25" />
+        </div>
+      </div>
+
+      <!-- SUGERENCIAS DE IPS LIBRES EN ESTA VLAN -->
+      @if (ipsDisponibles().length > 0) {
+        <div class="sugerencias-ip">
+          <span class="sugerencias-ip__label">
+            <app-icono nombre="check_circle" tamano="xs"></app-icono>
+            IPs libres detectadas en esta subred:
+          </span>
+          <div class="sugerencias-ip__lista">
+            @for (ipLibre of ipsDisponibles().slice(0, 6); track ipLibre) {
+              <button 
+                type="button" 
+                class="chip-ip-sugerida" 
+                (click)="seleccionarIpSugerida(ipLibre)"
+                [class.chip-ip-sugerida--activa]="formulario.get('ip')?.value === ipLibre">
+                {{ ipLibre }}
+              </button>
+            }
+          </div>
+        </div>
+      }
+
+      <div class="form-grid-3">
+        <div class="campo-grupo">
+          <label for="hostname" class="campo-label">Hostname de Red *</label>
+          <input 
+            id="hostname" 
+            type="text" 
+            formControlName="hostname" 
+            class="campo-input campo-input--mono" 
+            placeholder="Ej: PC-EMERG-02" />
+        </div>
+
+        <div class="campo-grupo">
+          <label for="mac" class="campo-label">Dirección MAC</label>
+          <input 
+            id="mac" 
+            type="text" 
+            formControlName="mac" 
+            class="campo-input campo-input--mono" 
+            placeholder="Ej: 70:85:C2:51:AA:15" />
+        </div>
+
+        <div class="campo-grupo">
+          <label for="sistemaOperativo" class="campo-label">Sistema Operativo / Firmware</label>
+          <input 
+            id="sistemaOperativo" 
+            type="text" 
+            formControlName="sistemaOperativo" 
+            class="campo-input" 
+            placeholder="Ej: Windows 11 / Debian 12" />
+        </div>
+      </div>
+    </div>
+
+    <!-- SECCIÓN 3: UBICACIÓN HOSPITALARIA Y CRITICIDAD -->
+    <div class="form-bloque">
+      <h4 class="form-bloque__titulo">
+        <app-icono nombre="local_hospital" tamano="xs"></app-icono>
+        3. Asignación Hospitalaria y Criticidad Asistencial
+      </h4>
+
+      <div class="form-grid-3">
+        <div class="campo-grupo">
+          <label for="idArea" class="campo-label">Servicio o Área Hospitalaria *</label>
+          <select id="idArea" formControlName="idArea" class="campo-select">
+            @for (area of areasHospitalarias; track area.id) {
+              <option [value]="area.id">{{ area.nombre }}</option>
+            }
+          </select>
+        </div>
+
+        <div class="campo-grupo">
+          <label for="criticidad" class="campo-label">Nivel de Criticidad Asistencial *</label>
+          <select id="criticidad" formControlName="criticidad" class="campo-select">
+            <option value="VITAL_STAT">VITAL STAT (Soporte Inmediato ≤ 60m)</option>
+            <option value="ALTA">ALTA (Servicios Médicos Prioritarios)</option>
+            <option value="MEDIA">MEDIA (Atención Ambulatoria Regular)</option>
+            <option value="ESTANDAR">ESTÁNDAR (Oficinas Administrativas)</option>
+          </select>
+        </div>
+
+        <div class="campo-grupo">
+          <label for="estado" class="campo-label">Estado Operativo *</label>
+          <select id="estado" formControlName="estado" class="campo-select">
+            <option value="ACTIVO">ACTIVO (En operación)</option>
+            <option value="EN_MANTENIMIENTO">EN MANTENIMIENTO</option>
+            <option value="DADO_DE_BAJA">DADO DE BAJA</option>
+          </select>
+        </div>
+      </div>
+
+      <div class="form-grid-2">
+        <div class="campo-grupo">
+          <label for="ubicacionDetalle" class="campo-label">Ubicación Física Específica</label>
+          <input 
+            id="ubicacionDetalle" 
+            type="text" 
+            formControlName="ubicacionDetalle" 
+            class="campo-input" 
+            placeholder="Ej: Pabellón A, 1er Piso, Módulo 2" />
+        </div>
+
+        <div class="campo-grupo">
+          <label for="responsableAsignado" class="campo-label">Usuario o Custodio Responsable</label>
+          <input 
+            id="responsableAsignado" 
+            type="text" 
+            formControlName="responsableAsignado" 
+            class="campo-input" 
+            placeholder="Ej: Lic. Elena Morales" />
+        </div>
+      </div>
+
+      <div class="campo-grupo">
+        <label for="observaciones" class="campo-label">Observaciones Técnicas</label>
+        <textarea 
+          id="observaciones" 
+          formControlName="observaciones" 
+          rows="2" 
+          class="campo-textarea" 
+          placeholder="Anotaciones sobre periferia, conectores o puertos asignados..."></textarea>
+      </div>
+    </div>
+
+    <!-- BOTONES DE ACCIÓN -->
+    <div class="modal-footer">
+      <button type="button" class="btn-cancelar" (click)="cerrar()">
+        Cancelar
+      </button>
+
+      <app-boton 
+        variante="primario" 
+        icono="save" 
+        tipo="submit"
+        [deshabilitado]="formulario.invalid">
+        {{ activoEditar() ? 'Actualizar Activo' : 'Guardar en Inventario' }}
+      </app-boton>
+    </div>
+  </form>
+</div>
