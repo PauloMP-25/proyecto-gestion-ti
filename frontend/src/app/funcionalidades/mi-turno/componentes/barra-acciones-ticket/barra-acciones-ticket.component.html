@@ -1,0 +1,61 @@
+<div class="barra-acciones" [class.barra-acciones--procesando]="procesando()">
+  @if (primaria(); as accionPrimaria) {
+    <!-- Acción Secundaria si existe (ej. Escalar a Nivel 2) -->
+    @for (accionSecundaria of secundarias(); track accionSecundaria) {
+      <button
+        type="button"
+        class="btn-accion btn-accion--secundaria"
+        [class.btn-accion--escalar]="accionSecundaria === 'ESCALAR'"
+        [disabled]="procesando()"
+        (click)="ejecutarAccion(accionSecundaria)"
+        [attr.aria-label]="etiquetaAccion(accionSecundaria)">
+        <app-icono [nombre]="iconoAccion(accionSecundaria)" tamano="sm" aria-hidden="true"></app-icono>
+        <span>{{ etiquetaAccion(accionSecundaria) }}</span>
+      </button>
+    }
+
+    <!-- Acción Primaria (ej. Tomar y comenzar, Iniciar atención, Resolver) -->
+    <button
+      type="button"
+      class="btn-accion btn-accion--primaria"
+      [class.btn-accion--verde]="accionPrimaria === 'RESOLVER'"
+      [class.btn-accion--iniciar]="accionPrimaria === 'INICIAR'"
+      [class.btn-accion--tomar]="accionPrimaria === 'TOMAR' || accionPrimaria === 'TOMAR_Y_COMENZAR'"
+      [disabled]="procesando()"
+      [attr.aria-busy]="procesando()"
+      (click)="ejecutarAccion(accionPrimaria)"
+      [attr.aria-label]="etiquetaAccion(accionPrimaria)">
+      @if (procesando()) {
+        <span>Procesando...</span>
+      } @else {
+        <app-icono [nombre]="iconoAccion(accionPrimaria)" tamano="sm" aria-hidden="true"></app-icono>
+        <span>{{ etiquetaAccion(accionPrimaria) }}</span>
+      }
+    </button>
+  } @else {
+    <!-- Estado solo lectura o asignado a otro técnico -->
+    <div class="barra-solo-lectura">
+      @if (ticket().estado === 'RESUELTO') {
+        <span class="insignia-estado-lectura insignia-estado-lectura--verde">
+          <app-icono nombre="check_circle" tamano="xs" aria-hidden="true"></app-icono>
+          <span>Ticket resuelto</span>
+        </span>
+      } @else if (ticket().estado === 'CERRADO') {
+        <span class="insignia-estado-lectura insignia-estado-lectura--gris">
+          <app-icono nombre="archive" tamano="xs" aria-hidden="true"></app-icono>
+          <span>Ticket cerrado</span>
+        </span>
+      } @else if (ticket().estado === 'ESCALADO') {
+        <span class="insignia-estado-lectura insignia-estado-lectura--morado">
+          <app-icono nombre="arrow_upward" tamano="xs" aria-hidden="true"></app-icono>
+          <span>Derivado a Nivel 2</span>
+        </span>
+      } @else if (!ticket().esMio && ticket().asignadoA) {
+        <span class="insignia-estado-lectura insignia-estado-lectura--azul">
+          <app-icono nombre="person" tamano="xs" aria-hidden="true"></app-icono>
+          <span>En atención por {{ ticket().asignadoA?.nombre }}</span>
+        </span>
+      }
+    </div>
+  }
+</div>
