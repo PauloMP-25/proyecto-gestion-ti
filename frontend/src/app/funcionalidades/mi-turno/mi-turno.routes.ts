@@ -14,6 +14,14 @@ export const MI_TURNO_ROUTES: Routes = [
             (m) => m.BandejaTurnoPage
           ),
       },
+      {
+        path: 'ticket/:id',
+        title: 'Mesa de Ayuda · Ficha de Atención',
+        loadComponent: () =>
+          import('./paginas/ficha-atencion/ficha-atencion.page').then(
+            (m) => m.FichaAtencionPage
+          ),
+      },
     ],
   },
 ];

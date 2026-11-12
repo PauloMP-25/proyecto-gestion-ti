@@ -1,0 +1,274 @@
+<div class="ficha-atencion-contenedor">
+  <!-- Botón Volver -->
+  <nav class="ficha-nav-volver" aria-label="Navegación de retorno">
+    <a routerLink="/mi-turno" class="btn-volver" aria-label="Volver a la bandeja de Mi Turno">
+      <app-icono nombre="arrow_back" tamano="sm" aria-hidden="true"></app-icono>
+      <span>Mi Turno</span>
+    </a>
+  </nav>
+
+  <!-- Mensajes de Estado y Feedback -->
+  @if (mensajeAlerta()) {
+    <div class="mensaje-banner mensaje-banner--alerta" role="alert" aria-live="assertive">
+      <app-icono nombre="warning" tamano="sm" aria-hidden="true"></app-icono>
+      <span>{{ mensajeAlerta() }}</span>
+      <button type="button" class="mensaje-banner__cerrar" (click)="cerrarMensajeAlerta()" aria-label="Cerrar alerta">
+        <app-icono nombre="close" tamano="xs" aria-hidden="true"></app-icono>
+      </button>
+    </div>
+  }
+
+  @if (mensajeExito()) {
+    <div class="mensaje-banner mensaje-banner--exito" role="status" aria-live="polite">
+      <app-icono nombre="check_circle" tamano="sm" aria-hidden="true"></app-icono>
+      <span>{{ mensajeExito() }}</span>
+      <button type="button" class="mensaje-banner__cerrar" (click)="cerrarMensajeExito()" aria-label="Cerrar mensaje">
+        <app-icono nombre="close" tamano="xs" aria-hidden="true"></app-icono>
+      </button>
+    </div>
+  }
+
+  <!-- Estado: Cargando -->
+  @if (cargando()) {
+    <div class="ficha-esqueleto" aria-busy="true" aria-label="Cargando ficha del ticket...">
+      <div class="esqueleto-linea esqueleto-linea--corta"></div>
+      <div class="esqueleto-linea esqueleto-linea--titulo"></div>
+      <div class="esqueleto-caja"></div>
+    </div>
+  }
+
+  <!-- Estado: Error o No Encontrado -->
+  @else if (error() || !ticket()) {
+    <div class="ficha-error" role="alert">
+      <app-icono nombre="search_off" tamano="xl" aria-hidden="true"></app-icono>
+      <h2 class="ficha-error__titulo">Ticket no disponible</h2>
+      <p class="ficha-error__mensaje">{{ error() || 'No se encontró la información del ticket solicitado.' }}</p>
+      <a routerLink="/mi-turno" class="btn-error-volver">
+        <app-icono nombre="arrow_back" tamano="sm" aria-hidden="true"></app-icono>
+        <span>Regresar a Mi Turno</span>
+      </a>
+    </div>
+  }
+
+  <!-- Contenido Principal de la Ficha -->
+  @else {
+    @let t = ticket()!;
+
+    <!-- Cabecera de la Ficha -->
+    <header class="ficha-cabecera">
+      <div class="ficha-cabecera__meta">
+        <span class="insignia-prioridad" [ngClass]="'insignia-prioridad--' + t.prioridad">
+          {{ t.prioridad }}
+        </span>
+        <span class="ficha-cabecera__codigo">{{ t.codigo }}</span>
+        @if (t.reabierto) {
+          <span class="insignia-reabierto">Reabierto</span>
+        }
+      </div>
+
+      <h1 class="ficha-cabecera__titulo">{{ t.titulo }}</h1>
+    </header>
+
+    <!-- Layout en 2 columnas para Desktop / 1 columna para Móvil -->
+    <div class="ficha-grid">
+      <!-- Columna Principal: Datos asistenciales, descripción y trazabilidad -->
+      <main class="ficha-columna-principal">
+        <!-- Tarjeta de Contexto Asistencial -->
+        <section class="tarjeta-seccion" aria-labelledby="seccion-contexto-titulo">
+          <h2 id="seccion-contexto-titulo" class="tarjeta-seccion__titulo">
+            <app-icono nombre="badge" tamano="sm" aria-hidden="true"></app-icono>
+            <span>Información Asistencial</span>
+          </h2>
+
+          <div class="datos-asistenciales-grid">
+            <div class="dato-item">
+              <span class="dato-item__etiqueta">Solicitante</span>
+              <span class="dato-item__valor">{{ t.solicitanteNombre }}</span>
+            </div>
+
+            <div class="dato-item">
+              <span class="dato-item__etiqueta">Área Hospitalaria</span>
+              <span class="dato-item__valor">{{ t.areaNombre }}</span>
+            </div>
+
+            @if (t.anexo) {
+              <div class="dato-item">
+                <span class="dato-item__etiqueta">Anexo Telefónico</span>
+                <a [href]="'tel:' + t.anexo" class="dato-item__valor dato-item__valor--enlace">
+                  <app-icono nombre="phone" tamano="xs" aria-hidden="true"></app-icono>
+                  <span>{{ t.anexo }}</span>
+                </a>
+              </div>
+            }
+
+            <div class="dato-item">
+              <span class="dato-item__etiqueta">Categoría</span>
+              <span class="dato-item__valor">{{ t.categoriaNombre }}</span>
+            </div>
+          </div>
+
+          <!-- Equipo y Accesos Rápidos -->
+          @if (t.equipo) {
+            <div class="equipo-bloque">
+              <div class="equipo-bloque__info">
+                <app-icono nombre="computer" tamano="sm" aria-hidden="true"></app-icono>
+                <div>
+                  <span class="equipo-bloque__nombre">{{ t.equipo.hostname }}</span>
+                  <span class="equipo-bloque__ip">{{ t.equipo.ip }} · {{ t.equipo.area }}</span>
+                </div>
+              </div>
+
+              <div class="equipo-bloque__acciones">
+                <button
+                  type="button"
+                  class="btn-consulta-equipo"
+                  (click)="consultarEquipo(t.equipo.hostname)"
+                  aria-label="Ver historial técnico y fallas del equipo en Consulta Rápida">
+                  <app-icono nombre="info" tamano="xs" aria-hidden="true"></app-icono>
+                  <span>Ver equipo</span>
+                </button>
+
+                <button
+                  type="button"
+                  class="btn-consulta-soluciones"
+                  (click)="consultarSoluciones(t.categoriaId)"
+                  aria-label="Ver guías de solución recomendadas para esta categoría">
+                  <app-icono nombre="lightbulb" tamano="xs" aria-hidden="true"></app-icono>
+                  <span>Soluciones sugeridas</span>
+                </button>
+              </div>
+            </div>
+          }
+        </section>
+
+        <!-- Tarjeta de Descripción del Problema -->
+        <section class="tarjeta-seccion" aria-labelledby="seccion-descripcion-titulo">
+          <h2 id="seccion-descripcion-titulo" class="tarjeta-seccion__titulo">
+            <app-icono nombre="description" tamano="sm" aria-hidden="true"></app-icono>
+            <span>Descripción del Problema</span>
+          </h2>
+          <div class="descripcion-contenido">
+            <p>{{ t.descripcion }}</p>
+          </div>
+        </section>
+
+        <!-- Tarjeta de Línea de Tiempo Interna -->
+        <section class="tarjeta-seccion" aria-labelledby="seccion-trazabilidad-titulo">
+          <h2 id="seccion-trazabilidad-titulo" class="tarjeta-seccion__titulo">
+            <app-icono nombre="history" tamano="sm" aria-hidden="true"></app-icono>
+            <span>Historial y Trazabilidad de Atención</span>
+          </h2>
+
+          <ol class="linea-tiempo-interna" role="list">
+            @for (hito of hitosInternos(); track hito.id) {
+              <li class="hito-interno" [ngClass]="'hito-interno--' + hito.tipo">
+                <div class="hito-interno__icono" aria-hidden="true">
+                  <app-icono [nombre]="hito.icono" tamano="xs"></app-icono>
+                </div>
+                <div class="hito-interno__cuerpo">
+                  <div class="hito-interno__cabecera">
+                    <span class="hito-interno__etiqueta">{{ hito.etiqueta }}</span>
+                    <time class="hito-interno__fecha" [attr.datetime]="hito.fechaIso">
+                      {{ hito.fechaIso | date:'shortTime' }} hrs
+                    </time>
+                  </div>
+                  <p class="hito-interno__detalle">{{ hito.detalle }}</p>
+                </div>
+              </li>
+            }
+          </ol>
+        </section>
+      </main>
+
+      <!-- Columna Lateral: Cronómetro SLA y Barra de Acciones Desktop -->
+      <aside class="ficha-columna-lateral">
+        <!-- Cronómetro de Compromiso de Atención -->
+        <div class="tarjeta-lateral tarjeta-lateral--sla">
+          <h2 class="tarjeta-lateral__titulo">
+            <app-icono nombre="schedule" tamano="sm" aria-hidden="true"></app-icono>
+            <span>Compromiso de Atención (SLA)</span>
+          </h2>
+
+          @if (slaCalculado(); as sla) {
+            @if (sla.fase !== 'COMPLETADO') {
+              <div class="sla-cronometro-envoltorio">
+                <app-sla-cronometro
+                  [sla]="sla"
+                  [compacto]="false">
+                </app-sla-cronometro>
+                <div class="sla-explicacion">
+                  @if (sla.fase === 'RESPUESTA') {
+                    <span>Fase actual: <strong>Primera respuesta</strong></span>
+                  } @else {
+                    <span>Fase actual: <strong>Resolución técnica</strong></span>
+                  }
+                </div>
+              </div>
+            } @else {
+              <div class="sla-completado-bloque">
+                <app-icono nombre="check_circle" tamano="md" aria-hidden="true"></app-icono>
+                <span>Atención concluida</span>
+              </div>
+            }
+          }
+        </div>
+
+        <!-- Panel de Acciones en Desktop -->
+        <div class="tarjeta-lateral tarjeta-lateral--acciones">
+          <h2 class="tarjeta-lateral__titulo">
+            <app-icono nombre="touch_app" tamano="sm" aria-hidden="true"></app-icono>
+            <span>Acciones del Turno</span>
+          </h2>
+
+          <app-barra-acciones-ticket
+            [ticket]="t"
+            [rol]="rolUsuario"
+            [procesando]="procesandoAccion()"
+            (alTomar)="onTomar($event)"
+            (alIniciar)="onIniciar()"
+            (alResolver)="abrirDialogoResolver()"
+            (alEscalar)="abrirDialogoEscalar()">
+          </app-barra-acciones-ticket>
+        </div>
+      </aside>
+    </div>
+
+    <!-- Barra de Acciones Fija Inferior en Móvil (< 768px) -->
+    <div class="barra-acciones-movil-fija" role="region" aria-label="Acciones principales del ticket">
+      <app-barra-acciones-ticket
+        [ticket]="t"
+        [rol]="rolUsuario"
+        [procesando]="procesandoAccion()"
+        (alTomar)="onTomar($event)"
+        (alIniciar)="onIniciar()"
+        (alResolver)="abrirDialogoResolver()"
+        (alEscalar)="abrirDialogoEscalar()">
+      </app-barra-acciones-ticket>
+    </div>
+
+    <!-- Modal Diálogo Resolver -->
+    @if (modalResolverAbierto()) {
+      <app-dialogo-resolver-ticket
+        [ticketId]="t.id"
+        [codigo]="t.codigo"
+        [equipoEtiqueta]="t.equipo ? t.equipo.hostname + ' · ' + t.equipo.ip : null"
+        [articuloSugeridoId]="solucionSugeridaId()"
+        [procesando]="procesandoAccion()"
+        (alCancelar)="modalResolverAbierto.set(false)"
+        (alConfirmar)="confirmarResolucion($event)">
+      </app-dialogo-resolver-ticket>
+    }
+
+    <!-- Modal Diálogo Escalar -->
+    @if (modalEscalarAbierto()) {
+      <app-dialogo-escalar-ticket
+        [ticketId]="t.id"
+        [codigo]="t.codigo"
+        [titulo]="t.titulo"
+        [procesando]="procesandoAccion()"
+        (alCancelar)="modalEscalarAbierto.set(false)"
+        (alConfirmar)="confirmarEscalamiento($event)">
+      </app-dialogo-escalar-ticket>
+    }
+  }
+</div>
