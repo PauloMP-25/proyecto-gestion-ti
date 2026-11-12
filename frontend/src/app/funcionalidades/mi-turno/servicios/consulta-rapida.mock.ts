@@ -73,7 +73,7 @@ export class ConsultaRapidaMock extends ConsultaRapidaApi {
     {
       id: 6,
       nombre: 'Switch Troncal Rack Piso 2',
-      tipo: TipoActivo.SWITCH,
+      tipo: TipoActivo.RED,
       estado: 'MANTENIMIENTO',
       hostname: 'HSP-SW-P02',
       ip: '10.20.10.12',
