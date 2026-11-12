@@ -1,3 +1,6 @@
+@use 'estilos/mixins/responsive' as r;
+@use 'estilos/mixins/a11y' as a11y;
+
 .barra-superior {
   position: sticky;
   top: 0;
@@ -10,11 +13,11 @@
   align-items: center;
   justify-content: space-between;
   padding: 0 var(--space-4);
-  z-index: 100;
+  z-index: var(--z-sticky);
   box-shadow: var(--shadow-sm);
   transition: all var(--transition-normal);
 
-  @media (min-width: 768px) {
+  @include r.desde(md) {
     padding: 0 var(--space-6);
   }
 }
@@ -34,11 +37,13 @@
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  width: 40px;
-  height: 40px;
+  @include a11y.touch-target;
+  width: 44px;
+  height: 44px;
   border-radius: var(--radius-md);
   color: var(--color-text-main);
   transition: background-color var(--transition-fast);
+  @include a11y.foco-visible;
 
   &:hover {
     background-color: var(--color-surface-hover);
@@ -60,9 +65,9 @@
   height: 40px;
   width: 40px;
   object-fit: contain;
-  background-color: #ffffff;
+  background-color: var(--color-surface-card);
   border-radius: var(--radius-md);
-  box-shadow: 0 1px 3px rgba(0,0,0,0.08);
+  box-shadow: var(--shadow-sm);
   border: 1px solid var(--color-border-subtle);
 }
 
@@ -79,7 +84,7 @@
     overflow: hidden;
     text-overflow: ellipsis;
 
-    @media (min-width: 768px) {
+    @include r.desde(md) {
       font-size: var(--font-size-base);
     }
   }
@@ -90,7 +95,7 @@
     font-weight: var(--font-weight-medium);
     display: none;
 
-    @media (min-width: 640px) {
+    @include r.desde(sm) {
       display: inline-block;
     }
   }
@@ -114,6 +119,7 @@
   align-items: center;
   gap: var(--space-1);
   padding: 0.35rem 0.65rem;
+  min-height: var(--touch-min);
   background-color: var(--color-bg-app);
   border: 1px solid var(--color-border-subtle);
   border-radius: var(--radius-md);
@@ -122,6 +128,7 @@
   font-weight: var(--font-weight-medium);
   cursor: pointer;
   transition: all var(--transition-fast);
+  @include a11y.foco-visible;
 
   &:hover {
     background-color: var(--color-surface-hover);
@@ -135,7 +142,7 @@
 
   .texto-cambiar-rol {
     display: none;
-    @media (min-width: 768px) {
+    @include r.desde(md) {
       display: inline;
     }
   }
@@ -151,7 +158,7 @@
   border-radius: var(--radius-lg);
   box-shadow: var(--shadow-lg);
   padding: var(--space-2);
-  z-index: 150;
+  z-index: var(--z-dropdown);
   animation: fadeIn 150ms ease-out;
 
   .dropdown-header {
@@ -169,12 +176,14 @@
     align-items: center;
     gap: var(--space-2);
     padding: var(--space-2) var(--space-3);
+    min-height: var(--touch-min);
     background: transparent;
     border: none;
     border-radius: var(--radius-md);
     cursor: pointer;
     text-align: left;
     transition: background-color var(--transition-fast);
+    @include a11y.foco-visible;
 
     &:hover {
       background-color: var(--color-surface-hover);
@@ -215,7 +224,7 @@
 .badge-rol-wrapper {
   display: none;
 
-  @media (min-width: 640px) {
+  @include r.desde(sm) {
     display: flex;
     align-items: center;
   }
@@ -247,25 +256,25 @@
     text-overflow: ellipsis;
   }
 
-  /* USUARIO_FINAL: Slate corporativo */
+  /* USUARIO_FINAL */
   &.badge-usuario-final {
-    background-color: #f1f5f9;
-    color: #334155;
-    border: 1px solid #cbd5e1;
+    background-color: var(--color-surface-sunken);
+    color: var(--color-text-secondary);
+    border: 1px solid var(--color-border-subtle);
   }
 
-  /* PRACTICANTE: Azul / Cyan técnico */
+  /* PRACTICANTE */
   &.badge-practicante {
-    background-color: #e0f2fe;
-    color: #0369a1;
-    border: 1px solid #7dd3fc;
+    background-color: var(--color-info-bg);
+    color: var(--color-info-text);
+    border: 1px solid var(--color-info-border);
   }
 
-  /* ADMINISTRADOR: Guinda Institucional */
+  /* ADMINISTRADOR */
   &.badge-administrador {
     background-color: var(--color-primary-light);
     color: var(--color-primary-base);
-    border: 1px solid rgba(112, 28, 28, 0.3);
+    border: 1px solid var(--color-primary-focus-ring);
   }
 }
 
@@ -278,12 +287,14 @@
   display: flex;
   align-items: center;
   gap: var(--space-2);
+  min-height: var(--touch-min);
   background: transparent;
   border: 1px solid transparent;
   border-radius: var(--radius-full);
   padding: 0.25rem 0.5rem 0.25rem 0.25rem;
   cursor: pointer;
   transition: all var(--transition-fast);
+  @include a11y.foco-visible;
 
   &:hover {
     background-color: var(--color-surface-hover);
@@ -296,7 +307,7 @@
     text-align: left;
     line-height: 1.2;
 
-    @media (min-width: 1024px) {
+    @include r.desde(lg) {
       display: flex;
     }
 
@@ -317,7 +328,7 @@
     color: var(--color-text-muted);
     display: none;
 
-    @media (min-width: 1024px) {
+    @include r.desde(lg) {
       display: inline-block;
     }
   }
@@ -332,15 +343,15 @@
   justify-content: center;
   font-weight: var(--font-weight-bold);
   font-size: var(--font-size-sm);
-  color: #ffffff;
-  background-color: #475569;
+  color: var(--color-text-on-primary);
+  background-color: var(--color-text-muted);
 
   &[data-rol="USUARIO_FINAL"] {
-    background-color: #475569;
+    background-color: var(--color-text-muted);
   }
 
   &[data-rol="PRACTICANTE"] {
-    background-color: #0284c7;
+    background-color: var(--color-info-border);
   }
 
   &[data-rol="ADMINISTRADOR"] {
@@ -359,7 +370,7 @@
   border-radius: var(--radius-lg);
   box-shadow: var(--shadow-lg);
   padding: var(--space-2);
-  z-index: 150;
+  z-index: var(--z-dropdown);
   animation: fadeIn 150ms ease-out;
 
   .dropdown-usuario-resumen {
@@ -400,6 +411,7 @@
     align-items: center;
     gap: var(--space-2);
     width: 100%;
+    min-height: var(--touch-min);
     padding: var(--space-2) var(--space-3);
     background: transparent;
     border: none;
@@ -409,6 +421,7 @@
     cursor: pointer;
     text-decoration: none;
     transition: background-color var(--transition-fast);
+    @include a11y.foco-visible;
 
     &:hover {
       background-color: var(--color-surface-hover);
@@ -438,6 +451,7 @@
     opacity: 0;
     transform: translateY(-6px);
   }
+
   to {
     opacity: 1;
     transform: translateY(0);

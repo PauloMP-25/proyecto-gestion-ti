@@ -1,3 +1,5 @@
+@use 'estilos/mixins/responsive' as r;
+
 .shell-layout {
   display: flex;
   flex-direction: column;
@@ -23,21 +25,22 @@
   overflow-y: auto;
   overflow-x: hidden;
   height: calc(100vh - 64px);
+  scroll-padding-top: var(--espacio-md);
 }
 
 .lienzo-vista {
   flex: 1;
-  padding: 8px var(--space-4, 16px) var(--space-4, 16px);
+  padding: var(--espacio-xs) var(--espacio-md) var(--espacio-md);
   max-width: 1440px;
   width: 100%;
   margin: 0 auto;
   box-sizing: border-box;
 
-  @media (min-width: 768px) {
-    padding: 12px var(--space-6, 24px) var(--space-6, 24px);
+  @include r.desde(md) {
+    padding: var(--espacio-sm) var(--espacio-lg) var(--espacio-lg);
   }
 
-  @media (min-width: 1280px) {
-    padding: 12px var(--space-6, 24px) var(--space-6, 24px);
+  @include r.desde(xl) {
+    padding: var(--espacio-sm) var(--espacio-lg) var(--espacio-lg);
   }
 }
