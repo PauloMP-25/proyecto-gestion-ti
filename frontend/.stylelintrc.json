@@ -1,0 +1,27 @@
+{
+  "extends": ["stylelint-config-standard-scss"],
+  "defaultSeverity": "warning",
+  "rules": {
+    "color-no-hex": [true, { "severity": "warning" }],
+    "declaration-property-value-disallowed-list": [
+      {
+        "font-size": ["/^0?\\.[0-6]\\d*rem$/", "/^1[01]px$/"],
+        "min-height": ["/^(2\\d|3\\d|4[0-3])px$/"]
+      },
+      { "severity": "warning" }
+    ],
+    "selector-class-pattern": null,
+    "no-empty-source": null
+  },
+  "overrides": [
+    {
+      "files": [
+        "src/estilos/tokens/_primitivos.scss",
+        "src/estilos/tokens/_tema-noche.scss"
+      ],
+      "rules": {
+        "color-no-hex": null
+      }
+    }
+  ]
+}
