@@ -23,6 +23,26 @@
   src: url('/assets/fonts/material-symbols-outlined.woff2') format('woff2');
 }
 
+/* Clase utilitaria para iconos Material Symbols Outlined usados como <span> */
+.material-symbols-outlined {
+  font-family: 'Material Symbols Outlined';
+  font-weight: normal;
+  font-style: normal;
+  font-size: 24px;
+  display: inline-block;
+  line-height: 1;
+  text-transform: none;
+  letter-spacing: normal;
+  word-wrap: normal;
+  white-space: nowrap;
+  direction: ltr;
+  -webkit-font-smoothing: antialiased;
+  text-rendering: optimizelegibility;
+  font-feature-settings: 'liga';
+  font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+  user-select: none;
+}
+
 /* Reset y caja de modelo */
 *, *::before, *::after {
   box-sizing: border-box;
