@@ -1,0 +1,435 @@
+.mis-solicitudes {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 24px 20px 48px;
+
+  &__cabecera {
+    display: flex;
+    align-items: flex-start;
+    justify-content: space-between;
+    gap: 16px;
+    margin-bottom: 24px;
+  }
+
+  &__titulo {
+    font-size: 1.625rem;
+    font-weight: 800;
+    margin: 0 0 4px;
+    color: var(--text-main, #0f172a);
+    letter-spacing: -0.02em;
+  }
+
+  &__subtitulo {
+    font-size: 0.875rem;
+    color: var(--text-muted, #64748b);
+    margin: 0;
+  }
+
+  &__btn-nuevo {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    min-height: 44px;
+    padding: 0 18px;
+    background-color: var(--hsmsi-guinda, #701c1c);
+    color: #ffffff;
+    font-size: 0.875rem;
+    font-weight: 600;
+    text-decoration: none;
+    border-radius: var(--radius-md, 8px);
+    white-space: nowrap;
+    transition: background-color 0.15s ease;
+
+    &:hover {
+      background-color: #551313;
+    }
+
+    &:focus-visible {
+      outline: 3px solid var(--hsmsi-verde-salud, #1b5e20);
+      outline-offset: 2px;
+    }
+  }
+
+  // Chips de filtro
+  &__barra-filtros {
+    display: flex;
+    gap: 8px;
+    overflow-x: auto;
+    padding-bottom: 6px;
+    margin-bottom: 16px;
+    scrollbar-width: thin;
+  }
+
+  &__chip {
+    display: inline-flex;
+    align-items: center;
+    min-height: 38px;
+    padding: 6px 16px;
+    border-radius: 20px;
+    border: 1px solid var(--border-subtle, #cbd5e1);
+    background-color: var(--surface-card, #ffffff);
+    color: var(--text-muted, #64748b);
+    font-size: 0.875rem;
+    font-weight: 600;
+    cursor: pointer;
+    white-space: nowrap;
+    transition: all 0.15s ease;
+
+    &:hover {
+      background-color: var(--surface-hover, #f1f5f9);
+      color: var(--text-main, #0f172a);
+    }
+
+    &.activo {
+      background-color: var(--hsmsi-guinda, #701c1c);
+      color: #ffffff;
+      border-color: var(--hsmsi-guinda, #701c1c);
+    }
+
+    &:focus-visible {
+      outline: 2px solid var(--hsmsi-verde-salud, #1b5e20);
+      outline-offset: 2px;
+    }
+  }
+
+  // Buscador
+  &__buscador {
+    margin-bottom: 20px;
+  }
+
+  &__caja-buscar {
+    position: relative;
+    display: flex;
+    align-items: center;
+    max-width: 480px;
+  }
+
+  &__icono-buscar {
+    position: absolute;
+    left: 14px;
+    color: var(--text-muted, #94a3b8);
+    pointer-events: none;
+  }
+
+  &__input-buscar {
+    width: 100%;
+    min-height: 44px;
+    padding: 10px 40px 10px 42px;
+    border: 1px solid var(--border-subtle, #cbd5e1);
+    border-radius: var(--radius-md, 8px);
+    font-size: 0.875rem;
+    color: var(--text-main, #0f172a);
+    background-color: var(--surface-card, #ffffff);
+    box-sizing: border-box;
+
+    &:focus {
+      outline: 2px solid var(--hsmsi-verde-salud, #1b5e20);
+      outline-offset: 1px;
+      border-color: var(--hsmsi-verde-salud, #1b5e20);
+    }
+  }
+
+  &__btn-limpiar {
+    position: absolute;
+    right: 8px;
+    background: transparent;
+    border: none;
+    color: var(--text-muted, #94a3b8);
+    cursor: pointer;
+    padding: 6px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    &:hover {
+      color: var(--text-main, #0f172a);
+    }
+  }
+
+  // Lista de tarjetas móvil
+  &__lista-tarjetas {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+  }
+
+  // Tabla Desktop
+  &__tabla-contenedor {
+    background: var(--surface-card, #ffffff);
+    border: 1px solid var(--border-subtle, #e2e8f0);
+    border-radius: var(--radius-md, 8px);
+    overflow: hidden;
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05);
+  }
+
+  &__tabla {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 0.875rem;
+    text-align: left;
+
+    thead tr {
+      background-color: #f8fafc;
+      border-bottom: 1px solid var(--border-subtle, #e2e8f0);
+    }
+
+    th, td {
+      padding: 14px 16px;
+    }
+
+    th {
+      font-weight: 600;
+      color: var(--text-muted, #64748b);
+    }
+
+    tbody tr {
+      border-bottom: 1px solid var(--border-subtle, #f1f5f9);
+      transition: background-color 0.15s ease;
+
+      &:hover {
+        background-color: #f8fafc;
+      }
+
+      &.fila-por-confirmar {
+        background-color: #fffefb;
+      }
+    }
+  }
+
+  &__enlace-codigo {
+    color: var(--hsmsi-guinda, #701c1c);
+    font-weight: 700;
+    text-decoration: none;
+
+    &:hover {
+      text-decoration: underline;
+    }
+
+    &:focus-visible {
+      outline: 2px solid var(--hsmsi-verde-salud, #1b5e20);
+      outline-offset: 2px;
+      border-radius: 4px;
+    }
+  }
+
+  &__titulo-texto {
+    font-weight: 600;
+    color: var(--text-main, #0f172a);
+    display: block;
+  }
+
+  &__insignia-atencion {
+    display: inline-block;
+    margin-top: 4px;
+    font-size: 0.6875rem;
+    font-weight: 700;
+    background-color: #fef3c7;
+    color: #92400e;
+    padding: 2px 6px;
+    border-radius: 4px;
+  }
+
+  &__badge-etapa {
+    display: inline-flex;
+    align-items: center;
+    font-size: 0.75rem;
+    font-weight: 600;
+    padding: 3px 8px;
+    border-radius: 12px;
+
+    &[data-etapa='REGISTRADO'] {
+      background-color: #f1f5f9;
+      color: #475569;
+    }
+
+    &[data-etapa='EN_ATENCION'] {
+      background-color: #e0f2fe;
+      color: #0369a1;
+    }
+
+    &[data-etapa='RESUELTO'] {
+      background-color: #fef3c7;
+      color: #92400e;
+    }
+
+    &[data-etapa='CERRADO'] {
+      background-color: #dcfce7;
+      color: #166534;
+    }
+  }
+
+  &__btn-ver {
+    display: inline-flex;
+    align-items: center;
+    gap: 4px;
+    min-height: 36px;
+    padding: 6px 12px;
+    background-color: var(--surface-input, #f1f5f9);
+    color: var(--text-main, #0f172a);
+    font-size: 0.8125rem;
+    font-weight: 600;
+    text-decoration: none;
+    border-radius: var(--radius-md, 6px);
+
+    &:hover {
+      background-color: #e2e8f0;
+    }
+  }
+
+  // Paginador
+  &__paginador {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-top: 24px;
+    padding: 12px 4px;
+  }
+
+  &__btn-pag {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    min-height: 44px;
+    padding: 0 16px;
+    border: 1px solid var(--border-subtle, #cbd5e1);
+    background-color: var(--surface-card, #ffffff);
+    color: var(--text-main, #0f172a);
+    font-size: 0.875rem;
+    font-weight: 600;
+    border-radius: var(--radius-md, 8px);
+    cursor: pointer;
+
+    &:hover:not(:disabled) {
+      background-color: var(--surface-hover, #f1f5f9);
+    }
+
+    &:disabled {
+      opacity: 0.5;
+      cursor: not-allowed;
+    }
+  }
+
+  &__info-pag {
+    font-size: 0.875rem;
+    color: var(--text-muted, #64748b);
+  }
+
+  &__total-pag {
+    color: #94a3b8;
+  }
+
+  // Estados
+  &__esqueletos {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+  }
+
+  &__esqueleto-fila {
+    height: 72px;
+    background: linear-gradient(90deg, #f1f5f9 25%, #e2e8f0 50%, #f1f5f9 75%);
+    background-size: 200% 100%;
+    animation: loading-pulse 1.5s infinite;
+    border-radius: var(--radius-md, 8px);
+    border: 1px solid var(--border-subtle, #e2e8f0);
+  }
+
+  &__vacio,
+  &__error {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    text-align: center;
+    padding: 48px 20px;
+    background: var(--surface-card, #ffffff);
+    border: 1px dashed var(--border-subtle, #cbd5e1);
+    border-radius: var(--radius-md, 8px);
+  }
+
+  &__icono-vacio,
+  &__icono-error {
+    color: var(--text-muted, #94a3b8);
+    margin-bottom: 12px;
+  }
+
+  &__error &__icono-error {
+    color: #dc2626;
+  }
+
+  &__vacio-titulo,
+  &__error-titulo {
+    font-size: 1.125rem;
+    font-weight: 700;
+    margin: 0 0 6px;
+    color: var(--text-main, #0f172a);
+  }
+
+  &__vacio-texto,
+  &__error-texto {
+    font-size: 0.875rem;
+    color: var(--text-muted, #64748b);
+    max-width: 440px;
+    margin: 0 0 18px;
+    line-height: 1.4;
+  }
+
+  &__vacio-accion,
+  &__btn-reintentar {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    min-height: 44px;
+    padding: 0 20px;
+    background-color: var(--hsmsi-verde-salud, #1b5e20);
+    color: #ffffff;
+    font-size: 0.875rem;
+    font-weight: 600;
+    text-decoration: none;
+    border: none;
+    border-radius: var(--radius-md, 8px);
+    cursor: pointer;
+
+    &:hover {
+      background-color: #144919;
+    }
+  }
+}
+
+@keyframes loading-pulse {
+  0% {
+    background-position: 200% 0;
+  }
+  100% {
+    background-position: -200% 0;
+  }
+}
+
+@media (max-width: 599.98px) {
+  .mis-solicitudes {
+    padding: 16px 12px 36px;
+
+    &__cabecera {
+      flex-direction: column;
+      align-items: stretch;
+    }
+
+    &__btn-nuevo {
+      width: 100%;
+      justify-content: center;
+    }
+
+    &__paginador {
+      flex-direction: column;
+      gap: 12px;
+
+      button {
+        width: 100%;
+        justify-content: center;
+      }
+    }
+  }
+}

@@ -1,0 +1,197 @@
+<div class="mis-solicitudes">
+  <!-- Cabecera -->
+  <header class="mis-solicitudes__cabecera">
+    <div>
+      <h1 class="mis-solicitudes__titulo">Mis solicitudes</h1>
+      <p class="mis-solicitudes__subtitulo">
+        Consulte el estado, seguimiento y soluciones de los problemas que ha reportado.
+      </p>
+    </div>
+    <a routerLink="/solicitudes/nuevo" class="mis-solicitudes__btn-nuevo">
+      <app-icono nombre="add" aria-hidden="true" />
+      <span>Reportar problema</span>
+    </a>
+  </header>
+
+  <!-- Barra de Filtros (Chips con role tablist) -->
+  <div class="mis-solicitudes__barra-filtros" role="tablist" aria-label="Filtrar solicitudes por estado">
+    @for (f of filtros; track f.valor) {
+      <button
+        type="button"
+        role="tab"
+        class="mis-solicitudes__chip"
+        [class.activo]="filtroActual() === f.valor"
+        [attr.aria-selected]="filtroActual() === f.valor"
+        (click)="cambiarFiltro(f.valor)"
+      >
+        <span>{{ f.etiqueta }}</span>
+      </button>
+    }
+  </div>
+
+  <!-- Buscador con debounce -->
+  <div class="mis-solicitudes__buscador">
+    <div class="mis-solicitudes__caja-buscar">
+      <app-icono nombre="search" class="mis-solicitudes__icono-buscar" aria-hidden="true" />
+      <label for="buscar-solicitudes" class="sr-only">Buscar por número o texto de la solicitud</label>
+      <input
+        id="buscar-solicitudes"
+        type="search"
+        class="mis-solicitudes__input-buscar"
+        [formControl]="buscador"
+        placeholder="Buscar por código (#INC-…), título o área…"
+        autocomplete="off"
+      />
+      @if (buscador.value) {
+        <button
+          type="button"
+          class="mis-solicitudes__btn-limpiar"
+          aria-label="Limpiar búsqueda"
+          (click)="limpiarBusqueda()"
+        >
+          <app-icono nombre="close" tamano="xs" aria-hidden="true" />
+        </button>
+      }
+    </div>
+  </div>
+
+  <!-- Anuncio accesible para lectores de pantalla -->
+  <div role="status" aria-live="polite" class="sr-only">
+    {{ anuncioResultados() }}
+  </div>
+
+  <!-- Estado de carga: Esqueletos -->
+  @if (cargando()) {
+    <div class="mis-solicitudes__esqueletos" aria-label="Cargando solicitudes" aria-busy="true">
+      <div class="mis-solicitudes__esqueleto-fila"></div>
+      <div class="mis-solicitudes__esqueleto-fila"></div>
+      <div class="mis-solicitudes__esqueleto-fila"></div>
+    </div>
+  } @else if (error(); as err) {
+    <!-- Estado de error -->
+    <div class="mis-solicitudes__error" role="alert">
+      <app-icono nombre="cloud_off" tamano="xl" class="mis-solicitudes__icono-error" aria-hidden="true" />
+      <h2 class="mis-solicitudes__error-titulo">No pudimos cargar sus solicitudes</h2>
+      <p class="mis-solicitudes__error-texto">{{ err }}</p>
+      <button type="button" class="mis-solicitudes__btn-reintentar" (click)="cargarSolicitudes(false)">
+        <app-icono nombre="refresh" aria-hidden="true" />
+        <span>Reintentar</span>
+      </button>
+    </div>
+  } @else if (solicitudes().length === 0) {
+    <!-- Estado vacío -->
+    <div class="mis-solicitudes__vacio">
+      <app-icono nombre="inbox" tamano="xl" class="mis-solicitudes__icono-vacio" aria-hidden="true" />
+      <h2 class="mis-solicitudes__vacio-titulo">
+        {{ buscador.value ? 'No se encontraron resultados para su búsqueda.' : 'No tiene solicitudes registradas en esta vista.' }}
+      </h2>
+      <p class="mis-solicitudes__vacio-texto">
+        {{ buscador.value ? 'Pruebe con otros términos o limpie el buscador.' : 'Si necesita asistencia técnica para algún equipo o sistema, puede registrarlo aquí.' }}
+      </p>
+      @if (buscador.value) {
+        <button type="button" class="mis-solicitudes__vacio-accion" (click)="limpiarBusqueda()">
+          Limpiar búsqueda
+        </button>
+      } @else {
+        <a routerLink="/solicitudes/nuevo" class="mis-solicitudes__vacio-accion">
+          Reportar un problema
+        </a>
+      }
+    </div>
+  } @else {
+    <!-- Vista Híbrida: Tabla en Desktop (>= 1024px) / Tarjetas en Móvil (< 1024px) -->
+    @if (viewport.esDesktop()) {
+      <!-- TABLA DESKTOP -->
+      <div class="mis-solicitudes__tabla-contenedor">
+        <table class="mis-solicitudes__tabla">
+          <caption class="sr-only">Listado de solicitudes asistenciales del usuario</caption>
+          <thead>
+            <tr>
+              <th scope="col" class="col-codigo">N.°</th>
+              <th scope="col" class="col-titulo">Problema reportado</th>
+              <th scope="col" class="col-area">Servicio / Área</th>
+              <th scope="col" class="col-etapa">Estado</th>
+              <th scope="col" class="col-fecha">Fecha de registro</th>
+              <th scope="col" class="col-acciones"><span class="sr-only">Acciones</span></th>
+            </tr>
+          </thead>
+          <tbody>
+            @for (s of solicitudes(); track s.id) {
+              <tr [class.fila-por-confirmar]="s.requiereConfirmacion">
+                <th scope="row" class="col-codigo">
+                  <a [routerLink]="['/portal/mis-solicitudes', s.id]" class="mis-solicitudes__enlace-codigo">
+                    {{ s.codigo }}
+                  </a>
+                </th>
+                <td class="col-titulo">
+                  <span class="mis-solicitudes__titulo-texto">{{ s.titulo }}</span>
+                  @if (s.requiereConfirmacion) {
+                    <span class="mis-solicitudes__insignia-atencion">Requiere confirmación</span>
+                  }
+                </td>
+                <td class="col-area">{{ s.areaNombre }}</td>
+                <td class="col-etapa">
+                  <span class="mis-solicitudes__badge-etapa" [attr.data-etapa]="s.etapa">
+                    {{ s.etapa === 'REGISTRADO' ? 'Registrado' : s.etapa === 'EN_ATENCION' ? 'En atención' : s.etapa === 'RESUELTO' ? 'Resuelto' : 'Cerrado' }}
+                  </span>
+                </td>
+                <td class="col-fecha">
+                  <time [attr.datetime]="s.fechaCreacionIso">
+                    {{ s.fechaCreacionIso | date:'dd/MM/yyyy HH:mm' }}
+                  </time>
+                </td>
+                <td class="col-acciones">
+                  <a [routerLink]="['/portal/mis-solicitudes', s.id]" class="mis-solicitudes__btn-ver">
+                    <span>Ver</span>
+                    <app-icono nombre="arrow_forward" tamano="xs" aria-hidden="true" />
+                  </a>
+                </td>
+              </tr>
+            }
+          </tbody>
+        </table>
+      </div>
+    } @else {
+      <!-- TARJETAS MÓVIL / TABLET -->
+      <ul class="mis-solicitudes__lista-tarjetas" role="list">
+        @for (s of solicitudes(); track s.id) {
+          <li>
+            <app-tarjeta-solicitud [solicitud]="s" />
+          </li>
+        }
+      </ul>
+    }
+
+    <!-- Paginador accesible -->
+    @if (totalPaginas() > 1) {
+      <nav class="mis-solicitudes__paginador" aria-label="Paginación de solicitudes">
+        <button
+          type="button"
+          class="mis-solicitudes__btn-pag"
+          [disabled]="paginaActual() === 0"
+          (click)="cambiarPagina(paginaActual() - 1)"
+          aria-label="Página anterior"
+        >
+          <app-icono nombre="chevron_left" aria-hidden="true" />
+          <span>Anterior</span>
+        </button>
+
+        <span class="mis-solicitudes__info-pag">
+          Página {{ paginaActual() + 1 }} de {{ totalPaginas() }}
+          <span class="mis-solicitudes__total-pag">({{ totalSolicitudes() }} en total)</span>
+        </span>
+
+        <button
+          type="button"
+          class="mis-solicitudes__btn-pag"
+          [disabled]="paginaActual() >= totalPaginas() - 1"
+          (click)="cambiarPagina(paginaActual() + 1)"
+          aria-label="Página siguiente"
+        >
+          <span>Siguiente</span>
+          <app-icono nombre="chevron_right" aria-hidden="true" />
+        </button>
+      </nav>
+    }
+  }
+</div>
