@@ -19,7 +19,6 @@ import { BannerConfirmacionComponent } from '../../componentes/banner-confirmaci
 import { TarjetaSolicitudComponent } from '../../componentes/tarjeta-solicitud/tarjeta-solicitud.component';
 import { AccesosAyudaComponent } from '../../componentes/accesos-ayuda/accesos-ayuda.component';
 import { IconoComponent } from '../../../../compartido/ui/atomos/icono/icono.component';
-import { EsqueletoComponent } from '../../../../compartido/ui/atomos/esqueleto/esqueleto.component';
 
 @Component({
   selector: 'app-portal-inicio',
@@ -31,7 +30,6 @@ import { EsqueletoComponent } from '../../../../compartido/ui/atomos/esqueleto/e
     TarjetaSolicitudComponent,
     AccesosAyudaComponent,
     IconoComponent,
-    EsqueletoComponent,
   ],
   templateUrl: './portal-inicio.page.html',
   styleUrl: './portal-inicio.page.scss',

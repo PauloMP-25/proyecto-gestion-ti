@@ -1,0 +1,94 @@
+<section class="tarjeta-confirmacion" aria-labelledby="confirmacion-titulo">
+  <div class="tarjeta-confirmacion__cabecera">
+    <div class="tarjeta-confirmacion__icono-wrap" aria-hidden="true">
+      <app-icono nombre="check-circle" tamano="lg"></app-icono>
+    </div>
+    <div class="tarjeta-confirmacion__textos">
+      <h2 id="confirmacion-titulo" class="tarjeta-confirmacion__titulo">
+        Su solicitud fue atendida
+      </h2>
+      <p class="tarjeta-confirmacion__bajada">
+        El personal técnico indicó que el inconveniente quedó resuelto. ¿El servicio o equipo ya funciona con normalidad?
+      </p>
+    </div>
+  </div>
+
+  @if (errorMensaje()) {
+    <div class="tarjeta-confirmacion__error" role="alert">
+      <app-icono nombre="alert-triangle" tamano="sm"></app-icono>
+      <p>{{ errorMensaje() }}</p>
+    </div>
+  }
+
+  @if (!mostrarFormularioNo()) {
+    <div class="tarjeta-confirmacion__acciones">
+      <button
+        type="button"
+        class="tarjeta-confirmacion__btn tarjeta-confirmacion__btn--si"
+        [disabled]="enviando()"
+        [attr.aria-busy]="enviando()"
+        (click)="confirmarSi()"
+      >
+        <app-icono nombre="check" tamano="sm"></app-icono>
+        <span>Sí, quedó solucionado</span>
+      </button>
+
+      <button
+        type="button"
+        class="tarjeta-confirmacion__btn tarjeta-confirmacion__btn--no"
+        [disabled]="enviando()"
+        (click)="abrirFormularioNo()"
+      >
+        <app-icono nombre="x" tamano="sm"></app-icono>
+        <span>No, sigue fallando</span>
+      </button>
+    </div>
+  } @else {
+    <div class="tarjeta-confirmacion__reapertura">
+      <label for="motivo-reapertura" class="tarjeta-confirmacion__label">
+        Cuéntenos qué sigue fallando:
+      </label>
+      <textarea
+        id="motivo-reapertura"
+        class="tarjeta-confirmacion__textarea"
+        rows="3"
+        maxlength="300"
+        placeholder="Describa el error o mensaje que continúa apareciendo (mínimo 10 caracteres)..."
+        [ngModel]="motivoReapertura()"
+        (ngModelChange)="motivoReapertura.set($event)"
+        [disabled]="enviando()"
+      ></textarea>
+
+      <div class="tarjeta-confirmacion__textarea-meta">
+        <span
+          class="tarjeta-confirmacion__contador"
+          [class.tarjeta-confirmacion__contador--insuficiente]="!esMotivoValido"
+        >
+          {{ caracteresUtiles }} / 10 caracteres útiles requeridos (máx. 300)
+        </span>
+      </div>
+
+      <div class="tarjeta-confirmacion__acciones-form">
+        <button
+          type="button"
+          class="tarjeta-confirmacion__btn tarjeta-confirmacion__btn--enviar"
+          [disabled]="enviando() || !esMotivoValido"
+          [attr.aria-busy]="enviando()"
+          (click)="enviarReapertura()"
+        >
+          <app-icono nombre="send" tamano="sm"></app-icono>
+          <span>{{ enviando() ? 'Enviando...' : 'Enviar reporte' }}</span>
+        </button>
+
+        <button
+          type="button"
+          class="tarjeta-confirmacion__btn tarjeta-confirmacion__btn--cancelar"
+          [disabled]="enviando()"
+          (click)="cancelarNo()"
+        >
+          <span>Volver</span>
+        </button>
+      </div>
+    </div>
+  }
+</section>

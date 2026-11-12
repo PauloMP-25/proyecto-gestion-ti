@@ -9,6 +9,14 @@ export function textoUtil(raw: unknown): string {
   return String(raw).trim().replace(/\s+/g, ' ');
 }
 
+export function contarCaracteresUtiles(raw: unknown): number {
+  return textoUtil(raw).length;
+}
+
+export function tieneMinimoCaracteresUtiles(raw: unknown, min: number): boolean {
+  return textoUtil(raw).length >= min;
+}
+
 /**
  * Validador que exige un mínimo de caracteres útiles (sin espacios inflados).
  * Opcionalmente verifica que no supere un máximo.

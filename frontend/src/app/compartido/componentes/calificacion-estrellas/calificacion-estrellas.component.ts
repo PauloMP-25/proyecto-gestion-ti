@@ -4,7 +4,10 @@ import {
   forwardRef,
   signal,
   computed,
-  HostListener
+  HostListener,
+  input,
+  output,
+  effect,
 } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { ControlValueAccessor, NG_VALUE_ACCESSOR } from '@angular/forms';
@@ -36,6 +39,9 @@ const TEXTO_CALIFICACION: Record<PuntuacionEstrellas, string> = {
   styleUrl: './calificacion-estrellas.component.scss',
 })
 export class CalificacionEstrellasComponent implements ControlValueAccessor {
+  readonly valorInicial = input<number | null>(null);
+  readonly calificacionSeleccionada = output<number>();
+
   readonly valor = signal<PuntuacionEstrellas | null>(null);
   readonly deshabilitado = signal<boolean>(false);
   readonly valorHover = signal<PuntuacionEstrellas | null>(null);
@@ -68,11 +74,21 @@ export class CalificacionEstrellasComponent implements ControlValueAccessor {
     this.deshabilitado.set(isDisabled);
   }
 
+  constructor() {
+    effect(() => {
+      const v = this.valorInicial();
+      if (v && v >= 1 && v <= 5) {
+        this.valor.set(v as PuntuacionEstrellas);
+      }
+    });
+  }
+
   seleccionar(p: PuntuacionEstrellas): void {
     if (this.deshabilitado()) return;
     this.valor.set(p);
     this.onChange(p);
     this.onTouched();
+    this.calificacionSeleccionada.emit(p);
   }
 
   hover(p: PuntuacionEstrellas): void {

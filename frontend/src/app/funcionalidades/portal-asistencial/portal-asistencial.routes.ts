@@ -22,6 +22,14 @@ export const PORTAL_ASISTENCIAL_ROUTES: Routes = [
             (m) => m.MisSolicitudesPage
           ),
       },
+      {
+        path: 'mis-solicitudes/:id',
+        title: 'Mesa de Ayuda · Detalle de solicitud',
+        loadComponent: () =>
+          import('./paginas/solicitud-detalle/solicitud-detalle.page').then(
+            (m) => m.SolicitudDetallePage
+          ),
+      },
     ],
   },
 ];

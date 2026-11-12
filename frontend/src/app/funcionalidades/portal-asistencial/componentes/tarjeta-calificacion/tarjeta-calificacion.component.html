@@ -1,0 +1,84 @@
+<section class="tarjeta-calificacion" aria-labelledby="calificacion-titulo">
+  @if (enviadoExitoso()) {
+    <div class="tarjeta-calificacion__exito" role="status" aria-live="polite">
+      <div class="tarjeta-calificacion__icono-exito" aria-hidden="true">
+        <app-icono nombre="heart" tamano="lg"></app-icono>
+      </div>
+      <div class="tarjeta-calificacion__exito-textos">
+        <h3 class="tarjeta-calificacion__exito-titulo">¡Gracias por ayudarnos a mejorar!</h3>
+        <p class="tarjeta-calificacion__exito-bajada">
+          Su valoración ha sido registrada y nos ayuda a brindar un mejor servicio asistencial.
+        </p>
+      </div>
+    </div>
+  } @else {
+    <div class="tarjeta-calificacion__cabecera">
+      <div class="tarjeta-calificacion__icono-wrap" aria-hidden="true">
+        <app-icono nombre="star" tamano="md"></app-icono>
+      </div>
+      <div class="tarjeta-calificacion__textos">
+        <h2 id="calificacion-titulo" class="tarjeta-calificacion__titulo">
+          ¿Cómo fue la atención de su solicitud?
+        </h2>
+        <p class="tarjeta-calificacion__bajada">
+          Seleccione una puntuación para valorar la atención recibida por nuestro equipo de soporte.
+        </p>
+      </div>
+    </div>
+
+    @if (errorMensaje()) {
+      <div class="tarjeta-calificacion__error" role="alert">
+        <app-icono nombre="alert-triangle" tamano="sm"></app-icono>
+        <p>{{ errorMensaje() }}</p>
+      </div>
+    }
+
+    <div class="tarjeta-calificacion__estrellas-contenedor">
+      <app-calificacion-estrellas
+        [valorInicial]="puntuacion()"
+        (calificacionSeleccionada)="onPuntuacionCambiada($event)"
+      ></app-calificacion-estrellas>
+    </div>
+
+    <div class="tarjeta-calificacion__comentario-bloque">
+      <label for="comentario-calificacion" class="tarjeta-calificacion__label">
+        Comentario adicional (opcional):
+      </label>
+      <textarea
+        id="comentario-calificacion"
+        class="tarjeta-calificacion__textarea"
+        rows="2"
+        maxlength="300"
+        placeholder="¿Desea agregar alguna observación o sugerencia sobre la atención?..."
+        [ngModel]="comentario()"
+        (ngModelChange)="comentario.set($event)"
+        [disabled]="enviando()"
+      ></textarea>
+      <div class="tarjeta-calificacion__contador">
+        {{ comentario().length }} / 300 caracteres
+      </div>
+    </div>
+
+    <div class="tarjeta-calificacion__acciones">
+      <button
+        type="button"
+        class="tarjeta-calificacion__btn tarjeta-calificacion__btn--enviar"
+        [disabled]="!puedeEnviar"
+        [attr.aria-busy]="enviando()"
+        (click)="enviar()"
+      >
+        <app-icono nombre="send" tamano="sm"></app-icono>
+        <span>{{ enviando() ? 'Enviando...' : 'Enviar opinión' }}</span>
+      </button>
+
+      <button
+        type="button"
+        class="tarjeta-calificacion__btn tarjeta-calificacion__btn--posponer"
+        [disabled]="enviando()"
+        (click)="posponer()"
+      >
+        <span>Ahora no</span>
+      </button>
+    </div>
+  }
+</section>

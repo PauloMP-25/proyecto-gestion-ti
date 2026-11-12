@@ -1,0 +1,183 @@
+<main class="solicitud-detalle" aria-labelledby="detalle-titulo">
+  <!-- Botón de retorno -->
+  <nav class="solicitud-detalle__nav" aria-label="Navegación de retorno">
+    <a routerLink="/portal/mis-solicitudes" class="solicitud-detalle__volver">
+      <app-icono nombre="arrow-left" tamano="sm"></app-icono>
+      <span>Volver a mis solicitudes</span>
+    </a>
+  </nav>
+
+  @if (cargando()) {
+    <div class="solicitud-detalle__cargando" aria-live="polite">
+      <div class="solicitud-detalle__spinner" aria-hidden="true"></div>
+      <p>Cargando información de su solicitud...</p>
+    </div>
+  } @else if (noEncontrado() || !solicitud()) {
+    <section class="solicitud-detalle__vacio" role="alert">
+      <div class="solicitud-detalle__vacio-icono" aria-hidden="true">
+        <app-icono nombre="alert-circle" tamano="xl"></app-icono>
+      </div>
+      <h1 class="solicitud-detalle__vacio-titulo">No encontramos esta solicitud</h1>
+      <p class="solicitud-detalle__vacio-bajada">
+        La solicitud indicada no se encuentra disponible o no tiene permisos para visualizarla.
+      </p>
+      <a routerLink="/portal/mis-solicitudes" class="solicitud-detalle__btn-volver">
+        Ver mis solicitudes
+      </a>
+    </section>
+  } @else {
+    @let s = solicitud()!;
+
+    <!-- Paso 1 de confirmación si está en RESUELTO -->
+    @if (s.etapa === 'RESUELTO') {
+      <app-tarjeta-confirmacion-solucion
+        [ticketId]="s.id"
+        (solucionConfirmada)="onSolucionConfirmada()"
+        (solicitudReabierta)="onSolicitudReabierta($event)"
+      ></app-tarjeta-confirmacion-solucion>
+    }
+
+    <!-- Paso 2 de calificación si está en CERRADO y no calificado -->
+    @if (s.etapa === 'CERRADO' && !s.calificada && !calificacionPospuesta()) {
+      <app-tarjeta-calificacion
+        [ticketId]="s.id"
+        (calificacionEnviada)="onCalificacionEnviada()"
+        (pospuesto)="onCalificacionPospuesta()"
+      ></app-tarjeta-calificacion>
+    }
+
+    <!-- Cabecera principal de la solicitud -->
+    <header class="solicitud-detalle__cabecera">
+      <div class="solicitud-detalle__codigo-fila">
+        <span class="solicitud-detalle__codigo">#{{ s.codigo }}</span>
+        <span class="solicitud-detalle__badge" [ngClass]="obtenerClaseUrgencia(s.urgencia)">
+          {{ obtenerTextoUrgencia(s.urgencia) }}
+        </span>
+      </div>
+
+      <h1 id="detalle-titulo" class="solicitud-detalle__titulo">
+        {{ s.titulo }}
+      </h1>
+
+      <div class="solicitud-detalle__metadatos">
+        <span class="solicitud-detalle__meta-item">
+          <app-icono nombre="map-pin" tamano="xs"></app-icono>
+          <span>{{ s.areaNombre }}</span>
+        </span>
+        <span class="solicitud-detalle__meta-item">
+          <app-icono nombre="tag" tamano="xs"></app-icono>
+          <span>{{ s.categoriaNombre }}</span>
+        </span>
+        <span class="solicitud-detalle__meta-item">
+          <app-icono nombre="calendar" tamano="xs"></app-icono>
+          <span>Registrada: {{ formatearFechaHora(s.fechaCreacionIso) }}</span>
+        </span>
+      </div>
+    </header>
+
+    <!-- Progreso de la solicitud (Línea de tiempo) -->
+    <section class="solicitud-detalle__seccion" aria-labelledby="progreso-titulo">
+      <h2 id="progreso-titulo" class="solicitud-detalle__seccion-titulo">
+        Progreso de su solicitud
+      </h2>
+
+      <div class="solicitud-detalle__linea-contenedor">
+        <app-linea-tiempo-etapas
+          [etapaActual]="s.etapa"
+          [hitos]="s.hitos"
+        ></app-linea-tiempo-etapas>
+      </div>
+
+      @if (s.tecnicoVisible && (s.etapa === 'EN_ATENCION' || s.etapa === 'RESUELTO')) {
+        <div class="solicitud-detalle__tecnico-bloque">
+          <app-icono nombre="user" tamano="sm"></app-icono>
+          <span><strong>Lo atiende:</strong> {{ s.tecnicoVisible }}</span>
+        </div>
+      }
+    </section>
+
+    <!-- Compromiso y tiempo estimado -->
+    @if (s.etapa !== 'CERRADO' && s.tiempoEstimadoSolucionIso) {
+      <section class="solicitud-detalle__estimado-card" aria-label="Tiempo de atención">
+        <div class="solicitud-detalle__estimado-icono" aria-hidden="true">
+          <app-icono nombre="clock" tamano="md"></app-icono>
+        </div>
+        <div class="solicitud-detalle__estimado-textos">
+          <h3 class="solicitud-detalle__estimado-etiqueta">Tiempo estimado de solución</h3>
+          @if (esTiempoExcedido(s.tiempoEstimadoSolucionIso)) {
+            <p class="solicitud-detalle__estimado-valor solicitud-detalle__estimado-valor--priorizando">
+              Estamos priorizando su caso
+            </p>
+            <p class="solicitud-detalle__estimado-ayuda">
+              Nuestro equipo continúa trabajando para darle solución lo antes posible.
+            </p>
+          } @else {
+            <p class="solicitud-detalle__estimado-valor">
+              Atención esperada: {{ formatearFechaHora(s.tiempoEstimadoSolucionIso) }}
+            </p>
+          }
+        </div>
+      </section>
+    }
+
+    <!-- Detalle reportado -->
+    <section class="solicitud-detalle__seccion" aria-labelledby="descripcion-titulo">
+      <h2 id="descripcion-titulo" class="solicitud-detalle__seccion-titulo">
+        Descripción del problema
+      </h2>
+      <p class="solicitud-detalle__descripcion-texto">
+        {{ s.descripcion }}
+      </p>
+    </section>
+
+    <!-- Contexto del equipo si aplica -->
+    @if (s.equipo) {
+      <section class="solicitud-detalle__seccion" aria-labelledby="equipo-titulo">
+        <h2 id="equipo-titulo" class="solicitud-detalle__seccion-titulo">
+          Equipo asociado
+        </h2>
+        <div class="solicitud-detalle__equipo-grid">
+          <div class="solicitud-detalle__equipo-item">
+            <span class="solicitud-detalle__equipo-label">Identificador:</span>
+            <span class="solicitud-detalle__equipo-val">{{ s.equipo.hostname }}</span>
+          </div>
+          <div class="solicitud-detalle__equipo-item">
+            <span class="solicitud-detalle__equipo-label">Dirección de red:</span>
+            <span class="solicitud-detalle__equipo-val">{{ s.equipo.ip }}</span>
+          </div>
+          <div class="solicitud-detalle__equipo-item">
+            <span class="solicitud-detalle__equipo-label">Ubicación física:</span>
+            <span class="solicitud-detalle__equipo-val">{{ s.equipo.area }}</span>
+          </div>
+        </div>
+      </section>
+    }
+
+    <!-- Novedades y seguimiento asistencial -->
+    <section class="solicitud-detalle__seccion" aria-labelledby="novedades-titulo">
+      <h2 id="novedades-titulo" class="solicitud-detalle__seccion-titulo">
+        Novedades
+      </h2>
+
+      @if (s.hitos && s.hitos.length > 0) {
+        <ol class="solicitud-detalle__hitos-lista" aria-label="Novedades de la atención">
+          @for (hito of s.hitos; track hito.id) {
+            <li class="solicitud-detalle__hito">
+              <span class="solicitud-detalle__hito-punto" aria-hidden="true"></span>
+              <div class="solicitud-detalle__hito-cuerpo">
+                <time class="solicitud-detalle__hito-fecha" [dateTime]="hito.fechaIso">
+                  {{ formatearFechaHora(hito.fechaIso) }}
+                </time>
+                <p class="solicitud-detalle__hito-mensaje">{{ hito.mensaje }}</p>
+              </div>
+            </li>
+          }
+        </ol>
+      } @else {
+        <p class="solicitud-detalle__sin-hitos">
+          Aún no se registran novedades adicionales para esta solicitud.
+        </p>
+      }
+    </section>
+  }
+</main>
