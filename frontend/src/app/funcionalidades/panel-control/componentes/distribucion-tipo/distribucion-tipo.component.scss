@@ -1,14 +1,16 @@
+@use 'estilos/mixins/a11y' as a11y;
+
 :host {
   display: block;
   width: 100%;
 }
 
 .tarjeta-distribucion {
-  background: var(--fondo-tarjeta, #ffffff);
-  border: 1px solid var(--borde-tarjeta, #e2e8f0);
-  border-radius: var(--radio-lg, 12px);
-  padding: var(--espacio-4, 16px);
-  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05);
+  background: var(--color-surface-card);
+  border: var(--tarjeta-borde);
+  border-radius: var(--tarjeta-radio);
+  padding: var(--espacio-md);
+  box-shadow: var(--shadow-sm);
   display: flex;
   flex-direction: column;
   height: 100%;
@@ -18,21 +20,21 @@
     display: flex;
     justify-content: space-between;
     align-items: center;
-    margin-bottom: var(--espacio-2, 8px);
-    gap: 8px;
+    margin-bottom: var(--espacio-2xs);
+    gap: var(--espacio-2xs);
     flex-wrap: wrap;
   }
 
   &__titulo {
-    font-size: 0.95rem;
+    font-size: var(--font-size-base);
     font-weight: 700;
-    color: var(--texto-principal, #0b1c30);
+    color: var(--color-text-main);
     margin: 0;
   }
 
   &__subtitulo {
-    font-size: 0.72rem;
-    color: var(--texto-secundario, #64748b);
+    font-size: var(--font-size-xs);
+    color: var(--color-text-secondary);
     margin: 2px 0 0 0;
   }
 }
@@ -44,39 +46,31 @@
 
   .select-top {
     padding: 4px 10px;
-    border-radius: var(--radio-md, 6px);
-    border: 1px solid var(--borde-tarjeta, #cbd5e1);
-    background-color: var(--fondo-aplicacion, #f8fafc);
-    color: var(--texto-principal, #0f172a);
+    border-radius: var(--radius-sm);
+    border: 1px solid var(--color-border-subtle);
+    background-color: var(--color-surface-sunken);
+    color: var(--color-text-main);
     font-family: inherit;
-    font-size: 0.75rem;
+    font-size: var(--font-size-xs);
     font-weight: 600;
     outline: none;
     cursor: pointer;
-    transition: border-color 0.15s ease, background-color 0.15s ease;
+    transition: border-color var(--transition-fast), background-color var(--transition-fast);
 
     &:hover {
-      border-color: var(--primario-guinda, #701c1c);
-      background-color: var(--fondo-tarjeta, #ffffff);
+      border-color: var(--color-primary-base);
+      background-color: var(--color-surface-card);
     }
 
     &:focus {
-      border-color: var(--primario-guinda, #701c1c);
+      border-color: var(--color-primary-base);
       box-shadow: 0 0 0 2px rgba(112, 28, 28, 0.12);
     }
   }
 }
 
 .sr-only {
-  position: absolute;
-  width: 1px;
-  height: 1px;
-  padding: 0;
-  margin: -1px;
-  overflow: hidden;
-  clip: rect(0, 0, 0, 0);
-  white-space: nowrap;
-  border-width: 0;
+  @include a11y.sr-only;
 }
 
 /* CONTENEDOR CHART.JS */
@@ -93,4 +87,3 @@
     height: 100%;
   }
 }
-

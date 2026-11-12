@@ -54,7 +54,7 @@ export class GraficoPorServicioComponent implements AfterViewInit, OnDestroy {
   }
 
   private obtenerDatosPorPeriodo() {
-    // Datos hospitalarios reales de la base de datos ITIL v4 (Áreas Asistenciales)
+    // Datos hospitalarios reales de solicitudes registradas (Áreas Asistenciales)
     switch (this.periodo()) {
       case 'hoy':
         return {

@@ -1,3 +1,7 @@
+@use 'estilos/mixins/boton' as b;
+@use 'estilos/mixins/a11y' as a11y;
+@use 'estilos/mixins/responsive' as r;
+
 :host {
   display: block;
   width: 100%;
@@ -6,10 +10,15 @@
 .dashboard-contenedor {
   display: flex;
   flex-direction: column;
-  gap: var(--espacio-4, 16px);
-  padding: 0 0 var(--espacio-4, 16px) 0;
+  gap: var(--espacio-md);
+  padding: 0 0 var(--espacio-md) 0;
   width: 100%;
   box-sizing: border-box;
+
+  @include r.hasta(sm) {
+    padding: var(--espacio-2xs) 0;
+    gap: var(--espacio-sm);
+  }
 }
 
 /* ==========================================================
@@ -20,9 +29,9 @@
   justify-content: space-between;
   align-items: center;
   flex-wrap: wrap;
-  gap: var(--espacio-3, 12px);
-  padding-bottom: var(--espacio-2, 8px);
-  border-bottom: 1px solid var(--borde-tarjeta, #e2e8f0);
+  gap: var(--espacio-xs);
+  padding-bottom: var(--espacio-2xs);
+  border-bottom: 1px solid var(--color-border-subtle);
 
   &__izq {
     display: flex;
@@ -35,6 +44,20 @@
     display: flex;
     align-items: center;
   }
+
+  @include r.hasta(lg) {
+    flex-direction: column;
+    align-items: stretch;
+
+    &__izq {
+      width: 100%;
+    }
+
+    &__der {
+      width: 100%;
+      justify-content: flex-end;
+    }
+  }
 }
 
 /* BARRA DE PESTAÑAS */
@@ -42,20 +65,24 @@
   display: flex;
   align-items: center;
   gap: 6px;
-  background-color: var(--fondo-aplicacion, #f1f5f9);
+  background-color: var(--color-surface-sunken);
   padding: 4px;
-  border-radius: var(--radio-lg, 10px);
-  border: 1px solid var(--borde-tarjeta, #e2e8f0);
+  border-radius: var(--radius-md);
+  border: 1px solid var(--color-border-subtle);
   overflow-x: auto;
   max-width: 100%;
 
-  /* Scrollbar fina si desborda en pantallas muy estrechas */
+  @include r.hasta(lg) {
+    width: 100%;
+  }
+
+  /* Scrollbar fina si desborda */
   &::-webkit-scrollbar {
     height: 3px;
   }
   &::-webkit-scrollbar-thumb {
-    background-color: #cbd5e1;
-    border-radius: 4px;
+    background-color: var(--color-border-subtle);
+    border-radius: var(--radius-sm);
   }
 }
 
@@ -63,19 +90,19 @@
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  gap: 8px;
-  height: 38px;
-  padding: 0 16px;
+  gap: var(--espacio-2xs);
+  min-height: var(--touch-min);
+  padding: 0 var(--espacio-md);
   border: 1px solid transparent;
-  border-radius: var(--radio-md, 8px);
+  border-radius: var(--radius-md);
   background: transparent;
-  color: var(--texto-secundario, #64748b);
+  color: var(--color-text-secondary);
   font-family: inherit;
-  font-size: 0.86rem;
+  font-size: var(--font-size-sm);
   font-weight: 600;
   cursor: pointer;
   white-space: nowrap;
-  transition: all 0.18s ease-in-out;
+  transition: all var(--transition-fast);
 
   &__texto {
     letter-spacing: -0.01em;
@@ -83,15 +110,27 @@
 
   &:hover:not(.tab-btn--activo) {
     background-color: rgba(255, 255, 255, 0.6);
-    color: var(--texto-principal, #0f172a);
+    color: var(--color-text-main);
   }
 
   /* Pestaña Activa */
   &--activo {
-    background-color: var(--fondo-tarjeta, #ffffff);
-    color: var(--primario-guinda, #701c1c);
+    background-color: var(--color-surface-card);
+    color: var(--color-primary-base);
     border-color: rgba(112, 28, 28, 0.2);
-    box-shadow: 0 2px 6px rgba(0, 0, 0, 0.06);
+    box-shadow: var(--shadow-sm);
+  }
+
+  @include a11y.foco-visible;
+
+  @include r.hasta(sm) {
+    padding: 0 var(--espacio-xs);
+    font-size: var(--font-size-xs);
+
+    &__texto {
+      display: inline-block;
+      white-space: nowrap;
+    }
   }
 }
 
@@ -99,29 +138,27 @@
 .acciones-header {
   display: flex;
   align-items: center;
-  gap: var(--espacio-2, 8px);
+  gap: var(--espacio-2xs);
+
+  @include r.hasta(sm) {
+    width: 100%;
+    justify-content: space-between;
+
+    .btn-refrescar {
+      flex: 1;
+      justify-content: center;
+    }
+  }
 }
 
 .btn-refrescar {
-  display: inline-flex;
-  align-items: center;
+  @include b.boton-base;
+  @include b.boton-secundario;
   gap: 6px;
-  height: 38px;
-  padding: 0 var(--espacio-3, 12px);
-  background-color: var(--fondo-tarjeta, #ffffff);
-  border: 1px solid var(--borde-tarjeta, #cbd5e1);
-  border-radius: var(--radio-md, 8px);
-  font-family: inherit;
-  font-size: 0.82rem;
+  min-height: var(--touch-min);
+  padding: 0 var(--espacio-xs);
+  font-size: var(--font-size-xs);
   font-weight: 600;
-  color: var(--texto-secundario, #475569);
-  cursor: pointer;
-  transition: all 0.15s ease;
-
-  &:hover {
-    border-color: var(--primario-guinda, #701c1c);
-    color: var(--primario-guinda, #701c1c);
-  }
 }
 
 /* ==========================================================
@@ -130,7 +167,7 @@
 .pestana-contenido {
   display: flex;
   flex-direction: column;
-  gap: var(--espacio-4, 16px);
+  gap: var(--espacio-md);
   width: 100%;
   animation: fade-pestana 0.2s ease-out;
 }
@@ -155,69 +192,19 @@
   width: 100%;
 }
 
-/* PESTAÑA 2: GRID DE LOS 4 GRÁFICOS ITIL */
+/* PESTAÑA 2: GRID DE LOS 4 GRÁFICOS */
 .grid-cuatro-graficos {
   display: grid;
   grid-template-columns: repeat(2, 1fr);
-  gap: var(--espacio-4, 16px);
+  gap: var(--espacio-md);
   width: 100%;
+
+  @include r.hasta(lg) {
+    grid-template-columns: 1fr;
+  }
 }
 
 .cuadrante-grafico {
   width: 100%;
   min-height: 280px;
-}
-
-/* ==========================================================
-   RESPONSIVIDAD TOTAL (Desktop, Tablet, Mobile)
-   ========================================================== */
-@media (max-width: 1024px) {
-  .grid-cuatro-graficos {
-    grid-template-columns: 1fr;
-  }
-
-  .consola-header {
-    flex-direction: column;
-    align-items: stretch;
-
-    &__izq {
-      width: 100%;
-    }
-
-    &__der {
-      width: 100%;
-      justify-content: flex-end;
-    }
-  }
-
-  .nav-pestanas {
-    width: 100%;
-  }
-}
-
-@media (max-width: 640px) {
-  .dashboard-contenedor {
-    padding: var(--espacio-1, 4px) 0;
-    gap: var(--espacio-3, 12px);
-  }
-
-  .tab-btn {
-    padding: 0 12px;
-    font-size: 0.82rem;
-
-    &__texto {
-      display: inline-block;
-      white-space: nowrap;
-    }
-  }
-
-  .acciones-header {
-    width: 100%;
-    justify-content: space-between;
-
-    .btn-refrescar {
-      flex: 1;
-      justify-content: center;
-    }
-  }
 }
