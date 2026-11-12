@@ -12,6 +12,7 @@ import { EstadoTicket } from '../../../../compartido/modelos/estado-ticket.enum'
 import { NivelSoporte } from '../../../../compartido/modelos/nivel-soporte.enum';
 import { EstadoSla } from '../../../../compartido/modelos/estado-sla.enum';
 import { TicketTurno, ResumenTurno, ConsultaTurno } from '../../modelos/ticket-turno.model';
+import { AlertasTurnoService } from '../../servicios/alertas-turno.service';
 
 describe('BandejaTurnoPage (B2)', () => {
   let component: BandejaTurnoPage;
@@ -269,5 +270,27 @@ describe('BandejaTurnoPage (B2)', () => {
     component.cancelarResolucion();
     fixture.detectChanges();
     expect(component.ticketParaResolver()).toBeNull();
+  });
+
+  it('debe mostrar el banner de modo sin conexión cuando AlertasTurnoService.online() es false', () => {
+    const alertas = TestBed.inject(AlertasTurnoService);
+    alertas.online.set(false);
+    fixture.detectChanges();
+
+    const bannerOffline = fixture.nativeElement.querySelector('.mensaje-banner--offline');
+    expect(bannerOffline).not.toBeNull();
+    expect(bannerOffline.textContent).toContain('Modo sin conexión');
+  });
+
+  it('debe renderizar anuncios accesibles en las regiones aria-live', () => {
+    const alertas = TestBed.inject(AlertasTurnoService);
+    alertas.emitirAnuncio('Ticket urgente por vencer', 'polite');
+    fixture.detectChanges();
+
+    const regionesLive = fixture.nativeElement.querySelectorAll('.sr-only');
+    expect(regionesLive.length).toBeGreaterThanOrEqual(2);
+
+    const textoLive = Array.from(regionesLive).map((el: any) => el.textContent).join(' ');
+    expect(textoLive).toContain('Ticket urgente por vencer');
   });
 });

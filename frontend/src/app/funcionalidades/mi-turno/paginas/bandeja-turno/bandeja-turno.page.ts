@@ -35,6 +35,8 @@ import { DialogoResolverTicketComponent } from '../../../../compartido/component
 import { ResolverTicketPayload } from '../../../../compartido/modelos/dialogos-acciones.model';
 import { HttpErrorResponse } from '@angular/common/http';
 
+import { AlertasTurnoService } from '../../servicios/alertas-turno.service';
+
 @Component({
   selector: 'app-bandeja-turno',
   standalone: true,
@@ -55,9 +57,13 @@ export class BandejaTurnoPage implements OnInit {
   private readonly turnoApi = inject(TurnoApi);
   private readonly reloj = inject(RelojService);
   private readonly sondeo = inject(SondeoService);
+  private readonly alertas = inject(AlertasTurnoService);
   private readonly router = inject(Router);
   private readonly route = inject(ActivatedRoute);
   private readonly destroyRef = inject(DestroyRef);
+
+  readonly online = this.alertas.online;
+  readonly ultimoAnuncio = this.alertas.ultimoAnuncio;
 
   // Estados reactivos principales
   readonly vistaActual = signal<VistaTurno>('EN_ATENCION');
@@ -174,6 +180,7 @@ export class BandejaTurnoPage implements OnInit {
         next: ([resumen, pagina]) => {
           this.resumen.set(resumen);
           this.tickets.set(pagina.contenido);
+          this.alertas.inspeccionarTransicionesSla(pagina.contenido, this.reloj.ahora());
           this.cargando.set(false);
           this.actualizando.set(false);
           const ahora = new Date();

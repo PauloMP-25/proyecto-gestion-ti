@@ -33,6 +33,13 @@
   </header>
 
   <!-- Anuncios y Alertas Accesibles -->
+  @if (!online()) {
+    <div class="mensaje-banner mensaje-banner--offline" role="status" aria-live="polite">
+      <app-icono nombre="wifi_off" tamano="sm" aria-hidden="true"></app-icono>
+      <span>Modo sin conexión. Se muestran los últimos datos registrados del turno.</span>
+    </div>
+  }
+
   @if (mensajeAlerta()) {
     <div class="mensaje-banner mensaje-banner--alerta" role="alert" aria-live="assertive">
       <app-icono nombre="warning" tamano="sm" aria-hidden="true"></app-icono>
@@ -52,6 +59,18 @@
       </button>
     </div>
   }
+
+  <!-- Regiones aria-live para lectores de pantalla -->
+  <div class="sr-only" aria-live="polite" aria-atomic="true">
+    @if (ultimoAnuncio() && ultimoAnuncio()?.tipo === 'polite') {
+      <span>{{ ultimoAnuncio()?.mensaje }}</span>
+    }
+  </div>
+  <div class="sr-only" aria-live="assertive" aria-atomic="true">
+    @if (ultimoAnuncio() && ultimoAnuncio()?.tipo === 'assertive') {
+      <span>{{ ultimoAnuncio()?.mensaje }}</span>
+    }
+  </div>
 
   <!-- Resumen superior de contadores -->
   <section class="bandeja-resumen" aria-label="Resumen de actividad">

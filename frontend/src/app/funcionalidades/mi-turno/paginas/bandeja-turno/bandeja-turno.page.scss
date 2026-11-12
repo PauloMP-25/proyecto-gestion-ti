@@ -130,6 +130,12 @@
   font-size: var(--hsmsi-texto-sm, 0.875rem);
   font-weight: 600;
 
+  &--offline {
+    background: #fffbeb;
+    border: 1px solid #f59e0b;
+    color: #92400e;
+  }
+
   &--alerta {
     background: var(--p1-bg, #fef2f2);
     border: 1px solid var(--p1-border, #dc2626);
@@ -732,4 +738,16 @@
   font-weight: 700;
   cursor: pointer;
   margin-top: 0.5rem;
+}
+
+.sr-only {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+  white-space: nowrap;
+  border: 0;
 }
