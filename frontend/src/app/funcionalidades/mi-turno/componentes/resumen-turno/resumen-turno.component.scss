@@ -1,0 +1,177 @@
+.resumen-turno {
+  display: flex;
+  flex-direction: column;
+  gap: var(--hsmsi-espacio-md, 1rem);
+  width: 100%;
+}
+
+.alerta-p1 {
+  display: flex;
+  align-items: center;
+  gap: var(--hsmsi-espacio-md, 1rem);
+  background: var(--p1-bg, #fef2f2);
+  border: 1.5px solid var(--p1-border, #dc2626);
+  border-left-width: 6px;
+  border-radius: var(--hsmsi-radio-md, 8px);
+  padding: 0.875rem 1.25rem;
+  box-shadow: 0 2px 6px rgba(220, 38, 38, 0.12);
+
+  @media (max-width: 600px) {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 0.75rem;
+  }
+
+  &__icono {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: var(--p1-text, #991b1b);
+    flex-shrink: 0;
+  }
+
+  &__contenido {
+    flex: 1;
+    min-width: 0;
+  }
+
+  &__titulo {
+    display: block;
+    font-size: var(--hsmsi-texto-sm, 0.875rem);
+    font-weight: 700;
+    color: var(--p1-text, #991b1b);
+    text-transform: uppercase;
+    letter-spacing: 0.04em;
+  }
+
+  &__texto {
+    margin: 0.25rem 0 0;
+    font-size: var(--hsmsi-texto-sm, 0.875rem);
+    color: var(--hsmsi-gris-800, #1e293b);
+    line-height: 1.35;
+  }
+
+  &__boton {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.375rem;
+    padding: 0.625rem 1rem;
+    min-height: 44px;
+    background: var(--p1-border, #dc2626);
+    color: #ffffff;
+    border: none;
+    border-radius: var(--hsmsi-radio-sm, 6px);
+    font-size: var(--hsmsi-texto-sm, 0.875rem);
+    font-weight: 600;
+    cursor: pointer;
+    white-space: nowrap;
+    transition: background-color 0.2s ease, transform 0.1s ease;
+
+    &:hover {
+      background: var(--p1-text, #991b1b);
+    }
+
+    &:focus-visible {
+      outline: 2px solid var(--p1-text, #991b1b);
+      outline-offset: 2px;
+    }
+
+    @media (max-width: 600px) {
+      width: 100%;
+      justify-content: center;
+    }
+  }
+}
+
+.contadores-grid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: var(--hsmsi-espacio-sm, 0.75rem);
+
+  @media (min-width: 768px) {
+    grid-template-columns: repeat(4, 1fr);
+    gap: var(--hsmsi-espacio-md, 1rem);
+  }
+}
+
+.tarjeta-contador {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  padding: 1rem 1.25rem;
+  min-height: 84px;
+  background: #ffffff;
+  border: 1px solid var(--hsmsi-borde, #e2e8f0);
+  border-radius: var(--hsmsi-radio-md, 8px);
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.04);
+  transition: transform 0.15s ease, box-shadow 0.15s ease;
+
+  &__valor {
+    font-size: 1.75rem;
+    font-weight: 800;
+    line-height: 1;
+    color: var(--hsmsi-gris-900, #0f172a);
+    font-feature-settings: 'tnum';
+  }
+
+  &__etiqueta {
+    margin-top: 0.375rem;
+    font-size: var(--hsmsi-texto-xs, 0.75rem);
+    font-weight: 600;
+    color: var(--hsmsi-gris-600, #64748b);
+    text-transform: uppercase;
+    letter-spacing: 0.03em;
+  }
+
+  &__icono {
+    position: absolute;
+    top: 0.875rem;
+    right: 0.875rem;
+    color: var(--hsmsi-gris-400, #94a3b8);
+  }
+
+  &--asignados {
+    border-left: 4px solid var(--hsmsi-guinda-principal, #701c1c);
+  }
+
+  &--por-vencer {
+    border-left: 4px solid var(--p3-border, #d97706);
+
+    &.tarjeta-contador--alerta {
+      background: var(--p3-bg, #fffbeb);
+
+      .tarjeta-contador__valor {
+        color: var(--p3-text, #92400e);
+      }
+
+      .tarjeta-contador__icono {
+        color: var(--p3-border, #d97706);
+      }
+    }
+  }
+
+  &--vencidos {
+    border-left: 4px solid var(--p1-border, #dc2626);
+
+    &.tarjeta-contador--peligro {
+      background: var(--p1-bg, #fef2f2);
+
+      .tarjeta-contador__valor {
+        color: var(--p1-text, #991b1b);
+      }
+
+      .tarjeta-contador__icono {
+        color: var(--p1-border, #dc2626);
+      }
+    }
+  }
+
+  &--resueltos {
+    border-left: 4px solid var(--hsmsi-verde-salud, #1b5e20);
+
+    .tarjeta-contador__icono {
+      color: var(--hsmsi-verde-salud, #1b5e20);
+    }
+  }
+}

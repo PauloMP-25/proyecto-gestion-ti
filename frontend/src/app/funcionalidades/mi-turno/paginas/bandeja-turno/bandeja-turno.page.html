@@ -1,0 +1,374 @@
+<div class="bandeja-turno-contenedor">
+  <!-- Cabecera de la Bandeja de Turno -->
+  <header class="bandeja-cabecera">
+    <div class="bandeja-cabecera__info">
+      <h1 class="bandeja-cabecera__titulo">Mi Turno</h1>
+      <div class="bandeja-cabecera__subinfo">
+        <span class="bandeja-cabecera__saludo">Hola, técnico</span>
+        @if (ultimaActualizacion()) {
+          <span class="bandeja-cabecera__separador" aria-hidden="true">·</span>
+          <span class="bandeja-cabecera__hora">Actualizado {{ ultimaActualizacion() }}</span>
+        }
+        <button
+          type="button"
+          class="bandeja-cabecera__btn-refrescar"
+          [class.bandeja-cabecera__btn-refrescar--girando]="actualizando()"
+          (click)="actualizarAhora()"
+          title="Actualizar datos ahora"
+          aria-label="Actualizar datos de la bandeja ahora">
+          <app-icono nombre="refresh" tamano="sm" aria-hidden="true"></app-icono>
+        </button>
+      </div>
+    </div>
+
+    <div class="bandeja-cabecera__acciones">
+      <a
+        routerLink="/mi-turno/consulta"
+        class="btn-consultar"
+        aria-label="Consultar equipos, activos y guías de solución">
+        <app-icono nombre="search" tamano="sm" aria-hidden="true"></app-icono>
+        <span>Consultar</span>
+      </a>
+    </div>
+  </header>
+
+  <!-- Anuncios y Alertas Accesibles -->
+  @if (mensajeAlerta()) {
+    <div class="mensaje-banner mensaje-banner--alerta" role="alert" aria-live="assertive">
+      <app-icono nombre="warning" tamano="sm" aria-hidden="true"></app-icono>
+      <span>{{ mensajeAlerta() }}</span>
+      <button type="button" class="mensaje-banner__cerrar" (click)="mensajeAlerta.set(null)" aria-label="Cerrar mensaje">
+        <app-icono nombre="close" tamano="xs" aria-hidden="true"></app-icono>
+      </button>
+    </div>
+  }
+
+  @if (mensajeExito()) {
+    <div class="mensaje-banner mensaje-banner--exito" role="status" aria-live="polite">
+      <app-icono nombre="check_circle" tamano="sm" aria-hidden="true"></app-icono>
+      <span>{{ mensajeExito() }}</span>
+      <button type="button" class="mensaje-banner__cerrar" (click)="mensajeExito.set(null)" aria-label="Cerrar mensaje">
+        <app-icono nombre="close" tamano="xs" aria-hidden="true"></app-icono>
+      </button>
+    </div>
+  }
+
+  <!-- Resumen superior de contadores -->
+  <section class="bandeja-resumen" aria-label="Resumen de actividad">
+    <app-resumen-turno
+      [resumen]="resumen()"
+      (irAPorTomar)="cambiarVista('POR_TOMAR')">
+    </app-resumen-turno>
+  </section>
+
+  <!-- Pestañas de vistas -->
+  <nav class="bandeja-pestañas" role="tablist" aria-label="Pestañas de tickets del turno">
+    <button
+      type="button"
+      role="tab"
+      class="bandeja-pestaña"
+      [class.bandeja-pestaña--activa]="vistaActual() === 'POR_TOMAR'"
+      [attr.aria-selected]="vistaActual() === 'POR_TOMAR'"
+      (click)="cambiarVista('POR_TOMAR')">
+      <span>Por tomar</span>
+      @if (resumen().hayP1SinTomar) {
+        <span class="insignia-alerta-dot" title="Hay tickets P1 sin tomar"></span>
+      }
+    </button>
+
+    <button
+      type="button"
+      role="tab"
+      class="bandeja-pestaña"
+      [class.bandeja-pestaña--activa]="vistaActual() === 'EN_ATENCION'"
+      [attr.aria-selected]="vistaActual() === 'EN_ATENCION'"
+      (click)="cambiarVista('EN_ATENCION')">
+      <span>En atención</span>
+      <span class="bandeja-pestaña__conteo">{{ resumen().asignados }}</span>
+    </button>
+
+    <button
+      type="button"
+      role="tab"
+      class="bandeja-pestaña"
+      [class.bandeja-pestaña--activa]="vistaActual() === 'HISTORIAL'"
+      [attr.aria-selected]="vistaActual() === 'HISTORIAL'"
+      (click)="cambiarVista('HISTORIAL')">
+      <span>Historial del turno</span>
+      <span class="bandeja-pestaña__conteo">{{ resumen().resueltosHoy }}</span>
+    </button>
+  </nav>
+
+  <!-- Barra de Filtros y Búsqueda -->
+  <div class="bandeja-filtros">
+    <div class="buscador-campo">
+      <span class="buscador-campo__icono" aria-hidden="true">
+        <app-icono nombre="search" tamano="sm"></app-icono>
+      </span>
+      <input
+        type="search"
+        class="buscador-campo__input"
+        placeholder="Buscar por código, problema, área o equipo..."
+        [value]="terminoBusqueda()"
+        (input)="onInputBusqueda($event)"
+        aria-label="Buscar tickets en la pestaña actual" />
+      @if (terminoBusqueda()) {
+        <button
+          type="button"
+          class="buscador-campo__limpiar"
+          (click)="limpiarBusqueda()"
+          aria-label="Limpiar término de búsqueda">
+          <app-icono nombre="close" tamano="xs" aria-hidden="true"></app-icono>
+        </button>
+      }
+    </div>
+
+    <button
+      type="button"
+      class="chip-filtro"
+      [class.chip-filtro--activo]="soloUrgentes()"
+      [attr.aria-pressed]="soloUrgentes()"
+      (click)="toggleSoloUrgentes()">
+      <app-icono nombre="warning" tamano="xs" aria-hidden="true"></app-icono>
+      <span>P1 / P2 Urgentes</span>
+    </button>
+  </div>
+
+  <!-- Estado: Cargando (Esqueleto) -->
+  @if (cargando()) {
+    <div class="bandeja-esqueleto" aria-busy="true" aria-label="Cargando tickets de soporte...">
+      <div class="esqueleto-tarjeta" *ngFor="let i of [1, 2, 3, 4]"></div>
+    </div>
+  }
+
+  <!-- Estado: Error -->
+  @else if (error()) {
+    <div class="bandeja-error" role="alert">
+      <app-icono nombre="error" tamano="lg" aria-hidden="true"></app-icono>
+      <p class="bandeja-error__mensaje">{{ error() }}</p>
+      <button type="button" class="btn-reintentar" (click)="cargarDatos(true)">
+        <app-icono nombre="refresh" tamano="sm" aria-hidden="true"></app-icono>
+        <span>Reintentar</span>
+      </button>
+    </div>
+  }
+
+  <!-- Estado: Vacío -->
+  @else if (tickets().length === 0) {
+    <div class="bandeja-vacia">
+      <app-icono nombre="assignment_turned_in" tamano="xl" aria-hidden="true"></app-icono>
+      @if (vistaActual() === 'EN_ATENCION') {
+        <h2 class="bandeja-vacia__titulo">No tiene tickets en atención activa</h2>
+        <p class="bandeja-vacia__texto">¡Excelente trabajo! Todo su turno está al día.</p>
+        <button type="button" class="btn-ir-por-tomar" (click)="cambiarVista('POR_TOMAR')">
+          <span>Revisar tickets por tomar</span>
+          <app-icono nombre="arrow_forward" tamano="sm" aria-hidden="true"></app-icono>
+        </button>
+      } @else if (vistaActual() === 'POR_TOMAR') {
+        <h2 class="bandeja-vacia__titulo">No hay tickets pendientes en la bolsa común</h2>
+        <p class="bandeja-vacia__texto">No hay solicitudes nuevas en espera en este momento.</p>
+      } @else {
+        <h2 class="bandeja-vacia__titulo">Aún no tiene tickets en el historial de hoy</h2>
+        <p class="bandeja-vacia__texto">Aquí aparecerán los tickets que resuelva o derive durante su guardia.</p>
+      }
+    </div>
+  }
+
+  <!-- Lista de Tickets (Vista Híbrida: Tarjetas en móvil/tablet, Tabla en desktop) -->
+  @else {
+    <!-- VISTA MÓVIL Y TABLET (< 1024px): TARJETAS -->
+    <div class="vista-movil" role="list" aria-label="Lista de tickets en turno">
+      @for (ticket of tickets(); track ticket.id) {
+        <article
+          class="tarjeta-turno"
+          [ngClass]="claseBordeSla(ticket)"
+          (click)="verFicha(ticket.id)"
+          tabindex="0"
+          role="button"
+          (keydown.enter)="verFicha(ticket.id)"
+          (keydown.space)="verFicha(ticket.id)"
+          [attr.aria-label]="'Ticket ' + ticket.codigo + ', ' + ticket.titulo + ', área ' + ticket.areaNombre">
+          
+          <div class="tarjeta-turno__arriba">
+            <div class="tarjeta-turno__prioridad-codigo">
+              <span class="insignia-prioridad" [ngClass]="'insignia-prioridad--' + ticket.prioridad">
+                {{ ticket.prioridad }}
+              </span>
+              <span class="tarjeta-turno__codigo">{{ ticket.codigo }}</span>
+              @if (ticket.reabierto) {
+                <span class="insignia-reabierto" title="Ticket reabierto por el usuario">Reabierto</span>
+              }
+            </div>
+
+            <span class="tarjeta-turno__area">
+              <app-icono nombre="location_on" tamano="xs" aria-hidden="true"></app-icono>
+              <span>{{ ticket.areaNombre }}</span>
+            </span>
+          </div>
+
+          <h2 class="tarjeta-turno__titulo">{{ ticket.titulo }}</h2>
+
+          @if (ticket.equipo) {
+            <div class="tarjeta-turno__equipo">
+              <app-icono nombre="computer" tamano="xs" aria-hidden="true"></app-icono>
+              <span>{{ ticket.equipo.hostname }} ({{ ticket.equipo.ip }})</span>
+            </div>
+          }
+
+          <!-- Cronómetro de compromiso SLA -->
+          @if (ticket.sla.fase !== 'COMPLETADO') {
+            <div class="tarjeta-turno__cronometro" (click)="$event.stopPropagation()">
+              <app-sla-cronometro
+                [sla]="obtenerSlaCalculado(ticket)"
+                [compacto]="true">
+              </app-sla-cronometro>
+            </div>
+          } @else if (ticket.estado === 'ESCALADO') {
+            <div class="insignia-escalado">
+              <app-icono nombre="arrow_upward" tamano="xs" aria-hidden="true"></app-icono>
+              <span>Derivado a Nivel 2</span>
+            </div>
+          } @else {
+            <div class="insignia-resuelto">
+              <app-icono nombre="check" tamano="xs" aria-hidden="true"></app-icono>
+              <span>Resuelto en el turno</span>
+            </div>
+          }
+
+          <!-- Botón de acción primaria si aplica -->
+          @if (obtenerAccionPrimaria(ticket); as accion) {
+            <div class="tarjeta-turno__accion">
+              <button
+                type="button"
+                class="btn-accion-primaria"
+                [class.btn-accion-primaria--verde]="accion === 'RESOLVER'"
+                [class.btn-accion-primaria--iniciar]="accion === 'INICIAR'"
+                [disabled]="ticketEnProcesoId() === ticket.id"
+                [attr.aria-busy]="ticketEnProcesoId() === ticket.id"
+                (click)="ejecutarAccion(ticket, accion, $event)">
+                @if (ticketEnProcesoId() === ticket.id) {
+                  <span>Procesando...</span>
+                } @else {
+                  <span>{{ etiquetaAccion(accion) }}</span>
+                  <app-icono nombre="arrow_forward" tamano="xs" aria-hidden="true"></app-icono>
+                }
+              </button>
+            </div>
+          }
+        </article>
+      }
+    </div>
+
+    <!-- VISTA DESKTOP (≥ 1024px): TABLA SEMÁNTICA -->
+    <div class="vista-desktop">
+      <table class="tabla-turno" role="table" aria-label="Tabla de tickets del turno">
+        <thead>
+          <tr>
+            <th scope="col" class="col-prioridad">Prioridad</th>
+            <th scope="col" class="col-codigo">Código</th>
+            <th scope="col" class="col-problema">Problema / Solicitud</th>
+            <th scope="col" class="col-area">Área / Equipo</th>
+            <th scope="col" class="col-cronometro">Compromiso (SLA)</th>
+            <th scope="col" class="col-estado">Estado</th>
+            <th scope="col" class="col-accion">Acción</th>
+          </tr>
+        </thead>
+        <tbody>
+          @for (ticket of tickets(); track ticket.id) {
+            <tr
+              class="tabla-turno__fila"
+              [ngClass]="claseBordeSla(ticket)"
+              (click)="verFicha(ticket.id)"
+              tabindex="0"
+              (keydown.enter)="verFicha(ticket.id)"
+              (keydown.space)="verFicha(ticket.id)">
+              
+              <td class="col-prioridad">
+                <span class="insignia-prioridad" [ngClass]="'insignia-prioridad--' + ticket.prioridad">
+                  {{ ticket.prioridad }}
+                </span>
+              </td>
+
+              <td class="col-codigo">
+                <span class="codigo-texto">{{ ticket.codigo }}</span>
+                @if (ticket.reabierto) {
+                  <span class="insignia-reabierto" title="Ticket reabierto">Reabierto</span>
+                }
+              </td>
+
+              <td class="col-problema">
+                <div class="problema-titulo">{{ ticket.titulo }}</div>
+                <div class="problema-solicitante">{{ ticket.solicitanteNombre }}</div>
+              </td>
+
+              <td class="col-area">
+                <div class="area-texto">{{ ticket.areaNombre }}</div>
+                @if (ticket.equipo) {
+                  <div class="equipo-texto">{{ ticket.equipo.hostname }}</div>
+                }
+              </td>
+
+              <td class="col-cronometro" (click)="$event.stopPropagation()">
+                @if (ticket.sla.fase !== 'COMPLETADO') {
+                  <app-sla-cronometro
+                    [sla]="obtenerSlaCalculado(ticket)"
+                    [compacto]="true">
+                  </app-sla-cronometro>
+                } @else {
+                  <span class="texto-completado">Completado</span>
+                }
+              </td>
+
+              <td class="col-estado">
+                @if (ticket.estado === 'ESCALADO') {
+                  <span class="insignia-estado insignia-estado--escalado">Derivado N2</span>
+                } @else if (ticket.estado === 'RESUELTO') {
+                  <span class="insignia-estado insignia-estado--resuelto">Resuelto</span>
+                } @else if (ticket.estado === 'EN_PROCESO') {
+                  <span class="insignia-estado insignia-estado--proceso">En proceso</span>
+                } @else if (ticket.estado === 'ASIGNADO') {
+                  <span class="insignia-estado insignia-estado--asignado">Asignado</span>
+                } @else {
+                  <span class="insignia-estado insignia-estado--nuevo">Nuevo</span>
+                }
+              </td>
+
+              <td class="col-accion" (click)="$event.stopPropagation()">
+                @if (obtenerAccionPrimaria(ticket); as accion) {
+                  <button
+                    type="button"
+                    class="btn-accion-tabla"
+                    [class.btn-accion-tabla--verde]="accion === 'RESOLVER'"
+                    [class.btn-accion-tabla--iniciar]="accion === 'INICIAR'"
+                    [disabled]="ticketEnProcesoId() === ticket.id"
+                    (click)="ejecutarAccion(ticket, accion, $event)">
+                    <span>{{ etiquetaAccion(accion) }}</span>
+                  </button>
+                } @else {
+                  <button
+                    type="button"
+                    class="btn-ver-detalle"
+                    (click)="verFicha(ticket.id)">
+                    <span>Ver ficha</span>
+                  </button>
+                }
+              </td>
+            </tr>
+          }
+        </tbody>
+      </table>
+    </div>
+  }
+
+  <!-- Diálogo de resolución si se activó -->
+  @if (ticketParaResolver(); as t) {
+    <app-dialogo-resolver-ticket
+      [ticketId]="t.id"
+      [codigo]="t.codigo"
+      [equipoEtiqueta]="t.equipo ? t.equipo.hostname + ' · ' + t.equipo.ip : null"
+      [procesando]="procesandoResolucion()"
+      (alCancelar)="cancelarResolucion()"
+      (alConfirmar)="confirmarResolucion($event)">
+    </app-dialogo-resolver-ticket>
+  }
+</div>

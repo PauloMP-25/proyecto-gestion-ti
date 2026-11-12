@@ -1,0 +1,55 @@
+<div class="resumen-turno">
+  @if (resumen().hayP1SinTomar) {
+    <div class="alerta-p1" role="alert" aria-live="assertive">
+      <div class="alerta-p1__icono" aria-hidden="true">
+        <app-icono nombre="warning" tamano="md"></app-icono>
+      </div>
+      <div class="alerta-p1__contenido">
+        <span class="alerta-p1__titulo">Atención Inmediata</span>
+        <p class="alerta-p1__texto">Hay al menos un ticket P1 crítico sin asignar en la bolsa del hospital.</p>
+      </div>
+      <button
+        type="button"
+        class="alerta-p1__boton"
+        (click)="onIrAPorTomar()"
+        aria-label="Ir a la bolsa de tickets por tomar para revisar el caso crítico">
+        <span>Revisar caso</span>
+        <app-icono nombre="chevron-right" tamano="sm" aria-hidden="true"></app-icono>
+      </button>
+    </div>
+  }
+
+  <div class="contadores-grid" role="region" aria-label="Resumen de actividad del turno">
+    <div class="tarjeta-contador tarjeta-contador--asignados">
+      <span class="tarjeta-contador__valor">{{ resumen().asignados }}</span>
+      <span class="tarjeta-contador__etiqueta">En atención</span>
+      <span class="tarjeta-contador__icono" aria-hidden="true">
+        <app-icono nombre="assignment" tamano="sm"></app-icono>
+      </span>
+    </div>
+
+    <div class="tarjeta-contador tarjeta-contador--por-vencer" [class.tarjeta-contador--alerta]="resumen().porVencer > 0">
+      <span class="tarjeta-contador__valor">{{ resumen().porVencer }}</span>
+      <span class="tarjeta-contador__etiqueta">Por vencer</span>
+      <span class="tarjeta-contador__icono" aria-hidden="true">
+        <app-icono nombre="alarm" tamano="sm"></app-icono>
+      </span>
+    </div>
+
+    <div class="tarjeta-contador tarjeta-contador--vencidos" [class.tarjeta-contador--peligro]="resumen().vencidos > 0">
+      <span class="tarjeta-contador__valor">{{ resumen().vencidos }}</span>
+      <span class="tarjeta-contador__etiqueta">Vencidos</span>
+      <span class="tarjeta-contador__icono" aria-hidden="true">
+        <app-icono nombre="timer_off" tamano="sm"></app-icono>
+      </span>
+    </div>
+
+    <div class="tarjeta-contador tarjeta-contador--resueltos">
+      <span class="tarjeta-contador__valor">{{ resumen().resueltosHoy }}</span>
+      <span class="tarjeta-contador__etiqueta">Resueltos hoy</span>
+      <span class="tarjeta-contador__icono" aria-hidden="true">
+        <app-icono nombre="check_circle" tamano="sm"></app-icono>
+      </span>
+    </div>
+  </div>
+</div>

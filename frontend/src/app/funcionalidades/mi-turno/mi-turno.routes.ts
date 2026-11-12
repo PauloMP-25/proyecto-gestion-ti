@@ -5,6 +5,15 @@ export const MI_TURNO_ROUTES: Routes = [
   {
     path: '',
     providers: TURNO_PROVIDERS,
-    children: [],
+    children: [
+      {
+        path: '',
+        title: 'Mesa de Ayuda · Mi Turno',
+        loadComponent: () =>
+          import('./paginas/bandeja-turno/bandeja-turno.page').then(
+            (m) => m.BandejaTurnoPage
+          ),
+      },
+    ],
   },
 ];
