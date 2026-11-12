@@ -1,32 +1,36 @@
+@use 'estilos/mixins/boton' as b;
+@use 'estilos/mixins/a11y' as a11y;
+@use 'estilos/mixins/responsive' as r;
+
 .resumen-turno {
   display: flex;
   flex-direction: column;
-  gap: var(--hsmsi-espacio-md, 1rem);
+  gap: var(--espacio-md);
   width: 100%;
 }
 
 .alerta-p1 {
   display: flex;
   align-items: center;
-  gap: var(--hsmsi-espacio-md, 1rem);
-  background: var(--p1-bg, #fef2f2);
-  border: 1.5px solid var(--p1-border, #dc2626);
+  gap: var(--espacio-md);
+  background: var(--color-error-bg);
+  border: 1.5px solid var(--color-error-border);
   border-left-width: 6px;
-  border-radius: var(--hsmsi-radio-md, 8px);
-  padding: 0.875rem 1.25rem;
+  border-radius: var(--radius-md);
+  padding: 14px var(--espacio-lg);
   box-shadow: 0 2px 6px rgba(220, 38, 38, 0.12);
 
-  @media (max-width: 600px) {
+  @include r.hasta(sm) {
     flex-direction: column;
     align-items: flex-start;
-    gap: 0.75rem;
+    gap: var(--espacio-xs);
   }
 
   &__icono {
     display: flex;
     align-items: center;
     justify-content: center;
-    color: var(--p1-text, #991b1b);
+    color: var(--color-error-text);
     flex-shrink: 0;
   }
 
@@ -37,46 +41,39 @@
 
   &__titulo {
     display: block;
-    font-size: var(--hsmsi-texto-sm, 0.875rem);
+    font-size: var(--font-size-sm);
     font-weight: 700;
-    color: var(--p1-text, #991b1b);
+    color: var(--color-error-text);
     text-transform: uppercase;
     letter-spacing: 0.04em;
   }
 
   &__texto {
-    margin: 0.25rem 0 0;
-    font-size: var(--hsmsi-texto-sm, 0.875rem);
-    color: var(--hsmsi-gris-800, #1e293b);
-    line-height: 1.35;
+    margin: var(--espacio-2xs) 0 0;
+    font-size: var(--font-size-sm);
+    color: var(--color-text-main);
+    line-height: var(--line-height-tight);
   }
 
   &__boton {
-    display: inline-flex;
-    align-items: center;
-    gap: 0.375rem;
-    padding: 0.625rem 1rem;
-    min-height: 44px;
-    background: var(--p1-border, #dc2626);
+    @include b.boton-base;
+    gap: var(--espacio-2xs);
+    padding: var(--espacio-2xs) var(--espacio-md);
+    min-height: var(--touch-min);
+    background: var(--color-error-border);
     color: #ffffff;
-    border: none;
-    border-radius: var(--hsmsi-radio-sm, 6px);
-    font-size: var(--hsmsi-texto-sm, 0.875rem);
+    border-radius: var(--radius-sm);
+    font-size: var(--font-size-sm);
     font-weight: 600;
-    cursor: pointer;
     white-space: nowrap;
-    transition: background-color 0.2s ease, transform 0.1s ease;
 
     &:hover {
-      background: var(--p1-text, #991b1b);
+      background: var(--color-error-text);
     }
 
-    &:focus-visible {
-      outline: 2px solid var(--p1-text, #991b1b);
-      outline-offset: 2px;
-    }
+    @include a11y.foco-visible;
 
-    @media (max-width: 600px) {
+    @include r.hasta(sm) {
       width: 100%;
       justify-content: center;
     }
@@ -86,11 +83,11 @@
 .contadores-grid {
   display: grid;
   grid-template-columns: repeat(2, 1fr);
-  gap: var(--hsmsi-espacio-sm, 0.75rem);
+  gap: var(--espacio-sm);
 
-  @media (min-width: 768px) {
+  @include r.desde(md) {
     grid-template-columns: repeat(4, 1fr);
-    gap: var(--hsmsi-espacio-md, 1rem);
+    gap: var(--espacio-md);
   }
 }
 
@@ -99,79 +96,79 @@
   display: flex;
   flex-direction: column;
   justify-content: center;
-  padding: 1rem 1.25rem;
+  padding: var(--espacio-md) var(--espacio-lg);
   min-height: 84px;
-  background: #ffffff;
-  border: 1px solid var(--hsmsi-borde, #e2e8f0);
-  border-radius: var(--hsmsi-radio-md, 8px);
-  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.04);
-  transition: transform 0.15s ease, box-shadow 0.15s ease;
+  background: var(--color-surface-card);
+  border: 1px solid var(--color-border-subtle);
+  border-radius: var(--radius-md);
+  box-shadow: var(--shadow-sm);
+  transition: transform var(--transition-fast), box-shadow var(--transition-fast);
 
   &__valor {
-    font-size: 1.75rem;
+    font-size: var(--font-size-2xl);
     font-weight: 800;
     line-height: 1;
-    color: var(--hsmsi-gris-900, #0f172a);
-    font-feature-settings: 'tnum';
+    color: var(--color-text-main);
+    font-variant-numeric: tabular-nums;
   }
 
   &__etiqueta {
-    margin-top: 0.375rem;
-    font-size: var(--hsmsi-texto-xs, 0.75rem);
+    margin-top: 6px;
+    font-size: var(--font-size-xs);
     font-weight: 600;
-    color: var(--hsmsi-gris-600, #64748b);
+    color: var(--color-text-secondary);
     text-transform: uppercase;
     letter-spacing: 0.03em;
   }
 
   &__icono {
     position: absolute;
-    top: 0.875rem;
-    right: 0.875rem;
-    color: var(--hsmsi-gris-400, #94a3b8);
+    top: 14px;
+    right: 14px;
+    color: var(--color-text-muted);
   }
 
   &--asignados {
-    border-left: 4px solid var(--hsmsi-guinda-principal, #701c1c);
+    border-left: 4px solid var(--color-primary-base);
   }
 
   &--por-vencer {
-    border-left: 4px solid var(--p3-border, #d97706);
+    border-left: 4px solid var(--color-aviso-border);
 
     &.tarjeta-contador--alerta {
-      background: var(--p3-bg, #fffbeb);
+      background: var(--color-aviso-bg);
 
       .tarjeta-contador__valor {
-        color: var(--p3-text, #92400e);
+        color: var(--color-aviso-text);
       }
 
       .tarjeta-contador__icono {
-        color: var(--p3-border, #d97706);
+        color: var(--color-aviso-border);
       }
     }
   }
 
   &--vencidos {
-    border-left: 4px solid var(--p1-border, #dc2626);
+    border-left: 4px solid var(--color-error-border);
 
     &.tarjeta-contador--peligro {
-      background: var(--p1-bg, #fef2f2);
+      background: var(--color-error-bg);
 
       .tarjeta-contador__valor {
-        color: var(--p1-text, #991b1b);
+        color: var(--color-error-text);
       }
 
       .tarjeta-contador__icono {
-        color: var(--p1-border, #dc2626);
+        color: var(--color-error-border);
       }
     }
   }
 
   &--resueltos {
-    border-left: 4px solid var(--hsmsi-verde-salud, #1b5e20);
+    border-left: 4px solid var(--color-secondary-base);
 
     .tarjeta-contador__icono {
-      color: var(--hsmsi-verde-salud, #1b5e20);
+      color: var(--color-secondary-base);
     }
   }
 }

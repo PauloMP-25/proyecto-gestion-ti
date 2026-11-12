@@ -1,75 +1,68 @@
+@use 'estilos/mixins/boton' as b;
+@use 'estilos/mixins/a11y' as a11y;
+@use 'estilos/mixins/responsive' as r;
+
 .barra-acciones {
   display: flex;
   align-items: center;
-  gap: var(--hsmsi-espacio-sm, 0.75rem);
+  gap: var(--espacio-sm);
   width: 100%;
   box-sizing: border-box;
 
-  @media (max-width: 600px) {
+  @include r.hasta(sm) {
     flex-direction: column-reverse;
   }
 }
 
 .btn-accion {
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  gap: 0.5rem;
+  @include b.boton-base;
   min-height: 48px;
-  padding: 0.75rem 1.25rem;
-  border-radius: var(--hsmsi-radio-md, 8px);
-  font-size: var(--hsmsi-texto-sm, 0.875rem);
+  padding: var(--espacio-xs) var(--espacio-md);
+  border-radius: var(--radius-md);
+  font-size: var(--font-size-sm);
   font-weight: 700;
-  cursor: pointer;
   white-space: nowrap;
-  transition: all 0.2s ease;
-  box-sizing: border-box;
 
-  @media (max-width: 600px) {
+  @include r.hasta(sm) {
     width: 100%;
-  }
-
-  &:disabled {
-    opacity: 0.6;
-    cursor: not-allowed;
   }
 
   &--primaria {
     flex: 2;
     color: #ffffff;
     border: none;
-    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    box-shadow: var(--shadow-sm);
 
     &:hover:not(:disabled) {
       transform: translateY(-1px);
-      box-shadow: 0 4px 8px rgba(0, 0, 0, 0.15);
+      box-shadow: var(--shadow-md);
     }
   }
 
   &--secundaria {
     flex: 1;
-    background: #ffffff;
-    color: var(--hsmsi-gris-800, #1e293b);
-    border: 1.5px solid var(--hsmsi-borde, #cbd5e1);
+    background: var(--color-surface-card);
+    color: var(--color-text-main);
+    border: 1.5px solid var(--color-border-subtle);
 
     &:hover:not(:disabled) {
-      background: var(--hsmsi-gris-50, #f8fafc);
+      background: var(--color-surface-sunken);
     }
   }
 
   &--verde {
-    background: var(--hsmsi-verde-salud, #1b5e20);
-    &:hover:not(:disabled) { background: #144718; }
+    background: var(--color-secondary-base);
+    &:hover:not(:disabled) { background: var(--color-secondary-hover); }
   }
 
   &--iniciar {
-    background: #0284c7;
-    &:hover:not(:disabled) { background: #0369a1; }
+    background: var(--color-info-border);
+    &:hover:not(:disabled) { background: var(--color-info-text); }
   }
 
   &--tomar {
-    background: var(--hsmsi-guinda-principal, #701c1c);
-    &:hover:not(:disabled) { background: #541414; }
+    background: var(--color-primary-base);
+    &:hover:not(:disabled) { background: var(--color-primary-dark); }
   }
 
   &--escalar {
@@ -81,10 +74,7 @@
     }
   }
 
-  &:focus-visible {
-    outline: 2px solid var(--hsmsi-guinda-principal, #701c1c);
-    outline-offset: 2px;
-  }
+  @include a11y.foco-visible;
 }
 
 .barra-solo-lectura {
@@ -92,21 +82,21 @@
   align-items: center;
   justify-content: center;
   width: 100%;
-  padding: 0.5rem 0;
+  padding: var(--espacio-2xs) 0;
 }
 
 .insignia-estado-lectura {
   display: inline-flex;
   align-items: center;
-  gap: 0.375rem;
-  padding: 0.5rem 1rem;
-  border-radius: var(--hsmsi-radio-sm, 6px);
-  font-size: var(--hsmsi-texto-sm, 0.875rem);
+  gap: var(--espacio-2xs);
+  padding: var(--espacio-2xs) var(--espacio-md);
+  border-radius: var(--radius-sm);
+  font-size: var(--font-size-sm);
   font-weight: 700;
 
   &--verde {
-    background: var(--hsmsi-verde-suave, #e8f5e9);
-    color: var(--hsmsi-verde-salud, #1b5e20);
+    background: var(--color-secondary-light);
+    color: var(--color-secondary-base);
   }
 
   &--morado {
@@ -116,12 +106,12 @@
   }
 
   &--azul {
-    background: #e0f2fe;
-    color: #0369a1;
+    background: var(--color-info-bg);
+    color: var(--color-info-text);
   }
 
   &--gris {
-    background: var(--hsmsi-gris-100, #f1f5f9);
-    color: var(--hsmsi-gris-600, #64748b);
+    background: var(--color-surface-sunken);
+    color: var(--color-text-secondary);
   }
 }
