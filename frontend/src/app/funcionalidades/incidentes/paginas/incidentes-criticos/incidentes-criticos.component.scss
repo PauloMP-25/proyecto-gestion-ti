@@ -1,3 +1,7 @@
+@use 'estilos/mixins/boton' as b;
+@use 'estilos/mixins/a11y' as a11y;
+@use 'estilos/mixins/responsive' as r;
+
 :host {
   display: block;
   width: 100%;
@@ -6,10 +10,15 @@
 .criticos-contenedor {
   display: flex;
   flex-direction: column;
-  gap: var(--espacio-4, 16px);
-  padding: 0 0 var(--espacio-4, 16px) 0;
+  gap: var(--espacio-md);
+  padding: 0 0 var(--espacio-md) 0;
   width: 100%;
   box-sizing: border-box;
+
+  @include r.hasta(sm) {
+    padding: var(--espacio-2xs) 0;
+    gap: var(--espacio-sm);
+  }
 }
 
 /* ==========================================================
@@ -20,9 +29,9 @@
   justify-content: space-between;
   align-items: center;
   flex-wrap: wrap;
-  gap: var(--espacio-3, 12px);
-  padding-bottom: var(--espacio-2, 8px);
-  border-bottom: 1px solid var(--borde-tarjeta, #e2e8f0);
+  gap: var(--espacio-xs);
+  padding-bottom: var(--espacio-2xs);
+  border-bottom: 1px solid var(--color-border-subtle);
 
   &__izq {
     display: flex;
@@ -35,67 +44,79 @@
     display: flex;
     align-items: center;
   }
+
+  @include r.hasta(lg) {
+    flex-direction: column;
+    align-items: stretch;
+
+    &__izq {
+      width: 100%;
+    }
+
+    &__der {
+      width: 100%;
+      justify-content: flex-end;
+    }
+  }
 }
 
 .titulo-vista {
   display: flex;
   align-items: baseline;
   flex-wrap: wrap;
-  gap: var(--espacio-2, 8px) var(--espacio-3, 12px);
+  gap: var(--espacio-2xs) var(--espacio-xs);
 
   &__texto {
     margin: 0;
-    font-size: 1.15rem;
+    font-size: var(--font-size-lg);
     font-weight: 800;
     letter-spacing: -0.01em;
-    color: var(--texto-principal, #0b1c30);
+    color: var(--color-text-main);
   }
 
   &__conteo {
-    font-size: 0.82rem;
+    font-size: var(--font-size-xs);
     font-weight: 600;
-    color: var(--primario-guinda, #701c1c);
+    color: var(--color-primary-base);
   }
 }
 
 .acciones-header {
   display: flex;
   align-items: center;
-  gap: var(--espacio-2, 8px);
+  gap: var(--espacio-2xs);
+
+  @include r.hasta(sm) {
+    width: 100%;
+    flex-wrap: wrap;
+    justify-content: space-between;
+
+    .ultima-actualizacion {
+      width: 100%;
+    }
+
+    .btn-refrescar {
+      flex: 1;
+      justify-content: center;
+    }
+  }
 }
 
 .ultima-actualizacion {
-  font-size: 0.76rem;
-  color: var(--texto-secundario, #64748b);
+  font-size: var(--font-size-xs);
+  color: var(--color-text-secondary);
   font-variant-numeric: tabular-nums;
   white-space: nowrap;
 }
 
 .btn-refrescar {
-  display: inline-flex;
-  align-items: center;
+  @include b.boton-base;
+  @include b.boton-secundario;
   gap: 6px;
-  height: 38px;
-  padding: 0 var(--espacio-3, 12px);
-  background-color: var(--fondo-tarjeta, #ffffff);
-  border: 1px solid var(--borde-tarjeta, #cbd5e1);
-  border-radius: var(--radio-md, 8px);
-  font-family: inherit;
-  font-size: 0.82rem;
+  min-height: var(--touch-min);
+  padding: 0 var(--espacio-xs);
+  font-size: var(--font-size-xs);
   font-weight: 600;
-  color: var(--texto-secundario, #475569);
-  cursor: pointer;
-  transition: all 0.15s ease;
-
-  &:hover {
-    border-color: var(--primario-guinda, #701c1c);
-    color: var(--primario-guinda, #701c1c);
-  }
-
-  &:focus-visible {
-    outline: 2px solid var(--color-primary-base, #701c1c);
-    outline-offset: 2px;
-  }
 }
 
 /* ==========================================================
@@ -104,7 +125,7 @@
 .seccion-bandeja {
   display: flex;
   flex-direction: column;
-  gap: var(--espacio-4, 16px);
+  gap: var(--espacio-md);
   width: 100%;
   animation: fade-bandeja 0.2s ease-out;
 }
@@ -123,46 +144,5 @@
 @media (prefers-reduced-motion: reduce) {
   .seccion-bandeja {
     animation: none;
-  }
-}
-
-/* ==========================================================
-   RESPONSIVIDAD
-   ========================================================== */
-@media (max-width: 1024px) {
-  .consola-header {
-    flex-direction: column;
-    align-items: stretch;
-
-    &__izq {
-      width: 100%;
-    }
-
-    &__der {
-      width: 100%;
-      justify-content: flex-end;
-    }
-  }
-}
-
-@media (max-width: 640px) {
-  .criticos-contenedor {
-    padding: var(--espacio-1, 4px) 0;
-    gap: var(--espacio-3, 12px);
-  }
-
-  .acciones-header {
-    width: 100%;
-    flex-wrap: wrap;
-    justify-content: space-between;
-
-    .ultima-actualizacion {
-      width: 100%;
-    }
-
-    .btn-refrescar {
-      flex: 1;
-      justify-content: center;
-    }
   }
 }
