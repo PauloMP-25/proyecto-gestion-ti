@@ -155,7 +155,7 @@
     grid-template-columns: repeat(2, 1fr);
   }
 
-  @media (max-width: 480px) {
+  @media (width <= 480px) {
     grid-template-columns: 1fr;
   }
 }
@@ -195,7 +195,7 @@
   &:focus {
     outline: none;
     border-color: var(--color-primary-base);
-    box-shadow: 0 0 0 3px rgba(112, 28, 28, 0.12);
+    box-shadow: 0 0 0 3px rgb(112 28 28 / 12%);
   }
 
   &--mono {
@@ -253,7 +253,7 @@
 
   &--activa {
     background: var(--color-secondary-base);
-    color: #ffffff;
+    color: var(--color-text-on-primary);
     border-color: var(--color-secondary-base);
   }
 }
@@ -270,6 +270,7 @@
 .btn-cancelar {
   @include b.boton-base;
   @include b.boton-secundario;
+
   min-height: var(--touch-min);
   padding: var(--espacio-2xs) var(--espacio-md);
   font-size: var(--font-size-sm);
@@ -286,6 +287,7 @@
     opacity: 0;
     transform: scale(0.96) translateY(8px);
   }
+
   to {
     opacity: 1;
     transform: scale(1) translateY(0);

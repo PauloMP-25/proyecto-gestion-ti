@@ -37,12 +37,15 @@
   display: inline-flex;
   align-items: center;
   justify-content: center;
+
   @include a11y.touch-target;
+
   width: 44px;
   height: 44px;
   border-radius: var(--radius-md);
   color: var(--color-text-main);
   transition: background-color var(--transition-fast);
+
   @include a11y.foco-visible;
 
   &:hover {
@@ -128,6 +131,7 @@
   font-weight: var(--font-weight-medium);
   cursor: pointer;
   transition: all var(--transition-fast);
+
   @include a11y.foco-visible;
 
   &:hover {
@@ -142,6 +146,7 @@
 
   .texto-cambiar-rol {
     display: none;
+
     @include r.desde(md) {
       display: inline;
     }
@@ -183,6 +188,7 @@
     cursor: pointer;
     text-align: left;
     transition: background-color var(--transition-fast);
+
     @include a11y.foco-visible;
 
     &:hover {
@@ -294,6 +300,7 @@
   padding: 0.25rem 0.5rem 0.25rem 0.25rem;
   cursor: pointer;
   transition: all var(--transition-fast);
+
   @include a11y.foco-visible;
 
   &:hover {
@@ -384,7 +391,7 @@
     }
 
     .resumen-correo {
-      margin: 0.15rem 0 0.35rem 0;
+      margin: 0.15rem 0 0.35rem;
       font-size: var(--font-size-xs);
       color: var(--color-text-muted);
       overflow: hidden;
@@ -421,6 +428,7 @@
     cursor: pointer;
     text-decoration: none;
     transition: background-color var(--transition-fast);
+
     @include a11y.foco-visible;
 
     &:hover {

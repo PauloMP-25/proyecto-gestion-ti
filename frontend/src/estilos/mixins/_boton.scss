@@ -5,7 +5,9 @@
   align-items: center;
   justify-content: center;
   gap: var(--espacio-2);
+
   @include a11y.touch-target;
+
   padding: 0 var(--boton-padding-x);
   font: 600 var(--font-size-sm)/1 var(--font-family-base);
   border: 1px solid transparent;
@@ -14,6 +16,7 @@
   white-space: nowrap;
   text-decoration: none;
   transition: background-color var(--transition-fast), border-color var(--transition-fast), box-shadow var(--transition-fast);
+
   @include a11y.foco-visible;
 
   &:disabled, &[aria-disabled='true'] {
@@ -24,6 +27,7 @@
 
 @mixin boton-primario {
   @include boton-base;
+
   background: var(--color-primary-base);
   color: var(--color-text-on-primary);
 
@@ -38,6 +42,7 @@
 
 @mixin boton-exito {
   @include boton-base;
+
   background: var(--color-secondary-base);
   color: var(--color-text-on-primary);
 
@@ -52,6 +57,7 @@
 
 @mixin boton-secundario {
   @include boton-base;
+
   background: var(--color-surface-card);
   color: var(--color-text-main);
   border-color: var(--color-border-strong);
@@ -63,6 +69,7 @@
 
 @mixin boton-peligro {
   @include boton-base;
+
   background: var(--color-error-border);
   color: var(--color-text-on-primary);
 
@@ -73,6 +80,7 @@
 
 @mixin boton-fantasma {
   @include boton-base;
+
   background: transparent;
   color: var(--color-text-main);
 

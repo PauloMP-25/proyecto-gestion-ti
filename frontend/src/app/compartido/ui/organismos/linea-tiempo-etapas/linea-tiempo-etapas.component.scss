@@ -1,3 +1,5 @@
+@use 'estilos/mixins/responsive' as r;
+
 :host {
   display: block;
   width: 100%;
@@ -9,14 +11,14 @@
   padding: 0;
   display: flex;
   flex-direction: column;
-  gap: 16px;
+  gap: var(--espacio-4, 16px);
   position: relative;
 
-  @media (min-width: 1024px) {
+  @include r.desde(lg) {
     flex-direction: row;
     align-items: flex-start;
     justify-content: space-between;
-    gap: 8px;
+    gap: var(--espacio-2, 8px);
 
     &::before {
       content: '';
@@ -25,7 +27,7 @@
       left: 24px;
       right: 24px;
       height: 3px;
-      background: var(--border-subtle, #E2E8F0);
+      background: var(--color-border-subtle);
       z-index: 1;
     }
   }
@@ -38,12 +40,12 @@
   position: relative;
   z-index: 2;
 
-  @media (min-width: 1024px) {
+  @include r.desde(lg) {
     flex-direction: column;
     align-items: center;
     text-align: center;
     flex: 1;
-    gap: 8px;
+    gap: var(--espacio-2, 8px);
   }
 
   .indicador {
@@ -54,11 +56,11 @@
     align-items: center;
     justify-content: center;
     flex-shrink: 0;
-    background: var(--surface-card, #FFFFFF);
-    border: 2.5px solid var(--border-subtle, #CBD5E1);
-    color: var(--text-muted, #64748B);
+    background: var(--color-surface-card);
+    border: 2.5px solid var(--color-border-strong);
+    color: var(--color-text-muted);
     font-weight: 700;
-    font-size: 0.875rem;
+    font-size: var(--fuente-sm, 0.875rem);
     transition: all 0.25s ease;
 
     .icono {
@@ -71,7 +73,7 @@
       width: 12px;
       height: 12px;
       border-radius: 50%;
-      background: currentColor;
+      background: currentcolor;
     }
   }
 
@@ -81,29 +83,29 @@
     .cabecera-paso {
       display: flex;
       align-items: center;
-      gap: 8px;
+      gap: var(--espacio-2, 8px);
       flex-wrap: wrap;
 
-      @media (min-width: 1024px) {
+      @include r.desde(lg) {
         justify-content: center;
       }
 
       .titulo {
         font-weight: 700;
         font-size: 0.9375rem;
-        color: var(--text-main, #0F172A);
+        color: var(--color-text-main);
       }
 
       .fecha {
-        font-size: 0.75rem;
-        color: var(--text-muted, #64748B);
+        font-size: var(--fuente-xs, 0.75rem);
+        color: var(--color-text-muted);
       }
     }
 
     .descripcion {
       margin: 4px 0 0;
       font-size: 0.8125rem;
-      color: var(--text-muted, #64748B);
+      color: var(--color-text-muted);
       line-height: 1.4;
     }
   }
@@ -111,36 +113,40 @@
   // Estados
   &.pasado {
     .indicador {
-      background: var(--hsmsi-verde-salud, #1B5E20);
-      border-color: var(--hsmsi-verde-salud, #1B5E20);
-      color: #FFFFFF;
+      background: var(--color-secondary-base);
+      border-color: var(--color-secondary-base);
+      color: var(--color-text-on-primary);
     }
+
     .titulo {
-      color: var(--hsmsi-verde-salud, #1B5E20);
+      color: var(--color-secondary-base);
     }
   }
 
   &.actual {
     .indicador {
-      background: var(--surface-card, #FFFFFF);
-      border-color: var(--hsmsi-guinda, #701C1C);
-      color: var(--hsmsi-guinda, #701C1C);
-      box-shadow: 0 0 0 4px rgba(112, 28, 28, 0.15);
+      background: var(--color-surface-card);
+      border-color: var(--color-primary-base);
+      color: var(--color-primary-base);
+      box-shadow: 0 0 0 4px var(--color-primary-focus-ring);
     }
+
     .titulo {
-      color: var(--hsmsi-guinda, #701C1C);
+      color: var(--color-primary-base);
       font-weight: 800;
     }
+
     .descripcion {
-      color: var(--text-main, #0F172A);
+      color: var(--color-text-main);
       font-weight: 500;
     }
   }
 
   &.futuro {
     opacity: 0.65;
+
     .indicador {
-      background: var(--surface-ground, #FAF6F0);
+      background: var(--color-bg-app);
     }
   }
 }

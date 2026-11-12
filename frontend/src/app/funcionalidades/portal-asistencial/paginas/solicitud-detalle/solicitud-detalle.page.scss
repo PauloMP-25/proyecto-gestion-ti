@@ -97,6 +97,7 @@
   &__btn-volver {
     @include b.boton-base;
     @include b.boton-primario;
+
     min-height: var(--touch-min);
     padding: var(--espacio-2xs) var(--espacio-lg);
     text-decoration: none;
@@ -145,8 +146,8 @@
     }
 
     &--media {
-      background-color: #fef9c3;
-      color: #854d0e;
+      background-color: var(--color-p3-bg);
+      color: var(--color-p3-text);
     }
 
     &--baja {

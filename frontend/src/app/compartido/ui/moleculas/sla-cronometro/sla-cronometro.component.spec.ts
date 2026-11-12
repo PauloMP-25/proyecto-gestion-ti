@@ -1,7 +1,7 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { SlaCronometroComponent } from './sla-cronometro.component';
-import { SlaCalculado } from '../../modelos/sla-vista.model';
-import { EstadoSla } from '../../modelos/estado-sla.enum';
+import { SlaCalculado } from '../../../modelos/sla-vista.model';
+import { EstadoSla } from '../../../modelos/estado-sla.enum';
 
 describe('SlaCronometroComponent', () => {
   let component: SlaCronometroComponent;

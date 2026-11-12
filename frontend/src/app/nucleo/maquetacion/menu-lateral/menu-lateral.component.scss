@@ -112,10 +112,13 @@
     display: flex;
     align-items: center;
     justify-content: center;
+
     @include a11y.touch-target;
+
     width: 44px;
     height: 44px;
     border-radius: var(--radius-sm);
+
     @include a11y.foco-visible;
 
     &:hover {
@@ -128,8 +131,7 @@
 /* Navegación y Secciones */
 .sidebar-nav {
   flex: 1;
-  overflow-y: auto;
-  overflow-x: hidden;
+  overflow: hidden auto;
   padding: var(--space-4) var(--space-3);
   display: flex;
   flex-direction: column;
@@ -187,6 +189,7 @@
   font-weight: var(--font-weight-medium);
   transition: all var(--transition-fast);
   position: relative;
+
   @include a11y.foco-visible;
 
   &:hover {

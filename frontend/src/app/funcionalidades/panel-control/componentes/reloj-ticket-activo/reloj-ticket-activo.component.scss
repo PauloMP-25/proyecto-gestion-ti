@@ -100,14 +100,14 @@
   height: 8px;
   border-radius: 50%;
   background-color: var(--color-secondary-base);
-  box-shadow: 0 0 0 rgba(22, 163, 74, 0.4);
+  box-shadow: 0 0 0 rgb(22 163 74 / 40%);
   animation: pulso 2s infinite;
 }
 
 @keyframes pulso {
-  0% { box-shadow: 0 0 0 0 rgba(22, 163, 74, 0.7); }
-  70% { box-shadow: 0 0 0 6px rgba(22, 163, 74, 0); }
-  100% { box-shadow: 0 0 0 0 rgba(22, 163, 74, 0); }
+  0% { box-shadow: 0 0 0 0 rgb(22 163 74 / 70%); }
+  70% { box-shadow: 0 0 0 6px rgb(22 163 74 / 0%); }
+  100% { box-shadow: 0 0 0 0 rgb(22 163 74 / 0%); }
 }
 
 .badge-pausa {
@@ -196,7 +196,7 @@
 
     &--abierto &__trigger {
       border-color: var(--color-primary-base);
-      box-shadow: 0 0 0 3px rgba(112, 28, 28, 0.12);
+      box-shadow: 0 0 0 3px rgb(112 28 28 / 12%);
     }
 
     .trigger-contenido {
@@ -304,7 +304,7 @@
 
       &--activo {
         background-color: var(--color-primary-light);
-        border-color: rgba(112, 28, 28, 0.2);
+        border-color: rgb(112 28 28 / 20%);
       }
     }
 
@@ -331,10 +331,12 @@
         background-color: var(--color-error-bg);
         color: var(--color-error-text);
       }
+
       &.p2 {
         background-color: var(--color-aviso-bg);
         color: var(--color-aviso-text);
       }
+
       &.p3, &.p4 {
         background-color: var(--color-surface-sunken);
         color: var(--color-text-secondary);
@@ -406,6 +408,7 @@
     opacity: 0;
     transform: translateY(-4px);
   }
+
   to {
     opacity: 1;
     transform: translateY(0);
@@ -482,6 +485,7 @@
   &--alerta {
     border-color: var(--color-aviso-border);
     background-color: var(--color-aviso-bg);
+
     .reloj-digitos--sla {
       color: var(--color-aviso-text);
     }
@@ -490,6 +494,7 @@
   &--vencido {
     border-color: var(--color-error-border);
     background-color: var(--color-error-bg);
+
     .reloj-digitos--sla {
       color: var(--color-error-text);
     }
@@ -568,6 +573,7 @@
 
 .btn-control-reloj {
   @include b.boton-base;
+
   min-height: var(--touch-min);
   padding: var(--espacio-2xs) 14px;
   border-radius: var(--radius-md);
@@ -591,12 +597,13 @@
     color: var(--color-aviso-text);
 
     &:hover {
-      background-color: #ffedd5;
+      background-color: var(--color-p2-bg);
     }
   }
 
   &.btn-control--resolver {
     @include b.boton-primario;
+
     margin-left: auto;
 
     @include r.hasta(sm) {
@@ -630,7 +637,7 @@
 
   h4 {
     color: var(--color-text-main);
-    margin: 0 0 6px 0;
+    margin: 0 0 6px;
     font-size: var(--font-size-base);
   }
 

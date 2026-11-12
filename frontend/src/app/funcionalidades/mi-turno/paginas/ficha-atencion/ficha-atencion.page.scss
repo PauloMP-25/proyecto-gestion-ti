@@ -121,8 +121,8 @@
   font-weight: 800;
 
   &--P1, &--P1_CRITICA { background: var(--color-error-bg); color: var(--color-error-text); border: 1px solid var(--color-error-border); }
-  &--P2, &--P2_ALTA { background: var(--color-aviso-bg); color: var(--color-aviso-text); border: 1px solid #ea580c; }
-  &--P3, &--P3_MEDIA { background: #fffbeb; color: #92400e; border: 1px solid var(--color-aviso-border); }
+  &--P2, &--P2_ALTA { background: var(--color-aviso-bg); color: var(--color-aviso-text); border: 1px solid var(--color-p2-border); }
+  &--P3, &--P3_MEDIA { background: var(--color-p3-bg); color: var(--color-p3-text); border: 1px solid var(--color-aviso-border); }
   &--P4, &--P4_BAJA { background: var(--color-surface-sunken); color: var(--color-text-secondary); border: 1px solid var(--color-border-subtle); }
 }
 
@@ -266,6 +266,7 @@
 .btn-consulta-equipo, .btn-consulta-soluciones {
   @include b.boton-base;
   @include b.boton-secundario;
+
   gap: 6px;
   padding: var(--espacio-2xs) var(--espacio-xs);
   min-height: var(--touch-min);
@@ -364,8 +365,8 @@
   }
 
   &--escalamiento &__icono {
-    background: #fdf2f8;
-    color: #9d174d;
+    background: var(--color-p4-bg);
+    color: var(--color-p4-text);
   }
 }
 
@@ -411,7 +412,7 @@
   background: var(--color-surface-card);
   padding: var(--espacio-xs) var(--espacio-md) calc(var(--espacio-xs) + env(safe-area-inset-bottom));
   border-top: 1px solid var(--color-border-subtle);
-  box-shadow: 0 -4px 12px rgba(0, 0, 0, 0.08);
+  box-shadow: 0 -4px 12px rgb(0 0 0 / 8%);
   z-index: 50;
 
   @include r.desde(md) {
@@ -467,6 +468,7 @@
 .btn-error-volver {
   @include b.boton-base;
   @include b.boton-primario;
+
   gap: var(--espacio-2xs);
   padding: 10px var(--espacio-lg);
   min-height: var(--touch-min);

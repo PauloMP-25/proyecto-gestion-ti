@@ -32,6 +32,7 @@
   &__btn-nuevo {
     @include b.boton-base;
     @include b.boton-primario;
+
     gap: var(--espacio-xs);
     min-height: var(--touch-min);
     padding: 0 var(--espacio-md);
@@ -72,7 +73,7 @@
 
     &.activo {
       background-color: var(--color-primary-base);
-      color: #ffffff;
+      color: var(--color-text-on-primary);
       border-color: var(--color-primary-base);
     }
 
@@ -277,6 +278,7 @@
   &__btn-pag {
     @include b.boton-base;
     @include b.boton-secundario;
+
     gap: var(--espacio-2xs);
     min-height: var(--touch-min);
     padding: 0 var(--espacio-md);
@@ -351,6 +353,7 @@
   &__btn-reintentar {
     @include b.boton-base;
     @include b.boton-exito;
+
     gap: var(--espacio-xs);
     min-height: var(--touch-min);
     padding: 0 var(--espacio-lg);
@@ -363,6 +366,7 @@
   0% {
     background-position: 200% 0;
   }
+
   100% {
     background-position: -200% 0;
   }

@@ -67,7 +67,7 @@
 .subtitulo-principal {
   font-size: var(--font-size-xs);
   color: var(--color-text-secondary);
-  margin: 2px 0 0 0;
+  margin: 2px 0 0;
 }
 
 /* ALERTA */
@@ -92,7 +92,7 @@
   grid-template-columns: repeat(auto-fit, minmax(420px, 1fr));
   gap: var(--espacio-lg);
 
-  @media (max-width: 900px) {
+  @media (width <= 900px) {
     grid-template-columns: 1fr;
   }
 }
@@ -191,7 +191,7 @@
   font-weight: 800;
   padding: 4px var(--espacio-2xs);
   border-radius: var(--radius-sm);
-  color: #ffffff;
+  color: var(--color-text-on-primary);
   white-space: nowrap;
 
   &.tag--p1-critica { background-color: var(--color-error-border); }

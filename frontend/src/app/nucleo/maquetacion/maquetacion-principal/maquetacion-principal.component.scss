@@ -22,8 +22,7 @@
   min-width: 0; // Previene overflow en Flexbox
   display: flex;
   flex-direction: column;
-  overflow-y: auto;
-  overflow-x: hidden;
+  overflow: hidden auto;
   height: calc(100vh - 64px);
   scroll-padding-top: var(--espacio-md);
 }

@@ -16,6 +16,7 @@
 
 .btn-accion {
   @include b.boton-base;
+
   min-height: 48px;
   padding: var(--espacio-xs) var(--espacio-md);
   border-radius: var(--radius-md);
@@ -29,7 +30,7 @@
 
   &--primaria {
     flex: 2;
-    color: #ffffff;
+    color: var(--color-text-on-primary);
     border: none;
     box-shadow: var(--shadow-sm);
 
@@ -66,11 +67,11 @@
   }
 
   &--escalar {
-    border-color: #9d174d;
-    color: #9d174d;
+    border-color: var(--color-p2-border);
+    color: var(--color-p2-text);
 
     &:hover:not(:disabled) {
-      background: #fdf2f8;
+      background: var(--color-p2-bg);
     }
   }
 
@@ -100,9 +101,9 @@
   }
 
   &--morado {
-    background: #fdf2f8;
-    color: #9d174d;
-    border: 1px solid #f472b6;
+    background: var(--color-p4-bg);
+    color: var(--color-p4-text);
+    border: 1px solid var(--color-p4-border);
   }
 
   &--azul {

@@ -91,6 +91,7 @@
   &__btn-volver {
     @include b.boton-base;
     @include b.boton-primario;
+
     min-height: var(--touch-min);
     padding: var(--espacio-2xs) var(--espacio-lg);
     text-decoration: none;
@@ -180,7 +181,7 @@
     height: 32px;
     border-radius: var(--radius-full);
     background-color: var(--color-primary-base);
-    color: #ffffff;
+    color: var(--color-text-on-primary);
     font-weight: 700;
     font-size: var(--font-size-base);
     display: flex;
@@ -231,6 +232,7 @@
 
   &__btn {
     @include b.boton-base;
+
     gap: var(--espacio-2xs);
     min-height: 48px;
     padding: var(--espacio-xs) var(--espacio-md);
@@ -239,6 +241,7 @@
 
     &--si {
       @include b.boton-exito;
+
       flex: 1;
     }
 

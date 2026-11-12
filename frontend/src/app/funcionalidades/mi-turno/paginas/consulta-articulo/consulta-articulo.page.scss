@@ -114,7 +114,7 @@
     color: var(--color-aviso-text);
 
     .bloque-seccion__titulo { color: var(--color-aviso-text); }
-    .bloque-seccion__texto { color: #78350f; }
+    .bloque-seccion__texto { color: var(--color-aviso-text); }
   }
 
   &--causa {
@@ -152,7 +152,7 @@
     height: 28px;
     border-radius: var(--radius-full);
     background: var(--color-primary-base);
-    color: #ffffff;
+    color: var(--color-text-on-primary);
     font-size: var(--font-size-xs);
     font-weight: 700;
     display: flex;
@@ -178,6 +178,7 @@
 .btn-usar-ticket {
   @include b.boton-base;
   @include b.boton-exito;
+
   gap: var(--espacio-2xs);
   width: 100%;
   min-height: 50px;
@@ -225,6 +226,7 @@
 .btn-error-volver {
   @include b.boton-base;
   @include b.boton-primario;
+
   padding: 10px var(--espacio-lg);
   min-height: var(--touch-min);
   border-radius: var(--radius-sm);

@@ -1,3 +1,5 @@
+@use 'estilos/mixins/responsive' as r;
+
 :host {
   display: block;
   width: 100%;
@@ -18,7 +20,7 @@
   &__icono-lupa {
     position: absolute;
     left: 14px;
-    color: var(--texto-secundario, #94a3b8);
+    color: var(--color-text-muted);
     pointer-events: none;
   }
 
@@ -26,22 +28,26 @@
     width: 100%;
     height: var(--touch-min, 44px);
     padding: 0 16px 0 42px;
-    background-color: var(--fondo-tarjeta, #ffffff);
-    border: 1px solid var(--borde-tarjeta, #cbd5e1);
+    background-color: var(--color-surface-card);
+    border: 1px solid var(--color-border-strong);
     border-radius: var(--radio-md, 8px);
     font-family: inherit;
-    font-size: 0.9rem;
-    color: var(--texto-principal, #0f172a);
+    font-size: var(--fuente-sm, 0.875rem);
+    color: var(--color-text-main);
     outline: none;
     transition: border-color 0.15s, box-shadow 0.15s;
 
     &:hover {
-      border-color: #94a3b8;
+      border-color: var(--color-border-strong);
     }
 
     &:focus {
-      border-color: var(--primario-guinda, #701c1c);
-      box-shadow: 0 0 0 3px rgba(112, 28, 28, 0.12);
+      border-color: var(--color-primary-base);
+      box-shadow: 0 0 0 3px var(--color-primary-focus-ring);
+    }
+
+    @include r.hasta(sm) {
+      padding-right: 14px;
     }
   }
 
@@ -56,16 +62,11 @@
     &::-webkit-scrollbar {
       height: 4px;
     }
+
     &::-webkit-scrollbar-thumb {
-      background: var(--borde-tarjeta, #cbd5e1);
+      background: var(--color-border-strong);
       border-radius: 4px;
     }
-  }
-}
-
-@media (max-width: 640px) {
-  .buscador-filtros__input {
-    padding-right: 14px;
   }
 }
 

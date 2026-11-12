@@ -108,9 +108,9 @@
   .spinner {
     width: 18px;
     height: 18px;
-    border: 2px solid rgb(255 255 255 / 0.3);
+    border: 2px solid rgb(255 255 255 / 30%);
     border-radius: 50%;
-    border-top-color: currentColor;
+    border-top-color: currentcolor;
     animation: rotar 0.8s linear infinite;
   }
 }

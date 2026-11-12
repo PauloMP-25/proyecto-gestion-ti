@@ -78,6 +78,7 @@
 
   &__btn {
     @include b.boton-base;
+
     min-height: 56px; // Cumple DoD: botones de 56px
     padding: var(--espacio-xs) var(--espacio-lg);
     font-size: var(--font-size-base);
@@ -86,6 +87,7 @@
 
     &--si {
       @include b.boton-exito;
+
       flex: 1;
     }
 
@@ -143,7 +145,7 @@
 
     &:focus {
       border-color: var(--color-focus);
-      box-shadow: 0 0 0 3px rgba(112, 28, 28, 0.12);
+      box-shadow: 0 0 0 3px rgb(112 28 28 / 12%);
     }
   }
 

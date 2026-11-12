@@ -11,7 +11,7 @@
   &__progreso {
     width: 100%;
     height: 4px;
-    background-color: var(--fondo-aplicacion, #e2e8f0);
+    background-color: var(--color-surface-sunken);
     border-radius: var(--radio-full, 9999px);
     overflow: hidden;
   }
@@ -22,15 +22,15 @@
     transition: width 0.3s ease;
 
     &.barra--ok {
-      background-color: var(--sla-ok-border, #1b5e20);
+      background-color: var(--sla-ok-border);
     }
 
     &.barra--alerta {
-      background-color: var(--sla-alerta-border, #d97706);
+      background-color: var(--sla-alerta-border);
     }
 
     &.barra--vencida {
-      background-color: var(--sla-venc-border, #dc2626);
+      background-color: var(--sla-venc-border);
     }
   }
 }

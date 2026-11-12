@@ -112,7 +112,7 @@
 
   &:hover {
     background: var(--color-primary-base);
-    color: #ffffff;
+    color: var(--color-text-on-primary);
   }
 
   @include a11y.foco-visible;
@@ -217,7 +217,7 @@
 
   &--activa &__conteo {
     background: var(--color-primary-base);
-    color: #ffffff;
+    color: var(--color-text-on-primary);
   }
 }
 
@@ -338,12 +338,12 @@
   &--P2, &--P2_ALTA {
     background: var(--color-aviso-bg);
     color: var(--color-aviso-text);
-    border: 1px solid #ea580c;
+    border: 1px solid var(--color-p2-border);
   }
 
   &--P3, &--P3_MEDIA {
-    background: #fffbeb;
-    color: #92400e;
+    background: var(--color-p3-bg);
+    color: var(--color-p3-text);
     border: 1px solid var(--color-aviso-border);
   }
 
@@ -369,9 +369,9 @@
   align-items: center;
   gap: 4px;
   padding: 5px 10px;
-  background: #fdf2f8;
-  color: #9d174d;
-  border: 1px solid #f472b6;
+  background: var(--color-p4-bg);
+  color: var(--color-p4-text);
+  border: 1px solid var(--color-p4-border);
   border-radius: var(--radius-sm);
   font-size: var(--font-size-xs);
   font-weight: 700;
@@ -398,9 +398,9 @@
 
   &--nuevo { background: var(--color-info-bg); color: var(--color-info-text); }
   &--asignado { background: var(--color-aviso-bg); color: var(--color-aviso-text); }
-  &--proceso { background: #ecfdf5; color: #047857; }
+  &--proceso { background: var(--color-exito-bg); color: var(--color-exito-text); }
   &--resuelto { background: var(--color-exito-bg); color: var(--color-exito-text); }
-  &--escalado { background: #fae8ff; color: #86198f; }
+  &--escalado { background: var(--color-p4-bg); color: var(--color-p4-text); }
 }
 
 /* VISTA MÓVIL (< 1024px) */
@@ -489,11 +489,12 @@
 
 .btn-accion-primaria {
   @include b.boton-base;
+
   width: 100%;
   min-height: 48px;
   padding: var(--espacio-xs) var(--espacio-lg);
   background: var(--color-primary-base);
-  color: #ffffff;
+  color: var(--color-text-on-primary);
   border: none;
   border-radius: var(--radius-md);
   font-size: var(--font-size-sm);
@@ -622,10 +623,11 @@
 
 .btn-accion-tabla {
   @include b.boton-base;
+
   padding: var(--espacio-2xs) 14px;
   min-height: var(--touch-min);
   background: var(--color-primary-base);
-  color: #ffffff;
+  color: var(--color-text-on-primary);
   border-radius: var(--radius-sm);
   font-size: var(--font-size-xs);
   font-weight: 700;
@@ -647,6 +649,7 @@
 .btn-ver-detalle {
   @include b.boton-base;
   @include b.boton-secundario;
+
   padding: var(--espacio-2xs) 14px;
   min-height: var(--touch-min);
   border-radius: var(--radius-sm);
@@ -694,6 +697,7 @@
 .btn-reintentar, .btn-ir-por-tomar {
   @include b.boton-base;
   @include b.boton-primario;
+
   gap: var(--espacio-2xs);
   padding: 10px var(--espacio-lg);
   min-height: var(--touch-min);

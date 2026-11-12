@@ -20,8 +20,8 @@ import { ContextoEquipoComponent } from '../../../../compartido/ui/moleculas/con
 import { IncidenteLineaTiempoComponent } from '../../componentes/incidente-linea-tiempo/incidente-linea-tiempo.component';
 import { DialogoAsignarComponent, ResultadoAsignar } from '../../componentes/dialogo-asignar/dialogo-asignar.component';
 import { DialogoCambiarEstadoComponent } from '../../componentes/dialogo-cambiar-estado/dialogo-cambiar-estado.component';
-import { DialogoEscalarTicketComponent } from '../../../../compartido/componentes/dialogo-escalar-ticket/dialogo-escalar-ticket.component';
-import { DialogoResolverTicketComponent } from '../../../../compartido/componentes/dialogo-resolver-ticket/dialogo-resolver-ticket.component';
+import { DialogoEscalarTicketComponent } from '../../../../compartido/ui/organismos/dialogo-escalar-ticket/dialogo-escalar-ticket.component';
+import { DialogoResolverTicketComponent } from '../../../../compartido/ui/organismos/dialogo-resolver-ticket/dialogo-resolver-ticket.component';
 
 type TipoDialogo = 'asignar' | 'iniciar' | 'cerrar' | 'reabrir' | 'escalar' | 'resolver';
 

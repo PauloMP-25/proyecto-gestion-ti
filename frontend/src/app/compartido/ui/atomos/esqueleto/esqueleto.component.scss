@@ -6,9 +6,9 @@
 .esqueleto, .sk {
   background: linear-gradient(
     90deg,
-    rgb(226 232 240 / 0.6) 0%,
-    rgb(241 245 249 / 0.9) 50%,
-    rgb(226 232 240 / 0.6) 100%
+    rgb(226 232 240 / 60%) 0%,
+    rgb(241 245 249 / 90%) 50%,
+    rgb(226 232 240 / 60%) 100%
   );
   background-size: 200% 100%;
   animation: esqueleto-shimmer 1.5s infinite;

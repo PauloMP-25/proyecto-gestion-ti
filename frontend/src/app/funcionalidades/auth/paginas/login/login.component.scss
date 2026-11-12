@@ -57,7 +57,7 @@
     }
   }
 
-  @media (max-width: 480px) {
+  @media (width <= 480px) {
     .nav-left {
       gap: var(--espacio-2xs);
 
@@ -83,7 +83,7 @@
     padding: var(--espacio-md);
   }
 
-  @media (max-width: 480px) {
+  @media (width <= 480px) {
     padding: var(--espacio-2xs);
   }
 }
@@ -130,7 +130,7 @@
       content: '';
       position: absolute;
       inset: 0;
-      background: linear-gradient(180deg, rgba(11, 28, 48, 0.1) 0%, rgba(11, 28, 48, 0.45) 100%);
+      background: linear-gradient(180deg, rgb(11 28 48 / 10%) 0%, rgb(11 28 48 / 45%) 100%);
       pointer-events: none;
     }
   }
@@ -204,8 +204,8 @@
             &:-webkit-autofill:hover, 
             &:-webkit-autofill:focus, 
             &:-webkit-autofill:active {
-              -webkit-box-shadow: 0 0 0 1000px #ffffff inset !important;
-              -webkit-text-fill-color: #0f172a !important;
+              box-shadow: 0 0 0 1000px var(--color-surface-card) inset !important;
+              -webkit-text-fill-color: var(--color-text-main) !important;
               transition: background-color 5000s ease-in-out 0s;
             }
 
@@ -215,7 +215,8 @@
 
             &:focus {
               border-color: var(--color-primary-base);
-              box-shadow: 0 0 0 3px rgba(112, 28, 28, 0.15);
+              box-shadow: 0 0 0 3px rgb(112 28 28 / 15%);
+
               + .input-prefix-icon {
                 color: var(--color-primary-base);
               }
@@ -272,6 +273,7 @@
       .btn-primary {
         @include b.boton-base;
         @include b.boton-primario;
+
         width: 100%;
         min-height: var(--touch-min);
         font-weight: 600;
@@ -309,7 +311,7 @@
     }
   }
 
-  @media (max-width: 480px) {
+  @media (width <= 480px) {
     border-radius: var(--radius-md);
 
     .image-side {

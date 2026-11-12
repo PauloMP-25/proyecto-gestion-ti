@@ -105,6 +105,7 @@
 
   &__btn {
     @include b.boton-base;
+
     padding: 0 var(--espacio-md);
     min-height: var(--touch-min);
 
@@ -114,6 +115,7 @@
 
     &--posponer {
       @include b.boton-fantasma;
+
       color: var(--color-text-muted);
 
       &:hover:not(:disabled) {

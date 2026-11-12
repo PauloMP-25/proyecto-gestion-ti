@@ -14,7 +14,7 @@ $bp: (
 }
 
 @mixin hasta($nombre) {
-  @media (max-width: calc(#{map.get($bp, $nombre)} - 0.02px)) {
+  @media (width <= calc(#{map.get($bp, $nombre)} - 0.02px)) {
     @content;
   }
 }

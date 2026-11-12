@@ -34,7 +34,7 @@
   &__subtitulo {
     font-size: var(--font-size-xs);
     color: var(--color-text-secondary);
-    margin: 2px 0 0 0;
+    margin: 2px 0 0;
   }
 }
 
@@ -114,7 +114,7 @@
   &__descripcion {
     font-size: var(--font-size-xs);
     color: var(--color-text-secondary);
-    margin: 2px 0 0 0;
+    margin: 2px 0 0;
     line-height: var(--line-height-tight);
   }
 
@@ -147,7 +147,8 @@
 
   /* Variantes de color */
   &--ok {
-    border-color: #bbf7d0;
+    border-color: var(--color-secondary-light);
+
     .item-sla__icono {
       background-color: var(--color-secondary-light);
       color: var(--color-secondary-base);
@@ -155,7 +156,8 @@
   }
 
   &--alerta {
-    border-color: #fde68a;
+    border-color: var(--color-aviso-border);
+
     .item-sla__icono {
       background-color: var(--color-aviso-bg);
       color: var(--color-aviso-text);
@@ -163,7 +165,8 @@
   }
 
   &--vencido {
-    border-color: #fecaca;
+    border-color: var(--color-error-border);
+
     .item-sla__icono {
       background-color: var(--color-error-bg);
       color: var(--color-error-text);

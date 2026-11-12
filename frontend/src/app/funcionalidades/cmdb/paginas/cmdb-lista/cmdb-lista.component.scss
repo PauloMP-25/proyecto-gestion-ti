@@ -64,6 +64,7 @@
   .btn-nuevo-activo {
     @include b.boton-base;
     @include b.boton-primario;
+
     gap: var(--espacio-2xs);
     min-height: var(--touch-min);
     padding: 10px var(--espacio-lg);
@@ -150,7 +151,7 @@
     grid-template-columns: repeat(2, 1fr);
   }
 
-  @media (max-width: 480px) {
+  @media (width <= 480px) {
     grid-template-columns: 1fr;
   }
 }
@@ -234,7 +235,7 @@
 
     &:focus {
       border-color: var(--color-primary-base);
-      box-shadow: 0 0 0 3px rgba(112, 28, 28, 0.12);
+      box-shadow: 0 0 0 3px rgb(112 28 28 / 12%);
     }
   }
 }
@@ -588,7 +589,7 @@
     border-radius: var(--radius-md);
     padding: 10px var(--espacio-xs);
 
-    @media (max-width: 480px) {
+    @media (width <= 480px) {
       grid-template-columns: 1fr;
     }
 
@@ -625,6 +626,7 @@
     .btn-movil-accion {
       @include b.boton-base;
       @include b.boton-secundario;
+
       flex: 1;
       min-height: var(--touch-min);
       gap: 6px;
@@ -642,7 +644,9 @@
 }
 
 /* ======================================================== */
+
 /* SECCIÓN MATRIZ DE TRAZABILIDAD Y SUBREDES IP             */
+
 /* ======================================================== */
 .seccion-matriz-ip {
   display: flex;
@@ -679,7 +683,7 @@
     grid-template-columns: repeat(2, 1fr);
   }
 
-  @media (max-width: 480px) {
+  @media (width <= 480px) {
     grid-template-columns: 1fr;
   }
 }
@@ -852,10 +856,12 @@
       background: var(--color-exito-bg);
       border-color: var(--color-secondary-light);
     }
+
     &.muestra--ocupada {
       background: var(--color-info-bg);
       border-color: var(--color-info-border);
     }
+
     &.muestra--reservada {
       background: var(--color-aviso-bg);
       border-color: var(--color-aviso-border);
@@ -930,14 +936,14 @@
     color: var(--color-aviso-text);
 
     &:hover {
-      background: #fef3c7;
+      background: var(--color-p3-bg);
     }
   }
 
   &--seleccionado {
     outline: 2px solid var(--color-primary-base);
     outline-offset: 2px;
-    box-shadow: 0 0 0 4px rgba(112, 28, 28, 0.15);
+    box-shadow: 0 0 0 4px rgb(112 28 28 / 15%);
   }
 }
 
@@ -1025,7 +1031,7 @@
       grid-template-columns: repeat(2, 1fr);
     }
 
-    @media (max-width: 480px) {
+    @media (width <= 480px) {
       grid-template-columns: 1fr;
     }
 
@@ -1061,6 +1067,7 @@
     .btn-copiar-ip-rapido {
       @include b.boton-base;
       @include b.boton-secundario;
+
       gap: 6px;
       padding: 6px var(--espacio-xs);
       border-radius: var(--radius-sm);
@@ -1095,6 +1102,7 @@
     opacity: 0;
     transform: translateY(-6px);
   }
+
   to {
     opacity: 1;
     transform: translateY(0);

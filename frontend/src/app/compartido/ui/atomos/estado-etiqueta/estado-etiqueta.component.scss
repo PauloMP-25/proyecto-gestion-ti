@@ -18,31 +18,31 @@
     width: 6px;
     height: 6px;
     border-radius: 50%;
-    background-color: currentColor;
+    background-color: currentcolor;
   }
 
   &.estado--nuevo {
-    background-color: #f3e8ff;
-    color: #6b21a8;
-    border-color: #d8b4fe;
+    background-color: var(--color-p4-bg);
+    color: var(--color-p4-text);
+    border-color: var(--color-p4-border);
   }
 
   &.estado--asignado {
-    background-color: #e0f2fe;
-    color: #0369a1;
-    border-color: #7dd3fc;
+    background-color: var(--color-info-bg);
+    color: var(--color-info-text);
+    border-color: var(--color-info-border);
   }
 
   &.estado--en-proceso {
-    background-color: var(--sla-alerta-bg, #fef3c7);
-    color: var(--sla-alerta-text, #78350f);
-    border-color: var(--sla-alerta-border, #d97706);
+    background-color: var(--sla-alerta-bg);
+    color: var(--sla-alerta-text);
+    border-color: var(--sla-alerta-border);
   }
 
   &.estado--resuelto {
-    background-color: var(--sla-ok-bg, #e8f5e9);
-    color: var(--sla-ok-text, #113e14);
-    border-color: var(--sla-ok-border, #1b5e20);
+    background-color: var(--sla-ok-bg);
+    color: var(--sla-ok-text);
+    border-color: var(--sla-ok-border);
   }
 
   &.estado--escalado {
@@ -58,13 +58,13 @@
   }
 
   &.estado--cerrado {
-    background-color: var(--fondo-aplicacion, #f1f5f9);
-    color: var(--texto-secundario, #475569);
-    border-color: var(--borde-tarjeta, #cbd5e1);
+    background-color: var(--color-surface-sunken);
+    color: var(--color-text-muted);
+    border-color: var(--color-border-subtle);
   }
 
   &.estado--default {
-    background-color: var(--fondo-aplicacion, #f1f5f9);
-    color: var(--texto-secundario, #475569);
+    background-color: var(--color-surface-sunken);
+    color: var(--color-text-muted);
   }
 }

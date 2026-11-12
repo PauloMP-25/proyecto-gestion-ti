@@ -112,6 +112,7 @@
 .btn-refrescar {
   @include b.boton-base;
   @include b.boton-secundario;
+
   gap: 6px;
   min-height: var(--touch-min);
   padding: 0 var(--espacio-xs);
@@ -135,6 +136,7 @@
     opacity: 0;
     transform: translateY(3px);
   }
+
   to {
     opacity: 1;
     transform: translateY(0);

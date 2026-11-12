@@ -8,7 +8,7 @@ import {
 import { CommonModule } from '@angular/common';
 import { ActivatedRoute, RouterModule } from '@angular/router';
 import { IconoComponent } from '../../../../compartido/ui/atomos/icono/icono.component';
-import { LineaTiempoEtapasComponent } from '../../../../compartido/componentes/linea-tiempo-etapas/linea-tiempo-etapas.component';
+import { LineaTiempoEtapasComponent } from '../../../../compartido/ui/organismos/linea-tiempo-etapas/linea-tiempo-etapas.component';
 import { TarjetaConfirmacionSolucionComponent } from '../../componentes/tarjeta-confirmacion-solucion/tarjeta-confirmacion-solucion.component';
 import { TarjetaCalificacionComponent } from '../../componentes/tarjeta-calificacion/tarjeta-calificacion.component';
 import { PortalSolicitudesApi } from '../../servicios/portal-solicitudes.api';

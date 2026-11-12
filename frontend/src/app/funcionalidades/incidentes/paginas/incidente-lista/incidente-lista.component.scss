@@ -69,7 +69,7 @@
   border-radius: var(--radius-md);
   overflow: hidden;
 
-  @media (min-width: 1024px) {
+  @media (width >= 1024px) {
     display: block;
   }
 }
@@ -145,11 +145,11 @@
   grid-template-columns: 1fr;
   gap: var(--espacio-3);
 
-  @media (min-width: 640px) and (max-width: 1023px) {
+  @media (width >= 640px) and (width <= 1023px) {
     grid-template-columns: repeat(2, 1fr);
   }
 
-  @media (min-width: 1024px) {
+  @media (width >= 1024px) {
     display: none;
   }
 }

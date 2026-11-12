@@ -250,6 +250,7 @@
 .btn-reintentar {
   @include b.boton-base;
   @include b.boton-primario;
+
   gap: var(--espacio-2xs);
   padding: 10px var(--espacio-lg);
   min-height: var(--touch-min);

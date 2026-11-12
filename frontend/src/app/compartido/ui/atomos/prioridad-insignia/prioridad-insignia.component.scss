@@ -21,26 +21,26 @@
   }
 
   &.prioridad--p1 {
-    background-color: var(--sla-venc-bg, #fee2e2);
-    color: var(--sla-venc-text, #7f1d1d);
-    border-color: var(--sla-venc-border, #dc2626);
+    background-color: var(--color-p1-bg);
+    color: var(--color-p1-text);
+    border-color: var(--color-p1-border);
   }
 
   &.prioridad--p2 {
-    background-color: var(--sla-alerta-bg, #fef3c7);
-    color: var(--sla-alerta-text, #78350f);
-    border-color: var(--sla-alerta-border, #d97706);
+    background-color: var(--color-p2-bg);
+    color: var(--color-p2-text);
+    border-color: var(--color-p2-border);
   }
 
   &.prioridad--p3 {
-    background-color: #eff6ff;
-    color: #1e40af;
-    border-color: #93c5fd;
+    background-color: var(--color-p3-bg);
+    color: var(--color-p3-text);
+    border-color: var(--color-p3-border);
   }
 
   &.prioridad--p4 {
-    background-color: var(--fondo-aplicacion, #f1f5f9);
-    color: var(--texto-secundario, #475569);
-    border-color: var(--borde-tarjeta, #cbd5e1);
+    background-color: var(--color-p4-bg);
+    color: var(--color-p4-text);
+    border-color: var(--color-p4-border);
   }
 }

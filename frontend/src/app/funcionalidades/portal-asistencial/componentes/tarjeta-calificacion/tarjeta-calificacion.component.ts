@@ -10,7 +10,7 @@ import {
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { IconoComponent } from '../../../../compartido/ui/atomos/icono/icono.component';
-import { CalificacionEstrellasComponent } from '../../../../compartido/componentes/calificacion-estrellas/calificacion-estrellas.component';
+import { CalificacionEstrellasComponent } from '../../../../compartido/ui/moleculas/calificacion-estrellas/calificacion-estrellas.component';
 import { PortalSolicitudesApi } from '../../servicios/portal-solicitudes.api';
 import { CalificacionAtencion } from '../../modelos/solicitud.model';
 

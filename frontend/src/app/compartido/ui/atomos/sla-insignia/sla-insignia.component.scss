@@ -15,20 +15,20 @@
   border: 1px solid transparent;
 
   &.sla--a-tiempo {
-    background-color: var(--sla-ok-bg, #e8f5e9);
-    color: var(--sla-ok-text, #113e14);
-    border-color: var(--sla-ok-border, #1b5e20);
+    background-color: var(--sla-ok-bg);
+    color: var(--sla-ok-text);
+    border-color: var(--sla-ok-border);
   }
 
   &.sla--alerta {
-    background-color: var(--sla-alerta-bg, #fef3c7);
-    color: var(--sla-alerta-text, #78350f);
-    border-color: var(--sla-alerta-border, #d97706);
+    background-color: var(--sla-alerta-bg);
+    color: var(--sla-alerta-text);
+    border-color: var(--sla-alerta-border);
   }
 
   &.sla--incumplido {
-    background-color: var(--sla-venc-bg, #fee2e2);
-    color: var(--sla-venc-text, #7f1d1d);
-    border-color: var(--sla-venc-border, #dc2626);
+    background-color: var(--sla-venc-bg);
+    color: var(--sla-venc-text);
+    border-color: var(--sla-venc-border);
   }
 }
