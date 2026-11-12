@@ -1,48 +1,48 @@
+@use 'estilos/mixins/a11y' as a11y;
+@use 'estilos/mixins/superficie' as s;
+
 .accesos-ayuda {
   &__cuadricula {
     display: grid;
     grid-template-columns: repeat(auto-fill, minmax(240px, 1fr));
-    gap: 12px;
+    gap: var(--espacio-sm);
   }
 
   &__tarjeta {
     position: relative;
     display: flex;
     align-items: flex-start;
-    gap: 12px;
-    padding: 14px 16px;
-    background: var(--surface-card, #ffffff);
-    border: 1px solid var(--border-subtle, #e2e8f0);
-    border-radius: var(--radius-md, 8px);
+    gap: var(--espacio-sm);
+    padding: 14px var(--espacio-md);
+    background: var(--color-surface-card);
+    border: var(--tarjeta-borde);
+    border-radius: var(--tarjeta-radio);
     text-decoration: none;
-    color: var(--text-main, #0f172a);
-    box-shadow: 0 1px 2px rgba(0, 0, 0, 0.05);
-    transition: transform 0.15s ease, box-shadow 0.15s ease, border-color 0.15s ease;
+    color: var(--color-text-main);
+    box-shadow: var(--shadow-sm);
+    transition: transform var(--transition-fast), box-shadow var(--transition-fast), border-color var(--transition-fast);
 
     &:hover {
       transform: translateY(-2px);
-      box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.08);
-      border-color: #cbd5e1;
+      box-shadow: var(--shadow-md);
+      border-color: var(--color-border-focus);
     }
 
-    &:focus-visible {
-      outline: 3px solid var(--hsmsi-verde-salud, #1b5e20);
-      outline-offset: 2px;
-    }
+    @include a11y.foco-visible;
 
     &--todas {
-      background-color: #f8fafc;
+      background-color: var(--color-surface-sunken);
       border-style: dashed;
     }
   }
 
   &__icono {
-    color: var(--hsmsi-guinda, #701c1c);
+    color: var(--color-primary-base);
     flex-shrink: 0;
     margin-top: 2px;
 
     &--mas {
-      color: var(--hsmsi-verde-salud, #1b5e20);
+      color: var(--color-secondary-base);
     }
   }
 
@@ -52,18 +52,18 @@
   }
 
   &__titulo {
-    font-size: 0.875rem;
+    font-size: var(--font-size-sm);
     font-weight: 600;
-    margin: 0 0 4px;
-    color: var(--text-main, #0f172a);
-    line-height: 1.3;
+    margin: 0 0 var(--espacio-2xs);
+    color: var(--color-text-main);
+    line-height: var(--line-height-tight);
   }
 
   &__sintoma {
-    font-size: 0.75rem;
-    color: var(--text-muted, #64748b);
+    font-size: var(--font-size-xs);
+    color: var(--color-text-secondary);
     margin: 0;
-    line-height: 1.4;
+    line-height: var(--line-height-normal);
     display: -webkit-box;
     -webkit-line-clamp: 2;
     -webkit-box-orient: vertical;
@@ -71,7 +71,7 @@
   }
 
   &__flecha {
-    color: var(--text-muted, #94a3b8);
+    color: var(--color-text-muted);
     flex-shrink: 0;
     align-self: center;
   }

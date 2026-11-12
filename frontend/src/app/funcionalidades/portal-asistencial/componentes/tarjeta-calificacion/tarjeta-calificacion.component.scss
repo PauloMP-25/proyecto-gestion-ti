@@ -1,17 +1,21 @@
+@use 'estilos/mixins/boton' as b;
+@use 'estilos/mixins/responsive' as r;
+@use 'estilos/mixins/a11y' as a11y;
+
 .tarjeta-calificacion {
-  background-color: #ffffff;
-  border: 1px solid #e2e8f0;
-  border-left: 6px solid #f59e0b; // Ámbar / dorado cálido
-  border-radius: 12px;
-  padding: 1.25rem;
-  margin-bottom: 1.5rem;
-  box-shadow: 0 4px 12px rgba(245, 158, 11, 0.08);
+  background-color: var(--color-surface-card);
+  border: var(--tarjeta-borde);
+  border-left: 6px solid var(--color-aviso-border);
+  border-radius: var(--tarjeta-radio);
+  padding: var(--espacio-lg);
+  margin-bottom: var(--espacio-lg);
+  box-shadow: var(--shadow-card);
 
   &__cabecera {
     display: flex;
-    gap: 1rem;
+    gap: var(--espacio-md);
     align-items: flex-start;
-    margin-bottom: 1rem;
+    margin-bottom: var(--espacio-md);
   }
 
   &__icono-wrap {
@@ -19,8 +23,8 @@
     width: 44px;
     height: 44px;
     border-radius: 50%;
-    background-color: #fef3c7;
-    color: #b45309;
+    background-color: var(--color-aviso-bg);
+    color: var(--color-aviso-text);
     display: flex;
     align-items: center;
     justify-content: center;
@@ -31,107 +35,90 @@
   }
 
   &__titulo {
-    font-size: 1.15rem;
+    font-size: var(--font-size-lg);
     font-weight: 700;
-    color: #0f172a;
-    margin: 0 0 0.25rem 0;
+    color: var(--color-text-main);
+    margin: 0 0 var(--espacio-2xs) 0;
   }
 
   &__bajada {
-    font-size: 0.9rem;
-    color: #64748b;
+    font-size: var(--font-size-sm);
+    color: var(--color-text-muted);
     margin: 0;
     line-height: 1.4;
   }
 
   &__estrellas-contenedor {
-    padding: 0.75rem 0;
-    margin-bottom: 0.75rem;
+    padding: var(--espacio-xs) 0;
+    margin-bottom: var(--espacio-xs);
   }
 
   &__comentario-bloque {
-    margin-bottom: 1rem;
+    margin-bottom: var(--espacio-md);
   }
 
   &__label {
     display: block;
-    font-size: 0.875rem;
+    font-size: var(--font-size-sm);
     font-weight: 600;
-    color: #334155;
-    margin-bottom: 0.35rem;
+    color: var(--color-text-secondary);
+    margin-bottom: var(--espacio-2xs);
   }
 
   &__textarea {
     width: 100%;
     box-sizing: border-box;
-    padding: 0.65rem;
-    font-size: 0.9rem;
+    padding: var(--espacio-sm);
+    font-size: var(--font-size-sm);
     font-family: inherit;
-    border: 1px solid #cbd5e1;
-    border-radius: 6px;
+    background-color: var(--color-surface-card);
+    color: var(--color-text-main);
+    border: 1px solid var(--color-border-strong);
+    border-radius: var(--radius-sm);
     resize: vertical;
     outline: none;
-    transition: border-color 0.2s;
+    transition: border-color var(--transition-fast), box-shadow var(--transition-fast);
 
     &:focus {
-      border-color: #701c1c;
-      box-shadow: 0 0 0 3px rgba(112, 28, 28, 0.12);
+      border-color: var(--color-primary-base);
+      box-shadow: 0 0 0 3px var(--color-primary-focus-ring);
     }
   }
 
   &__contador {
     text-align: right;
-    font-size: 0.775rem;
-    color: #94a3b8;
-    margin-top: 0.25rem;
+    font-size: var(--font-size-xs);
+    color: var(--color-text-disabled);
+    margin-top: var(--espacio-2xs);
   }
 
   &__acciones {
     display: flex;
     flex-direction: column;
-    gap: 0.625rem;
+    gap: var(--espacio-sm);
 
-    @media (min-width: 480px) {
+    @include r.desde(sm) {
       flex-direction: row;
       align-items: center;
     }
   }
 
   &__btn {
-    display: inline-flex;
-    align-items: center;
-    justify-content: center;
-    gap: 0.5rem;
-    min-height: 44px; // Accesibilidad táctil >= 44px
-    padding: 0.625rem 1.25rem;
-    font-size: 0.95rem;
-    font-weight: 600;
-    border-radius: 8px;
-    cursor: pointer;
-    transition: all 0.2s ease;
-    border: 1px solid transparent;
-
-    &:disabled {
-      opacity: 0.55;
-      cursor: not-allowed;
-    }
+    @include b.boton-base;
+    padding: 0 var(--espacio-md);
+    min-height: var(--touch-min);
 
     &--enviar {
-      background-color: #166534;
-      color: #ffffff;
-
-      &:hover:not(:disabled) {
-        background-color: #14532d;
-      }
+      @include b.boton-exito;
     }
 
     &--posponer {
-      background-color: transparent;
-      color: #64748b;
+      @include b.boton-fantasma;
+      color: var(--color-text-muted);
 
       &:hover:not(:disabled) {
-        color: #0f172a;
-        background-color: #f1f5f9;
+        color: var(--color-text-main);
+        background-color: var(--color-surface-hover);
       }
     }
   }
@@ -139,14 +126,14 @@
   &__error {
     display: flex;
     align-items: center;
-    gap: 0.5rem;
-    background-color: #fef2f2;
-    border: 1px solid #fecaca;
-    color: #991b1b;
-    border-radius: 6px;
-    padding: 0.5rem 0.75rem;
-    margin-bottom: 0.75rem;
-    font-size: 0.85rem;
+    gap: var(--espacio-xs);
+    background-color: var(--color-error-bg);
+    border: 1px solid var(--color-error-border);
+    color: var(--color-error-text);
+    border-radius: var(--radius-sm);
+    padding: var(--espacio-xs) var(--espacio-sm);
+    margin-bottom: var(--espacio-sm);
+    font-size: var(--font-size-xs);
 
     p {
       margin: 0;
@@ -156,18 +143,19 @@
   &__exito {
     display: flex;
     align-items: center;
-    gap: 1rem;
-    background-color: #f0fdf4;
-    border-radius: 8px;
-    padding: 1rem;
+    gap: var(--espacio-md);
+    background-color: var(--color-exito-bg);
+    border: 1px solid var(--color-exito-border);
+    border-radius: var(--radius-md);
+    padding: var(--espacio-md);
   }
 
   &__icono-exito {
     width: 48px;
     height: 48px;
     border-radius: 50%;
-    background-color: #dcfce7;
-    color: #166534;
+    background-color: var(--color-secondary-light);
+    color: var(--color-secondary-base);
     display: flex;
     align-items: center;
     justify-content: center;
@@ -179,15 +167,15 @@
   }
 
   &__exito-titulo {
-    font-size: 1.1rem;
+    font-size: var(--font-size-base);
     font-weight: 700;
-    color: #166534;
-    margin: 0 0 0.25rem 0;
+    color: var(--color-secondary-base);
+    margin: 0 0 var(--espacio-2xs) 0;
   }
 
   &__exito-bajada {
-    font-size: 0.9rem;
-    color: #1e293b;
+    font-size: var(--font-size-sm);
+    color: var(--color-text-secondary);
     margin: 0;
   }
 }

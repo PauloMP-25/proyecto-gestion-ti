@@ -1,92 +1,97 @@
+@use 'estilos/mixins/superficie' as s;
+@use 'estilos/mixins/a11y' as a11y;
+
 .tarjeta-solicitud {
   position: relative;
-  background: var(--surface-card, #ffffff);
-  border: 1px solid var(--border-subtle, #e2e8f0);
-  border-left: 6px solid var(--borde-etapa, #64748b);
-  border-radius: var(--radius-md, 8px);
-  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05);
+  background: var(--color-surface-card);
+  border: var(--tarjeta-borde);
+  border-left: 6px solid var(--borde-etapa, var(--color-text-muted));
+  border-radius: var(--tarjeta-radio);
+  box-shadow: var(--shadow-card);
   padding: 14px 18px;
   display: flex;
   flex-direction: column;
-  gap: 8px;
-  transition: transform 0.15s ease, box-shadow 0.15s ease;
+  gap: var(--espacio-xs);
+  transition: transform var(--transition-fast), box-shadow var(--transition-fast);
 
   &:hover {
     transform: translateY(-2px);
-    box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+    box-shadow: var(--shadow-md);
   }
 
   &[data-etapa='REGISTRADO'] {
-    --borde-etapa: #64748b;
+    --borde-etapa: var(--color-text-muted);
   }
 
   &[data-etapa='EN_ATENCION'] {
-    --borde-etapa: #0284c7;
+    --borde-etapa: var(--color-info-border);
   }
 
   &[data-etapa='RESUELTO'] {
-    --borde-etapa: #f59e0b;
+    --borde-etapa: var(--color-aviso-border);
   }
 
   &[data-etapa='CERRADO'] {
-    --borde-etapa: var(--hsmsi-verde-salud, #1b5e20);
+    --borde-etapa: var(--color-secondary-base);
   }
 
   &.requiere-confirmacion {
-    background-color: #fffefb;
-    border-color: #fde68a;
+    background-color: var(--color-aviso-bg);
+    border-color: var(--color-aviso-border);
   }
 
   &__cabecera {
     display: flex;
     align-items: center;
     justify-content: space-between;
-    gap: 12px;
+    gap: var(--espacio-sm);
   }
 
   &__codigo {
-    font-size: 0.8125rem;
+    font-size: var(--font-size-xs);
     font-weight: 700;
-    color: var(--text-muted, #64748b);
+    color: var(--color-text-muted);
     letter-spacing: 0.02em;
+    font-family: var(--font-family-mono);
+    font-variant-numeric: tabular-nums;
   }
 
   &__etiqueta {
     display: inline-flex;
     align-items: center;
-    gap: 4px;
-    font-size: 0.75rem;
+    gap: var(--espacio-2xs);
+    font-size: var(--font-size-xs);
     font-weight: 600;
-    padding: 3px 8px;
-    border-radius: 12px;
+    padding: 3px var(--espacio-2);
+    border-radius: var(--radius-full);
 
     &[data-etapa='REGISTRADO'] {
-      background-color: #f1f5f9;
-      color: #475569;
+      background-color: var(--color-surface-sunken);
+      color: var(--color-text-secondary);
     }
 
     &[data-etapa='EN_ATENCION'] {
-      background-color: #e0f2fe;
-      color: #0369a1;
+      background-color: var(--color-info-bg);
+      color: var(--color-info-text);
     }
 
     &[data-etapa='RESUELTO'] {
-      background-color: #fef3c7;
-      color: #92400e;
+      background-color: var(--color-aviso-bg);
+      color: var(--color-aviso-text);
     }
 
     &[data-etapa='CERRADO'] {
-      background-color: #dcfce7;
-      color: #166534;
+      background-color: var(--color-exito-bg);
+      color: var(--color-exito-text);
     }
   }
 
   &__titulo {
-    font-size: 0.9375rem;
+    font-size: var(--font-size-base);
     font-weight: 600;
     margin: 0;
     line-height: 1.4;
-    color: var(--text-main, #0f172a);
+    color: var(--color-text-main);
   }
 
   &__enlace {
@@ -100,39 +105,35 @@
       border-radius: inherit;
     }
 
-    &:focus-visible {
-      outline: 3px solid var(--hsmsi-verde-salud, #1b5e20);
-      outline-offset: 2px;
-      border-radius: 4px;
-    }
+    @include a11y.foco-visible;
   }
 
   &__pie {
     display: flex;
     align-items: center;
     justify-content: space-between;
-    font-size: 0.8125rem;
-    color: var(--text-muted, #64748b);
-    margin-top: 4px;
-    gap: 8px;
+    font-size: var(--font-size-xs);
+    color: var(--color-text-muted);
+    margin-top: var(--espacio-2xs);
+    gap: var(--espacio-2);
   }
 
   &__area {
     display: flex;
     align-items: center;
-    gap: 4px;
+    gap: var(--espacio-2xs);
   }
 
   &__banner-accion {
     display: flex;
     align-items: center;
-    gap: 6px;
-    background-color: #fef3c7;
-    color: #92400e;
-    font-size: 0.75rem;
+    gap: var(--espacio-2xs);
+    background-color: var(--color-aviso-bg);
+    color: var(--color-aviso-text);
+    font-size: var(--font-size-xs);
     font-weight: 600;
-    padding: 6px 10px;
-    border-radius: 6px;
-    margin-top: 4px;
+    padding: var(--espacio-2) var(--espacio-3);
+    border-radius: var(--radius-sm);
+    margin-top: var(--espacio-2xs);
   }
 }
