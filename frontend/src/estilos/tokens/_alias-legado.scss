@@ -1,0 +1,64 @@
+/* @deprecated — eliminar en Ola 7 tras migración completa */
+:root {
+  /* Familia "panel" */
+  --primario-guinda: var(--color-primary-base);
+  --primario-guinda-hover: var(--color-primary-hover);
+  --fondo-tarjeta: var(--color-surface-card);
+  --fondo-aplicacion: var(--color-surface-sunken);
+  --texto-principal: var(--color-text-main);
+  --texto-secundario: var(--color-text-muted);
+  --borde-tarjeta: var(--color-border-subtle);
+  --radio-sm: var(--radius-sm);
+  --radio-md: var(--radius-md);
+  --radio-lg: var(--radius-lg);
+  --radio-full: var(--radius-pildora);
+  --fuente-principal: var(--font-family-base);
+
+  /* Familia "portal" */
+  --text-main: var(--color-text-main);
+  --text-muted: var(--color-text-muted);
+  --surface-card: var(--color-surface-card);
+  --surface-hover: var(--color-surface-hover);
+  --surface-input: var(--color-surface-card);
+  --border-subtle: var(--color-border-subtle);
+  --hsmsi-guinda: var(--color-primary-base);
+  --hsmsi-verde-salud: var(--color-secondary-base);
+  --hsmsi-guinda-principal: var(--color-primary-base);
+  --hsmsi-verde-suave: var(--color-secondary-light);
+  --hsmsi-guinda-suave: var(--color-primary-light);
+  --hsmsi-crema-fachada: var(--color-bg-warm);
+
+  /* Familia "mi-turno" */
+  --hsmsi-borde: var(--color-border-subtle);
+  --hsmsi-gris-50: var(--prim-slate-50);
+  --hsmsi-gris-100: var(--prim-slate-100);
+  --hsmsi-gris-200: var(--prim-slate-200);
+  --hsmsi-gris-400: var(--prim-slate-400);
+  --hsmsi-gris-500: var(--prim-slate-500);
+  --hsmsi-gris-600: var(--prim-slate-600);
+  --hsmsi-gris-700: var(--prim-slate-700);
+  --hsmsi-gris-800: var(--prim-slate-800);
+  --hsmsi-gris-900: var(--prim-slate-900);
+  --hsmsi-espacio-sm: 0.75rem;
+  --hsmsi-espacio-md: 1rem;
+  --hsmsi-radio-sm: var(--radius-sm);
+  --hsmsi-radio-md: var(--radius-md);
+  --hsmsi-texto-xs: var(--font-size-xs);
+  --hsmsi-texto-sm: var(--font-size-sm);
+
+  /* Prioridades en mi-turno */
+  --p1-bg: var(--color-p1-bg);
+  --p1-text: var(--color-p1-text);
+  --p1-border: var(--color-p1-base);
+  --p2-bg: var(--color-p2-bg);
+  --p2-text: var(--color-p2-text);
+  --p2-border: var(--color-p2-base);
+  --p3-bg: var(--color-p3-bg);
+  --p3-text: var(--color-p3-text);
+  --p3-border: var(--color-p3-base);
+  --p4-bg: var(--color-p4-bg);
+  --p4-text: var(--color-p4-text);
+  --p4-border: var(--color-p4-base);
+  --secondary-light: var(--color-secondary-light);
+  --text-main-legacy: var(--color-text-main);
+}

@@ -1,0 +1,67 @@
+:root {
+  /* ── Marca / acción ───────────────────────────────────── */
+  --color-primary-base:     var(--prim-guinda-700);
+  --color-primary-hover:    var(--prim-guinda-800);
+  --color-primary-active:   var(--prim-guinda-900);
+  --color-primary-light:    var(--prim-guinda-50);
+  --color-primary-focus-ring: rgb(112 28 28 / 0.25);
+  --color-secondary-base:   var(--prim-verde-700);
+  --color-secondary-hover:  var(--prim-verde-800);
+  --color-secondary-active: var(--prim-verde-900);
+  --color-secondary-light:  var(--prim-verde-50);
+
+  /* ── Superficies (Figura–Fondo) ───────────────────────── */
+  --color-bg-app:           var(--prim-crema-50);   /* Cambia a crema anti-fatiga */
+  --color-bg-warm:          var(--prim-crema-50);
+  --color-surface-card:     var(--prim-blanco);
+  --color-surface-sunken:   var(--prim-slate-50);
+  --color-surface-hover:    var(--prim-slate-100);
+  --color-surface-overlay:  rgb(15 23 42 / 0.55);
+
+  /* ── Bordes ───────────────────────────────────────────── */
+  --color-border-subtle:    var(--prim-slate-200);
+  --color-border-strong:    var(--prim-slate-300);
+
+  /* ── Texto (todos ≥ 4.5:1 sobre blanco Y sobre crema) ── */
+  --color-text-main:        var(--prim-slate-900);
+  --color-text-secondary:   var(--prim-slate-700);
+  --color-text-muted:       var(--prim-slate-600);  /* #475569 */
+  --color-text-disabled:    var(--prim-slate-500);
+  --color-text-inverse:     var(--prim-blanco);
+  --color-text-on-primary:  var(--prim-blanco);
+
+  /* ── Estado de atención (semáforo de compromisos) ─────── */
+  --sla-ok-bg:  var(--prim-verde-50);  --sla-ok-text:  var(--prim-verde-800);  --sla-ok-border:  var(--prim-verde-700);
+  --sla-alerta-bg: var(--prim-ambar-100); --sla-alerta-text: var(--prim-ambar-900); --sla-alerta-border: var(--prim-ambar-600);
+  --sla-venc-bg: var(--prim-rojo-100); --sla-venc-text: var(--prim-rojo-900); --sla-venc-border: var(--prim-rojo-600);
+
+  /* Compatibilidad con indicadores previos */
+  --color-sla-a-tiempo-bg: var(--sla-ok-bg);
+  --color-sla-a-tiempo-text: var(--sla-ok-text);
+  --color-sla-a-tiempo-dot: var(--prim-verde-700);
+  --color-sla-alerta-bg: var(--sla-alerta-bg);
+  --color-sla-alerta-text: var(--sla-alerta-text);
+  --color-sla-alerta-dot: var(--prim-ambar-600);
+  --color-sla-incumplido-bg: var(--sla-venc-bg);
+  --color-sla-incumplido-text: var(--sla-venc-text);
+  --color-sla-incumplido-dot: var(--prim-rojo-600);
+
+  /* ── Urgencia P1…P4 (doble codificación: color + ícono + texto) ── */
+  --color-p1-bg: var(--prim-rojo-100);    --color-p1-text: var(--prim-rojo-900);    --color-p1-base: var(--prim-rojo-600);    --color-p1-border: var(--prim-rojo-300);
+  --color-p2-bg: var(--prim-naranja-100); --color-p2-text: var(--prim-naranja-900); --color-p2-base: var(--prim-naranja-600); --color-p2-border: var(--prim-naranja-300);
+  --color-p3-bg: var(--prim-ambar-100);   --color-p3-text: var(--prim-ambar-900);   --color-p3-base: var(--prim-ambar-600);   --color-p3-border: var(--prim-ambar-300);
+  --color-p4-bg: var(--prim-azul-100);    --color-p4-text: var(--prim-azul-900);    --color-p4-base: var(--prim-azul-600);    --color-p4-border: var(--prim-azul-300);
+
+  /* ── Feedback genérico ────────────────────────────────── */
+  --color-exito-bg: var(--prim-verde-50);  --color-exito-text: var(--prim-verde-800); --color-exito-border: var(--prim-verde-700);
+  --color-error-bg: var(--prim-rojo-100);  --color-error-text: var(--prim-rojo-900);  --color-error-border: var(--prim-rojo-600);
+  --color-aviso-bg: var(--prim-ambar-100); --color-aviso-text: var(--prim-ambar-900); --color-aviso-border: var(--prim-ambar-600);
+  --color-info-bg:  var(--prim-azul-100);  --color-info-text:  var(--prim-azul-900);  --color-info-border:  var(--prim-azul-600);
+
+  /* ── Foco accesible ───────────────────────────────────── */
+  --foco-anillo: 3px solid var(--color-secondary-base);
+  --foco-offset: 2px;
+
+  /* ── Interacción ──────────────────────────────────────── */
+  --touch-min: 44px;
+}

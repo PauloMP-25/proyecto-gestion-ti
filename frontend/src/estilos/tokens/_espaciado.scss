@@ -1,0 +1,26 @@
+:root {
+  --espacio-2xs: 4px;   /* alias existente: --espacio-1 */
+  --espacio-xs:  8px;   /* --espacio-2 */
+  --espacio-sm:  12px;  /* --espacio-3 */
+  --espacio-md:  16px;  /* --espacio-4 */
+  --espacio-lg:  24px;  /* --espacio-6 */
+  --espacio-xl:  32px;  /* --espacio-8 */
+  --espacio-2xl: 48px;
+
+  /* Compatibilidad con escalas 1-8 ya usadas */
+  --espacio-1: var(--espacio-2xs);
+  --espacio-2: var(--espacio-xs);
+  --espacio-3: var(--espacio-sm);
+  --espacio-4: var(--espacio-md);
+  --espacio-5: 20px;
+  --espacio-6: var(--espacio-lg);
+  --espacio-8: var(--espacio-xl);
+
+  --space-1: var(--espacio-1);
+  --space-2: var(--espacio-2);
+  --space-3: var(--espacio-3);
+  --space-4: var(--espacio-4);
+  --space-5: var(--espacio-5);
+  --space-6: var(--espacio-6);
+  --space-8: var(--espacio-8);
+}

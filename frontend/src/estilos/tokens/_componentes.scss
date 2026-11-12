@@ -1,0 +1,24 @@
+:root {
+  /* Botón */
+  --boton-altura: var(--touch-min);
+  --boton-altura-compacto: var(--touch-min);   /* "sm" mantiene 44 px de área táctil */
+  --boton-radio: var(--radius-md);
+  --boton-padding-x: var(--espacio-4);
+
+  /* Tarjeta */
+  --tarjeta-radio: var(--radius-lg);
+  --tarjeta-padding: var(--espacio-4);
+  --tarjeta-borde: 1px solid var(--color-border-subtle);
+  --tarjeta-sombra: var(--shadow-card);
+  --tarjeta-sombra-hover: var(--shadow-md);
+
+  /* Campo de formulario */
+  --campo-altura: var(--touch-min);
+  --campo-radio: var(--radius-md);
+  --campo-borde: 1px solid var(--color-border-strong);
+
+  /* Diálogo */
+  --dialogo-radio: var(--radius-lg);
+  --dialogo-ancho-md: 540px;
+  --dialogo-z: 1000;
+}
