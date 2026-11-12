@@ -19,6 +19,7 @@ export class BotonComponent {
   readonly tipo = input<'button' | 'submit' | 'reset'>('button');
   readonly deshabilitado = input<boolean>(false);
   readonly cargando = input<boolean>(false);
+  readonly bloque = input<boolean>(false);
   readonly icono = input<string | undefined>(undefined);
   readonly iconoDerecha = input<string | undefined>(undefined);
   readonly ariaLabel = input<string | undefined>(undefined);

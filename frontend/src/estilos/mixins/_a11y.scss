@@ -1,0 +1,24 @@
+@mixin foco-visible {
+  &:focus-visible {
+    outline: var(--foco-anillo);
+    outline-offset: var(--foco-offset);
+    border-radius: var(--radius-sm);
+  }
+}
+
+@mixin touch-target {
+  min-height: var(--touch-min);
+  min-width: var(--touch-min);
+}
+
+@mixin sr-only {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip: rect(0 0 0 0);
+  white-space: nowrap;
+  border: 0;
+}

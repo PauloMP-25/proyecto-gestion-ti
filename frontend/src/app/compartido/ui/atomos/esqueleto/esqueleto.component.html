@@ -1,0 +1,57 @@
+@switch (preset()) {
+  @case ('tarjeta-ticket') {
+    <div class="sk-tarjeta" aria-hidden="true">
+      <div class="sk-fila">
+        <div class="sk sk--badge"></div>
+        <div class="sk sk--codigo"></div>
+      </div>
+      <div class="sk sk--titulo"></div>
+      <div class="sk sk--meta"></div>
+      <div class="sk sk--cronometro"></div>
+      <div class="sk sk--boton"></div>
+    </div>
+  }
+  @case ('tarjeta-solicitud') {
+    <div class="sk-tarjeta" aria-hidden="true">
+      <div class="sk-fila">
+        <div class="sk sk--codigo"></div>
+        <div class="sk sk--badge"></div>
+      </div>
+      <div class="sk sk--titulo"></div>
+      <div class="sk sk--meta"></div>
+    </div>
+  }
+  @case ('fila-tabla') {
+    <div class="sk-fila-tabla" aria-hidden="true">
+      <div class="sk sk--celda-sm"></div>
+      <div class="sk sk--celda-md"></div>
+      <div class="sk sk--celda-lg"></div>
+      <div class="sk sk--celda-sm"></div>
+      <div class="sk sk--celda-sm"></div>
+    </div>
+  }
+  @case ('kpi') {
+    <div class="sk-kpi" aria-hidden="true">
+      <div class="sk sk--kpi-titulo"></div>
+      <div class="sk sk--kpi-valor"></div>
+      <div class="sk sk--kpi-meta"></div>
+    </div>
+  }
+  @case ('articulo') {
+    <div class="sk-articulo" aria-hidden="true">
+      <div class="sk sk--titulo"></div>
+      <div class="sk sk--linea-texto"></div>
+      <div class="sk sk--linea-texto"></div>
+      <div class="sk sk--linea-texto sk--tres-cuartos"></div>
+    </div>
+  }
+  @default {
+    <div 
+      class="esqueleto" 
+      [style.width]="ancho()" 
+      [style.height]="alto()" 
+      [style.border-radius]="radio()"
+      aria-hidden="true">
+    </div>
+  }
+}

@@ -1,0 +1,29 @@
+@use 'estilos/mixins/a11y' as a11y;
+
+:host {
+  display: inline-flex;
+}
+
+.badge {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--espacio-1);
+  padding: 3px var(--espacio-2);
+  border: 1px solid transparent;
+  border-radius: var(--radius-sm);
+  font: 700 var(--font-size-xs)/1 var(--font-family-base);
+  letter-spacing: 0.02em;
+  white-space: nowrap;
+
+  &--compacto {
+    padding: 2px var(--espacio-1);
+  }
+}
+
+@each $n in 1, 2, 3, 4 {
+  .badge--p#{$n} {
+    background: var(--color-p#{$n}-bg);
+    color: var(--color-p#{$n}-text);
+    border-color: var(--color-p#{$n}-border);
+  }
+}

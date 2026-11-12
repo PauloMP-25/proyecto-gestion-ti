@@ -1,0 +1,37 @@
+:host {
+  display: inline-flex;
+}
+
+.semaforo {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--espacio-1);
+  padding: 3px var(--espacio-2);
+  border: 1px solid transparent;
+  border-radius: var(--radius-sm);
+  font: 700 var(--font-size-xs)/1 var(--font-family-base);
+  letter-spacing: 0.02em;
+  white-space: nowrap;
+
+  &--compacto {
+    padding: 3px;
+  }
+
+  &--ok {
+    background: var(--sla-ok-bg);
+    color: var(--sla-ok-text);
+    border-color: var(--sla-ok-border);
+  }
+
+  &--alerta {
+    background: var(--sla-alerta-bg);
+    color: var(--sla-alerta-text);
+    border-color: var(--sla-alerta-border);
+  }
+
+  &--vencido {
+    background: var(--sla-venc-bg);
+    color: var(--sla-venc-text);
+    border-color: var(--sla-venc-border);
+  }
+}

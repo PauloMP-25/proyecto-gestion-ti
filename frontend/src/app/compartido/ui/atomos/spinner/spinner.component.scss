@@ -1,0 +1,44 @@
+@use 'estilos/mixins/a11y' as a11y;
+
+:host {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.spinner {
+  display: inline-block;
+  border-radius: 50%;
+  border-style: solid;
+  border-color: rgb(15 23 42 / 0.15);
+  border-top-color: var(--color-primary-base);
+  animation: girar 0.8s linear infinite;
+
+  &--sm {
+    width: 16px;
+    height: 16px;
+    border-width: 2px;
+  }
+
+  &--md {
+    width: 24px;
+    height: 24px;
+    border-width: 3px;
+  }
+
+  &--lg {
+    width: 36px;
+    height: 36px;
+    border-width: 4px;
+  }
+}
+
+.sr-only {
+  @include a11y.sr-only;
+}
+
+@keyframes girar {
+  to {
+    transform: rotate(360deg);
+  }
+}

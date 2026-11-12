@@ -1,0 +1,92 @@
+:host {
+  display: block;
+  width: 100%;
+}
+
+.esqueleto, .sk {
+  background: linear-gradient(
+    90deg,
+    rgb(226 232 240 / 0.6) 0%,
+    rgb(241 245 249 / 0.9) 50%,
+    rgb(226 232 240 / 0.6) 100%
+  );
+  background-size: 200% 100%;
+  animation: esqueleto-shimmer 1.5s infinite;
+  border-radius: var(--radius-sm);
+}
+
+@keyframes esqueleto-shimmer {
+  0% {
+    background-position: 200% 0;
+  }
+
+  100% {
+    background-position: -200% 0;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .esqueleto, .sk {
+    animation: none;
+    background: var(--color-surface-hover);
+  }
+}
+
+/* Presets */
+.sk-tarjeta {
+  display: flex;
+  flex-direction: column;
+  gap: var(--espacio-sm);
+  background: var(--color-surface-card);
+  border: var(--tarjeta-borde);
+  border-radius: var(--tarjeta-radio);
+  padding: var(--tarjeta-padding);
+}
+
+.sk-fila {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.sk--badge { width: 90px; height: 22px; }
+.sk--codigo { width: 110px; height: 18px; }
+.sk--titulo { width: 80%; height: 24px; }
+.sk--meta { width: 60%; height: 16px; }
+.sk--cronometro { width: 100%; height: 28px; }
+.sk--boton { width: 140px; height: 44px; align-self: flex-end; }
+
+.sk-fila-tabla {
+  display: flex;
+  gap: var(--espacio-md);
+  padding: var(--espacio-sm) var(--espacio-md);
+  border-bottom: 1px solid var(--color-border-subtle);
+  align-items: center;
+}
+
+.sk--celda-sm { width: 80px; height: 20px; }
+.sk--celda-md { width: 140px; height: 20px; }
+.sk--celda-lg { flex: 1; height: 20px; }
+
+.sk-kpi {
+  display: flex;
+  flex-direction: column;
+  gap: var(--espacio-xs);
+  background: var(--color-surface-card);
+  border: var(--tarjeta-borde);
+  border-radius: var(--tarjeta-radio);
+  padding: var(--tarjeta-padding);
+}
+
+.sk--kpi-titulo { width: 60%; height: 16px; }
+.sk--kpi-valor { width: 40%; height: 36px; }
+.sk--kpi-meta { width: 80%; height: 14px; }
+
+.sk-articulo {
+  display: flex;
+  flex-direction: column;
+  gap: var(--espacio-sm);
+}
+
+.sk--linea-texto { width: 100%; height: 16px; }
+.sk--tres-cuartos { width: 75%; }

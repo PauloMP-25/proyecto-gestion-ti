@@ -1,129 +1,114 @@
+@use 'estilos/mixins/boton' as b;
+@use 'estilos/mixins/a11y' as a11y;
+
 :host {
   display: inline-block;
+
+  &:has(.btn--bloque) {
+    display: block;
+    width: 100%;
+  }
 }
 
 .btn {
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  gap: var(--espacio-2, 8px);
-  min-height: var(--touch-min, 44px);
-  padding: 0 var(--espacio-4, 16px);
-  font-family: inherit;
-  font-size: 0.92rem;
-  font-weight: 600;
-  border-radius: var(--radio-md, 8px);
-  border: 1px solid transparent;
-  cursor: pointer;
-  white-space: nowrap;
-  user-select: none;
-  text-decoration: none;
-  transition: background-color 0.15s ease, border-color 0.15s ease, box-shadow 0.15s ease, transform 0.1s ease;
+  @include b.boton-base;
 
-  &:active:not(:disabled) {
-    transform: translateY(1px);
-  }
-
-  &:focus-visible {
-    outline: 3px solid var(--sla-alerta-border, #d97706);
-    outline-offset: 2px;
-  }
-
-  &:disabled {
-    opacity: 0.55;
-    cursor: not-allowed;
-    pointer-events: none;
-  }
-
-  /* Tamaños */
+  /* Tamaños asegurando siempre min-height >= 44px */
   &--sm {
-    min-height: 36px;
-    padding: 0 var(--espacio-3, 12px);
-    font-size: 0.82rem;
+    min-height: var(--touch-min);
+    min-width: var(--touch-min);
+    padding: 0 var(--espacio-3);
+    font-size: var(--font-size-xs);
   }
 
   &--md {
-    min-height: var(--touch-min, 44px);
-    padding: 0 var(--espacio-4, 16px);
-    font-size: 0.92rem;
+    min-height: var(--touch-min);
+    min-width: var(--touch-min);
+    padding: 0 var(--espacio-4);
+    font-size: var(--font-size-sm);
   }
 
   &--lg {
     min-height: 50px;
-    padding: 0 var(--espacio-6, 24px);
-    font-size: 1rem;
+    padding: 0 var(--espacio-6);
+    font-size: var(--font-size-base);
+  }
+
+  &--bloque {
+    width: 100%;
   }
 
   /* Variantes */
   &--primario {
-    background-color: var(--primario-guinda, #701c1c);
-    color: #ffffff;
-    border-color: var(--primario-guinda, #701c1c);
+    background-color: var(--color-primary-base);
+    color: var(--color-text-on-primary);
+    border-color: var(--color-primary-base);
 
     &:hover:not(:disabled) {
-      background-color: var(--primario-guinda-hover, #8a1f1f);
-      border-color: var(--primario-guinda-hover, #8a1f1f);
-      box-shadow: 0 4px 12px rgba(112, 28, 28, 0.25);
+      background-color: var(--color-primary-hover);
+      border-color: var(--color-primary-hover);
+      box-shadow: var(--shadow-sm);
     }
   }
 
   &--secundario {
-    background-color: var(--fondo-aplicacion, #f1f5f9);
-    color: var(--texto-principal, #0f172a);
-    border-color: var(--borde-tarjeta, #cbd5e1);
+    background-color: var(--color-surface-card);
+    color: var(--color-text-main);
+    border-color: var(--color-border-strong);
 
     &:hover:not(:disabled) {
-      background-color: #e2e8f0;
-      border-color: #94a3b8;
+      background-color: var(--color-surface-hover);
+      border-color: var(--color-border-strong);
     }
   }
 
   &--exito {
-    background-color: var(--sla-ok-border, #1b5e20);
-    color: #ffffff;
-    border-color: var(--sla-ok-border, #1b5e20);
+    background-color: var(--color-secondary-base);
+    color: var(--color-text-on-primary);
+    border-color: var(--color-secondary-base);
 
     &:hover:not(:disabled) {
-      background-color: #144a18;
-      box-shadow: 0 4px 12px rgba(27, 94, 32, 0.25);
+      background-color: var(--color-secondary-hover);
+      border-color: var(--color-secondary-hover);
+      box-shadow: var(--shadow-sm);
     }
   }
 
   &--peligro {
-    background-color: var(--sla-venc-border, #dc2626);
-    color: #ffffff;
-    border-color: var(--sla-venc-border, #dc2626);
+    background-color: var(--color-error-border);
+    color: var(--color-text-on-primary);
+    border-color: var(--color-error-border);
 
     &:hover:not(:disabled) {
-      background-color: #b91c1c;
-      box-shadow: 0 4px 12px rgba(220, 38, 38, 0.25);
+      filter: brightness(0.9);
+      box-shadow: var(--shadow-sm);
     }
   }
 
   &--outline {
     background-color: transparent;
-    color: var(--primario-guinda, #701c1c);
-    border-color: var(--primario-guinda, #701c1c);
+    color: var(--color-primary-base);
+    border-color: var(--color-primary-base);
 
     &:hover:not(:disabled) {
-      background-color: rgba(112, 28, 28, 0.05);
+      background-color: var(--color-primary-light);
     }
   }
 
   &--fantasma {
     background-color: transparent;
-    color: var(--texto-principal, #0f172a);
+    color: var(--color-text-main);
     border-color: transparent;
 
     &:hover:not(:disabled) {
-      background-color: rgba(0, 0, 0, 0.05);
+      background-color: var(--color-surface-hover);
     }
   }
 
   .spinner {
     width: 18px;
     height: 18px;
-    border: 2px solid rgba(255, 255, 255, 0.3);
+    border: 2px solid rgb(255 255 255 / 0.3);
     border-radius: 50%;
     border-top-color: currentColor;
     animation: rotar 0.8s linear infinite;

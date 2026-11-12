@@ -2,104 +2,46 @@
    CLASES UTILITARIAS Y COMPONENTES BASE - DESIGN SYSTEM HSMSI
    ========================================================================== */
 
-/* Botones del Design System */
+@use 'estilos/mixins/boton' as b;
+@use 'estilos/mixins/a11y' as a11y;
+
+/* Utilidades Tipográficas Canónicas (Plan §2.6) */
+.t-display { font: var(--text-display-weight) var(--text-display-size)/var(--text-display-lh) var(--font-family-base); }
+.t-h1      { font: var(--text-h1-weight) var(--text-h1-size)/var(--text-h1-lh) var(--font-family-base); }
+.t-h2      { font: var(--text-h2-weight) var(--text-h2-size)/var(--text-h2-lh) var(--font-family-base); }
+.t-h3      { font: var(--text-h3-weight) var(--text-h3-size)/var(--text-h3-lh) var(--font-family-base); }
+.t-body-lg { font: var(--text-body-lg-weight) var(--text-body-lg-size)/var(--text-body-lg-lh) var(--font-family-base); }
+.t-body    { font: var(--text-body-weight) var(--text-body-size)/var(--text-body-lh) var(--font-family-base); }
+.t-body-sm { font: var(--text-body-sm-weight) var(--text-body-sm-size)/var(--text-body-sm-lh) var(--font-family-base); }
+.t-caption { font: var(--text-caption-weight) var(--text-caption-size)/var(--text-caption-lh) var(--font-family-base); color: var(--color-text-muted); }
+.t-mono    { font-family: var(--font-family-mono); font-variant-numeric: tabular-nums; }
+
+/* Accesibilidad */
+.sr-only { @include a11y.sr-only; }
+
+/* Botones del Design System con Touch Target >= 44px */
 .btn-primary {
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  gap: var(--space-2);
-  padding: 0.625rem 1.25rem;
-  background-color: var(--color-primary-base);
-  color: var(--color-text-inverse);
-  font-family: var(--font-family-base);
-  font-size: var(--font-size-sm);
-  font-weight: var(--font-weight-semibold);
-  border: 1px solid transparent;
-  border-radius: var(--radius-md);
-  cursor: pointer;
-  transition: background-color var(--transition-fast), box-shadow var(--transition-fast);
-  text-decoration: none;
-  min-height: 40px;
-
-  &:hover:not(:disabled) {
-    background-color: var(--color-primary-hover);
-    box-shadow: var(--shadow-sm);
-  }
-
-  &:active:not(:disabled) {
-    background-color: var(--color-primary-active);
-  }
-
-  &:focus-visible {
-    outline: 2px solid var(--color-primary-base);
-    outline-offset: 2px;
-  }
-
-  &:disabled {
-    opacity: 0.55;
-    cursor: not-allowed;
-  }
+  @include b.boton-primario;
 }
 
 .btn-secondary {
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  gap: var(--space-2);
-  padding: 0.625rem 1.25rem;
-  background-color: var(--color-secondary-base);
-  color: var(--color-text-inverse);
-  font-family: var(--font-family-base);
-  font-size: var(--font-size-sm);
-  font-weight: var(--font-weight-semibold);
-  border: 1px solid transparent;
-  border-radius: var(--radius-md);
-  cursor: pointer;
-  transition: background-color var(--transition-fast);
-  min-height: 40px;
-
-  &:hover:not(:disabled) {
-    background-color: var(--color-secondary-hover);
-  }
-
-  &:active:not(:disabled) {
-    background-color: var(--color-secondary-active);
-  }
+  @include b.boton-exito;
 }
 
 .btn-outline {
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  gap: var(--space-2);
-  padding: 0.625rem 1.25rem;
-  background-color: var(--color-surface-card);
-  color: var(--color-text-main);
-  font-family: var(--font-family-base);
-  font-size: var(--font-size-sm);
-  font-weight: var(--font-weight-medium);
-  border: 1px solid var(--color-border-subtle);
-  border-radius: var(--radius-md);
-  cursor: pointer;
-  transition: background-color var(--transition-fast), border-color var(--transition-fast);
-  min-height: 40px;
-
-  &:hover:not(:disabled) {
-    background-color: var(--color-surface-hover);
-    border-color: var(--color-border-strong);
-  }
+  @include b.boton-secundario;
 }
 
 /* Tarjetas y Contenedores */
 .card-hospital {
   background-color: var(--color-surface-card);
-  border: 1px solid var(--color-border-subtle);
+  border: var(--tarjeta-borde);
   border-radius: var(--radius-lg);
   box-shadow: var(--shadow-card);
   padding: var(--space-6);
 }
 
-/* Insignias Semánticas de Prioridad ITIL (Doble codificación WCAG AAA) */
+/* Insignias Semánticas de Prioridad Hospitalaria (Doble codificación WCAG AAA) */
 .badge-prioridad {
   display: inline-flex;
   align-items: center;
@@ -135,7 +77,7 @@
   }
 }
 
-/* Insignias de SLA */
+/* Insignias de Compromiso de Atención (SLA) */
 .badge-sla {
   display: inline-flex;
   align-items: center;

@@ -1,0 +1,17 @@
+@use 'estilos/mixins/superficie' as s;
+
+:host {
+  display: block;
+}
+
+.tarjeta {
+  @include s.tarjeta;
+
+  &--interactiva {
+    @include s.tarjeta-interactiva;
+  }
+
+  &--con-acento {
+    border-left-width: 4px;
+  }
+}
