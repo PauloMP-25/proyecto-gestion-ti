@@ -1,0 +1,129 @@
+<div class="consulta-rapida-contenedor">
+  <!-- Cabecera y Navegación de retorno -->
+  <header class="consulta-cabecera">
+    <button type="button" class="btn-volver" (click)="volver()" aria-label="Volver">
+      <app-icono nombre="arrow_back" tamano="sm" aria-hidden="true"></app-icono>
+      <span>{{ ticketOrigenId() ? 'Volver al ticket' : 'Volver a Mi Turno' }}</span>
+    </button>
+    <h1 class="consulta-cabecera__titulo">Consulta Rápida de Soporte</h1>
+  </header>
+
+  <!-- Pestañas Equipos / Soluciones -->
+  <nav class="consulta-tabs" role="tablist" aria-label="Secciones de consulta rápida">
+    <button
+      type="button"
+      role="tab"
+      class="consulta-tab"
+      [class.consulta-tab--activo]="tabActivo() === 'equipos'"
+      [attr.aria-selected]="tabActivo() === 'equipos'"
+      (click)="cambiarTab('equipos')">
+      <app-icono nombre="computer" tamano="sm" aria-hidden="true"></app-icono>
+      <span>Equipos y Activos</span>
+    </button>
+
+    <button
+      type="button"
+      role="tab"
+      class="consulta-tab"
+      [class.consulta-tab--activo]="tabActivo() === 'soluciones'"
+      [attr.aria-selected]="tabActivo() === 'soluciones'"
+      (click)="cambiarTab('soluciones')">
+      <app-icono nombre="lightbulb" tamano="sm" aria-hidden="true"></app-icono>
+      <span>Guías de Solución</span>
+    </button>
+  </nav>
+
+  <!-- Barra de búsqueda con autofocus y teclado optimizado -->
+  <div class="consulta-buscador">
+    <span class="consulta-buscador__icono" aria-hidden="true">
+      <app-icono nombre="search" tamano="sm"></app-icono>
+    </span>
+    <input
+      type="search"
+      class="consulta-buscador__input"
+      inputmode="search"
+      [placeholder]="tabActivo() === 'equipos' ? 'Buscar por hostname, IP, código o área...' : 'Buscar problema, error o guía de solución...'"
+      [value]="terminoBusqueda()"
+      (input)="onInputBusqueda($event)"
+      aria-label="Buscar en consulta rápida" />
+    @if (terminoBusqueda()) {
+      <button
+        type="button"
+        class="consulta-buscador__limpiar"
+        (click)="limpiarBusqueda()"
+        aria-label="Limpiar búsqueda">
+        <app-icono nombre="close" tamano="xs" aria-hidden="true"></app-icono>
+      </button>
+    }
+  </div>
+
+  <!-- Estado: Cargando -->
+  @if (cargando()) {
+    <div class="consulta-esqueleto" aria-busy="true" aria-label="Cargando resultados...">
+      <div class="esqueleto-tarjeta" *ngFor="let i of [1, 2, 3]"></div>
+    </div>
+  }
+
+  <!-- Estado: Error -->
+  @else if (error()) {
+    <div class="consulta-error" role="alert">
+      <app-icono nombre="error" tamano="lg" aria-hidden="true"></app-icono>
+      <p>{{ error() }}</p>
+      <button type="button" class="btn-reintentar" (click)="ejecutarConsulta()">
+        <app-icono nombre="refresh" tamano="sm" aria-hidden="true"></app-icono>
+        <span>Reintentar</span>
+      </button>
+    </div>
+  }
+
+  <!-- RESULTADOS TAB EQUIPOS -->
+  @else if (tabActivo() === 'equipos') {
+    @if (activos().length === 0) {
+      <div class="consulta-vacia">
+        <app-icono nombre="search_off" tamano="xl" aria-hidden="true"></app-icono>
+        <h2>No se encontraron equipos hospitalarios</h2>
+        <p>Intente con otro hostname, número de IP o nombre de servicio.</p>
+      </div>
+    } @else {
+      <div class="lista-activos" role="list" aria-label="Lista de equipos hospitalarios encontrados">
+        @for (activo of activos(); track activo.id) {
+          <app-tarjeta-activo [activo]="activo"></app-tarjeta-activo>
+        }
+      </div>
+    }
+  }
+
+  <!-- RESULTADOS TAB SOLUCIONES -->
+  @else {
+    @if (articulos().length === 0) {
+      <div class="consulta-vacia">
+        <app-icono nombre="lightbulb" tamano="xl" aria-hidden="true"></app-icono>
+        <h2>No hay guías para esta búsqueda</h2>
+        <p>No encontramos soluciones registradas que coincidan con su término.</p>
+      </div>
+    } @else {
+      <div class="lista-soluciones" role="list" aria-label="Lista de guías técnicas y soluciones">
+        @for (art of articulos(); track art.id) {
+          <article
+            class="tarjeta-solucion"
+            (click)="verArticulo(art.id)"
+            tabindex="0"
+            role="button"
+            (keydown.enter)="verArticulo(art.id)"
+            (keydown.space)="verArticulo(art.id)"
+            [attr.aria-label]="art.titulo + ' en ' + art.categoriaNombre">
+            <div class="tarjeta-solucion__cabecera">
+              <span class="tarjeta-solucion__categoria">{{ art.categoriaNombre }}</span>
+              <span class="tarjeta-solucion__enlace">
+                <span>Ver pasos</span>
+                <app-icono nombre="arrow_forward" tamano="xs" aria-hidden="true"></app-icono>
+              </span>
+            </div>
+            <h2 class="tarjeta-solucion__titulo">{{ art.titulo }}</h2>
+            <p class="tarjeta-solucion__sintoma">{{ art.sintoma }}</p>
+          </article>
+        }
+      </div>
+    }
+  }
+</div>

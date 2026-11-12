@@ -1,0 +1,122 @@
+.tarjeta-activo {
+  display: flex;
+  align-items: flex-start;
+  gap: 1rem;
+  padding: 1rem 1.25rem;
+  background: #ffffff;
+  border: 1px solid var(--hsmsi-borde, #e2e8f0);
+  border-radius: var(--hsmsi-radio-md, 8px);
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.04);
+  transition: transform 0.15s ease, box-shadow 0.15s ease;
+
+  &:hover {
+    transform: translateY(-1px);
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.08);
+  }
+
+  &--prestamo {
+    border-left: 4px solid #0284c7;
+  }
+
+  &__icono {
+    width: 44px;
+    height: 44px;
+    border-radius: var(--hsmsi-radio-md, 8px);
+    background: var(--hsmsi-gris-100, #f1f5f9);
+    color: var(--hsmsi-gris-700, #334155);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+  }
+
+  &__contenido {
+    flex: 1;
+    min-width: 0;
+    display: flex;
+    flex-direction: column;
+    gap: 0.35rem;
+  }
+
+  &__arriba {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 0.5rem;
+    flex-wrap: wrap;
+  }
+
+  &__hostname {
+    font-size: 1rem;
+    font-weight: 800;
+    color: var(--hsmsi-gris-900, #0f172a);
+  }
+
+  &__estado {
+    font-size: 0.75rem;
+    font-weight: 700;
+
+    &--activo {
+      color: var(--hsmsi-verde-salud, #1b5e20);
+    }
+
+    &--mantenimiento {
+      color: var(--p3-text, #d97706);
+    }
+
+    &--baja {
+      color: var(--p1-text, #dc2626);
+    }
+  }
+
+  &__detalles {
+    display: flex;
+    align-items: center;
+    gap: 0.375rem;
+    font-size: 0.8rem;
+    color: var(--hsmsi-gris-600, #64748b);
+    flex-wrap: wrap;
+  }
+
+  &__badges {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    margin-top: 0.25rem;
+    flex-wrap: wrap;
+  }
+}
+
+.separador-punto {
+  color: var(--hsmsi-gris-400, #94a3b8);
+}
+
+.badge-fallas {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.25rem;
+  padding: 0.2rem 0.5rem;
+  background: var(--hsmsi-gris-100, #f1f5f9);
+  color: var(--hsmsi-gris-700, #334155);
+  border-radius: 4px;
+  font-size: 0.75rem;
+  font-weight: 600;
+
+  &--alerta {
+    background: var(--p1-bg, #fef2f2);
+    color: var(--p1-text, #991b1b);
+    border: 1px solid var(--p1-border, #fca5a5);
+  }
+}
+
+.badge-prestamo {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.25rem;
+  padding: 0.2rem 0.5rem;
+  background: #e0f2fe;
+  color: #0369a1;
+  border-radius: 4px;
+  font-size: 0.75rem;
+  font-weight: 700;
+}

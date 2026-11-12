@@ -22,6 +22,22 @@ export const MI_TURNO_ROUTES: Routes = [
             (m) => m.FichaAtencionPage
           ),
       },
+      {
+        path: 'consulta',
+        title: 'Mesa de Ayuda · Consulta Rápida',
+        loadComponent: () =>
+          import('./paginas/consulta-rapida/consulta-rapida.page').then(
+            (m) => m.ConsultaRapidaPage
+          ),
+      },
+      {
+        path: 'consulta/articulo/:id',
+        title: 'Mesa de Ayuda · Guía Técnica de Solución',
+        loadComponent: () =>
+          import('./paginas/consulta-articulo/consulta-articulo.page').then(
+            (m) => m.ConsultaArticuloPage
+          ),
+      },
     ],
   },
 ];

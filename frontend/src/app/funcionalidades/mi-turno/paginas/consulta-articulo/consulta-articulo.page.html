@@ -1,0 +1,96 @@
+<div class="consulta-articulo-contenedor">
+  <!-- Navegación de retorno -->
+  <header class="articulo-cabecera">
+    <button type="button" class="btn-volver" (click)="volver()" aria-label="Volver a las guías de solución">
+      <app-icono nombre="arrow_back" tamano="sm" aria-hidden="true"></app-icono>
+      <span>Volver a guías de solución</span>
+    </button>
+  </header>
+
+  <!-- Estado: Cargando -->
+  @if (cargando()) {
+    <div class="articulo-esqueleto" aria-busy="true" aria-label="Cargando contenido de la guía...">
+      <div class="esqueleto-linea esqueleto-linea--corta"></div>
+      <div class="esqueleto-linea esqueleto-linea--titulo"></div>
+      <div class="esqueleto-caja"></div>
+    </div>
+  }
+
+  <!-- Estado: Error -->
+  @else if (error() || !articulo()) {
+    <div class="articulo-error" role="alert">
+      <app-icono nombre="search_off" tamano="xl" aria-hidden="true"></app-icono>
+      <h2>Guía no encontrada</h2>
+      <p>{{ error() || 'No se pudo cargar la información de esta guía.' }}</p>
+      <button type="button" class="btn-error-volver" (click)="volver()">
+        <span>Regresar a la consulta</span>
+      </button>
+    </div>
+  }
+
+  <!-- Contenido de la Guía -->
+  @else {
+    @let art = articulo()!;
+
+    <article class="articulo-contenido">
+      <div class="articulo-meta">
+        <span class="articulo-categoria">{{ art.categoriaNombre }}</span>
+        @if (ticketOrigenId()) {
+          <span class="articulo-ticket-badge">Vinculado a ticket actual</span>
+        }
+      </div>
+
+      <h1 class="articulo-titulo">{{ art.titulo }}</h1>
+
+      <!-- Bloque Síntoma -->
+      <section class="bloque-seccion bloque-seccion--sintoma">
+        <h2 class="bloque-seccion__titulo">
+          <app-icono nombre="report_problem" tamano="sm" aria-hidden="true"></app-icono>
+          <span>Síntoma reportado</span>
+        </h2>
+        <p class="bloque-seccion__texto">{{ art.sintoma }}</p>
+      </section>
+
+      <!-- Bloque Causa Raíz -->
+      @if (art.causaRaiz) {
+        <section class="bloque-seccion bloque-seccion--causa">
+          <h2 class="bloque-seccion__titulo">
+            <app-icono nombre="psychology" tamano="sm" aria-hidden="true"></app-icono>
+            <span>Causa probable</span>
+          </h2>
+          <p class="bloque-seccion__texto">{{ art.causaRaiz }}</p>
+        </section>
+      }
+
+      <!-- Bloque Pasos de Solución -->
+      <section class="bloque-seccion bloque-seccion--pasos">
+        <h2 class="bloque-seccion__titulo">
+          <app-icono nombre="format_list_numbered" tamano="sm" aria-hidden="true"></app-icono>
+          <span>Procedimiento de solución paso a paso</span>
+        </h2>
+        <ol class="lista-pasos">
+          @for (paso of art.pasos; track $index) {
+            <li class="paso-item">
+              <span class="paso-item__numero">{{ $index + 1 }}</span>
+              <p class="paso-item__texto">{{ paso }}</p>
+            </li>
+          }
+        </ol>
+      </section>
+
+      <!-- Acción: Usar en el Ticket si proviene de una ficha -->
+      @if (ticketOrigenId()) {
+        <div class="articulo-accion-inferior">
+          <button
+            type="button"
+            class="btn-usar-ticket"
+            (click)="usarEnTicket()"
+            aria-label="Vincular esta solución al ticket de atención actual">
+            <app-icono nombre="assignment_turned_in" tamano="sm" aria-hidden="true"></app-icono>
+            <span>Usar esta solución en el ticket</span>
+          </button>
+        </div>
+      }
+    </article>
+  }
+</div>

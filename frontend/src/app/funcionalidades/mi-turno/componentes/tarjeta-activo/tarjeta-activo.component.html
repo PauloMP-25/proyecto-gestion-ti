@@ -1,0 +1,44 @@
+<article class="tarjeta-activo" [class.tarjeta-activo--prestamo]="activo().enPrestamo">
+  <div class="tarjeta-activo__icono" aria-hidden="true">
+    <app-icono [nombre]="iconoPorTipo(activo().tipo)" tamano="md"></app-icono>
+  </div>
+
+  <div class="tarjeta-activo__contenido">
+    <div class="tarjeta-activo__arriba">
+      <span class="tarjeta-activo__hostname">{{ activo().hostname || activo().nombre }}</span>
+      <span
+        class="tarjeta-activo__estado"
+        [class.tarjeta-activo__estado--activo]="activo().estado === 'ACTIVO'"
+        [class.tarjeta-activo__estado--mantenimiento]="activo().estado === 'MANTENIMIENTO'"
+        [class.tarjeta-activo__estado--baja]="activo().estado === 'BAJA'">
+        ● {{ activo().estado === 'ACTIVO' ? 'Operativo' : activo().estado === 'MANTENIMIENTO' ? 'En mantenimiento' : 'De baja' }}
+      </span>
+    </div>
+
+    <div class="tarjeta-activo__detalles">
+      <span class="detalle-texto">{{ activo().areaNombre }}</span>
+      @if (activo().ip) {
+        <span class="separador-punto" aria-hidden="true">·</span>
+        <span class="detalle-texto">{{ activo().ip }}</span>
+      }
+      <span class="separador-punto" aria-hidden="true">·</span>
+      <span class="detalle-texto">{{ activo().tipo }}</span>
+    </div>
+
+    <div class="tarjeta-activo__badges">
+      @if (activo().fallasUltimos90Dias !== null) {
+        <span class="badge-fallas" [class.badge-fallas--alerta]="activo().fallasUltimos90Dias! >= 3">
+          <app-icono nombre="history" tamano="xs" aria-hidden="true"></app-icono>
+          <span>{{ activo().fallasUltimos90Dias }} {{ activo().fallasUltimos90Dias === 1 ? 'falla' : 'fallas' }} en 90 días</span>
+        </span>
+      }
+
+      @if (activo().enPrestamo) {
+        <span class="badge-prestamo">
+          <app-icono nombre="sync_alt" tamano="xs" aria-hidden="true"></app-icono>
+          <span>En préstamo vigente</span>
+        </span>
+      }
+    </div>
+  </div>
+</article>
