@@ -1,0 +1,210 @@
+<div class="dialogo-fondo" (click)="intentarCerrar()">
+  <section
+    class="dialogo"
+    role="dialog"
+    aria-modal="true"
+    aria-labelledby="titulo-dialogo-resolver"
+    aria-describedby="ayuda-seguridad-paciente"
+    appDialogoAccesible
+    (alCerrar)="intentarCerrar()"
+    (click)="$event.stopPropagation()"
+  >
+    <!-- Cabecera -->
+    <header class="dialogo__cabecera">
+      <div>
+        <h2 class="dialogo__titulo" id="titulo-dialogo-resolver">
+          Resolver ticket {{ codigo() }}
+        </h2>
+        @if (equipoEtiqueta()) {
+          <p class="dialogo__subtitulo">
+            <app-icono nombre="devices" tamano="sm" aria-hidden="true" />
+            <span>Equipo: {{ equipoEtiqueta() }}</span>
+          </p>
+        }
+      </div>
+      <button
+        type="button"
+        class="dialogo__btn-cerrar"
+        aria-label="Cerrar diálogo"
+        (click)="intentarCerrar()"
+        [disabled]="procesando()"
+      >
+        <app-icono nombre="close" aria-hidden="true" />
+      </button>
+    </header>
+
+    @if (borradorRecuperado()) {
+      <div class="dialogo__aviso-borrador" role="status">
+        <app-icono nombre="history" tamano="sm" aria-hidden="true" />
+        <span>Se recuperó el borrador guardado anteriormente.</span>
+      </div>
+    }
+
+    <!-- Contenido del formulario -->
+    <div class="dialogo__cuerpo">
+      <form [formGroup]="form" (ngSubmit)="enviar()" id="form-resolver" novalidate>
+        <!-- Diagnóstico -->
+        <div class="dialogo__campo">
+          <label class="dialogo__label" for="resolver-diagnostico">
+            ¿Qué falló? (diagnóstico técnico) *
+          </label>
+          <textarea
+            id="resolver-diagnostico"
+            class="dialogo__textarea"
+            formControlName="diagnostico"
+            rows="3"
+            maxlength="650"
+            aria-describedby="ayuda-diagnostico error-diagnostico"
+            placeholder="Describa la causa identificada de la falla…"
+          ></textarea>
+          <div class="dialogo__pie-campo">
+            <span id="ayuda-diagnostico" class="dialogo__hint">
+              {{ conteoDiagnostico() }}/600 útiles · mínimo 20
+            </span>
+          </div>
+          @if (form.controls.diagnostico.touched && form.controls.diagnostico.errors?.['minimoUtil']) {
+            <span class="dialogo__error" id="error-diagnostico" role="alert">
+              Debe ingresar al menos 20 caracteres útiles.
+            </span>
+          }
+        </div>
+
+        <!-- Acción realizada -->
+        <div class="dialogo__campo">
+          <label class="dialogo__label" for="resolver-accion">
+            ¿Qué hizo para solucionarlo? (acciones realizadas) *
+          </label>
+          <textarea
+            id="resolver-accion"
+            class="dialogo__textarea"
+            formControlName="accionRealizada"
+            rows="4"
+            maxlength="1300"
+            aria-describedby="ayuda-accion error-accion"
+            placeholder="Detalle el procedimiento, configuración o reparación efectuada…"
+          ></textarea>
+          <div class="dialogo__pie-campo">
+            <span id="ayuda-accion" class="dialogo__hint">
+              {{ conteoAccion() }}/1200 útiles · mínimo 20
+            </span>
+          </div>
+          @if (form.controls.accionRealizada.touched && form.controls.accionRealizada.errors?.['minimoUtil']) {
+            <span class="dialogo__error" id="error-accion" role="alert">
+              Debe ingresar al menos 20 caracteres útiles.
+            </span>
+          }
+        </div>
+
+        <!-- Insumos o repuestos utilizados -->
+        <div class="dialogo__campo">
+          <label class="dialogo__label" for="resolver-insumos">
+            Insumos o repuestos utilizados (opcional)
+          </label>
+          <input
+            id="resolver-insumos"
+            type="text"
+            class="dialogo__input"
+            formControlName="insumosUtilizados"
+            maxlength="200"
+            aria-describedby="ayuda-insumos"
+            placeholder="Ej.: Cable de red RJ45 Cat6, tóner negro…"
+          />
+          <div class="dialogo__pie-campo">
+            <span id="ayuda-insumos" class="dialogo__hint">
+              {{ conteoInsumos() }}/200 caracteres útiles
+            </span>
+          </div>
+        </div>
+
+        <!-- Tipo de solución -->
+        <fieldset class="dialogo__fieldset">
+          <legend class="dialogo__legend">Tipo de solución aplicada *</legend>
+          <div class="dialogo__opciones-radio">
+            <label class="dialogo__radio">
+              <input
+                type="radio"
+                formControlName="tipoSolucion"
+                value="DEFINITIVA"
+              />
+              <span>Solución definitiva</span>
+            </label>
+            <label class="dialogo__radio">
+              <input
+                type="radio"
+                formControlName="tipoSolucion"
+                value="TEMPORAL"
+              />
+              <span>Solución temporal (workaround asistencial)</span>
+            </label>
+          </div>
+        </fieldset>
+
+        <!-- Aviso hospitalario permanente -->
+        <p class="dialogo__aviso-seguridad" id="ayuda-seguridad-paciente">
+          <app-icono nombre="info" tamano="sm" aria-hidden="true" />
+          <span>Atención: No escriba nombres, DNI ni datos clínicos de pacientes en este registro técnico.</span>
+        </p>
+
+        @if (borradorGuardadoIso(); as bg) {
+          <p class="dialogo__guardado-auto" role="status">
+            <app-icono nombre="check_circle" tamano="sm" aria-hidden="true" />
+            <span>Borrador guardado automáticamente ({{ bg | date:'HH:mm:ss' }} hrs)</span>
+          </p>
+        }
+      </form>
+    </div>
+
+    <!-- Pie fijo de acciones -->
+    <footer class="dialogo__acciones">
+      @if (form.invalid && form.touched) {
+        <p class="dialogo__motivo-invalido" role="status">
+          Complete los campos obligatorios con al menos 20 caracteres útiles para continuar.
+        </p>
+      }
+
+      <div class="dialogo__botones">
+        <button
+          type="button"
+          class="dialogo__btn dialogo__btn--secundario"
+          (click)="intentarCerrar()"
+          [disabled]="procesando()"
+        >
+          Cancelar
+        </button>
+        <button
+          type="submit"
+          form="form-resolver"
+          class="dialogo__btn dialogo__btn--primario"
+          [disabled]="form.invalid || procesando()"
+          [attr.aria-busy]="procesando()"
+        >
+          @if (procesando()) {
+            <span class="dialogo__spinner" aria-hidden="true"></span>
+            <span>Guardando…</span>
+          } @else {
+            <app-icono nombre="check" aria-hidden="true" />
+            <span>Marcar como resuelto</span>
+          }
+        </button>
+      </div>
+    </footer>
+
+    <!-- Confirmación de descarte superpuesta -->
+    @if (confirmandoDescarte()) {
+      <div class="dialogo__overlay-descarte" role="alertdialog" aria-modal="true" aria-labelledby="titulo-descarte">
+        <div class="dialogo__caja-descarte">
+          <h3 id="titulo-descarte" class="dialogo__titulo-descarte">¿Descartar los cambios escritos?</h3>
+          <p class="dialogo__texto-descarte">Tiene texto sin guardar. Si descarta, se perderá la información ingresada.</p>
+          <div class="dialogo__acciones-descarte">
+            <button type="button" class="dialogo__btn dialogo__btn--secundario" (click)="cancelarDescarte()">
+              Seguir editando
+            </button>
+            <button type="button" class="dialogo__btn dialogo__btn--peligro" (click)="confirmarDescarte()">
+              Descartar cambios
+            </button>
+          </div>
+        </div>
+      </div>
+    }
+  </section>
+</div>

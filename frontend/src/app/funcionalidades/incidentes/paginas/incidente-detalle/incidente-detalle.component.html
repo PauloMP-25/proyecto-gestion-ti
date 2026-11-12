@@ -175,20 +175,23 @@
         </app-dialogo-cambiar-estado>
       }
       @case ('escalar') {
-        <app-dialogo-escalar
+        <app-dialogo-escalar-ticket
           [codigo]="t.codigo"
+          [ticketId]="t.id"
+          [titulo]="t.titulo"
           [procesando]="procesando()"
-          (alConfirmar)="confirmarEscalamiento($event)"
+          (alConfirmarTexto)="confirmarEscalamiento($event)"
           (alCancelar)="cerrarDialogo()">
-        </app-dialogo-escalar>
+        </app-dialogo-escalar-ticket>
       }
       @case ('resolver') {
-        <app-dialogo-resolver
+        <app-dialogo-resolver-ticket
           [codigo]="t.codigo"
+          [ticketId]="t.id"
           [procesando]="procesando()"
-          (alConfirmar)="confirmarResolucion($event)"
+          (alConfirmarTexto)="confirmarResolucion($event)"
           (alCancelar)="cerrarDialogo()">
-        </app-dialogo-resolver>
+        </app-dialogo-resolver-ticket>
       }
     }
   }

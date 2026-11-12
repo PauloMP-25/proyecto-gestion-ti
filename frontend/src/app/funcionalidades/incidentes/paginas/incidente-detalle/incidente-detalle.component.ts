@@ -20,8 +20,8 @@ import { ContextoEquipoComponent } from '../../../../compartido/ui/moleculas/con
 import { IncidenteLineaTiempoComponent } from '../../componentes/incidente-linea-tiempo/incidente-linea-tiempo.component';
 import { DialogoAsignarComponent, ResultadoAsignar } from '../../componentes/dialogo-asignar/dialogo-asignar.component';
 import { DialogoCambiarEstadoComponent } from '../../componentes/dialogo-cambiar-estado/dialogo-cambiar-estado.component';
-import { DialogoEscalarComponent } from '../../componentes/dialogo-escalar/dialogo-escalar.component';
-import { DialogoResolverComponent } from '../../componentes/dialogo-resolver/dialogo-resolver.component';
+import { DialogoEscalarTicketComponent } from '../../../../compartido/componentes/dialogo-escalar-ticket/dialogo-escalar-ticket.component';
+import { DialogoResolverTicketComponent } from '../../../../compartido/componentes/dialogo-resolver-ticket/dialogo-resolver-ticket.component';
 
 type TipoDialogo = 'asignar' | 'iniciar' | 'cerrar' | 'reabrir' | 'escalar' | 'resolver';
 
@@ -50,8 +50,8 @@ const ETIQUETAS_URGENCIA = { ALTA: 'Alta', MEDIA: 'Media', BAJA: 'Baja' } as con
     IncidenteLineaTiempoComponent,
     DialogoAsignarComponent,
     DialogoCambiarEstadoComponent,
-    DialogoEscalarComponent,
-    DialogoResolverComponent,
+    DialogoEscalarTicketComponent,
+    DialogoResolverTicketComponent,
   ],
   templateUrl: './incidente-detalle.component.html',
   styleUrl: './incidente-detalle.component.scss',

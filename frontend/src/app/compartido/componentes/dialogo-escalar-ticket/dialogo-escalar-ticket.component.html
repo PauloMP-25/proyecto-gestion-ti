@@ -1,0 +1,150 @@
+<div class="dialogo-fondo" (click)="intentarCerrar()">
+  <section
+    class="dialogo"
+    role="dialog"
+    aria-modal="true"
+    aria-labelledby="titulo-dialogo-escalar"
+    aria-describedby="ayuda-motivo-escalar"
+    appDialogoAccesible
+    (alCerrar)="intentarCerrar()"
+    (click)="$event.stopPropagation()"
+  >
+    <!-- Cabecera -->
+    <header class="dialogo__cabecera">
+      <div>
+        <h2 class="dialogo__titulo" id="titulo-dialogo-escalar">
+          Escalar a Nivel 2
+        </h2>
+        <p class="dialogo__subtitulo">
+          <span class="dialogo__codigo">{{ codigo() }}</span>
+          @if (titulo()) {
+            <span>· {{ titulo() }}</span>
+          }
+        </p>
+      </div>
+      <button
+        type="button"
+        class="dialogo__btn-cerrar"
+        aria-label="Cerrar diálogo"
+        (click)="intentarCerrar()"
+        [disabled]="procesando()"
+      >
+        <app-icono nombre="close" aria-hidden="true" />
+      </button>
+    </header>
+
+    <!-- Cuerpo -->
+    <div class="dialogo__cuerpo">
+      <div class="dialogo__aviso-derivacion">
+        <app-icono nombre="trending_up" aria-hidden="true" />
+        <div>
+          <strong>Derivación a Nivel 2 (Especialista TI)</strong>
+          <p>El ticket saldrá de su turno y será asignado al área especializada correspondiente.</p>
+        </div>
+      </div>
+
+      <!-- Sugerencias rápidas -->
+      <div class="dialogo__sugerencias">
+        <span class="dialogo__sugerencias-label">Sugerencias rápidas:</span>
+        <div class="dialogo__chips" role="group" aria-label="Sugerencias de motivo técnico">
+          @for (sug of sugerencias; track sug) {
+            <button
+              type="button"
+              class="dialogo__chip"
+              (click)="aplicarSugerencia(sug)"
+              [disabled]="procesando()"
+            >
+              + {{ sug }}
+            </button>
+          }
+        </div>
+      </div>
+
+      <!-- Formulario -->
+      <form [formGroup]="form" (ngSubmit)="enviar()" id="form-escalar" novalidate>
+        <div class="dialogo__campo">
+          <label class="dialogo__label" for="escalar-motivo">
+            Motivo técnico del escalamiento *
+          </label>
+          <textarea
+            id="escalar-motivo"
+            class="dialogo__textarea"
+            formControlName="motivo"
+            rows="5"
+            maxlength="350"
+            aria-describedby="ayuda-motivo-escalar error-motivo"
+            placeholder="Describa qué verificaciones realizó y por qué requiere atención de Nivel 2…"
+          ></textarea>
+          <div class="dialogo__pie-campo">
+            <span id="ayuda-motivo-escalar" class="dialogo__hint">
+              {{ conteoMotivo() }}/300 útiles · mínimo 20
+            </span>
+          </div>
+          @if (form.controls.motivo.touched && form.controls.motivo.errors?.['minimoUtil']) {
+            <span class="dialogo__error" id="error-motivo" role="alert">
+              Debe ingresar al menos 20 caracteres útiles de justificación técnica.
+            </span>
+          }
+        </div>
+
+        <p class="dialogo__aviso-ayuda">
+          <app-icono nombre="info" tamano="sm" aria-hidden="true" />
+          <span>Indique las pruebas efectuadas para acelerar el diagnóstico del especialista.</span>
+        </p>
+      </form>
+    </div>
+
+    <!-- Pie fijo de acciones -->
+    <footer class="dialogo__acciones">
+      @if (form.invalid && form.touched) {
+        <p class="dialogo__motivo-invalido" role="status">
+          Escriba al menos 20 caracteres útiles para habilitar el escalamiento.
+        </p>
+      }
+
+      <div class="dialogo__botones">
+        <button
+          type="button"
+          class="dialogo__btn dialogo__btn--secundario"
+          (click)="intentarCerrar()"
+          [disabled]="procesando()"
+        >
+          Cancelar
+        </button>
+        <button
+          type="submit"
+          form="form-escalar"
+          class="dialogo__btn dialogo__btn--escalar"
+          [disabled]="form.invalid || procesando()"
+          [attr.aria-busy]="procesando()"
+        >
+          @if (procesando()) {
+            <span class="dialogo__spinner" aria-hidden="true"></span>
+            <span>Escalando…</span>
+          } @else {
+            <app-icono nombre="trending_up" aria-hidden="true" />
+            <span>Escalar a Nivel 2</span>
+          }
+        </button>
+      </div>
+    </footer>
+
+    <!-- Overlay de confirmación de descarte -->
+    @if (confirmandoDescarte()) {
+      <div class="dialogo__overlay-descarte" role="alertdialog" aria-modal="true" aria-labelledby="titulo-descarte-escalar">
+        <div class="dialogo__caja-descarte">
+          <h3 id="titulo-descarte-escalar" class="dialogo__titulo-descarte">¿Descartar el escalamiento?</h3>
+          <p class="dialogo__texto-descarte">Tiene texto escrito en el motivo. Si descarta, se perderán las justificaciones ingresadas.</p>
+          <div class="dialogo__acciones-descarte">
+            <button type="button" class="dialogo__btn dialogo__btn--secundario" (click)="cancelarDescarte()">
+              Seguir editando
+            </button>
+            <button type="button" class="dialogo__btn dialogo__btn--peligro" (click)="confirmarDescarte()">
+              Descartar cambios
+            </button>
+          </div>
+        </div>
+      </div>
+    }
+  </section>
+</div>
