@@ -1,5 +1,6 @@
 import { Component, ChangeDetectionStrategy, DestroyRef, OnInit, computed, inject, output, signal } from '@angular/core';
 import { CommonModule } from '@angular/common';
+import { ActivatedRoute } from '@angular/router';
 import { FormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { Categoria, ContextoCliente, CrearTicketDto } from '../../../../compartido/modelos/ticket.dto';
@@ -47,6 +48,7 @@ export class SolicitudFormularioComponent implements OnInit {
   private contextoService = inject(ContextoClienteService);
   private prioridadPrevia = inject(PrioridadPreviaService);
   private destroyRef = inject(DestroyRef);
+  private route = inject(ActivatedRoute);
 
   readonly alRegistrarExitoso = output<Ticket>();
   readonly alCancelar = output<void>();
@@ -78,6 +80,9 @@ export class SolicitudFormularioComponent implements OnInit {
   ngOnInit(): void {
     this.restaurarBorrador();
 
+    const catParam = this.route.snapshot.queryParamMap.get('categoria');
+    const catIdUrl = catParam ? parseInt(catParam, 10) : null;
+
     this.contextoService.obtener().pipe(takeUntilDestroyed(this.destroyRef)).subscribe(c => {
       this.contexto.set(c);
       if (!this.formulario.controls.anexoContacto.value && c.anexo) {
@@ -87,7 +92,9 @@ export class SolicitudFormularioComponent implements OnInit {
 
     this.ticketsService.categorias().pipe(takeUntilDestroyed(this.destroyRef)).subscribe(lista => {
       this.categorias.set(lista);
-      if (this.formulario.controls.idCategoria.value == null && lista.length > 0) {
+      if (catIdUrl && !isNaN(catIdUrl) && lista.some(c => c.id === catIdUrl)) {
+        this.formulario.controls.idCategoria.setValue(catIdUrl);
+      } else if (this.formulario.controls.idCategoria.value == null && lista.length > 0) {
         this.formulario.controls.idCategoria.setValue(lista[0].id);
       }
     });

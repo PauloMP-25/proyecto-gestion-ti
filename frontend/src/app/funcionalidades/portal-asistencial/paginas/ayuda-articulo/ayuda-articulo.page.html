@@ -1,0 +1,105 @@
+<main class="ayuda-articulo" aria-labelledby="articulo-titulo">
+  <!-- Navegación de retorno -->
+  <nav class="ayuda-articulo__nav" aria-label="Navegación de retorno">
+    <a routerLink="/portal/ayuda" class="ayuda-articulo__volver">
+      <app-icono nombre="arrow-left" tamano="sm"></app-icono>
+      <span>Volver a la ayuda rápida</span>
+    </a>
+  </nav>
+
+  @if (cargando()) {
+    <div class="ayuda-articulo__cargando" aria-live="polite">
+      <div class="ayuda-articulo__spinner" aria-hidden="true"></div>
+      <p>Cargando información de la guía...</p>
+    </div>
+  } @else if (noEncontrado() || !articulo()) {
+    <section class="ayuda-articulo__vacio" role="alert">
+      <div class="ayuda-articulo__vacio-icono" aria-hidden="true">
+        <app-icono nombre="alert-circle" tamano="xl"></app-icono>
+      </div>
+      <h1 class="ayuda-articulo__vacio-titulo">Guía no encontrada</h1>
+      <p class="ayuda-articulo__vacio-bajada">
+        La guía que intenta consultar no existe o fue retirada del catálogo asistencial.
+      </p>
+      <a routerLink="/portal/ayuda" class="ayuda-articulo__btn-volver">
+        Ver todas las guías
+      </a>
+    </section>
+  } @else {
+    @let art = articulo()!;
+
+    <!-- Cabecera del artículo -->
+    <header class="ayuda-articulo__cabecera">
+      <span class="ayuda-articulo__categoria">{{ art.categoriaNombre }}</span>
+      <h1 id="articulo-titulo" class="ayuda-articulo__titulo">
+        {{ art.titulo }}
+      </h1>
+      @if (art.sintoma) {
+        <div class="ayuda-articulo__sintoma-box">
+          <app-icono nombre="info" tamano="sm"></app-icono>
+          <p><strong>Síntoma o mensaje:</strong> {{ art.sintoma }}</p>
+        </div>
+      }
+    </header>
+
+    <!-- Lista de pasos numerada -->
+    <section class="ayuda-articulo__seccion" aria-labelledby="pasos-titulo">
+      <h2 id="pasos-titulo" class="ayuda-articulo__seccion-titulo">
+        Pruebe estos pasos para solucionarlo:
+      </h2>
+
+      <ol class="ayuda-articulo__pasos-lista">
+        @for (paso of art.pasos; track $index) {
+          <li class="ayuda-articulo__paso-item">
+            <span class="ayuda-articulo__paso-numero" aria-hidden="true">{{ $index + 1 }}</span>
+            <p class="ayuda-articulo__paso-texto">{{ paso }}</p>
+          </li>
+        }
+      </ol>
+    </section>
+
+    <!-- Feedback: ¿Le sirvió esta guía? -->
+    <section class="ayuda-articulo__feedback" aria-labelledby="feedback-titulo">
+      @if (resueltoPorGuia()) {
+        <div class="ayuda-articulo__exito" role="status" aria-live="polite">
+          <div class="ayuda-articulo__icono-exito" aria-hidden="true">
+            <app-icono nombre="check-circle" tamano="lg"></app-icono>
+          </div>
+          <div class="ayuda-articulo__exito-textos">
+            <h3 class="ayuda-articulo__exito-titulo">¡Nos alegra haberle ayudado!</h3>
+            <p class="ayuda-articulo__exito-bajada">
+              Esta guía continuará disponible en el portal para cualquier consulta futura.
+            </p>
+          </div>
+        </div>
+      } @else {
+        <h2 id="feedback-titulo" class="ayuda-articulo__feedback-titulo">
+          ¿Pudo solucionar el problema con estos pasos?
+        </h2>
+        <p class="ayuda-articulo__feedback-bajada">
+          Si el inconveniente persiste, le derivaremos de inmediato al formulario de soporte con los datos de esta guía precargados.
+        </p>
+
+        <div class="ayuda-articulo__feedback-acciones">
+          <button
+            type="button"
+            class="ayuda-articulo__btn ayuda-articulo__btn--si"
+            (click)="marcarComoUtil()"
+          >
+            <app-icono nombre="check" tamano="sm"></app-icono>
+            <span>Sí, resolvió mi problema</span>
+          </button>
+
+          <button
+            type="button"
+            class="ayuda-articulo__btn ayuda-articulo__btn--no"
+            (click)="reportarProblema()"
+          >
+            <app-icono nombre="alert-triangle" tamano="sm"></app-icono>
+            <span>No, reportar un problema →</span>
+          </button>
+        </div>
+      }
+    </section>
+  }
+</main>

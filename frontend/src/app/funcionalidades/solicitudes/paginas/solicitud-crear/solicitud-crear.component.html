@@ -20,9 +20,9 @@
           <span class="material-symbols-outlined" aria-hidden="true">add</span>
           Registrar otro
         </button>
-        <a routerLink="/incidentes/mis-tickets" class="btn-primario">
+        <a [routerLink]="rutaMisSolicitudes()" class="btn-primario">
           <span class="material-symbols-outlined" aria-hidden="true">list_alt</span>
-          Ver mis tickets
+          {{ textoMisSolicitudes() }}
         </a>
       </div>
     </section>

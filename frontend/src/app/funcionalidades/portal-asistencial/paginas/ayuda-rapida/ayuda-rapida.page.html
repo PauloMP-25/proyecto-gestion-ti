@@ -1,0 +1,139 @@
+<main class="ayuda-rapida" aria-labelledby="ayuda-titulo">
+  <!-- Cabecera -->
+  <header class="ayuda-rapida__cabecera">
+    <nav class="ayuda-rapida__nav" aria-label="Navegación de retorno">
+      <a routerLink="/portal" class="ayuda-rapida__volver">
+        <app-icono nombre="arrow-left" tamano="sm"></app-icono>
+        <span>Volver al portal</span>
+      </a>
+    </nav>
+    <h1 id="ayuda-titulo" class="ayuda-rapida__titulo">
+      Ayuda rápida y guías de autoatención
+    </h1>
+    <p class="ayuda-rapida__bajada">
+      Solucione inconvenientes comunes en pocos pasos o reporte una solicitud a la Mesa de Ayuda.
+    </p>
+
+    <!-- Campo de búsqueda -->
+    <div class="ayuda-rapida__buscador-wrap">
+      <label for="campo-busqueda-ayuda" class="visually-hidden">
+        Buscar guía de ayuda
+      </label>
+      <div class="ayuda-rapida__input-contenedor">
+        <span class="ayuda-rapida__input-icono" aria-hidden="true">
+          <app-icono nombre="search" tamano="sm"></app-icono>
+        </span>
+        <input
+          id="campo-busqueda-ayuda"
+          type="search"
+          class="ayuda-rapida__input"
+          placeholder="¿Qué problema presenta? (Ej. GalenHos, impresora, red...)"
+          [formControl]="busquedaControl"
+        />
+        @if (busquedaControl.value) {
+          <button
+            type="button"
+            class="ayuda-rapida__btn-limpiar"
+            aria-label="Limpiar búsqueda"
+            (click)="limpiarBusqueda()"
+          >
+            <app-icono nombre="x" tamano="xs"></app-icono>
+          </button>
+        }
+      </div>
+    </div>
+  </header>
+
+  <!-- Temas frecuentes -->
+  <section class="ayuda-rapida__seccion" aria-labelledby="temas-titulo">
+    <h2 id="temas-titulo" class="ayuda-rapida__seccion-titulo">
+      Temas frecuentes
+    </h2>
+    <div class="ayuda-rapida__temas-grid">
+      @for (tema of temasFrecuentes; track tema.id) {
+        <button
+          type="button"
+          class="ayuda-rapida__tema-card"
+          (click)="seleccionarTema(tema.busqueda)"
+        >
+          <span class="ayuda-rapida__tema-icono" aria-hidden="true">
+            <app-icono [nombre]="tema.icono" tamano="md"></app-icono>
+          </span>
+          <span class="ayuda-rapida__tema-nombre">{{ tema.nombre }}</span>
+        </button>
+      }
+    </div>
+  </section>
+
+  <!-- Lista de guías -->
+  <section class="ayuda-rapida__seccion" aria-labelledby="guias-titulo">
+    <h2 id="guias-titulo" class="ayuda-rapida__seccion-titulo">
+      {{ busquedaControl.value ? 'Resultados de búsqueda' : 'Guías recomendadas' }}
+    </h2>
+
+    @if (cargando()) {
+      <div class="ayuda-rapida__cargando" aria-live="polite">
+        <div class="ayuda-rapida__spinner" aria-hidden="true"></div>
+        <p>Buscando soluciones disponibles...</p>
+      </div>
+    } @else if (error()) {
+      <div class="ayuda-rapida__alerta" role="alert">
+        <p>No se pudo cargar la lista de guías. Por favor, intente nuevamente.</p>
+        <button type="button" class="ayuda-rapida__btn-reintentar" (click)="cargarPopulares()">
+          Reintentar
+        </button>
+      </div>
+    } @else if (articulos().length === 0) {
+      <div class="ayuda-rapida__sin-resultados">
+        <app-icono nombre="search" tamano="lg"></app-icono>
+        <h3>No encontramos guías para "{{ busquedaControl.value }}"</h3>
+        <p>
+          Si el problema continúa o requiere apoyo técnico presencial, puede registrar su solicitud directamente.
+        </p>
+        <a routerLink="/solicitudes/nuevo" class="ayuda-rapida__btn-reportar">
+          Reportar solicitud de soporte
+        </a>
+      </div>
+    } @else {
+      <div class="ayuda-rapida__guias-lista">
+        @for (art of articulos(); track art.id) {
+          <article class="ayuda-rapida__guia-card">
+            <div class="ayuda-rapida__guia-cuerpo">
+              <span class="ayuda-rapida__guia-categoria">{{ art.categoriaNombre }}</span>
+              <h3 class="ayuda-rapida__guia-titulo">
+                <a [routerLink]="['/portal/ayuda', art.id]" class="ayuda-rapida__guia-enlace">
+                  {{ art.titulo }}
+                </a>
+              </h3>
+              <p class="ayuda-rapida__guia-sintoma">{{ art.sintoma }}</p>
+            </div>
+            <a
+              [routerLink]="['/portal/ayuda', art.id]"
+              class="ayuda-rapida__guia-cta"
+              [attr.aria-label]="'Ver pasos para ' + art.titulo"
+            >
+              <span>Ver solución</span>
+              <app-icono nombre="chevron-right" tamano="xs"></app-icono>
+            </a>
+          </article>
+        }
+      </div>
+    }
+  </section>
+
+  <!-- Banner de reporte si no resuelve -->
+  <section class="ayuda-rapida__soporte-banner" aria-labelledby="soporte-banner-titulo">
+    <div class="ayuda-rapida__soporte-textos">
+      <h2 id="soporte-banner-titulo" class="ayuda-rapida__soporte-titulo">
+        ¿No encuentra solución a su problema?
+      </h2>
+      <p class="ayuda-rapida__soporte-bajada">
+        El equipo de soporte técnico hospitalario está disponible para atenderle.
+      </p>
+    </div>
+    <a routerLink="/solicitudes/nuevo" class="ayuda-rapida__btn-reportar">
+      <app-icono nombre="plus-circle" tamano="sm"></app-icono>
+      <span>Reportar solicitud</span>
+    </a>
+  </section>
+</main>

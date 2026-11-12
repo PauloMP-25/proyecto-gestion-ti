@@ -30,6 +30,22 @@ export const PORTAL_ASISTENCIAL_ROUTES: Routes = [
             (m) => m.SolicitudDetallePage
           ),
       },
+      {
+        path: 'ayuda',
+        title: 'Mesa de Ayuda · Ayuda rápida',
+        loadComponent: () =>
+          import('./paginas/ayuda-rapida/ayuda-rapida.page').then(
+            (m) => m.AyudaRapidaPage
+          ),
+      },
+      {
+        path: 'ayuda/:articuloId',
+        title: 'Mesa de Ayuda · Guía de autoatención',
+        loadComponent: () =>
+          import('./paginas/ayuda-articulo/ayuda-articulo.page').then(
+            (m) => m.AyudaArticuloPage
+          ),
+      },
     ],
   },
 ];
