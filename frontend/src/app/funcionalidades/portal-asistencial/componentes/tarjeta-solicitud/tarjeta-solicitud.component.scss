@@ -1,0 +1,138 @@
+.tarjeta-solicitud {
+  position: relative;
+  background: var(--surface-card, #ffffff);
+  border: 1px solid var(--border-subtle, #e2e8f0);
+  border-left: 6px solid var(--borde-etapa, #64748b);
+  border-radius: var(--radius-md, 8px);
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05);
+  padding: 14px 18px;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  transition: transform 0.15s ease, box-shadow 0.15s ease;
+
+  &:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+  }
+
+  &[data-etapa='REGISTRADO'] {
+    --borde-etapa: #64748b;
+  }
+
+  &[data-etapa='EN_ATENCION'] {
+    --borde-etapa: #0284c7;
+  }
+
+  &[data-etapa='RESUELTO'] {
+    --borde-etapa: #f59e0b;
+  }
+
+  &[data-etapa='CERRADO'] {
+    --borde-etapa: var(--hsmsi-verde-salud, #1b5e20);
+  }
+
+  &.requiere-confirmacion {
+    background-color: #fffefb;
+    border-color: #fde68a;
+  }
+
+  &__cabecera {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 12px;
+  }
+
+  &__codigo {
+    font-size: 0.8125rem;
+    font-weight: 700;
+    color: var(--text-muted, #64748b);
+    letter-spacing: 0.02em;
+  }
+
+  &__etiqueta {
+    display: inline-flex;
+    align-items: center;
+    gap: 4px;
+    font-size: 0.75rem;
+    font-weight: 600;
+    padding: 3px 8px;
+    border-radius: 12px;
+
+    &[data-etapa='REGISTRADO'] {
+      background-color: #f1f5f9;
+      color: #475569;
+    }
+
+    &[data-etapa='EN_ATENCION'] {
+      background-color: #e0f2fe;
+      color: #0369a1;
+    }
+
+    &[data-etapa='RESUELTO'] {
+      background-color: #fef3c7;
+      color: #92400e;
+    }
+
+    &[data-etapa='CERRADO'] {
+      background-color: #dcfce7;
+      color: #166534;
+    }
+  }
+
+  &__titulo {
+    font-size: 0.9375rem;
+    font-weight: 600;
+    margin: 0;
+    line-height: 1.4;
+    color: var(--text-main, #0f172a);
+  }
+
+  &__enlace {
+    color: inherit;
+    text-decoration: none;
+
+    &::after {
+      content: '';
+      position: absolute;
+      inset: 0;
+      border-radius: inherit;
+    }
+
+    &:focus-visible {
+      outline: 3px solid var(--hsmsi-verde-salud, #1b5e20);
+      outline-offset: 2px;
+      border-radius: 4px;
+    }
+  }
+
+  &__pie {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    font-size: 0.8125rem;
+    color: var(--text-muted, #64748b);
+    margin-top: 4px;
+    gap: 8px;
+  }
+
+  &__area {
+    display: flex;
+    align-items: center;
+    gap: 4px;
+  }
+
+  &__banner-accion {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    background-color: #fef3c7;
+    color: #92400e;
+    font-size: 0.75rem;
+    font-weight: 600;
+    padding: 6px 10px;
+    border-radius: 6px;
+    margin-top: 4px;
+  }
+}

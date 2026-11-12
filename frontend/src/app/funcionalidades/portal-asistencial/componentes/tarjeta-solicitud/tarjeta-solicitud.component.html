@@ -1,0 +1,39 @@
+<article
+  class="tarjeta-solicitud"
+  [attr.data-etapa]="solicitud().etapa"
+  [class.requiere-confirmacion]="solicitud().requiereConfirmacion"
+>
+  <div class="tarjeta-solicitud__cabecera">
+    <span class="tarjeta-solicitud__codigo">{{ solicitud().codigo }}</span>
+    <span class="tarjeta-solicitud__etiqueta" [attr.data-etapa]="solicitud().etapa">
+      <app-icono [nombre]="iconoEtapa()" tamano="xs" aria-hidden="true" />
+      <span>{{ etapaTexto() }}</span>
+    </span>
+  </div>
+
+  <h3 class="tarjeta-solicitud__titulo">
+    <a
+      [routerLink]="['/portal/mis-solicitudes', solicitud().id]"
+      class="tarjeta-solicitud__enlace"
+    >
+      {{ solicitud().titulo }}
+    </a>
+  </h3>
+
+  <div class="tarjeta-solicitud__pie">
+    <span class="tarjeta-solicitud__area">
+      <app-icono nombre="domain" tamano="xs" aria-hidden="true" />
+      <span>{{ solicitud().areaNombre }}</span>
+    </span>
+    <time class="tarjeta-solicitud__fecha" [attr.datetime]="solicitud().fechaCreacionIso">
+      {{ solicitud().fechaCreacionIso | date:'dd/MM/yyyy HH:mm' }}
+    </time>
+  </div>
+
+  @if (solicitud().requiereConfirmacion) {
+    <div class="tarjeta-solicitud__banner-accion" aria-hidden="true">
+      <app-icono nombre="error_outline" tamano="xs" />
+      <span>Esperando su confirmación de solución</span>
+    </div>
+  }
+</article>

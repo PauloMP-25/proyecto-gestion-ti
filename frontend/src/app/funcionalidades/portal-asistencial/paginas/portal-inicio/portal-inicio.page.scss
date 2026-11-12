@@ -1,0 +1,215 @@
+.portal-inicio {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 24px 20px 48px;
+
+  &__cabecera {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 24px;
+    margin-bottom: 24px;
+  }
+
+  &__saludo {
+    font-size: 1.625rem;
+    font-weight: 800;
+    margin: 0 0 6px;
+    color: var(--text-main, #0f172a);
+    letter-spacing: -0.02em;
+  }
+
+  &__meta {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    font-size: 0.875rem;
+    color: var(--text-muted, #64748b);
+    margin: 0;
+  }
+
+  &__separador {
+    color: var(--border-subtle, #cbd5e1);
+  }
+
+  &__cta {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 10px;
+    min-height: 56px;
+    padding: 0 24px;
+    background-color: var(--hsmsi-guinda, #701c1c);
+    color: #ffffff;
+    font-size: 1rem;
+    font-weight: 700;
+    text-decoration: none;
+    border-radius: var(--radius-md, 8px);
+    box-shadow: 0 4px 6px -1px rgba(112, 28, 28, 0.25);
+    white-space: nowrap;
+    flex-shrink: 0;
+    transition: background-color 0.15s ease, transform 0.15s ease, box-shadow 0.15s ease;
+
+    &:hover {
+      background-color: #551313;
+      transform: translateY(-2px);
+      box-shadow: 0 6px 10px -1px rgba(112, 28, 28, 0.35);
+    }
+
+    &:focus-visible {
+      outline: 3px solid var(--hsmsi-verde-salud, #1b5e20);
+      outline-offset: 3px;
+    }
+  }
+
+  &__cuadricula {
+    display: grid;
+    grid-template-columns: 1.1fr 0.9fr;
+    gap: 28px;
+    align-items: start;
+  }
+
+  &__seccion {
+    display: flex;
+    flex-direction: column;
+    gap: 14px;
+  }
+
+  &__seccion-cabecera {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 12px;
+  }
+
+  &__seccion-titulo {
+    font-size: 1.125rem;
+    font-weight: 700;
+    margin: 0;
+    color: var(--text-main, #0f172a);
+  }
+
+  &__seccion-desc {
+    font-size: 0.875rem;
+    color: var(--text-muted, #64748b);
+    margin: -6px 0 2px;
+    line-height: 1.4;
+  }
+
+  &__enlace-ver-todas {
+    display: inline-flex;
+    align-items: center;
+    gap: 4px;
+    font-size: 0.8125rem;
+    font-weight: 600;
+    color: var(--hsmsi-guinda, #701c1c);
+    text-decoration: none;
+
+    &:hover {
+      text-decoration: underline;
+    }
+
+    &:focus-visible {
+      outline: 2px solid var(--hsmsi-verde-salud, #1b5e20);
+      outline-offset: 2px;
+      border-radius: 4px;
+    }
+  }
+
+  &__lista-solicitudes {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+  }
+
+  &__esqueletos {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+  }
+
+  &__esqueleto-tarjeta {
+    height: 86px;
+    background: linear-gradient(90deg, #f1f5f9 25%, #e2e8f0 50%, #f1f5f9 75%);
+    background-size: 200% 100%;
+    animation: loading-pulse 1.5s infinite;
+    border-radius: var(--radius-md, 8px);
+    border: 1px solid var(--border-subtle, #e2e8f0);
+  }
+
+  &__vacio {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    text-align: center;
+    padding: 36px 20px;
+    background: var(--surface-card, #ffffff);
+    border: 1px dashed var(--border-subtle, #cbd5e1);
+    border-radius: var(--radius-md, 8px);
+  }
+
+  &__icono-vacio {
+    color: var(--text-muted, #94a3b8);
+    margin-bottom: 12px;
+  }
+
+  &__vacio-titulo {
+    font-size: 1rem;
+    font-weight: 600;
+    margin: 0 0 6px;
+    color: var(--text-main, #0f172a);
+  }
+
+  &__vacio-texto {
+    font-size: 0.875rem;
+    color: var(--text-muted, #64748b);
+    max-width: 380px;
+    margin: 0 0 16px;
+    line-height: 1.4;
+  }
+
+  &__vacio-accion {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    min-height: 44px;
+    padding: 0 18px;
+    background-color: var(--hsmsi-verde-salud, #1b5e20);
+    color: #ffffff;
+    font-size: 0.875rem;
+    font-weight: 600;
+    text-decoration: none;
+    border-radius: var(--radius-md, 8px);
+
+    &:hover {
+      background-color: #144919;
+    }
+  }
+}
+
+@keyframes loading-pulse {
+  0% {
+    background-position: 200% 0;
+  }
+  100% {
+    background-position: -200% 0;
+  }
+}
+
+@media (max-width: 1023.98px) {
+  .portal-inicio {
+    &__cabecera {
+      flex-direction: column;
+      align-items: stretch;
+    }
+
+    &__cta {
+      width: 100%;
+    }
+
+    &__cuadricula {
+      grid-template-columns: 1fr;
+      gap: 32px;
+    }
+  }
+}

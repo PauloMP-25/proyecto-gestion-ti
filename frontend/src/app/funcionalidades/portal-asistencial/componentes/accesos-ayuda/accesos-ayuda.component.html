@@ -1,0 +1,37 @@
+<div class="accesos-ayuda">
+  <div class="accesos-ayuda__cuadricula">
+    @for (art of articulos(); track art.id) {
+      <a
+        [routerLink]="['/portal/ayuda', art.id]"
+        class="accesos-ayuda__tarjeta"
+      >
+        <div class="accesos-ayuda__icono" aria-hidden="true">
+          <app-icono [nombre]="iconoPorTitulo(art.titulo)" tamano="md" />
+        </div>
+        <div class="accesos-ayuda__info">
+          <h4 class="accesos-ayuda__titulo">{{ art.titulo }}</h4>
+          <p class="accesos-ayuda__sintoma">{{ art.sintoma }}</p>
+        </div>
+        <div class="accesos-ayuda__flecha" aria-hidden="true">
+          <app-icono nombre="arrow_forward" tamano="xs" />
+        </div>
+      </a>
+    }
+
+    <a
+      routerLink="/portal/ayuda"
+      class="accesos-ayuda__tarjeta accesos-ayuda__tarjeta--todas"
+    >
+      <div class="accesos-ayuda__icono accesos-ayuda__icono--mas" aria-hidden="true">
+        <app-icono nombre="menu_book" tamano="md" />
+      </div>
+      <div class="accesos-ayuda__info">
+        <h4 class="accesos-ayuda__titulo">Ver todas las guías</h4>
+        <p class="accesos-ayuda__sintoma">Explore el catálogo de soluciones y procedimientos paso a paso.</p>
+      </div>
+      <div class="accesos-ayuda__flecha" aria-hidden="true">
+        <app-icono nombre="arrow_forward" tamano="xs" />
+      </div>
+    </a>
+  </div>
+</div>

@@ -1,0 +1,86 @@
+<div class="portal-inicio">
+  <!-- Cabecera de bienvenida asistencial -->
+  <header class="portal-inicio__cabecera">
+    <div class="portal-inicio__usuario">
+      <h1 class="portal-inicio__saludo">
+        {{ saludoTiempo() }}, {{ usuario()?.nombreCompleto || 'Estimado(a) colaborador(a)' }}
+      </h1>
+      <p class="portal-inicio__meta">
+        <app-icono nombre="local_hospital" tamano="xs" aria-hidden="true" />
+        <span>{{ usuario()?.areaProcedencia || 'Hospital Santa María del Socorro' }}</span>
+        @if (usuario()?.cargo) {
+          <span class="portal-inicio__separador" aria-hidden="true">·</span>
+          <span>{{ usuario()?.cargo }}</span>
+        }
+      </p>
+    </div>
+
+    <!-- CTA Principal de Reportar Problema (alto 56px) -->
+    <a routerLink="/solicitudes/nuevo" class="portal-inicio__cta" id="cta-reportar">
+      <app-icono nombre="add_circle" tamano="md" aria-hidden="true" />
+      <span>Reportar un problema</span>
+    </a>
+  </header>
+
+  <!-- Banner de atención resuelta pendiente de confirmación -->
+  <app-banner-confirmacion [conteo]="porConfirmar()" />
+
+  <!-- Cuadrícula principal (2 columnas en desktop, 1 columna en móvil) -->
+  <div class="portal-inicio__cuadricula">
+    <!-- Columna 1: Mis solicitudes recientes -->
+    <section class="portal-inicio__seccion" aria-labelledby="titulo-solicitudes-recientes">
+      <div class="portal-inicio__seccion-cabecera">
+        <h2 id="titulo-solicitudes-recientes" class="portal-inicio__seccion-titulo">
+          Mis solicitudes recientes
+        </h2>
+        <a routerLink="/portal/mis-solicitudes" class="portal-inicio__enlace-ver-todas">
+          <span>Ver todas</span>
+          <app-icono nombre="arrow_forward" tamano="xs" aria-hidden="true" />
+        </a>
+      </div>
+
+      @if (cargando()) {
+        <div class="portal-inicio__esqueletos" aria-label="Cargando solicitudes recientes" aria-busy="true">
+          <div class="portal-inicio__esqueleto-tarjeta"></div>
+          <div class="portal-inicio__esqueleto-tarjeta"></div>
+        </div>
+      } @else if (solicitudesRecientes().length === 0) {
+        <div class="portal-inicio__vacio">
+          <app-icono nombre="task" tamano="xl" class="portal-inicio__icono-vacio" aria-hidden="true" />
+          <h3 class="portal-inicio__vacio-titulo">No tiene problemas reportados recientemente</h3>
+          <p class="portal-inicio__vacio-texto">
+            Si experimenta fallas en sus equipos o sistemas de atención, puede reportarlo directamente.
+          </p>
+          <a routerLink="/solicitudes/nuevo" class="portal-inicio__vacio-accion">
+            Reportar un problema
+          </a>
+        </div>
+      } @else {
+        <div class="portal-inicio__lista-solicitudes">
+          @for (s of solicitudesRecientes(); track s.id) {
+            <app-tarjeta-solicitud [solicitud]="s" />
+          }
+        </div>
+      }
+    </section>
+
+    <!-- Columna 2: Soluciones y guías frecuentes -->
+    <section class="portal-inicio__seccion" aria-labelledby="titulo-guias-frecuentes">
+      <div class="portal-inicio__seccion-cabecera">
+        <h2 id="titulo-guias-frecuentes" class="portal-inicio__seccion-titulo">
+          Soluciones frecuentes
+        </h2>
+        <a routerLink="/portal/ayuda" class="portal-inicio__enlace-ver-todas">
+          <span>Catálogo de ayuda</span>
+          <app-icono nombre="arrow_forward" tamano="xs" aria-hidden="true" />
+        </a>
+      </div>
+
+      <p class="portal-inicio__seccion-desc">
+        Revise estos pasos rápidos antes de reportar. Puede resolver problemas habituales en pocos minutos.
+      </p>
+
+      <app-accesos-ayuda [articulos]="guiasDestacadas()" />
+    </section>
+  </div>
+</div>
