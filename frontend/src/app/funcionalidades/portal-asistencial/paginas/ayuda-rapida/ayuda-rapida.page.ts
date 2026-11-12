@@ -30,9 +30,9 @@ export class AyudaRapidaPage implements OnInit {
   readonly error = signal(false);
 
   readonly temasFrecuentes = [
-    { id: 1, nombre: 'GalenHos', icono: 'monitor', busqueda: 'GalenHos' },
-    { id: 2, nombre: 'Lector de huella', icono: 'shield', busqueda: 'huella' },
-    { id: 3, nombre: 'Impresora de recetas', icono: 'printer', busqueda: 'impresora' },
+    { id: 1, nombre: 'GalenHos', icono: 'desktop_windows', busqueda: 'GalenHos' },
+    { id: 2, nombre: 'Lector de huella', icono: 'security', busqueda: 'huella' },
+    { id: 3, nombre: 'Impresora de recetas', icono: 'print', busqueda: 'impresora' },
     { id: 4, nombre: 'Red e Internet', icono: 'wifi', busqueda: 'red' },
   ];
 

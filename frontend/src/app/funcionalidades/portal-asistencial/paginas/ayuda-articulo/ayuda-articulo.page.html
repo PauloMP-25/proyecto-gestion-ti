@@ -2,7 +2,7 @@
   <!-- Navegación de retorno -->
   <nav class="ayuda-articulo__nav" aria-label="Navegación de retorno">
     <a routerLink="/portal/ayuda" class="ayuda-articulo__volver">
-      <app-icono nombre="arrow-left" tamano="sm"></app-icono>
+      <app-icono nombre="arrow_back" tamano="sm"></app-icono>
       <span>Volver a la ayuda rápida</span>
     </a>
   </nav>
@@ -15,7 +15,7 @@
   } @else if (noEncontrado() || !articulo()) {
     <section class="ayuda-articulo__vacio" role="alert">
       <div class="ayuda-articulo__vacio-icono" aria-hidden="true">
-        <app-icono nombre="alert-circle" tamano="xl"></app-icono>
+        <app-icono nombre="error" tamano="xl"></app-icono>
       </div>
       <h1 class="ayuda-articulo__vacio-titulo">Guía no encontrada</h1>
       <p class="ayuda-articulo__vacio-bajada">
@@ -63,7 +63,7 @@
       @if (resueltoPorGuia()) {
         <div class="ayuda-articulo__exito" role="status" aria-live="polite">
           <div class="ayuda-articulo__icono-exito" aria-hidden="true">
-            <app-icono nombre="check-circle" tamano="lg"></app-icono>
+            <app-icono nombre="check_circle" tamano="lg"></app-icono>
           </div>
           <div class="ayuda-articulo__exito-textos">
             <h3 class="ayuda-articulo__exito-titulo">¡Nos alegra haberle ayudado!</h3>
@@ -95,7 +95,7 @@
             class="ayuda-articulo__btn ayuda-articulo__btn--no"
             (click)="reportarProblema()"
           >
-            <app-icono nombre="alert-triangle" tamano="sm"></app-icono>
+            <app-icono nombre="warning" tamano="sm"></app-icono>
             <span>No, reportar un problema →</span>
           </button>
         </div>

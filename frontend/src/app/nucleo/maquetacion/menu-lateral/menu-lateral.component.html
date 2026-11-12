@@ -37,7 +37,7 @@
               <a 
                 [routerLink]="item.ruta" 
                 routerLinkActive="activo"
-                [routerLinkActiveOptions]="{ exact: item.ruta === '/panel-control' }"
+                [routerLinkActiveOptions]="{ exact: item.ruta === '/portal' || item.ruta === '/mi-turno' || item.ruta === '/panel-control' }"
                 class="enlace-menu"
                 [title]="item.titulo"
                 (click)="cerrarSidebarMovil()">

@@ -3,7 +3,7 @@
   <header class="ayuda-rapida__cabecera">
     <nav class="ayuda-rapida__nav" aria-label="Navegación de retorno">
       <a routerLink="/portal" class="ayuda-rapida__volver">
-        <app-icono nombre="arrow-left" tamano="sm"></app-icono>
+        <app-icono nombre="arrow_back" tamano="sm"></app-icono>
         <span>Volver al portal</span>
       </a>
     </nav>
@@ -37,7 +37,7 @@
             aria-label="Limpiar búsqueda"
             (click)="limpiarBusqueda()"
           >
-            <app-icono nombre="x" tamano="xs"></app-icono>
+            <app-icono nombre="close" tamano="xs"></app-icono>
           </button>
         }
       </div>
@@ -113,7 +113,7 @@
               [attr.aria-label]="'Ver pasos para ' + art.titulo"
             >
               <span>Ver solución</span>
-              <app-icono nombre="chevron-right" tamano="xs"></app-icono>
+              <app-icono nombre="chevron_right" tamano="xs"></app-icono>
             </a>
           </article>
         }
@@ -132,7 +132,7 @@
       </p>
     </div>
     <a routerLink="/solicitudes/nuevo" class="ayuda-rapida__btn-reportar">
-      <app-icono nombre="plus-circle" tamano="sm"></app-icono>
+      <app-icono nombre="add_circle" tamano="sm"></app-icono>
       <span>Reportar solicitud</span>
     </a>
   </section>

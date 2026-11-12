@@ -36,24 +36,25 @@ export class TicketMapper {
 
   estado(raw: unknown): EstadoTicket {
     const valor = String(raw ?? '');
-    if (valor in EstadoTicket) return valor as EstadoTicket;
     if (valor in ALIAS_ESTADO) return ALIAS_ESTADO[valor];
+    if (Object.values(EstadoTicket).includes(valor as EstadoTicket)) return valor as EstadoTicket;
     this.logger.warn(`Estado de ticket desconocido: "${valor}". Se usa NUEVO.`);
     return EstadoTicket.NUEVO;
   }
 
   prioridad(raw: unknown): PrioridadTicket {
     const valor = String(raw ?? '');
-    if (valor in PrioridadTicket) return valor as PrioridadTicket;
     if (valor in ALIAS_PRIORIDAD) return ALIAS_PRIORIDAD[valor];
+    if (Object.values(PrioridadTicket).includes(valor as PrioridadTicket)) return valor as PrioridadTicket;
+    if (valor in PrioridadTicket) return PrioridadTicket[valor as keyof typeof PrioridadTicket];
     this.logger.warn(`Prioridad desconocida: "${valor}". Se usa P4.`);
     return PrioridadTicket.P4;
   }
 
   estadoSla(raw: unknown): EstadoSLA {
     const valor = String(raw ?? '');
-    if (valor in EstadoSLA) return valor as EstadoSLA;
     if (valor in ALIAS_SLA) return ALIAS_SLA[valor];
+    if (Object.values(EstadoSLA).includes(valor as EstadoSLA)) return valor as EstadoSLA;
     this.logger.warn(`Estado SLA desconocido: "${valor}". Se usa A_TIEMPO.`);
     return EstadoSLA.A_TIEMPO;
   }

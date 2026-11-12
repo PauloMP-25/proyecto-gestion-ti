@@ -2,7 +2,7 @@
   <!-- Botón de retorno -->
   <nav class="solicitud-detalle__nav" aria-label="Navegación de retorno">
     <a routerLink="/portal/mis-solicitudes" class="solicitud-detalle__volver">
-      <app-icono nombre="arrow-left" tamano="sm"></app-icono>
+      <app-icono nombre="arrow_back" tamano="sm"></app-icono>
       <span>Volver a mis solicitudes</span>
     </a>
   </nav>
@@ -15,7 +15,7 @@
   } @else if (noEncontrado() || !solicitud()) {
     <section class="solicitud-detalle__vacio" role="alert">
       <div class="solicitud-detalle__vacio-icono" aria-hidden="true">
-        <app-icono nombre="alert-circle" tamano="xl"></app-icono>
+        <app-icono nombre="error" tamano="xl"></app-icono>
       </div>
       <h1 class="solicitud-detalle__vacio-titulo">No encontramos esta solicitud</h1>
       <p class="solicitud-detalle__vacio-bajada">
@@ -61,15 +61,15 @@
 
       <div class="solicitud-detalle__metadatos">
         <span class="solicitud-detalle__meta-item">
-          <app-icono nombre="map-pin" tamano="xs"></app-icono>
+          <app-icono nombre="location_on" tamano="xs"></app-icono>
           <span>{{ s.areaNombre }}</span>
         </span>
         <span class="solicitud-detalle__meta-item">
-          <app-icono nombre="tag" tamano="xs"></app-icono>
+          <app-icono nombre="label" tamano="xs"></app-icono>
           <span>{{ s.categoriaNombre }}</span>
         </span>
         <span class="solicitud-detalle__meta-item">
-          <app-icono nombre="calendar" tamano="xs"></app-icono>
+          <app-icono nombre="calendar_today" tamano="xs"></app-icono>
           <span>Registrada: {{ formatearFechaHora(s.fechaCreacionIso) }}</span>
         </span>
       </div>
@@ -90,7 +90,7 @@
 
       @if (s.tecnicoVisible && (s.etapa === 'EN_ATENCION' || s.etapa === 'RESUELTO')) {
         <div class="solicitud-detalle__tecnico-bloque">
-          <app-icono nombre="user" tamano="sm"></app-icono>
+          <app-icono nombre="person" tamano="sm"></app-icono>
           <span><strong>Lo atiende:</strong> {{ s.tecnicoVisible }}</span>
         </div>
       }
@@ -100,7 +100,7 @@
     @if (s.etapa !== 'CERRADO' && s.tiempoEstimadoSolucionIso) {
       <section class="solicitud-detalle__estimado-card" aria-label="Tiempo de atención">
         <div class="solicitud-detalle__estimado-icono" aria-hidden="true">
-          <app-icono nombre="clock" tamano="md"></app-icono>
+          <app-icono nombre="schedule" tamano="md"></app-icono>
         </div>
         <div class="solicitud-detalle__estimado-textos">
           <h3 class="solicitud-detalle__estimado-etiqueta">Tiempo estimado de solución</h3>

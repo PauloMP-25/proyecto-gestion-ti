@@ -1,9 +1,10 @@
 import { Component, inject, signal } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { RouterModule } from '@angular/router';
+import { Router, RouterModule } from '@angular/router';
 import { AuthService } from '../../auth/auth.service';
 import { LayoutService } from '../layout.service';
 import { RolUsuario } from '../../modelos/rol.enum';
+import { rutaInicioPorRol } from '../../auth/ruta-inicio';
 
 @Component({
   selector: 'app-barra-superior',
@@ -15,6 +16,7 @@ import { RolUsuario } from '../../modelos/rol.enum';
 export class BarraSuperiorComponent {
   private authService = inject(AuthService);
   private layoutService = inject(LayoutService);
+  private router = inject(Router);
 
   readonly usuarioActual = this.authService.usuarioActual;
   readonly RolUsuario = RolUsuario;
@@ -41,6 +43,8 @@ export class BarraSuperiorComponent {
     this.authService.cambiarRol(rol);
     this.selectorRolAbierto.set(false);
     this.menuUsuarioAbierto.set(false);
+    const destino = rutaInicioPorRol(rol);
+    this.router.navigateByUrl(destino);
   }
 
   cerrarSesion(): void {
