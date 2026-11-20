@@ -100,7 +100,7 @@
   <!-- Modales Accesibles de Resolución y Escalamiento -->
   @if (modalEscalarAbierto() && ticketParaAccion(); as t) {
     <app-dialogo-escalar-ticket
-      [ticketId]="t.id"
+      [ticketId]="ticketIdNumerico"
       [codigo]="t.codigo"
       [titulo]="t.titulo"
       [procesando]="procesandoAccion()"
@@ -111,7 +111,7 @@
 
   @if (modalResolverAbierto() && ticketParaAccion(); as t) {
     <app-dialogo-resolver-ticket
-      [ticketId]="t.id"
+      [ticketId]="ticketIdNumerico"
       [codigo]="t.codigo"
       [procesando]="procesandoAccion()"
       (alCancelar)="modalResolverAbierto.set(false)"

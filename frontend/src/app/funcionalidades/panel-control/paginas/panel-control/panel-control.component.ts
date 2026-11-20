@@ -98,12 +98,17 @@ export class PanelControlComponent {
     this.modalEscalarAbierto.set(true);
   }
 
+  get ticketIdNumerico(): number {
+    const t = this.ticketParaAccion();
+    return t ? Number(t.id) : 0;
+  }
+
   confirmarEscalamiento(motivo: string): void {
     const t = this.ticketParaAccion();
     if (!t || this.procesandoAccion()) return;
 
     this.procesandoAccion.set(true);
-    this.ticketsService.escalar(t.id, motivo).subscribe({
+    this.ticketsService.escalar(Number(t.id), motivo).subscribe({
       next: () => {
         this.procesandoAccion.set(false);
         this.modalEscalarAbierto.set(false);
@@ -122,7 +127,7 @@ export class PanelControlComponent {
     if (!t || this.procesandoAccion()) return;
 
     this.procesandoAccion.set(true);
-    this.ticketsService.resolver(t.id, solucion).subscribe({
+    this.ticketsService.resolver(Number(t.id), solucion).subscribe({
       next: () => {
         this.procesandoAccion.set(false);
         this.modalResolverAbierto.set(false);
