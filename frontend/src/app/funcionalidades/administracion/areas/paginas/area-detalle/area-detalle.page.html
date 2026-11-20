@@ -1,0 +1,143 @@
+@if (store.cargandoDetalle()) {
+  <div class="cargando-contenedor">
+    <div class="spinner-grande" aria-hidden="true"></div>
+    <p>Cargando información del área hospitalaria...</p>
+  </div>
+} @else if (store.areaSeleccionada(); as area) {
+  <app-plantilla-pagina>
+    <!-- CABECERA -->
+    <app-cabecera-pagina
+      cabecera
+      icono="apartment"
+      [titulo]="area.nombre"
+      [subtitulo]="area.ubicacionLegible"
+    >
+      <div meta class="detalle-metas">
+        @if (!area.activo) {
+          <span class="badge-inactiva">Área Inactiva</span>
+        }
+      </div>
+
+      <button
+        acciones
+        type="button"
+        class="btn-editar"
+        (click)="abrirModalEditar()"
+        aria-label="Editar datos del área"
+      >
+        <span class="material-symbols-outlined icono-btn" aria-hidden="true">edit</span>
+        <span>Editar área</span>
+      </button>
+    </app-cabecera-pagina>
+
+    <!-- FICHA TÉCNICA DEL ÁREA -->
+    <app-ficha-area [area]="area"></app-ficha-area>
+
+    <!-- PESTAÑAS -->
+    <app-barra-pestanas
+      etiquetaAccesible="Secciones del área hospitalaria"
+      [pestanas]="pestanas()"
+      [(activa)]="pestanaActiva"
+    ></app-barra-pestanas>
+
+    <!-- PANELES SEGÚN PESTAÑA -->
+    @switch (pestanaActiva()) {
+      @case ('personal') {
+        <app-area-personal-asignado
+          [personal]="store.personal()"
+          [areaNombre]="area.nombre"
+          (alRegistrar)="abrirModalRegistrarPersonal()"
+          (alReasignar)="abrirModalReasignarPersonal(area.id)"
+        ></app-area-personal-asignado>
+      }
+      @case ('computadoras') {
+        <app-area-equipos-asignados
+          [equipos]="store.computadoras()"
+          tipo="COMPUTADORA"
+          tituloBoton="Registrar computadora"
+          mensajeVacio="No hay computadoras registradas en esta área."
+          (alRegistrar)="abrirModalRegistrarEquipo('COMPUTADORA')"
+        ></app-area-equipos-asignados>
+      }
+      @case ('impresoras') {
+        <app-area-equipos-asignados
+          [equipos]="store.impresoras()"
+          tipo="IMPRESORA"
+          tituloBoton="Registrar impresora"
+          mensajeVacio="No hay impresoras en red registradas en esta área."
+          (alRegistrar)="abrirModalRegistrarEquipo('IMPRESORA')"
+        ></app-area-equipos-asignados>
+      }
+    }
+  </app-plantilla-pagina>
+
+  @if (modalEditarAbierto()) {
+    <app-dialogo-area
+      [areaParaEditar]="area"
+      (cerrado)="modalEditarAbierto.set(false)"
+    ></app-dialogo-area>
+  }
+
+  @if (modalPersonalAbierto()) {
+    <app-dialogo-personal
+      [idAreaPreseleccionada]="area.id"
+      (cancelado)="modalPersonalAbierto.set(false)"
+      (guardado)="alGuardarPersonal(area.id)"
+    ></app-dialogo-personal>
+  }
+
+  @if (modalEquipoAbierto()) {
+    <app-dialogo-equipo
+      [idAreaPreseleccionada]="area.id"
+      [tipoPreseleccionado]="tipoEquipoParaCrear()"
+      (cancelar)="modalEquipoAbierto.set(false)"
+      (guardado)="alGuardarEquipo(area.id)"
+    ></app-dialogo-equipo>
+  }
+
+  @if (modalReasignarAbierto()) {
+    <app-dialogo-formulario
+      titulo="Traer colaborador(a) a esta área"
+      subtitulo="Seleccione a un personal activo para reasignarlo al servicio actual."
+      (cancelar)="cerrarModalReasignar()"
+    >
+      <div cuerpo class="contenedor-reasignar">
+        <app-campo-formulario
+          etiqueta="Colaborador(a) a reasignar"
+          paraId="selectorPersonalReasignar"
+          ayuda="Solo se muestran colaboradores activos de otras áreas."
+        >
+          <select
+            id="selectorPersonalReasignar"
+            [ngModel]="idColaboradorParaReasignar()"
+            (ngModelChange)="idColaboradorParaReasignar.set($event)"
+            class="select-reasignar"
+          >
+            <option [ngValue]="null" disabled>Seleccione un colaborador...</option>
+            @for (p of personalParaReasignar(); track p.id) {
+              <option [ngValue]="p.id">{{ p.nombreVisible }} ({{ p.nombreArea }})</option>
+            }
+          </select>
+        </app-campo-formulario>
+      </div>
+
+      <div acciones class="acciones-dialogo">
+        <button
+          type="button"
+          class="btn-cancelar-modal"
+          (click)="cerrarModalReasignar()"
+        >
+          Cancelar
+        </button>
+        <button
+          type="button"
+          class="btn-confirmar-modal"
+          [disabled]="!idColaboradorParaReasignar() || reasignando()"
+          (click)="confirmarReasignacion(area.id)"
+        >
+          {{ reasignando() ? 'Reasignando...' : 'Reasignar a esta área' }}
+        </button>
+      </div>
+    </app-dialogo-formulario>
+  }
+}

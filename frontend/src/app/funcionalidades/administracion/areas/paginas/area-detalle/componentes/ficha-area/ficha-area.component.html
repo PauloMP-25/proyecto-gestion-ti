@@ -1,0 +1,26 @@
+<div class="ficha-area">
+  <div class="ficha-grid">
+    <app-dato-etiquetado
+      etiqueta="Ubicación hospitalaria"
+      [valor]="area().ubicacionLegible"
+    ></app-dato-etiquetado>
+
+    <app-dato-etiquetado
+      etiqueta="Anexo telefónico"
+      [valor]="area().anexo ? 'Anexo ' + area().anexo : 'Sin anexo'"
+      [monoespaciado]="!!area().anexo"
+    ></app-dato-etiquetado>
+
+    <app-dato-etiquetado
+      etiqueta="Encargado(a) del área"
+      [valor]="area().encargado?.nombreVisible || 'Sin encargado asignado'"
+    ></app-dato-etiquetado>
+
+    @if (area().referenciaUbicacion) {
+      <app-dato-etiquetado
+        etiqueta="Referencia física"
+        [valor]="area().referenciaUbicacion"
+      ></app-dato-etiquetado>
+    }
+  </div>
+</div>

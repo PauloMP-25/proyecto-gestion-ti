@@ -1,0 +1,65 @@
+<section class="panel-personal" aria-label="Personal adscrito al área">
+  <div class="panel-cabecera-acciones">
+    <button
+      type="button"
+      class="btn-accion-tab"
+      (click)="alRegistrar.emit()"
+    >
+      <span class="material-symbols-outlined icono-btn" aria-hidden="true">person_add</span>
+      <span>Registrar persona</span>
+    </button>
+    <button
+      type="button"
+      class="btn-accion-tab btn-accion-tab--secundario"
+      (click)="alReasignar.emit()"
+    >
+      <span class="material-symbols-outlined icono-btn" aria-hidden="true">swap_horiz</span>
+      <span>Traer persona de otra área</span>
+    </button>
+  </div>
+
+  @if (personal().length === 0) {
+    <div class="estado-vacio-panel">
+      <span class="material-symbols-outlined icono-vacio" aria-hidden="true">person_off</span>
+      <p>No hay colaboradores adscritos a esta área actualmente.</p>
+    </div>
+  } @else {
+    <div class="tabla-contenedor">
+      <table class="tabla-datos">
+        <caption class="sr-only">Personal adscrito al área {{ areaNombre() }}</caption>
+        <thead>
+          <tr>
+            <th scope="col">Colaborador(a)</th>
+            <th scope="col">Usuario institucional</th>
+            <th scope="col">Correo</th>
+            <th scope="col">Estado</th>
+          </tr>
+        </thead>
+        <tbody>
+          @for (p of personal(); track p.id) {
+            <tr>
+              <td>
+                <div class="celda-persona">
+                  <strong>{{ p.nombreVisible }}</strong>
+                  <span class="nombre-completo-sub">{{ p.nombreCompleto }}</span>
+                </div>
+              </td>
+              <td>
+                <code>{{ p.nombreUsuario || '—' }}</code>
+              </td>
+              <td>{{ p.correo }}</td>
+              <td>
+                <span
+                  class="badge-estado"
+                  [class.badge-estado--activo]="p.activo"
+                >
+                  {{ p.activo ? 'En servicio' : 'Inactivo' }}
+                </span>
+              </td>
+            </tr>
+          }
+        </tbody>
+      </table>
+    </div>
+  }
+</section>

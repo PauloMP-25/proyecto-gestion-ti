@@ -1,0 +1,25 @@
+<section class="panel-equipos" [attr.aria-label]="tituloBoton()">
+  <div class="panel-cabecera-acciones">
+    <button
+      type="button"
+      class="btn-accion-tab"
+      (click)="alRegistrar.emit()"
+    >
+      <span class="material-symbols-outlined icono-btn" aria-hidden="true">{{ tipo() === 'IMPRESORA' ? 'print' : 'add_to_queue' }}</span>
+      <span>{{ tituloBoton() }}</span>
+    </button>
+  </div>
+
+  @if (equipos().length === 0) {
+    <div class="estado-vacio-panel">
+      <span class="material-symbols-outlined icono-vacio" aria-hidden="true">{{ tipo() === 'IMPRESORA' ? 'print_disabled' : 'desktop_access_disabled' }}</span>
+      <p>{{ mensajeVacio() }}</p>
+    </div>
+  } @else {
+    <div class="grid-equipos">
+      @for (eq of equipos(); track eq.id) {
+        <app-tarjeta-equipo [datos]="eq"></app-tarjeta-equipo>
+      }
+    </div>
+  }
+</section>
