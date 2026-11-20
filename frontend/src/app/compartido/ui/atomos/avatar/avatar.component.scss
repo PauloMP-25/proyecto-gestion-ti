@@ -1,45 +1,44 @@
 .avatar {
-  border-radius: 50%;
   display: inline-flex;
+  flex-shrink: 0;
   align-items: center;
   justify-content: center;
-  font-weight: var(--font-weight-bold, 700);
-  color: var(--color-text-on-primary, #ffffff);
-  background-color: var(--color-text-muted, #64748b);
+  border-radius: var(--radius-full);
+  font-weight: var(--font-weight-bold);
+  color: var(--comp-avatar-texto);
+  background-color: var(--comp-avatar-usuario-bg);
   user-select: none;
-  flex-shrink: 0;
 
   &--sm {
-    width: 28px;
-    height: 28px;
-    font-size: 0.6875rem; /* 11px */
+    width: var(--prim-espacio-8);
+    height: var(--prim-espacio-8);
+    font-size: var(--font-size-xs);
   }
 
   &--md {
-    width: 36px;
-    height: 36px;
-    font-size: var(--font-size-sm, 0.8125rem); /* 13px */
+    width: var(--prim-espacio-10);
+    height: var(--prim-espacio-10);
+    font-size: var(--font-size-sm);
   }
 
   &--lg {
-    width: 48px;
-    height: 48px;
-    font-size: 1rem; /* 16px */
+    width: var(--prim-espacio-12);
+    height: var(--prim-espacio-12);
+    font-size: var(--font-size-base);
   }
 
-  /* Variantes semánticas por rol */
   &--usuario,
   &[data-rol='USUARIO_FINAL'] {
-    background-color: var(--color-text-muted, #64748b);
+    background-color: var(--comp-avatar-usuario-bg);
   }
 
   &--practicante,
   &[data-rol='PRACTICANTE'] {
-    background-color: var(--color-info-border, #0284c7);
+    background-color: var(--comp-avatar-practicante-bg);
   }
 
   &--admin,
   &[data-rol='ADMINISTRADOR'] {
-    background-color: var(--hsmsi-guinda-principal, var(--color-primary-base, #701c1c));
+    background-color: var(--comp-avatar-admin-bg);
   }
 }

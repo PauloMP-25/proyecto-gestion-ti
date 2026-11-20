@@ -59,6 +59,14 @@
 
   /* ═══════════════ NIVEL 4 · ESPECÍFICOS ═══════════════ */
 
+  /* Insignia de nivel de atención */
+  --comp-insignia-nivel-n1-bg: var(--color-surface-hover);
+  --comp-insignia-nivel-n1-texto: var(--color-text-secondary);
+  --comp-insignia-nivel-n1-borde: var(--color-border-strong);
+  --comp-insignia-nivel-n2-bg: var(--color-escalado-bg);
+  --comp-insignia-nivel-n2-texto: var(--color-escalado-text);
+  --comp-insignia-nivel-n2-borde: var(--color-escalado-border);
+
   /* Botón primario */
   --comp-boton-primario-bg: var(--color-primary-base);
   --comp-boton-primario-texto: var(--color-text-on-primary);

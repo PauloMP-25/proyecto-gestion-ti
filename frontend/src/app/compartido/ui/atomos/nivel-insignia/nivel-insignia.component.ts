@@ -17,19 +17,19 @@ import { CommonModule } from '@angular/common';
     .insignia-nivel {
       display: inline-flex;
       align-items: center;
-      padding: 2px 7px;
-      border-radius: var(--radio-sm, 4px);
-      font-size: 0.72rem;
-      font-weight: 700;
+      padding: var(--espacio-2xs) var(--espacio-xs);
+      border-radius: var(--radius-sm);
+      font-size: var(--font-size-xs);
+      font-weight: var(--font-weight-bold);
       letter-spacing: 0.03em;
-      background-color: #f1f5f9;
-      color: #334155;
-      border: 1px solid #cbd5e1;
+      background-color: var(--comp-insignia-nivel-n1-bg);
+      color: var(--comp-insignia-nivel-n1-texto);
+      border: 1px solid var(--comp-insignia-nivel-n1-borde);
 
       &--n2 {
-        background-color: #ede9fe;
-        color: #5b21b6;
-        border-color: #c4b5fd;
+        background-color: var(--comp-insignia-nivel-n2-bg);
+        color: var(--comp-insignia-nivel-n2-texto);
+        border-color: var(--comp-insignia-nivel-n2-borde);
       }
     }
   `],

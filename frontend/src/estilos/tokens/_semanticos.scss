@@ -63,6 +63,11 @@
   --color-aviso-bg: var(--prim-ambar-100); --color-aviso-text: var(--prim-ambar-900); --color-aviso-border: var(--prim-ambar-600);
   --color-info-bg:  var(--prim-azul-100);  --color-info-text:  var(--prim-azul-900);  --color-info-border:  var(--prim-azul-600);
 
+  /* ── Escalamiento a Nivel 2 ────────────────────────────────── */
+  --color-escalado-bg:     var(--prim-violeta-100);
+  --color-escalado-text:   var(--prim-violeta-800);
+  --color-escalado-border: var(--prim-violeta-300);
+
   /* ── Foco accesible ───────────────────────────────────── */
   --foco-anillo: 3px solid var(--color-secondary-base);
   --foco-offset: 2px;

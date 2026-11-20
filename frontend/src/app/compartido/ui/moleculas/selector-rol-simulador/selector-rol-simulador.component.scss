@@ -8,28 +8,28 @@
 .btn-cambiar-rol {
   display: inline-flex;
   align-items: center;
-  gap: var(--space-2, 0.5rem);
-  min-height: var(--touch-min, 44px);
-  padding: 0.35rem 0.65rem;
-  background-color: var(--color-surface-card, #ffffff);
-  border: 1px solid var(--color-border-subtle, #e2e8f0);
-  border-radius: var(--radius-md, 8px);
-  color: var(--color-text-muted, #64748b);
-  font-size: var(--font-size-xs, 0.75rem);
-  font-weight: var(--font-weight-medium, 500);
+  gap: var(--espacio-xs);
+  min-height: var(--touch-min);
+  padding: var(--espacio-xs) var(--espacio-sm);
+  background-color: var(--comp-selector-rol-bg);
+  border: var(--comp-tarjeta-borde);
+  border-radius: var(--radius-md);
+  color: var(--comp-selector-rol-texto);
+  font-size: var(--font-size-xs);
+  font-weight: var(--font-weight-medium);
   cursor: pointer;
-  transition: all var(--transition-fast, 150ms ease);
+  transition: background-color var(--transition-fast), color var(--transition-fast), border-color var(--transition-fast);
 
   @include a11y.foco-visible;
 
   &:hover {
-    background-color: var(--color-surface-hover, #f1f5f9);
-    color: var(--color-primary-base, #701c1c);
-    border-color: var(--color-primary-base, #701c1c);
+    background-color: var(--comp-menu-flotante-opcion-hover);
+    color: var(--comp-selector-rol-hover-texto);
+    border-color: var(--comp-selector-rol-hover-texto);
   }
 
   .icono-swap {
-    font-size: 16px;
+    font-size: var(--font-size-lg);
   }
 
   .texto-cambiar-rol {
@@ -43,57 +43,57 @@
 
 .dropdown-selector-rol {
   position: absolute;
-  top: calc(100% + 8px);
+  top: calc(100% + var(--espacio-xs));
   right: 0;
-  width: 260px;
-  background-color: var(--color-surface-card, #ffffff);
-  border: 1px solid var(--color-border-subtle, #e2e8f0);
-  border-radius: var(--radius-lg, 12px);
-  box-shadow: var(--shadow-lg, 0 10px 15px -3px rgba(0, 0, 0, 0.1));
-  padding: var(--space-2, 0.5rem);
-  z-index: var(--z-dropdown, 100);
+  width: min(16.25rem, calc(100vw - var(--espacio-lg)));
+  padding: var(--comp-menu-flotante-padding);
+  background-color: var(--comp-menu-flotante-bg);
+  border: var(--comp-menu-flotante-borde);
+  border-radius: var(--comp-menu-flotante-radio);
+  box-shadow: var(--comp-menu-flotante-sombra);
+  z-index: var(--comp-menu-flotante-z);
 
   .dropdown-header {
-    padding: var(--space-2, 0.5rem) var(--space-3, 0.75rem);
-    font-size: var(--font-size-xs, 0.75rem);
-    font-weight: var(--font-weight-bold, 700);
-    color: var(--color-text-muted, #64748b);
+    padding: var(--espacio-xs) var(--espacio-sm);
+    font-size: var(--font-size-xs);
+    font-weight: var(--font-weight-bold);
+    color: var(--color-text-muted);
     text-transform: uppercase;
     letter-spacing: 0.05em;
   }
 
   .opcion-rol {
-    width: 100%;
     display: flex;
     align-items: center;
-    gap: var(--space-2, 0.5rem);
-    padding: var(--space-2, 0.5rem) var(--space-3, 0.75rem);
-    min-height: var(--touch-min, 44px);
+    gap: var(--espacio-xs);
+    width: 100%;
+    min-height: var(--touch-min);
+    padding: var(--espacio-xs) var(--espacio-sm);
     background: transparent;
     border: none;
-    border-radius: var(--radius-md, 8px);
-    cursor: pointer;
+    border-radius: var(--radius-md);
     text-align: left;
-    transition: background-color var(--transition-fast, 150ms ease);
+    cursor: pointer;
+    transition: background-color var(--transition-fast);
 
     @include a11y.foco-visible;
 
     &:hover {
-      background-color: var(--color-surface-hover, #f1f5f9);
+      background-color: var(--comp-menu-flotante-opcion-hover);
     }
 
     &.seleccionada {
-      background-color: var(--color-primary-light, #fdf2f2);
-      color: var(--color-primary-base, #701c1c);
+      background-color: var(--comp-selector-rol-opcion-activa-bg);
+      color: var(--comp-selector-rol-opcion-activa-texto);
 
       strong {
-        color: var(--color-primary-base, #701c1c);
+        color: var(--comp-selector-rol-opcion-activa-texto);
       }
     }
 
     .material-symbols-outlined {
-      font-size: 20px;
-      color: var(--color-text-muted, #64748b);
+      font-size: var(--font-size-xl);
+      color: var(--color-text-muted);
     }
 
     .info-rol {
@@ -101,13 +101,13 @@
       flex-direction: column;
 
       strong {
-        font-size: var(--font-size-xs, 0.75rem);
-        color: var(--color-text-main, #0f172a);
+        font-size: var(--font-size-xs);
+        color: var(--color-text-main);
       }
 
       span {
-        font-size: 11px;
-        color: var(--color-text-muted, #64748b);
+        font-size: var(--font-size-xs);
+        color: var(--color-text-muted);
       }
     }
   }

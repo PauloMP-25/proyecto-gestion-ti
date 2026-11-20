@@ -3,10 +3,10 @@
 }
 
 .sidebar-footer {
-  padding: var(--space-3, 0.75rem);
-  border-top: 1px solid var(--color-border-subtle, #e2e8f0);
-  background-color: var(--color-bg-app, #faf6f0);
-  transition: opacity var(--transition-fast, 150ms ease);
+  padding: var(--espacio-sm);
+  border-top: var(--comp-sidebar-borde);
+  background-color: var(--comp-soporte-pie-bg);
+  transition: opacity var(--transition-fast);
 
   &.oculto-colapsado {
     display: none;
@@ -16,16 +16,16 @@
 .sla-soporte-info {
   display: flex;
   align-items: center;
-  gap: var(--space-2, 0.5rem);
-  padding: var(--space-2, 0.5rem) var(--space-3, 0.75rem);
-  background-color: var(--color-surface-card, #ffffff);
-  border: 1px solid var(--color-border-subtle, #e2e8f0);
-  border-radius: var(--radius-md, 8px);
+  gap: var(--espacio-xs);
+  padding: var(--espacio-xs) var(--espacio-sm);
+  background-color: var(--comp-soporte-pie-tarjeta-bg);
+  border: var(--comp-sidebar-borde);
+  border-radius: var(--radius-md);
 
   .icono-help {
-    font-size: 24px;
-    color: var(--color-secondary-base, #1b5e20);
     flex-shrink: 0;
+    font-size: var(--font-size-2xl);
+    color: var(--comp-soporte-pie-icono);
   }
 
   .soporte-detalles {
@@ -34,20 +34,20 @@
     min-width: 0;
 
     .titulo-soporte {
-      font-size: var(--font-size-xs, 0.75rem);
-      font-weight: var(--font-weight-semibold, 600);
-      color: var(--color-text-main, #0f172a);
-      white-space: nowrap;
       overflow: hidden;
+      font-size: var(--font-size-xs);
+      font-weight: var(--font-weight-semibold);
+      color: var(--comp-soporte-pie-titulo-texto);
       text-overflow: ellipsis;
+      white-space: nowrap;
     }
 
     .anexo-soporte {
-      font-size: 11px;
-      color: var(--color-text-muted, #64748b);
-      white-space: nowrap;
       overflow: hidden;
+      font-size: var(--font-size-xs);
+      color: var(--comp-soporte-pie-detalle-texto);
       text-overflow: ellipsis;
+      white-space: nowrap;
     }
   }
 }

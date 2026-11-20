@@ -6,11 +6,11 @@
   display: none;
   position: fixed;
   inset: 0;
-  background-color: var(--color-surface-overlay, rgba(15, 23, 42, 0.4));
+  background-color: var(--comp-sidebar-backdrop-bg);
   backdrop-filter: blur(2px);
-  z-index: var(--z-drawer, 40);
+  z-index: var(--comp-sidebar-backdrop-z);
   opacity: 0;
-  transition: opacity var(--transition-normal, 250ms ease);
+  transition: opacity var(--transition-normal);
 
   &.abierto {
     display: block;
@@ -22,33 +22,35 @@
   }
 }
 
-/* Menú Lateral Shell */
+/* Menú lateral: drawer en móvil/tablet, anclado en escritorio */
 .menu-lateral {
   position: fixed;
-  top: 64px;
+  top: var(--comp-navbar-alto);
   bottom: 0;
   left: 0;
-  width: 250px;
-  background-color: var(--color-surface-card, #ffffff);
-  border-right: 1px solid var(--color-border-subtle, #e2e8f0);
-  z-index: var(--z-sidebar, 20);
   display: flex;
   flex-direction: column;
-  transition: width var(--transition-normal, 250ms ease), transform var(--transition-normal, 250ms ease);
+  width: min(var(--comp-sidebar-ancho), 85vw);
+  background-color: var(--comp-sidebar-bg);
+  border-right: var(--comp-sidebar-borde);
+  z-index: var(--comp-sidebar-backdrop-z);
   transform: translateX(-100%);
+  transition: width var(--transition-normal), transform var(--transition-normal);
 
-  /* Móvil y Tablet: Drawer Off-Canvas */
   &.movil-abierto {
     transform: translateX(0);
-    box-shadow: var(--shadow-xl, 0 20px 25px -5px rgba(0, 0, 0, 0.1));
+    box-shadow: var(--comp-sidebar-sombra-movil);
   }
 
-  /* Desktop: Visible y Anclado */
   @include r.desde(lg) {
-    transform: translateX(0);
+    position: static;
+    width: var(--comp-sidebar-ancho);
+    height: calc(100vh - var(--comp-navbar-alto));
+    z-index: var(--comp-sidebar-z);
+    transform: none;
 
     &.colapsado {
-      width: 72px;
+      width: var(--comp-sidebar-ancho-colapsado);
 
       .seccion-titulo {
         display: none;
@@ -62,8 +64,8 @@
   display: flex;
   align-items: center;
   justify-content: space-between;
-  padding: var(--space-3, 0.75rem);
-  border-bottom: 1px solid var(--color-border-subtle, #e2e8f0);
+  padding: var(--espacio-sm);
+  border-bottom: var(--comp-sidebar-borde);
 
   @include r.desde(lg) {
     display: none;
@@ -73,56 +75,55 @@
     display: inline-flex;
     align-items: center;
     justify-content: center;
-    width: var(--touch-min, 44px);
-    height: var(--touch-min, 44px);
+    width: var(--comp-boton-altura);
+    height: var(--comp-boton-altura);
     background: transparent;
     border: none;
-    border-radius: var(--radius-md, 8px);
-    color: var(--color-text-muted, #64748b);
+    border-radius: var(--comp-boton-radio);
+    color: var(--comp-sidebar-titulo-texto);
     cursor: pointer;
 
     @include a11y.foco-visible;
 
     &:hover {
-      background-color: var(--color-surface-hover, #f1f5f9);
-      color: var(--color-text-main, #0f172a);
+      background-color: var(--comp-boton-fantasma-hover-bg);
+      color: var(--comp-boton-fantasma-texto);
     }
   }
 }
 
-/* Área de Navegación con Scroll */
 .sidebar-nav {
-  flex: 1;
-  overflow-y: auto;
-  padding: var(--space-3, 0.75rem);
   display: flex;
+  flex: 1;
   flex-direction: column;
-  gap: var(--space-4, 1rem);
+  gap: var(--espacio-md);
+  padding: var(--espacio-sm);
+  overflow-y: auto;
 }
 
 .seccion-grupo {
   display: flex;
   flex-direction: column;
-  gap: var(--space-1, 0.25rem);
+  gap: var(--espacio-2xs);
 }
 
 .seccion-titulo {
-  font-size: 11px;
-  font-weight: var(--font-weight-bold, 700);
+  margin: 0 0 var(--espacio-2xs);
+  padding: 0 var(--espacio-sm);
+  font-size: var(--font-size-xs);
+  font-weight: var(--font-weight-bold);
+  color: var(--comp-sidebar-titulo-texto);
   text-transform: uppercase;
-  color: var(--color-text-muted, #64748b);
   letter-spacing: 0.05em;
-  padding: 0 var(--space-3, 0.75rem);
-  margin-bottom: var(--space-1, 0.25rem);
 }
 
 .lista-items {
-  list-style: none;
-  padding: 0;
-  margin: 0;
   display: flex;
   flex-direction: column;
-  gap: 2px;
+  gap: var(--espacio-2xs);
+  margin: 0;
+  padding: 0;
+  list-style: none;
 }
 
 .item-fila {
