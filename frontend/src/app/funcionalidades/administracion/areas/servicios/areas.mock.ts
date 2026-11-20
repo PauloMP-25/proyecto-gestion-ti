@@ -300,6 +300,48 @@ export class AreasMock extends AreasApi {
     return of(lista);
   }
 
+  reasignarPersonal(idArea: number, idUsuario: number): Observable<void> {
+    let usuarioEncontrado: PersonalAreaItem | null = null;
+    let areaOrigenId: number | null = null;
+
+    for (const [areaKey, personas] of Object.entries(this.personalPorArea)) {
+      const idx = personas.findIndex((p) => p.id === idUsuario);
+      if (idx !== -1) {
+        usuarioEncontrado = personas[idx];
+        areaOrigenId = Number(areaKey);
+        personas.splice(idx, 1);
+        break;
+      }
+    }
+
+    if (!this.personalPorArea[idArea]) {
+      this.personalPorArea[idArea] = [];
+    }
+
+    if (usuarioEncontrado) {
+      this.personalPorArea[idArea].push(usuarioEncontrado);
+    }
+
+    const idxDest = this.areas.findIndex((a) => a.id === idArea);
+    if (idxDest !== -1) {
+      this.areas[idxDest] = {
+        ...this.areas[idxDest],
+        totalPersonal: this.personalPorArea[idArea].length,
+      };
+    }
+    if (areaOrigenId) {
+      const idxOrig = this.areas.findIndex((a) => a.id === areaOrigenId);
+      if (idxOrig !== -1) {
+        this.areas[idxOrig] = {
+          ...this.areas[idxOrig],
+          totalPersonal: (this.personalPorArea[areaOrigenId] || []).length,
+        };
+      }
+    }
+
+    return of(void 0);
+  }
+
   private normalizar(texto: string): string {
     return (texto || '')
       .toLowerCase()

@@ -79,6 +79,14 @@ export const routes: Routes = [
         pathMatch: 'full',
       },
       {
+        path: 'cuenta/cambiar-contrasena',
+        loadComponent: () =>
+          import(
+            './funcionalidades/auth/paginas/cambiar-contrasena/cambiar-contrasena.page'
+          ).then((m) => m.CambiarContrasenaPage),
+        title: 'Cambiar contraseña - Mesa de Ayuda HSMSI',
+      },
+      {
         path: '403',
         loadComponent: () => import('./funcionalidades/errores/paginas/acceso-denegado/acceso-denegado.component').then(m => m.AccesoDenegadoComponent),
         title: 'Acceso denegado - Service Desk HSMSI',

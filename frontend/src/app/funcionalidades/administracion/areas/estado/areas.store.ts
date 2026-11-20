@@ -122,4 +122,19 @@ export class AreasStore {
       })
     );
   }
+
+  reasignarPersonal(idArea: number, idUsuario: number): Observable<void> {
+    return this.api.reasignarPersonal(idArea, idUsuario).pipe(
+      tap({
+        next: () => {
+          this.notificacion.exito('Colaborador(a) reasignado(a) al área exitosamente.');
+          this.obtenerDetalle(idArea);
+        },
+        error: (err) => {
+          const mensaje = err?.error?.mensaje || 'Error al reasignar colaborador.';
+          this.notificacion.error(mensaje);
+        },
+      })
+    );
+  }
 }

@@ -96,4 +96,10 @@ export class AreasHttp extends AreasApi {
       )
     );
   }
+
+  reasignarPersonal(idArea: number, idUsuario: number): Observable<void> {
+    return this.http
+      .post<void>(`${API_ENDPOINTS.admin.areas}/${idArea}/personal`, { idUsuario })
+      .pipe(map(() => void 0));
+  }
 }

@@ -20,6 +20,9 @@ import { DialogoFormularioComponent } from '../../../../../compartido/ui/organis
 import { CampoFormularioComponent } from '../../../../../compartido/ui/moleculas/campo-formulario/campo-formulario.component';
 import { aplicarErroresServidor } from '../../../../../compartido/utilidades/errores-formulario';
 
+import { PersonalApi } from '../../../personal/servicios/personal.api';
+import { PersonalItem } from '../../../personal/modelos/personal.model';
+
 @Component({
   selector: 'app-dialogo-area',
   standalone: true,
@@ -108,6 +111,20 @@ import { aplicarErroresServidor } from '../../../../../compartido/utilidades/err
             maxlength="150"
             placeholder="Detalle puntos de referencia visibles para guiar al técnico..."
           ></textarea>
+        </app-campo-formulario>
+
+        <app-campo-formulario
+          etiqueta="Encargado(a) del área"
+          paraId="encargadoArea"
+          ayuda="Personal responsable de coordinar solicitudes y turnos."
+          [error]="obtenerError('idEncargado')"
+        >
+          <select id="encargadoArea" formControlName="idEncargado">
+            <option [ngValue]="null">Sin encargado(a) asignado(a)</option>
+            @for (p of personalDisponible(); track p.id) {
+              <option [ngValue]="p.id">{{ p.nombreVisible }}</option>
+            }
+          </select>
         </app-campo-formulario>
       </form>
 
@@ -235,6 +252,7 @@ import { aplicarErroresServidor } from '../../../../../compartido/utilidades/err
 export class DialogoAreaComponent implements OnInit {
   private readonly fb = inject(FormBuilder);
   private readonly store = inject(AreasStore);
+  private readonly personalApi = inject(PersonalApi);
 
   readonly areaParaEditar = input<AreaDetalle | null>(null);
   readonly cerrado = output<boolean>();
@@ -242,10 +260,15 @@ export class DialogoAreaComponent implements OnInit {
   readonly pisos = PISOS_HOSPITALARIOS;
   readonly guardando = signal<boolean>(false);
   readonly errorGeneral = signal<string | null>(null);
+  readonly personalDisponible = signal<PersonalItem[]>([]);
 
   form!: FormGroup;
 
   ngOnInit(): void {
+    this.personalApi.listar({}).subscribe({
+      next: (pag) => this.personalDisponible.set(pag.contenido),
+    });
+
     const area = this.areaParaEditar();
     this.form = this.fb.group({
       nombre: [

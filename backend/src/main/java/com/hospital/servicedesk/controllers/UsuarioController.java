@@ -31,7 +31,7 @@ public class UsuarioController {
         return ResponseEntity.ok(usuarioService.getTecnicosActivos());
     }
 
-    @GetMapping("/usuarios")
+    @GetMapping({"/usuarios", "/admin/personal"})
     @PreAuthorize("hasRole('ADMINISTRADOR')")
     public ResponseEntity<PaginaRespuesta<UsuarioRespuesta>> getAllUsuarios(
             @RequestParam(defaultValue = "0") int pagina,
@@ -40,20 +40,20 @@ public class UsuarioController {
         return ResponseEntity.ok(usuarioService.getUsuariosPaginados(pagina, tamano, busqueda));
     }
 
-    @GetMapping("/usuarios/{id}")
+    @GetMapping({"/usuarios/{id}", "/admin/personal/{id}"})
     @PreAuthorize("hasRole('ADMINISTRADOR')")
     public ResponseEntity<UsuarioRespuesta> getUsuarioById(@PathVariable Integer id) {
         return ResponseEntity.ok(usuarioService.getUsuarioById(id));
     }
 
-    @PostMapping("/usuarios")
+    @PostMapping({"/usuarios", "/admin/personal"})
     @PreAuthorize("hasRole('ADMINISTRADOR')")
     public ResponseEntity<UsuarioRespuesta> createUsuario(@Valid @RequestBody UsuarioRegistroRequest request) {
         UsuarioRespuesta usuario = usuarioService.createUsuario(request);
         return new ResponseEntity<>(usuario, HttpStatus.CREATED);
     }
 
-    @PutMapping("/usuarios/{id}")
+    @PutMapping({"/usuarios/{id}", "/admin/personal/{id}"})
     @PreAuthorize("hasRole('ADMINISTRADOR')")
     public ResponseEntity<UsuarioRespuesta> updateUsuario(
             @PathVariable Integer id,
@@ -62,20 +62,20 @@ public class UsuarioController {
         return ResponseEntity.ok(usuario);
     }
 
-    @PatchMapping("/usuarios/{id}/activo")
+    @PatchMapping({"/usuarios/{id}/activo", "/admin/personal/{id}/activo"})
     @PreAuthorize("hasRole('ADMINISTRADOR')")
     public ResponseEntity<UsuarioRespuesta> toggleActivo(@PathVariable Integer id) {
         UsuarioRespuesta usuario = usuarioService.toggleActivo(id);
         return ResponseEntity.ok(usuario);
     }
 
-    @PostMapping("/usuarios/{id}/restablecer-contrasena")
+    @PostMapping({"/usuarios/{id}/restablecer-contrasena", "/admin/personal/{id}/restablecer-contrasena"})
     @PreAuthorize("hasRole('ADMINISTRADOR')")
     public ResponseEntity<RestablecerContrasenaRespuesta> restablecerContrasena(@PathVariable Integer id) {
         return ResponseEntity.ok(usuarioService.restablecerContrasena(id));
     }
 
-    @PutMapping({"/cuenta/contrasena", "/auth/cambiar-contrasena"})
+    @PutMapping("/cuenta/contrasena")
     public ResponseEntity<Map<String, String>> cambiarContrasena(
             @Valid @RequestBody CambioContrasenaRequest request,
             Authentication authentication) {

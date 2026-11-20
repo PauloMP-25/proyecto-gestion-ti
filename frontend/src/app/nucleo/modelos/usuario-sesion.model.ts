@@ -8,4 +8,5 @@ export interface UsuarioSesion {
   areaProcedencia?: string; // Ej: 'Triaje de Emergencia', 'Admisión Central', etc.
   cargo?: string;
   avatarUrl?: string;
+  debeCambiarContrasena?: boolean;
 }

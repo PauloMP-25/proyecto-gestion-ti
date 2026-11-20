@@ -16,4 +16,7 @@ export const API_ENDPOINTS = {
   catalogos: {
     gradosProfesionales: `${environment.apiUrl}/catalogos/grados-profesionales`,
   },
+  cuenta: {
+    contrasena: `${environment.apiUrl}/cuenta/contrasena`,
+  },
 } as const;

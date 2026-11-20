@@ -28,6 +28,7 @@ export class AuthService {
   readonly usuarioActual = this._usuarioActual.asReadonly();
   readonly estaAutenticado = computed(() => !!this._usuarioActual());
   readonly rolActual = computed(() => this._usuarioActual()?.rol ?? null);
+  readonly debeCambiarContrasena = computed(() => !!this._usuarioActual()?.debeCambiarContrasena);
 
   private cargarUsuarioInicial(): UsuarioSesion | null {
     const usuarioGuardado = this.tokenStorage.obtenerUsuario<UsuarioSesion>();
@@ -74,6 +75,15 @@ export class AuthService {
     };
 
     this.establecerUsuario(usuarioModificado);
+  }
+
+  marcarContrasenaCambiada(): void {
+    const usuarioActual = this._usuarioActual();
+    if (!usuarioActual) return;
+    this.establecerUsuario({
+      ...usuarioActual,
+      debeCambiarContrasena: false,
+    });
   }
 
   cerrarSesion(): void {

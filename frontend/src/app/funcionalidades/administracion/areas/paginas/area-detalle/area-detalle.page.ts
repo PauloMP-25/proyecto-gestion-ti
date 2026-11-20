@@ -6,11 +6,17 @@ import {
   signal,
 } from '@angular/core';
 import { CommonModule } from '@angular/common';
+import { FormsModule } from '@angular/forms';
 import { ActivatedRoute, RouterModule } from '@angular/router';
 import { AreasStore } from '../../estado/areas.store';
 import { TarjetaEquipoComponent } from '../../../../../compartido/ui/moleculas/tarjeta-equipo/tarjeta-equipo.component';
-import { InsigniaGradoComponent } from '../../../../../compartido/ui/atomos/insignia-grado/insignia-grado.component';
 import { DialogoAreaComponent } from '../../componentes/dialogo-area/dialogo-area.component';
+import { DialogoPersonalComponent } from '../../../personal/componentes/dialogo-personal/dialogo-personal.component';
+import { DialogoEquipoComponent } from '../../../equipos/componentes/dialogo-equipo/dialogo-equipo.component';
+import { DialogoFormularioComponent } from '../../../../../compartido/ui/organismos/dialogo-formulario/dialogo-formulario.component';
+import { CampoFormularioComponent } from '../../../../../compartido/ui/moleculas/campo-formulario/campo-formulario.component';
+import { PersonalApi } from '../../../personal/servicios/personal.api';
+import { PersonalItem } from '../../../personal/modelos/personal.model';
 
 type PestanaDetalle = 'personal' | 'computadoras' | 'impresoras';
 
@@ -19,9 +25,14 @@ type PestanaDetalle = 'personal' | 'computadoras' | 'impresoras';
   standalone: true,
   imports: [
     CommonModule,
+    FormsModule,
     RouterModule,
     TarjetaEquipoComponent,
     DialogoAreaComponent,
+    DialogoPersonalComponent,
+    DialogoEquipoComponent,
+    DialogoFormularioComponent,
+    CampoFormularioComponent,
   ],
   template: `
     @if (store.cargandoDetalle()) {
@@ -143,6 +154,25 @@ type PestanaDetalle = 'personal' | 'computadoras' | 'impresoras';
               aria-labelledby="tab-personal"
               class="panel-contenido"
             >
+              <div class="panel-cabecera-acciones">
+                <button
+                  type="button"
+                  class="btn-accion-tab"
+                  (click)="abrirModalRegistrarPersonal()"
+                >
+                  <span class="icono-btn" aria-hidden="true">person_add</span>
+                  <span>Registrar persona</span>
+                </button>
+                <button
+                  type="button"
+                  class="btn-accion-tab btn-accion-tab--secundario"
+                  (click)="abrirModalReasignarPersonal(area.id)"
+                >
+                  <span class="icono-btn" aria-hidden="true">swap_horiz</span>
+                  <span>Traer persona de otra área</span>
+                </button>
+              </div>
+
               @if (store.personal().length === 0) {
                 <div class="estado-vacio-panel">
                   <span class="icono-vacio" aria-hidden="true">person_off</span>
@@ -198,6 +228,17 @@ type PestanaDetalle = 'personal' | 'computadoras' | 'impresoras';
               aria-labelledby="tab-computadoras"
               class="panel-contenido"
             >
+              <div class="panel-cabecera-acciones">
+                <button
+                  type="button"
+                  class="btn-accion-tab"
+                  (click)="abrirModalRegistrarEquipo('COMPUTADORA')"
+                >
+                  <span class="icono-btn" aria-hidden="true">add_to_queue</span>
+                  <span>Registrar computadora</span>
+                </button>
+              </div>
+
               @if (store.computadoras().length === 0) {
                 <div class="estado-vacio-panel">
                   <span class="icono-vacio" aria-hidden="true">desktop_access_disabled</span>
@@ -221,6 +262,17 @@ type PestanaDetalle = 'personal' | 'computadoras' | 'impresoras';
               aria-labelledby="tab-impresoras"
               class="panel-contenido"
             >
+              <div class="panel-cabecera-acciones">
+                <button
+                  type="button"
+                  class="btn-accion-tab"
+                  (click)="abrirModalRegistrarEquipo('IMPRESORA')"
+                >
+                  <span class="icono-btn" aria-hidden="true">print</span>
+                  <span>Registrar impresora</span>
+                </button>
+              </div>
+
               @if (store.impresoras().length === 0) {
                 <div class="estado-vacio-panel">
                   <span class="icono-vacio" aria-hidden="true">print_disabled</span>
@@ -242,6 +294,69 @@ type PestanaDetalle = 'personal' | 'computadoras' | 'impresoras';
             [areaParaEditar]="area"
             (cerrado)="modalEditarAbierto.set(false)"
           ></app-dialogo-area>
+        }
+
+        @if (modalPersonalAbierto()) {
+          <app-dialogo-personal
+            [idAreaPreseleccionada]="area.id"
+            (cancelado)="modalPersonalAbierto.set(false)"
+            (guardado)="alGuardarPersonal(area.id)"
+          ></app-dialogo-personal>
+        }
+
+        @if (modalEquipoAbierto()) {
+          <app-dialogo-equipo
+            [idAreaPreseleccionada]="area.id"
+            [tipoPreseleccionado]="tipoEquipoParaCrear()"
+            (cancelar)="modalEquipoAbierto.set(false)"
+            (guardado)="alGuardarEquipo(area.id)"
+          ></app-dialogo-equipo>
+        }
+
+        @if (modalReasignarAbierto()) {
+          <app-dialogo-formulario
+            titulo="Traer colaborador(a) a esta área"
+            subtitulo="Seleccione a un personal activo para reasignarlo al servicio actual."
+            (cancelar)="cerrarModalReasignar()"
+          >
+            <div cuerpo class="contenedor-reasignar">
+              <app-campo-formulario
+                etiqueta="Colaborador(a) a reasignar"
+                paraId="selectorPersonalReasignar"
+                ayuda="Solo se muestran colaboradores activos de otras áreas."
+              >
+                <select
+                  id="selectorPersonalReasignar"
+                  [ngModel]="idColaboradorParaReasignar()"
+                  (ngModelChange)="idColaboradorParaReasignar.set($event)"
+                  class="select-reasignar"
+                >
+                  <option [ngValue]="null" disabled>Seleccione un colaborador...</option>
+                  @for (p of personalParaReasignar(); track p.id) {
+                    <option [ngValue]="p.id">{{ p.nombreVisible }} ({{ p.nombreArea }})</option>
+                  }
+                </select>
+              </app-campo-formulario>
+            </div>
+
+            <div pie class="acciones-dialogo">
+              <button
+                type="button"
+                class="btn-cancelar-modal"
+                (click)="cerrarModalReasignar()"
+              >
+                Cancelar
+              </button>
+              <button
+                type="button"
+                class="btn-confirmar-modal"
+                [disabled]="!idColaboradorParaReasignar() || reasignando()"
+                (click)="confirmarReasignacion(area.id)"
+              >
+                {{ reasignando() ? 'Reasignando...' : 'Reasignar a esta área' }}
+              </button>
+            </div>
+          </app-dialogo-formulario>
         }
       </div>
     }
@@ -273,9 +388,9 @@ type PestanaDetalle = 'personal' | 'computadoras' | 'impresoras';
       flex-direction: column;
       align-items: center;
       justify-content: center;
-      gap: var(--espacio-4);
       padding: var(--espacio-12);
       color: var(--color-text-muted);
+      gap: var(--espacio-4);
     }
 
     .spinner-grande {
@@ -291,45 +406,43 @@ type PestanaDetalle = 'personal' | 'computadoras' | 'impresoras';
       display: flex;
       flex-direction: column;
       gap: var(--espacio-6);
-      max-width: 80rem;
+      max-width: 75rem;
       margin: 0 auto;
     }
 
     .link-volver {
       display: inline-flex;
       align-items: center;
-      gap: var(--espacio-xs);
+      gap: var(--espacio-2);
       font-size: var(--font-size-sm);
-      color: var(--color-primary-base);
+      color: var(--color-text-muted);
       text-decoration: none;
       font-weight: var(--font-weight-medium);
 
       &:hover {
-        text-decoration: underline;
+        color: var(--color-primary-base);
       }
     }
 
-    .icono-volver {
-      font-family: 'Material Symbols Outlined', sans-serif;
-      font-size: var(--font-size-md);
-    }
-
     .detalle-cabecera {
-      display: flex;
-      align-items: flex-start;
-      justify-content: space-between;
-      gap: var(--espacio-4);
-      padding: var(--espacio-5);
       background-color: var(--color-surface-card);
       border: 1px solid var(--color-border-subtle);
       border-radius: var(--radius-lg);
+      padding: var(--espacio-6);
+      display: flex;
+      justify-content: space-between;
+      align-items: flex-start;
+      gap: var(--espacio-4);
       box-shadow: var(--shadow-sm);
-      flex-wrap: wrap;
+
+      @media (max-width: 640px) {
+        flex-direction: column;
+      }
 
       &__info {
         display: flex;
         flex-direction: column;
-        gap: var(--espacio-2);
+        gap: var(--espacio-3);
       }
 
       &__titulo-fila {
@@ -344,70 +457,59 @@ type PestanaDetalle = 'personal' | 'computadoras' | 'impresoras';
       font-size: var(--font-size-2xl);
       font-weight: var(--font-weight-bold);
       color: var(--color-text-main);
-      letter-spacing: -0.02em;
     }
 
     .badge-inactiva {
-      font-size: var(--font-size-xs);
+      display: inline-flex;
       padding: var(--espacio-2xs) var(--espacio-xs);
+      background-color: var(--color-danger-subtle);
+      color: var(--color-danger-text);
+      font-size: var(--font-size-xs);
+      font-weight: var(--font-weight-semibold);
       border-radius: var(--radius-sm);
-      background-color: var(--color-surface-hover);
-      color: var(--color-text-muted);
-      border: 1px solid var(--color-border-subtle);
     }
 
     .detalle-metadatos {
       display: flex;
-      align-items: center;
-      gap: var(--espacio-4);
       flex-wrap: wrap;
+      gap: var(--espacio-4);
+      color: var(--color-text-muted);
+      font-size: var(--font-size-sm);
     }
 
     .metadato-item {
       display: inline-flex;
       align-items: center;
-      gap: var(--espacio-xs);
-      font-size: var(--font-size-sm);
-      color: var(--color-text-muted);
-
-      strong {
-        color: var(--color-text-main);
-      }
-    }
-
-    .detalle-referencia {
-      margin: var(--espacio-xs) 0 0;
-      display: inline-flex;
-      align-items: center;
-      gap: var(--espacio-xs);
-      font-size: var(--font-size-sm);
-      color: var(--color-text-main);
-      background-color: var(--color-surface-sunken);
-      padding: var(--espacio-xs) var(--espacio-2);
-      border-radius: var(--radius-sm);
-      width: fit-content;
+      gap: var(--espacio-1);
     }
 
     .icono-meta {
-      font-family: 'Material Symbols Outlined', sans-serif;
-      font-size: var(--font-size-md);
+      font-family: 'Material Symbols Outlined';
+      font-size: 1.1rem;
+    }
+
+    .detalle-referencia {
+      margin: 0;
+      display: inline-flex;
+      align-items: center;
+      gap: var(--espacio-1);
+      font-size: var(--font-size-sm);
       color: var(--color-text-muted);
+      font-style: italic;
     }
 
     .btn-editar {
       display: inline-flex;
       align-items: center;
       gap: var(--espacio-2);
-      height: var(--touch-min);
-      padding: 0 var(--espacio-4);
-      background-color: var(--color-surface-card);
+      padding: var(--espacio-2) var(--espacio-4);
+      background-color: var(--color-surface-sunken);
       color: var(--color-text-main);
       border: 1px solid var(--color-border-subtle);
       border-radius: var(--radius-md);
       font-size: var(--font-size-sm);
       font-weight: var(--font-weight-medium);
       cursor: pointer;
-      transition: background-color var(--trans-fast);
 
       &:hover {
         background-color: var(--color-surface-hover);
@@ -415,21 +517,22 @@ type PestanaDetalle = 'personal' | 'computadoras' | 'impresoras';
     }
 
     .icono-btn {
-      font-family: 'Material Symbols Outlined', sans-serif;
-      font-size: var(--font-size-md);
+      font-family: 'Material Symbols Outlined';
+      font-size: 1.1rem;
     }
 
     .contenedor-pestanas {
-      display: flex;
-      flex-direction: column;
-      gap: var(--espacio-4);
+      background-color: var(--color-surface-card);
+      border: 1px solid var(--color-border-subtle);
+      border-radius: var(--radius-lg);
+      box-shadow: var(--shadow-sm);
+      overflow: hidden;
     }
 
     .barra-pestanas {
       display: flex;
-      align-items: center;
-      gap: var(--espacio-2);
-      border-bottom: 2px solid var(--color-border-subtle);
+      border-bottom: 1px solid var(--color-border-subtle);
+      background-color: var(--color-surface-sunken);
       overflow-x: auto;
     }
 
@@ -437,40 +540,71 @@ type PestanaDetalle = 'personal' | 'computadoras' | 'impresoras';
       display: inline-flex;
       align-items: center;
       gap: var(--espacio-2);
-      padding: var(--espacio-3) var(--espacio-4);
-      border: none;
+      padding: var(--espacio-4) var(--espacio-6);
       background: transparent;
+      border: none;
+      border-bottom: 2px solid transparent;
+      color: var(--color-text-muted);
       font-size: var(--font-size-sm);
       font-weight: var(--font-weight-medium);
-      color: var(--color-text-muted);
       cursor: pointer;
-      border-bottom: 2px solid transparent;
-      margin-bottom: -2px;
-      transition: color var(--trans-fast), border-color var(--trans-fast);
       white-space: nowrap;
 
       &:hover {
         color: var(--color-text-main);
+        background-color: var(--color-surface-hover);
       }
 
       &--activa {
         color: var(--color-primary-base);
         border-bottom-color: var(--color-primary-base);
+        background-color: var(--color-surface-card);
         font-weight: var(--font-weight-semibold);
       }
     }
 
     .icono-tab {
-      font-family: 'Material Symbols Outlined', sans-serif;
-      font-size: var(--font-size-md);
+      font-family: 'Material Symbols Outlined';
+      font-size: 1.2rem;
     }
 
     .panel-contenido {
-      background-color: var(--color-surface-card);
-      border: 1px solid var(--color-border-subtle);
-      border-radius: var(--radius-lg);
-      padding: var(--espacio-5);
-      box-shadow: var(--shadow-sm);
+      padding: var(--espacio-6);
+    }
+
+    .panel-cabecera-acciones {
+      display: flex;
+      flex-wrap: wrap;
+      gap: var(--espacio-3);
+      margin-bottom: var(--espacio-4);
+    }
+
+    .btn-accion-tab {
+      display: inline-flex;
+      align-items: center;
+      gap: var(--espacio-2);
+      padding: var(--espacio-2) var(--espacio-4);
+      background-color: var(--color-brand-primary);
+      color: var(--color-text-inverse);
+      border: none;
+      border-radius: var(--radius-sm);
+      font-size: var(--tipo-cuerpo-sm-size);
+      font-weight: 600;
+      cursor: pointer;
+
+      &:hover {
+        background-color: var(--color-brand-secondary);
+      }
+
+      &--secundario {
+        background-color: transparent;
+        color: var(--color-text-primary);
+        border: 1px solid var(--color-border-subtle);
+
+        &:hover {
+          background-color: var(--color-surface-hover);
+        }
+      }
     }
 
     .estado-vacio-panel {
@@ -478,15 +612,16 @@ type PestanaDetalle = 'personal' | 'computadoras' | 'impresoras';
       flex-direction: column;
       align-items: center;
       justify-content: center;
-      gap: var(--espacio-2);
       padding: var(--espacio-8);
       color: var(--color-text-muted);
-      font-size: var(--font-size-sm);
+      text-align: center;
+      gap: var(--espacio-2);
     }
 
     .icono-vacio {
-      font-family: 'Material Symbols Outlined', sans-serif;
+      font-family: 'Material Symbols Outlined';
       font-size: 2.5rem;
+      opacity: 0.6;
     }
 
     .tabla-contenedor {
@@ -496,24 +631,21 @@ type PestanaDetalle = 'personal' | 'computadoras' | 'impresoras';
     .tabla-datos {
       width: 100%;
       border-collapse: collapse;
-      text-align: left;
       font-size: var(--font-size-sm);
 
-      thead th {
+      th {
+        text-align: left;
         padding: var(--espacio-3) var(--espacio-4);
-        background-color: var(--comp-tabla-cabecera-bg);
-        border-bottom: 1px solid var(--color-border-subtle);
+        background-color: var(--color-surface-sunken);
         color: var(--color-text-muted);
-        font-size: var(--font-size-xs);
-        text-transform: uppercase;
-        letter-spacing: 0.05em;
+        font-weight: var(--font-weight-semibold);
+        border-bottom: 1px solid var(--color-border-subtle);
       }
 
-      tbody td {
+      td {
         padding: var(--espacio-3) var(--espacio-4);
         border-bottom: 1px solid var(--color-border-subtle);
         color: var(--color-text-main);
-        vertical-align: middle;
       }
 
       tbody tr:last-child td {
@@ -553,6 +685,61 @@ type PestanaDetalle = 'personal' | 'computadoras' | 'impresoras';
       gap: var(--espacio-4);
     }
 
+    .contenedor-reasignar {
+      padding: var(--espacio-2) 0;
+    }
+
+    .select-reasignar {
+      width: 100%;
+      padding: var(--espacio-2) var(--espacio-3);
+      border: 1px solid var(--color-border-subtle);
+      border-radius: var(--radius-sm);
+      background-color: var(--color-surface-input);
+      color: var(--color-text-primary);
+      font-size: var(--tipo-cuerpo-sm-size);
+    }
+
+    .acciones-dialogo {
+      display: flex;
+      justify-content: flex-end;
+      gap: var(--espacio-3);
+      width: 100%;
+    }
+
+    .btn-cancelar-modal {
+      padding: var(--espacio-2) var(--espacio-4);
+      border: 1px solid var(--color-border-subtle);
+      background: transparent;
+      color: var(--color-text-primary);
+      border-radius: var(--radius-sm);
+      cursor: pointer;
+      font-size: var(--tipo-cuerpo-sm-size);
+
+      &:hover {
+        background-color: var(--color-surface-hover);
+      }
+    }
+
+    .btn-confirmar-modal {
+      padding: var(--espacio-2) var(--espacio-4);
+      background-color: var(--color-brand-primary);
+      color: var(--color-text-inverse);
+      border: none;
+      border-radius: var(--radius-sm);
+      font-weight: 500;
+      font-size: var(--tipo-cuerpo-sm-size);
+      cursor: pointer;
+
+      &:hover:not(:disabled) {
+        background-color: var(--color-brand-secondary);
+      }
+
+      &:disabled {
+        opacity: 0.5;
+        cursor: not-allowed;
+      }
+    }
+
     @keyframes spin {
       to { transform: rotate(360deg); }
     }
@@ -562,9 +749,18 @@ type PestanaDetalle = 'personal' | 'computadoras' | 'impresoras';
 export class AreaDetallePage implements OnInit {
   readonly store = inject(AreasStore);
   private readonly route = inject(ActivatedRoute);
+  private readonly personalApi = inject(PersonalApi);
 
   readonly pestanaActiva = signal<PestanaDetalle>('personal');
   readonly modalEditarAbierto = signal<boolean>(false);
+  readonly modalPersonalAbierto = signal<boolean>(false);
+  readonly modalEquipoAbierto = signal<boolean>(false);
+  readonly tipoEquipoParaCrear = signal<string>('COMPUTADORA');
+
+  readonly modalReasignarAbierto = signal<boolean>(false);
+  readonly personalParaReasignar = signal<PersonalItem[]>([]);
+  readonly idColaboradorParaReasignar = signal<number | null>(null);
+  readonly reasignando = signal<boolean>(false);
 
   ngOnInit(): void {
     const id = Number(this.route.snapshot.paramMap.get('id'));
@@ -579,5 +775,60 @@ export class AreaDetallePage implements OnInit {
 
   abrirModalEditar(): void {
     this.modalEditarAbierto.set(true);
+  }
+
+  abrirModalRegistrarPersonal(): void {
+    this.modalPersonalAbierto.set(true);
+  }
+
+  alGuardarPersonal(idArea: number): void {
+    this.modalPersonalAbierto.set(false);
+    this.store.obtenerDetalle(idArea);
+  }
+
+  abrirModalRegistrarEquipo(tipo: 'COMPUTADORA' | 'IMPRESORA'): void {
+    this.tipoEquipoParaCrear.set(tipo);
+    this.modalEquipoAbierto.set(true);
+  }
+
+  alGuardarEquipo(idArea: number): void {
+    this.modalEquipoAbierto.set(false);
+    this.store.obtenerDetalle(idArea);
+  }
+
+  abrirModalReasignarPersonal(idAreaActual: number): void {
+    this.idColaboradorParaReasignar.set(null);
+    this.reasignando.set(false);
+    this.personalApi.listar({}).subscribe({
+      next: (pag) => {
+        // Filtrar solo colaboradores adscritos a otras áreas
+        const otros = pag.contenido.filter(
+          (p) => p.idArea !== idAreaActual && p.activo
+        );
+        this.personalParaReasignar.set(otros);
+        this.modalReasignarAbierto.set(true);
+      },
+    });
+  }
+
+  cerrarModalReasignar(): void {
+    this.modalReasignarAbierto.set(false);
+    this.idColaboradorParaReasignar.set(null);
+  }
+
+  confirmarReasignacion(idArea: number): void {
+    const idUsuario = this.idColaboradorParaReasignar();
+    if (!idUsuario) return;
+
+    this.reasignando.set(true);
+    this.store.reasignarPersonal(idArea, idUsuario).subscribe({
+      next: () => {
+        this.reasignando.set(false);
+        this.cerrarModalReasignar();
+      },
+      error: () => {
+        this.reasignando.set(false);
+      },
+    });
   }
 }

@@ -22,6 +22,22 @@ export const ADMINISTRACION_ROUTES: Routes = [
           ),
         title: 'Detalle de área - Mesa de Ayuda HSMSI',
       },
+      {
+        path: 'personal',
+        loadComponent: () =>
+          import('./personal/paginas/personal-lista/personal-lista.page').then(
+            (m) => m.PersonalListaPage
+          ),
+        title: 'Personal y cuentas - Mesa de Ayuda HSMSI',
+      },
+      {
+        path: 'equipos',
+        loadComponent: () =>
+          import('./equipos/paginas/equipos-lista/equipos-lista.page').then(
+            (m) => m.EquiposListaPage
+          ),
+        title: 'Equipos e impresoras - Mesa de Ayuda HSMSI',
+      },
       { path: '', pathMatch: 'full', redirectTo: 'areas' },
     ],
   },

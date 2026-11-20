@@ -34,4 +34,5 @@ export abstract class AreasApi {
   abstract cambiarEstado(id: number, activo: boolean): Observable<AreaDetalle>;
   abstract listarPersonal(idArea: number, incluirInactivos?: boolean): Observable<PersonalAreaItem[]>;
   abstract listarEquipos(idArea: number, tipo?: string): Observable<EquipoAreaItem[]>;
+  abstract reasignarPersonal(idArea: number, idUsuario: number): Observable<void>;
 }
