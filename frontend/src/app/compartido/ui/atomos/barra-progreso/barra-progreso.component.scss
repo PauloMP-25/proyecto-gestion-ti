@@ -1,0 +1,58 @@
+:host {
+  display: block;
+  width: 100%;
+}
+
+.contenedor-barra {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  width: 100%;
+}
+
+.barra-progreso {
+  position: relative;
+  flex: 1;
+  height: 0.5rem;
+  background-color: var(--color-surface-sunken, #e2e8f0);
+  border-radius: 9999px;
+  overflow: hidden;
+  display: flex;
+
+  &__segmento {
+    height: 100%;
+    transition: width 0.3s ease;
+
+    &--neutro {
+      background-color: var(--color-text-secondary, #64748b);
+    }
+
+    &--exito {
+      background-color: #16a34a;
+    }
+
+    &--aviso {
+      background-color: #f59e0b;
+    }
+
+    &--peligro {
+      background-color: #dc2626;
+    }
+
+    &--info {
+      background-color: #0284c7;
+    }
+
+    &--marca {
+      background-color: var(--hsmsi-primario, #701c1c);
+    }
+  }
+
+  &__porcentaje {
+    font-size: 0.75rem;
+    font-weight: 600;
+    color: var(--color-text-secondary, #64748b);
+    min-width: 2.5rem;
+    text-align: right;
+  }
+}

@@ -1,0 +1,24 @@
+<div class="contenedor-barra">
+  <div
+    class="barra-progreso"
+    role="progressbar"
+    [attr.aria-label]="etiquetaAccesible()"
+    [attr.aria-valuenow]="valorAcumulado()"
+    aria-valuemin="0"
+    [attr.aria-valuemax]="total()"
+  >
+    @for (seg of segmentosNormalizados(); track seg.etiqueta + $index) {
+      @if (seg.porcentaje > 0) {
+        <div
+          class="barra-progreso__segmento barra-progreso__segmento--{{ seg.tono }}"
+          [style.width.%]="seg.porcentaje"
+          [attr.title]="seg.etiqueta + ': ' + seg.valor + ' (' + seg.porcentaje.toFixed(1) + '%)'"
+        ></div>
+      }
+    }
+  </div>
+
+  @if (mostrarPorcentaje()) {
+    <span class="barra-progreso__porcentaje">{{ porcentajeTotal() }}%</span>
+  }
+</div>
