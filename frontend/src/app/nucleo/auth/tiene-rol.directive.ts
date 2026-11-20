@@ -1,4 +1,4 @@
-import { Directive, Input, TemplateRef, ViewContainerRef, inject, effect } from '@angular/core';
+import { Directive, TemplateRef, ViewContainerRef, inject, effect, input } from '@angular/core';
 import { AuthService } from './auth.service';
 import { RolUsuario } from '../modelos/rol.enum';
 
@@ -7,37 +7,27 @@ import { RolUsuario } from '../modelos/rol.enum';
   standalone: true,
 })
 export class TieneRolDirective {
-  private templateRef = inject(TemplateRef<unknown>);
-  private viewContainer = inject(ViewContainerRef);
-  private authService = inject(AuthService);
+  private readonly templateRef = inject(TemplateRef<unknown>);
+  private readonly viewContainer = inject(ViewContainerRef);
+  private readonly authService = inject(AuthService);
 
-  private rolesPermitidos: RolUsuario[] = [];
+  readonly roles = input<RolUsuario | RolUsuario[]>([], { alias: 'appTieneRol' });
   private visible = false;
-
-  @Input()
-  set appTieneRol(roles: RolUsuario | RolUsuario[]) {
-    this.rolesPermitidos = Array.isArray(roles) ? roles : [roles];
-    this.actualizarVista();
-  }
 
   constructor() {
     effect(() => {
-      // Reacciona a cambios en rolActual signal
-      this.authService.rolActual();
-      this.actualizarVista();
+      const rolesInput = this.roles();
+      const rolesPermitidos = Array.isArray(rolesInput) ? rolesInput : [rolesInput];
+      const rolActual = this.authService.rolActual();
+      const tienePermiso = rolActual !== null && rolesPermitidos.includes(rolActual);
+
+      if (tienePermiso && !this.visible) {
+        this.viewContainer.createEmbeddedView(this.templateRef);
+        this.visible = true;
+      } else if (!tienePermiso && this.visible) {
+        this.viewContainer.clear();
+        this.visible = false;
+      }
     });
-  }
-
-  private actualizarVista(): void {
-    const rolActual = this.authService.rolActual();
-    const tienePermiso = rolActual !== null && this.rolesPermitidos.includes(rolActual);
-
-    if (tienePermiso && !this.visible) {
-      this.viewContainer.createEmbeddedView(this.templateRef);
-      this.visible = true;
-    } else if (!tienePermiso && this.visible) {
-      this.viewContainer.clear();
-      this.visible = false;
-    }
   }
 }

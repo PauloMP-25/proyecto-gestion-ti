@@ -1,13 +1,11 @@
 import {
   Component,
-  Input,
-  Output,
-  EventEmitter,
+  input,
+  output,
   inject,
   signal,
   ChangeDetectionStrategy,
 } from '@angular/core';
-import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { IconoComponent } from '../../../../compartido/ui/atomos/icono/icono.component';
 import { PortalSolicitudesApi } from '../../servicios/portal-solicitudes.api';
@@ -16,17 +14,17 @@ import { tieneMinimoCaracteresUtiles, contarCaracteresUtiles } from '../../../..
 @Component({
   selector: 'app-tarjeta-confirmacion-solucion',
   standalone: true,
-  imports: [CommonModule, FormsModule, IconoComponent],
+  imports: [FormsModule, IconoComponent],
   templateUrl: './tarjeta-confirmacion-solucion.component.html',
-  styleUrls: ['./tarjeta-confirmacion-solucion.component.scss'],
+  styleUrl: './tarjeta-confirmacion-solucion.component.scss',
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class TarjetaConfirmacionSolucionComponent {
-  @Input({ required: true }) ticketId!: number;
-  @Output() solucionConfirmada = new EventEmitter<void>();
-  @Output() solicitudReabierta = new EventEmitter<string>();
+  readonly ticketId = input.required<number>();
+  readonly solucionConfirmada = output<void>();
+  readonly solicitudReabierta = output<string>();
 
-  private solicitudesApi = inject(PortalSolicitudesApi);
+  private readonly solicitudesApi = inject(PortalSolicitudesApi);
 
   readonly mostrarFormularioNo = signal(false);
   readonly motivoReapertura = signal('');
@@ -56,7 +54,7 @@ export class TarjetaConfirmacionSolucionComponent {
     this.enviando.set(true);
     this.errorMensaje.set(null);
 
-    this.solicitudesApi.confirmarSolucion(this.ticketId).subscribe({
+    this.solicitudesApi.confirmarSolucion(this.ticketId()).subscribe({
       next: () => {
         this.enviando.set(false);
         this.solucionConfirmada.emit();
@@ -74,7 +72,7 @@ export class TarjetaConfirmacionSolucionComponent {
     this.errorMensaje.set(null);
 
     const motivo = this.motivoReapertura().trim();
-    this.solicitudesApi.reabrir(this.ticketId, { motivo }).subscribe({
+    this.solicitudesApi.reabrir(this.ticketId(), { motivo }).subscribe({
       next: () => {
         this.enviando.set(false);
         this.solicitudReabierta.emit(motivo);

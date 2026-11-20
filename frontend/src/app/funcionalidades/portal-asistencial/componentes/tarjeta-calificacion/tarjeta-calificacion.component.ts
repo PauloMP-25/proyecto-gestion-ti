@@ -1,13 +1,11 @@
 import {
   Component,
-  Input,
-  Output,
-  EventEmitter,
+  input,
+  output,
   inject,
   signal,
   ChangeDetectionStrategy,
 } from '@angular/core';
-import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { IconoComponent } from '../../../../compartido/ui/atomos/icono/icono.component';
 import { CalificacionEstrellasComponent } from '../../../../compartido/ui/moleculas/calificacion-estrellas/calificacion-estrellas.component';
@@ -17,17 +15,17 @@ import { CalificacionAtencion } from '../../modelos/solicitud.model';
 @Component({
   selector: 'app-tarjeta-calificacion',
   standalone: true,
-  imports: [CommonModule, FormsModule, IconoComponent, CalificacionEstrellasComponent],
+  imports: [FormsModule, IconoComponent, CalificacionEstrellasComponent],
   templateUrl: './tarjeta-calificacion.component.html',
-  styleUrls: ['./tarjeta-calificacion.component.scss'],
+  styleUrl: './tarjeta-calificacion.component.scss',
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class TarjetaCalificacionComponent {
-  @Input({ required: true }) ticketId!: number;
-  @Output() calificacionEnviada = new EventEmitter<CalificacionAtencion>();
-  @Output() pospuesto = new EventEmitter<void>();
+  readonly ticketId = input.required<number>();
+  readonly calificacionEnviada = output<CalificacionAtencion>();
+  readonly pospuesto = output<void>();
 
-  private solicitudesApi = inject(PortalSolicitudesApi);
+  private readonly solicitudesApi = inject(PortalSolicitudesApi);
 
   readonly puntuacion = signal<number>(0);
   readonly comentario = signal<string>('');
@@ -53,7 +51,7 @@ export class TarjetaCalificacionComponent {
     const comentarioLimpio = this.comentario().trim() || undefined;
 
     this.solicitudesApi
-      .calificar(this.ticketId, {
+      .calificar(this.ticketId(), {
         puntuacion: valorPuntuacion,
         comentario: comentarioLimpio,
       })

@@ -50,7 +50,7 @@ import { AlertasTurnoService } from '../../servicios/alertas-turno.service';
     DialogoResolverTicketComponent,
   ],
   templateUrl: './bandeja-turno.page.html',
-  styleUrls: ['./bandeja-turno.page.scss'],
+  styleUrl: './bandeja-turno.page.scss',
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class BandejaTurnoPage implements OnInit {
