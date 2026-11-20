@@ -52,6 +52,7 @@ public class ElementoConfiguracion {
     @Builder.Default
     private EstadoCI estado = EstadoCI.ACTIVO;
 
-    @Column(name = "fecha_registro", nullable = false, insertable = false, updatable = false)
+    @org.hibernate.annotations.CreationTimestamp
+    @Column(name = "fecha_registro", nullable = false, updatable = false)
     private LocalDateTime fechaRegistro;
 }

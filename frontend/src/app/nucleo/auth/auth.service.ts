@@ -3,6 +3,7 @@ import { Router } from '@angular/router';
 import { RolUsuario } from '../modelos/rol.enum';
 import { UsuarioSesion } from '../modelos/usuario-sesion.model';
 import { TokenStorageService } from './token-storage.service';
+import { environment } from '../../../environments/environment';
 
 @Injectable({
   providedIn: 'root',
@@ -35,7 +36,10 @@ export class AuthService {
     if (usuarioGuardado) {
       return usuarioGuardado;
     }
-    // Usuario por defecto si hay token o en desarrollo
+    // En modo real no hay usuario falso: se exige login contra el backend
+    if (!environment.usarMocks) {
+      return null;
+    }
     return this.usuarioPorDefecto;
   }
 

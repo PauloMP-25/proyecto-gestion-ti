@@ -21,9 +21,10 @@ public class CustomUserDetailsService implements UserDetailsService {
     private final UsuarioRepository usuarioRepository;
 
     @Override
-    public UserDetails loadUserByUsername(String correo) throws UsernameNotFoundException {
-        Usuario usuario = usuarioRepository.findByCorreo(correo)
-                .orElseThrow(() -> new UsernameNotFoundException("Usuario no encontrado: " + correo));
+    public UserDetails loadUserByUsername(String identificador) throws UsernameNotFoundException {
+        Usuario usuario = usuarioRepository.findByCorreoIgnoreCase(identificador)
+                .or(() -> usuarioRepository.findByNombreUsuario(identificador))
+                .orElseThrow(() -> new UsernameNotFoundException("Usuario no encontrado: " + identificador));
 
         if (!Boolean.TRUE.equals(usuario.getActivo())) {
             throw new DisabledException("El usuario se encuentra inactivo");

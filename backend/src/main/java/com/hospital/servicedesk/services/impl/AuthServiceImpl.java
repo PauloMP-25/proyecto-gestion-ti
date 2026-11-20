@@ -41,8 +41,9 @@ public class AuthServiceImpl implements AuthService {
     @Override
     @Transactional
     public AuthResponse login(LoginRequest request) {
-        String correo = request.getCorreo().trim().toLowerCase();
-        Usuario usuario = usuarioRepository.findByCorreoIgnoreCase(correo)
+        String identificador = request.getCorreo().trim();
+        Usuario usuario = usuarioRepository.findByCorreoIgnoreCase(identificador)
+                .or(() -> usuarioRepository.findByNombreUsuario(identificador))
                 .orElseThrow(() -> new CredencialesInvalidasException("Correo o contraseña incorrectos"));
 
         LocalDateTime ahora = LocalDateTime.now(clock);
@@ -58,7 +59,7 @@ public class AuthServiceImpl implements AuthService {
         try {
             Authentication authentication = authenticationManager.authenticate(
                     new UsernamePasswordAuthenticationToken(
-                            correo,
+                            usuario.getCorreo(),
                             request.getContrasena()));
 
             // Éxito: limpiar intentos y actualizar último acceso
@@ -111,6 +112,8 @@ public class AuthServiceImpl implements AuthService {
         datos.put("gradoProfesional", usuario.getGradoProfesional() != null ? usuario.getGradoProfesional().name() : "SIN_GRADO");
         datos.put("correo", usuario.getCorreo());
         datos.put("rol", usuario.getRol());
+        datos.put("idArea", usuario.getArea() != null ? usuario.getArea().getIdArea() : null);
+        datos.put("areaProcedencia", usuario.getArea() != null ? usuario.getArea().getNombre() : "");
         datos.put("nivelSoporte", usuario.getNivelSoporte() != null ? usuario.getNivelSoporte() : "");
         datos.put("debeCambiarContrasena", usuario.getDebeCambiarContrasena() != null ? usuario.getDebeCambiarContrasena() : false);
         datos.put("activo", usuario.getActivo());

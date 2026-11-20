@@ -1,7 +1,7 @@
 export const environment = {
   production: false,
-  usarMocks: true,
+  usarMocks: false,
   apiUrl: '/api',
-  mockLatenciaMs: 400,
+  mockLatenciaMs: 0,
   sondeoBandejaMs: 30000,
 };
