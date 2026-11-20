@@ -1,24 +1,30 @@
-<header class="barra-superior">
-  <!-- Izquierda: Botón Hamburguesa + Logo HSMSI e Identidad -->
+<header class="barra-superior" role="banner">
+  <!-- Izquierda: Botón hamburguesa accesible + Identidad del Hospital -->
   <div class="seccion-izquierda">
-    <button
-      type="button"
-      class="btn-icono hamburguesa"
-      (click)="alternarSidebar()"
-      aria-label="Alternar menú lateral"
-      title="Alternar menú lateral"
-    >
-      <span class="material-symbols-outlined">menu</span>
-    </button>
+    <app-boton-hamburguesa
+      [expandido]="expandido()"
+      (alAlternar)="alternarSidebar()"
+    />
 
     <app-marca-hospital subtitulo="Mesa de Ayuda" />
   </div>
 
-  <!-- Derecha: Perfil del Usuario Autenticado y Menú de Sesión -->
-  <div class="seccion-derecha" *ngIf="usuarioActual() as usuario">
-    <app-usuario-perfil-menu
-      [usuario]="usuario"
-      (cerrarSesion)="cerrarSesion()"
+  <!-- Derecha: Acciones globales (Tema, Notificaciones, Menú de usuario) -->
+  <div class="seccion-derecha">
+    <app-alternador-tema />
+
+    <app-campana-notificaciones
+      [conteo]="notificaciones.length"
+      [notificaciones]="notificaciones"
     />
+
+    @if (usuarioActual(); as usuario) {
+      <div class="divisor-vertical" aria-hidden="true"></div>
+
+      <app-usuario-perfil-menu
+        [usuario]="usuario"
+        (alCerrarSesion)="cerrarSesion()"
+      />
+    }
   </div>
 </header>

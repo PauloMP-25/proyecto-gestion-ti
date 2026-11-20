@@ -1,0 +1,13 @@
+<div class="marca-hospital" [class.marca-hospital--compacto]="modoCompacto()">
+  <img
+    [src]="logoSrc()"
+    alt="Logo Hospital Santa María del Socorro"
+    class="marca-hospital__logo"
+  />
+  @if (!modoCompacto()) {
+    <div class="marca-hospital__textos">
+      <span class="marca-hospital__titulo">Hospital Santa María del Socorro</span>
+      <span class="marca-hospital__subtitulo">{{ subtitulo() }}</span>
+    </div>
+  }
+</div>

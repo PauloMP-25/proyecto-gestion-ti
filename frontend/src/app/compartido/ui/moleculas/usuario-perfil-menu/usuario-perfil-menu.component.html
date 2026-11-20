@@ -1,0 +1,49 @@
+@if (usuario(); as user) {
+  <div class="perfil-menu-container">
+    <button
+      type="button"
+      class="btn-perfil"
+      (click)="alternar()"
+      [attr.aria-expanded]="abierto()"
+      aria-haspopup="true"
+      aria-label="Menú de perfil de usuario"
+    >
+      <app-avatar
+        [nombre]="user.nombreCompleto"
+        [rol]="user.rol"
+        tamano="md"
+      />
+
+      <div class="perfil-info">
+        <span class="perfil-nombre">{{ user.nombreCompleto }}</span>
+        <span class="perfil-cargo">{{ user.cargo || 'Colaborador HSMSI' }}</span>
+      </div>
+
+      <span class="material-symbols-outlined flecha-desplegable" [class.rotada]="abierto()">
+        expand_more
+      </span>
+    </button>
+
+    @if (abierto()) {
+      <div class="dropdown-perfil" role="menu">
+        <div class="dropdown-usuario-resumen">
+          <p class="resumen-nombre">{{ user.nombreCompleto }}</p>
+          <p class="resumen-correo">{{ user.correo }}</p>
+          <span class="resumen-rol">{{ user.cargo || 'Colaborador HSMSI' }}</span>
+        </div>
+
+        <div class="dropdown-divisor"></div>
+
+        <button
+          type="button"
+          class="dropdown-item item-logout"
+          (click)="cerrarSesionAccion()"
+          role="menuitem"
+        >
+          <span class="material-symbols-outlined">logout</span>
+          <span>Cerrar Sesión</span>
+        </button>
+      </div>
+    }
+  </div>
+}

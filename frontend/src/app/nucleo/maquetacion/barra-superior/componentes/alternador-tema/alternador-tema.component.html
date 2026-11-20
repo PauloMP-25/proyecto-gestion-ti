@@ -1,0 +1,6 @@
+<app-boton-icono
+  [icono]="tema() === 'noche' ? 'light_mode' : 'dark_mode'"
+  [etiqueta]="tema() === 'noche' ? 'Cambiar a modo claro' : 'Cambiar a modo noche'"
+  variante="fantasma"
+  (alHacerClick)="alternar()"
+/>

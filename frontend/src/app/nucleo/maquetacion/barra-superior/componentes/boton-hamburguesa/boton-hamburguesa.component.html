@@ -1,0 +1,13 @@
+<button
+  type="button"
+  class="btn-hamburguesa"
+  [attr.aria-expanded]="expandido()"
+  aria-controls="menu-lateral"
+  aria-label="Alternar menú lateral"
+  title="Alternar menú lateral"
+  (click)="alAlternar.emit()"
+>
+  <span class="material-symbols-outlined icono-menu">
+    {{ expandido() ? 'menu_open' : 'menu' }}
+  </span>
+</button>

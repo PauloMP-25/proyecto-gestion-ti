@@ -1,66 +1,33 @@
-import { ChangeDetectionStrategy, Component, input, output, signal } from '@angular/core';
-import { CommonModule } from '@angular/common';
+import {
+  ChangeDetectionStrategy,
+  Component,
+  ElementRef,
+  HostListener,
+  inject,
+  input,
+  output,
+  signal,
+} from '@angular/core';
 import { AvatarComponent } from '../../atomos/avatar/avatar.component';
 import { UsuarioSesion } from '../../../../nucleo/modelos/usuario-sesion.model';
 
 @Component({
   selector: 'app-usuario-perfil-menu',
   standalone: true,
-  imports: [CommonModule, AvatarComponent],
-  changeDetection: ChangeDetectionStrategy.OnPush,
-  template: `
-    @if (usuario(); as user) {
-      <div class="perfil-menu-container">
-        <button
-          type="button"
-          class="btn-perfil"
-          (click)="alternar()"
-          [attr.aria-expanded]="abierto()"
-          aria-haspopup="true"
-        >
-          <app-avatar
-            [nombre]="user.nombreCompleto"
-            [rol]="user.rol"
-            tamano="md"
-          />
-
-          <div class="perfil-info">
-            <span class="perfil-nombre">{{ user.nombreCompleto }}</span>
-            <span class="perfil-cargo">{{ user.cargo || 'Colaborador HSMSI' }}</span>
-          </div>
-
-          <span class="material-symbols-outlined flecha-desplegable">expand_more</span>
-        </button>
-
-        @if (abierto()) {
-          <div class="dropdown-perfil" role="menu">
-            <div class="dropdown-usuario-resumen">
-              <p class="resumen-nombre">{{ user.nombreCompleto }}</p>
-              <p class="resumen-correo">{{ user.correo }}</p>
-              <span class="resumen-rol">{{ user.cargo || 'Colaborador HSMSI' }}</span>
-            </div>
-
-            <div class="dropdown-divisor"></div>
-
-            <button
-              type="button"
-              class="dropdown-item item-logout"
-              (click)="cerrarSesionAccion()"
-              role="menuitem"
-            >
-              <span class="material-symbols-outlined">logout</span>
-              <span>Cerrar Sesión</span>
-            </button>
-          </div>
-        }
-      </div>
-    }
-  `,
+  imports: [AvatarComponent],
+  templateUrl: './usuario-perfil-menu.component.html',
   styleUrl: './usuario-perfil-menu.component.scss',
+  changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class UsuarioPerfilMenuComponent {
+  private elementRef = inject(ElementRef);
+
   readonly usuario = input<UsuarioSesion | null | undefined>(null);
-  readonly cerrarSesion = output<void>();
+
+  readonly alCerrarSesion = output<void>();
+  readonly alCambiarContrasena = output<void>();
+  // Alias de compatibilidad
+  readonly cerrarSesion = this.alCerrarSesion;
 
   readonly abierto = signal(false);
 
@@ -74,6 +41,18 @@ export class UsuarioPerfilMenuComponent {
 
   cerrarSesionAccion(): void {
     this.abierto.set(false);
-    this.cerrarSesion.emit();
+    this.alCerrarSesion.emit();
+  }
+
+  @HostListener('document:click', ['$event'])
+  onDocumentClick(event: MouseEvent): void {
+    if (!this.elementRef.nativeElement.contains(event.target)) {
+      this.cerrar();
+    }
+  }
+
+  @HostListener('document:keydown.escape')
+  onEscape(): void {
+    this.cerrar();
   }
 }

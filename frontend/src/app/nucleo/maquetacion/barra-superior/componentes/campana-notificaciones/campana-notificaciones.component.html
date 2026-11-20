@@ -1,0 +1,60 @@
+<div class="contenedor-campana">
+  <div class="boton-con-badge">
+    <app-boton-icono
+      icono="notifications"
+      etiqueta="Notificaciones de atención"
+      variante="fantasma"
+      (alHacerClick)="alternarPanel()"
+    />
+
+    @if (textoBadge()) {
+      <span
+        class="badge-conteo"
+        aria-live="polite"
+        [attr.aria-label]="textoBadge() + ' notificaciones pendientes'"
+      >
+        {{ textoBadge() }}
+      </span>
+    }
+  </div>
+
+  @if (abierto()) {
+    <div
+      class="panel-notificaciones"
+      role="region"
+      aria-label="Panel de notificaciones"
+    >
+      <div class="cabecera-panel">
+        <h3 class="titulo-panel">Notificaciones</h3>
+        @if (conteo() > 0) {
+          <span class="etiqueta-conteo">{{ conteo() }} pendientes</span>
+        }
+      </div>
+
+      <div class="lista-notificaciones">
+        @if (notificaciones().length === 0) {
+          <div class="vacio">
+            <span class="material-symbols-outlined icono-vacio">check_circle</span>
+            <p>No tienes notificaciones pendientes</p>
+          </div>
+        } @else {
+          @for (notif of notificaciones(); track notif.id) {
+            <button
+              type="button"
+              class="item-notificacion"
+              [class.no-leida]="!notif.leida"
+              (click)="seleccionar(notif)"
+            >
+              <div class="indicador-urgencia" [attr.data-urgencia]="notif.urgencia || 'media'"></div>
+              <div class="cuerpo-notificacion">
+                <span class="titulo-notif">{{ notif.titulo }}</span>
+                <span class="mensaje-notif">{{ notif.mensaje }}</span>
+                <span class="tiempo-notif">{{ notif.tiempo }}</span>
+              </div>
+            </button>
+          }
+        }
+      </div>
+    </div>
+  }
+</div>
