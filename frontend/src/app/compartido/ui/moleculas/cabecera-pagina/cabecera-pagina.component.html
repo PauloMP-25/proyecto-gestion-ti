@@ -1,1 +1,33 @@
-<p>cabecera-pagina works!</p>
+<div class="cabecera-pagina">
+  <div class="cabecera-pagina__principal">
+    <div class="cabecera-pagina__titulo-fila">
+      @if (icono(); as iconoNombre) {
+        <span class="cabecera-pagina__icono" aria-hidden="true">
+          <app-icono [nombre]="iconoNombre" tamano="lg" />
+        </span>
+      }
+
+      <div class="cabecera-pagina__textos">
+        @if (nivelTitulo() === 1) {
+          <h1 class="cabecera-pagina__titulo">{{ titulo() }}</h1>
+        } @else {
+          <h2 class="cabecera-pagina__titulo cabecera-pagina__titulo--h2">{{ titulo() }}</h2>
+        }
+
+        @if (subtitulo()) {
+          <p class="cabecera-pagina__subtitulo">{{ subtitulo() }}</p>
+        }
+      </div>
+    </div>
+
+    <!-- Ranura para metadatos/insignias debajo del título -->
+    <div class="cabecera-pagina__meta">
+      <ng-content select="[meta]" />
+    </div>
+  </div>
+
+  <!-- Ranura para acciones y botones a la derecha -->
+  <div class="cabecera-pagina__acciones">
+    <ng-content select="[acciones]" />
+  </div>
+</div>
