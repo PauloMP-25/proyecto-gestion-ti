@@ -1,33 +1,34 @@
+/* NIVEL 2 — Tipografía semántica (roles tipográficos sobre la escala primitiva) */
 :root {
   --font-family-base: 'Inter', system-ui, -apple-system, 'Segoe UI', roboto, sans-serif;
   --font-family-heading: var(--font-family-base);
   --font-family-mono: 'JetBrains Mono', ui-monospace, consolas, monospace;
 
-  /* Escala modular (ratio ≈ 1.125–1.2). Mínimo 0.75rem */
-  --text-display-size: 2rem;
-  --text-display-lh: 1.2;
-  --text-display-weight: 700;
-  --text-h1-size: 1.5rem;
-  --text-h1-lh: 1.3;
-  --text-h1-weight: 700;
-  --text-h2-size: 1.25rem;
-  --text-h2-lh: 1.35;
-  --text-h2-weight: 600;
-  --text-h3-size: 1.125rem;
-  --text-h3-lh: 1.4;
-  --text-h3-weight: 600;
-  --text-body-lg-size: 1.125rem;
-  --text-body-lg-lh: 1.55;
-  --text-body-lg-weight: 400;
-  --text-body-size: 1rem;
-  --text-body-lh: 1.5;
-  --text-body-weight: 400;
-  --text-body-sm-size: 0.875rem;
-  --text-body-sm-lh: 1.5;
-  --text-body-sm-weight: 500;
-  --text-caption-size: 0.75rem;
-  --text-caption-lh: 1.4;
-  --text-caption-weight: 500;
+  /* Escala modular. Mínimo 0.75rem */
+  --text-display-size: var(--prim-fuente-tamano-3xl);
+  --text-display-lh: var(--prim-fuente-altura-120);
+  --text-display-weight: var(--prim-fuente-peso-700);
+  --text-h1-size: var(--prim-fuente-tamano-2xl);
+  --text-h1-lh: var(--prim-fuente-altura-130);
+  --text-h1-weight: var(--prim-fuente-peso-700);
+  --text-h2-size: var(--prim-fuente-tamano-xl);
+  --text-h2-lh: var(--prim-fuente-altura-135);
+  --text-h2-weight: var(--prim-fuente-peso-600);
+  --text-h3-size: var(--prim-fuente-tamano-lg);
+  --text-h3-lh: var(--prim-fuente-altura-140);
+  --text-h3-weight: var(--prim-fuente-peso-600);
+  --text-body-lg-size: var(--prim-fuente-tamano-lg);
+  --text-body-lg-lh: var(--prim-fuente-altura-155);
+  --text-body-lg-weight: var(--prim-fuente-peso-400);
+  --text-body-size: var(--prim-fuente-tamano-md);
+  --text-body-lh: var(--prim-fuente-altura-150);
+  --text-body-weight: var(--prim-fuente-peso-400);
+  --text-body-sm-size: var(--prim-fuente-tamano-sm);
+  --text-body-sm-lh: var(--prim-fuente-altura-150);
+  --text-body-sm-weight: var(--prim-fuente-peso-500);
+  --text-caption-size: var(--prim-fuente-tamano-xs);
+  --text-caption-lh: var(--prim-fuente-altura-140);
+  --text-caption-weight: var(--prim-fuente-peso-500);
 
   /* Compatibilidad con los nombres existentes */
   --font-size-xs: var(--text-caption-size);
@@ -37,11 +38,11 @@
   --font-size-xl: var(--text-h2-size);
   --font-size-2xl: var(--text-h1-size);
   --font-size-3xl: var(--text-display-size);
-  --font-weight-regular: 400;
-  --font-weight-medium: 500;
-  --font-weight-semibold: 600;
-  --font-weight-bold: 700;
+  --font-weight-regular: var(--prim-fuente-peso-400);
+  --font-weight-medium: var(--prim-fuente-peso-500);
+  --font-weight-semibold: var(--prim-fuente-peso-600);
+  --font-weight-bold: var(--prim-fuente-peso-700);
   --line-height-tight: 1.25;
-  --line-height-normal: 1.5;
-  --line-height-relaxed: 1.625;
+  --line-height-normal: var(--prim-fuente-altura-150);
+  --line-height-relaxed: var(--prim-fuente-altura-163);
 }

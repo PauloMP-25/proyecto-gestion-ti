@@ -1,7 +1,15 @@
+/*
+ * NIVEL 1 — TOKENS PRIMITIVOS
+ * ─────────────────────────────────────────────────────────────────────────
+ * Solo nombre + valor crudo. SIN significado de uso.
+ * Es el ÚNICO archivo del proyecto donde se permiten literales hexadecimales.
+ * Los componentes NUNCA consumen estos tokens directamente (usar N2/N3/N4).
+ */
 :root {
   /* ── Guinda institucional ─────────────────────────────── */
   --prim-guinda-50:  #fdf2f2;
-  --prim-guinda-500: #9b2c2c;   /* modo noche */
+  --prim-guinda-400: #b13a3a;   /* hover en modo noche */
+  --prim-guinda-500: #9b2c2c;   /* base en modo noche */
   --prim-guinda-700: #701c1c;   /* BASE (logo HSMSI) */
   --prim-guinda-800: #521414;   /* hover */
   --prim-guinda-900: #380e0e;   /* active */
@@ -11,6 +19,11 @@
   --prim-verde-700:  #1b5e20;   /* BASE */
   --prim-verde-800:  #113e14;   /* hover */
   --prim-verde-900:  #0a260c;   /* active */
+
+  /* ── Esmeralda (estado "a tiempo" en modo noche) ──────── */
+  --prim-esmeralda-200: #a7f3d0;
+  --prim-esmeralda-600: #059669;
+  --prim-esmeralda-900: #064e3b;
 
   /* ── Crema de fachada (lienzo anti-fatiga) ────────────── */
   --prim-crema-50:   #faf6f0;
@@ -29,24 +42,105 @@
   --prim-slate-800:  #1e293b;
   --prim-slate-900:  #0f172a;
 
+  /* ── Noche (superficies del modo oscuro) ──────────────── */
+  --prim-noche-950:  #0b1320;
+  --prim-noche-900:  #111d2e;
+  --prim-noche-800:  #152238;
+  --prim-noche-700:  #1e2f4a;
+  --prim-noche-600:  #233754;
+  --prim-noche-500:  #334e73;
+
   /* ── Severidad clínica (P1…P4) ────────────────────────── */
   --prim-rojo-100: #fee2e2;
+  --prim-rojo-200: #fecaca;
   --prim-rojo-300: #fca5a5;
   --prim-rojo-600: #dc2626;
   --prim-rojo-900: #7f1d1d;
   --prim-naranja-100: #ffedd5;
+  --prim-naranja-200: #fed7aa;
   --prim-naranja-300: #fdba74;
   --prim-naranja-600: #ea580c;
   --prim-naranja-900: #7c2d12;
   --prim-ambar-100: #fef3c7;
+  --prim-ambar-200: #fde68a;
   --prim-ambar-300: #fcd34d;
   --prim-ambar-600: #d97706;
   --prim-ambar-900: #78350f;
   --prim-azul-100: #dbeafe;
+  --prim-azul-200: #bfdbfe;
   --prim-azul-300: #93c5fd;
   --prim-azul-600: #2563eb;
   --prim-azul-900: #1e3a8a;
 
   /* ── Estrella de calificación ─────────────────────────── */
   --prim-dorado-500: #f59e0b;
+
+  /* ── Transparencias (alfa) ────────────────────────────── */
+  --prim-alfa-guinda-25: rgb(112 28 28 / 25%);
+  --prim-alfa-slate-55:  rgb(15 23 42 / 55%);
+  --prim-alfa-noche-70:  rgb(2 6 23 / 70%);
+  --prim-alfa-sombra-4:  rgb(15 23 42 / 4%);
+  --prim-alfa-sombra-5:  rgb(15 23 42 / 5%);
+  --prim-alfa-sombra-6:  rgb(15 23 42 / 6%);
+  --prim-alfa-sombra-7:  rgb(15 23 42 / 7%);
+  --prim-alfa-sombra-8:  rgb(15 23 42 / 8%);
+  --prim-alfa-sombra-20: rgb(15 23 42 / 20%);
+
+  /* ── Escala de espaciado (módulo 4 px) ────────────────── */
+  --prim-espacio-1:  4px;
+  --prim-espacio-2:  8px;
+  --prim-espacio-3:  12px;
+  --prim-espacio-4:  16px;
+  --prim-espacio-5:  20px;
+  --prim-espacio-6:  24px;
+  --prim-espacio-8:  32px;
+  --prim-espacio-10: 40px;
+  --prim-espacio-11: 44px;
+  --prim-espacio-12: 48px;
+  --prim-espacio-16: 64px;
+
+  /* ── Escala de radios ─────────────────────────────────── */
+  --prim-radio-xs:   4px;
+  --prim-radio-sm:   6px;
+  --prim-radio-md:   8px;
+  --prim-radio-lg:   12px;
+  --prim-radio-xl:   16px;
+  --prim-radio-full: 9999px;
+
+  /* ── Escala tipográfica ───────────────────────────────── */
+  --prim-fuente-tamano-xs:   0.75rem;
+  --prim-fuente-tamano-sm:   0.875rem;
+  --prim-fuente-tamano-md:   1rem;
+  --prim-fuente-tamano-lg:   1.125rem;
+  --prim-fuente-tamano-xl:   1.25rem;
+  --prim-fuente-tamano-2xl:  1.5rem;
+  --prim-fuente-tamano-3xl:  2rem;
+  --prim-fuente-peso-400:    400;
+  --prim-fuente-peso-500:    500;
+  --prim-fuente-peso-600:    600;
+  --prim-fuente-peso-700:    700;
+  --prim-fuente-altura-120:  1.2;
+  --prim-fuente-altura-130:  1.3;
+  --prim-fuente-altura-135:  1.35;
+  --prim-fuente-altura-140:  1.4;
+  --prim-fuente-altura-150:  1.5;
+  --prim-fuente-altura-155:  1.55;
+  --prim-fuente-altura-163:  1.625;
+
+  /* ── Duraciones de movimiento ─────────────────────────── */
+  --prim-duracion-150: 150ms;
+  --prim-duracion-250: 250ms;
+  --prim-duracion-350: 350ms;
+  --prim-curva-estandar: cubic-bezier(0.4, 0, 0.2, 1);
+
+  /* ── Escala de capas (z-index) ────────────────────────── */
+  --prim-capa-100:  100;
+  --prim-capa-150:  150;
+  --prim-capa-1000: 1000;
+  --prim-capa-1100: 1100;
+
+  /* ── Dimensiones de estructura ────────────────────────── */
+  --prim-medida-250: 250px;
+  --prim-medida-72:  72px;
+  --prim-medida-540: 540px;
 }

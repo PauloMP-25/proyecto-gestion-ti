@@ -1,24 +1,169 @@
+/*
+ * NIVELES 3 y 4 — TOKENS DE COMPONENTE
+ * ─────────────────────────────────────────────────────────────────────────
+ * Convención de nombre:  --comp-{componente}-{parte}-{estado?}
+ *
+ * NIVEL 3 · FAMILIA   (patrón común: botón, tarjeta, campo, diálogo…)
+ *                      → apunta a tokens semánticos (N2)
+ * NIVEL 4 · ESPECÍFICO (pieza concreta, variante o estado:
+ *                       botón-primario-hover, sidebar-item-activo…)
+ *                      → apunta a N3 o a N2
+ *
+ * Los componentes SCSS consumen únicamente N3/N4. Cero hex, cero px sueltos.
+ */
 :root {
+  /* ═══════════════ NIVEL 3 · FAMILIAS ═══════════════ */
+
   /* Botón */
-  --boton-altura: var(--touch-min);
-  --boton-altura-compacto: var(--touch-min);   /* "sm" mantiene 44 px de área táctil */
-  --boton-radio: var(--radius-md);
-  --boton-padding-x: var(--espacio-4);
+  --comp-boton-altura: var(--touch-min);
+  --comp-boton-radio: var(--radius-md);
+  --comp-boton-padding-x: var(--espacio-4);
+  --comp-boton-peso: var(--font-weight-semibold);
 
   /* Tarjeta */
-  --tarjeta-radio: var(--radius-lg);
-  --tarjeta-padding: var(--espacio-4);
-  --tarjeta-borde: 1px solid var(--color-border-subtle);
-  --tarjeta-sombra: var(--shadow-card);
-  --tarjeta-sombra-hover: var(--shadow-md);
+  --comp-tarjeta-bg: var(--color-surface-card);
+  --comp-tarjeta-radio: var(--radius-lg);
+  --comp-tarjeta-padding: var(--espacio-4);
+  --comp-tarjeta-borde: 1px solid var(--color-border-subtle);
+  --comp-tarjeta-sombra: var(--shadow-card);
+  --comp-tarjeta-sombra-hover: var(--shadow-md);
 
   /* Campo de formulario */
-  --campo-altura: var(--touch-min);
-  --campo-radio: var(--radius-md);
-  --campo-borde: 1px solid var(--color-border-strong);
+  --comp-campo-bg: var(--color-surface-card);
+  --comp-campo-altura: var(--touch-min);
+  --comp-campo-radio: var(--radius-md);
+  --comp-campo-borde: 1px solid var(--color-border-strong);
+  --comp-campo-texto: var(--color-text-main);
+  --comp-campo-placeholder: var(--color-text-muted);
 
   /* Diálogo */
-  --dialogo-radio: var(--radius-lg);
-  --dialogo-ancho-md: 540px;
-  --dialogo-z: 1000;
+  --comp-dialogo-bg: var(--color-surface-card);
+  --comp-dialogo-radio: var(--radius-lg);
+  --comp-dialogo-ancho-md: var(--prim-medida-540);
+  --comp-dialogo-sombra: var(--shadow-modal);
+  --comp-dialogo-z: var(--z-modal);
+
+  /* Menú flotante (dropdowns, selectores) */
+  --comp-menu-flotante-bg: var(--color-surface-card);
+  --comp-menu-flotante-borde: 1px solid var(--color-border-subtle);
+  --comp-menu-flotante-radio: var(--radius-lg);
+  --comp-menu-flotante-sombra: var(--shadow-lg);
+  --comp-menu-flotante-padding: var(--espacio-2);
+  --comp-menu-flotante-z: var(--z-dropdown);
+  --comp-menu-flotante-opcion-hover: var(--color-surface-hover);
+
+  /* Insignia (badge) */
+  --comp-insignia-radio: var(--radius-full);
+  --comp-insignia-padding-x: var(--espacio-2);
+  --comp-insignia-fuente: var(--font-size-xs);
+
+  /* ═══════════════ NIVEL 4 · ESPECÍFICOS ═══════════════ */
+
+  /* Botón primario */
+  --comp-boton-primario-bg: var(--color-primary-base);
+  --comp-boton-primario-texto: var(--color-text-on-primary);
+  --comp-boton-primario-hover-bg: var(--color-primary-hover);
+  --comp-boton-primario-active-bg: var(--color-primary-active);
+
+  /* Botón secundario (verde salud) */
+  --comp-boton-secundario-bg: var(--color-secondary-base);
+  --comp-boton-secundario-texto: var(--color-text-on-primary);
+  --comp-boton-secundario-hover-bg: var(--color-secondary-hover);
+  --comp-boton-secundario-active-bg: var(--color-secondary-active);
+
+  /* Botón fantasma / icono */
+  --comp-boton-fantasma-texto: var(--color-text-main);
+  --comp-boton-fantasma-hover-bg: var(--color-surface-hover);
+  --comp-boton-fantasma-hover-texto: var(--color-primary-base);
+
+  /* Lienzo de la aplicación (plantilla-layout) */
+  --comp-lienzo-bg: var(--color-bg-app);
+  --comp-lienzo-padding-movil: var(--espacio-md);
+  --comp-lienzo-padding-escritorio: var(--espacio-lg);
+  --comp-lienzo-ancho-max: 1440px;
+
+  /* Barra superior */
+  --comp-navbar-alto: var(--prim-espacio-16);
+  --comp-navbar-bg: var(--color-surface-card);
+  --comp-navbar-borde: 1px solid var(--color-border-subtle);
+  --comp-navbar-sombra: var(--shadow-sm);
+  --comp-navbar-z: var(--z-sticky);
+
+  /* Menú lateral */
+  --comp-sidebar-ancho: var(--prim-medida-250);
+  --comp-sidebar-ancho-colapsado: var(--prim-medida-72);
+  --comp-sidebar-bg: var(--color-surface-card);
+  --comp-sidebar-borde: 1px solid var(--color-border-subtle);
+  --comp-sidebar-sombra-movil: var(--shadow-modal);
+  --comp-sidebar-z: var(--z-sticky);
+  --comp-sidebar-backdrop-bg: var(--color-surface-overlay);
+  --comp-sidebar-backdrop-z: var(--z-drawer);
+  --comp-sidebar-titulo-texto: var(--color-text-muted);
+
+  /* Ítem de navegación */
+  --comp-item-nav-texto: var(--color-text-muted);
+  --comp-item-nav-icono: var(--color-text-muted);
+  --comp-item-nav-hover-bg: var(--color-surface-hover);
+  --comp-item-nav-hover-texto: var(--color-text-main);
+  --comp-item-nav-hover-icono: var(--color-primary-base);
+  --comp-item-nav-activo-bg: var(--color-primary-light);
+  --comp-item-nav-activo-texto: var(--color-primary-base);
+  --comp-item-nav-activo-indicador: var(--color-primary-base);
+
+  /* Insignias dentro de la navegación */
+  --comp-item-nav-badge-info-bg: var(--color-p4-bg);
+  --comp-item-nav-badge-info-texto: var(--color-p4-text);
+  --comp-item-nav-badge-alerta-bg: var(--color-sla-alerta-bg);
+  --comp-item-nav-badge-alerta-texto: var(--color-sla-alerta-text);
+  --comp-item-nav-badge-incumplido-bg: var(--color-sla-incumplido-bg);
+  --comp-item-nav-badge-incumplido-texto: var(--color-sla-incumplido-text);
+
+  /* Avatar */
+  --comp-avatar-texto: var(--color-text-on-primary);
+  --comp-avatar-usuario-bg: var(--color-text-muted);
+  --comp-avatar-practicante-bg: var(--color-info-border);
+  --comp-avatar-admin-bg: var(--color-primary-base);
+
+  /* Marca hospitalaria */
+  --comp-marca-titulo-texto: var(--color-text-main);
+  --comp-marca-subtitulo-texto: var(--color-primary-base);
+
+  /* Perfil de usuario */
+  --comp-perfil-nombre-texto: var(--color-text-main);
+  --comp-perfil-cargo-texto: var(--color-text-muted);
+  --comp-perfil-hover-bg: var(--color-surface-hover);
+  --comp-perfil-hover-borde: var(--color-border-subtle);
+  --comp-perfil-salir-texto: var(--color-p1-base);
+  --comp-perfil-salir-hover-bg: var(--color-p1-bg);
+
+  /* Selector de rol */
+  --comp-selector-rol-bg: var(--color-surface-card);
+  --comp-selector-rol-texto: var(--color-text-muted);
+  --comp-selector-rol-hover-texto: var(--color-primary-base);
+  --comp-selector-rol-opcion-activa-bg: var(--color-primary-light);
+  --comp-selector-rol-opcion-activa-texto: var(--color-primary-base);
+
+  /* Pie de soporte */
+  --comp-soporte-pie-bg: var(--color-bg-app);
+  --comp-soporte-pie-tarjeta-bg: var(--color-surface-card);
+  --comp-soporte-pie-icono: var(--color-secondary-base);
+  --comp-soporte-pie-titulo-texto: var(--color-text-main);
+  --comp-soporte-pie-detalle-texto: var(--color-text-muted);
+
+  /* ═══════════════ ALIAS DEPRECADOS (nombres previos) ═══════════════ */
+  --boton-altura: var(--comp-boton-altura);
+  --boton-altura-compacto: var(--comp-boton-altura);
+  --boton-radio: var(--comp-boton-radio);
+  --boton-padding-x: var(--comp-boton-padding-x);
+  --tarjeta-radio: var(--comp-tarjeta-radio);
+  --tarjeta-padding: var(--comp-tarjeta-padding);
+  --tarjeta-borde: var(--comp-tarjeta-borde);
+  --tarjeta-sombra: var(--comp-tarjeta-sombra);
+  --tarjeta-sombra-hover: var(--comp-tarjeta-sombra-hover);
+  --campo-altura: var(--comp-campo-altura);
+  --campo-radio: var(--comp-campo-radio);
+  --campo-borde: var(--comp-campo-borde);
+  --dialogo-radio: var(--comp-dialogo-radio);
+  --dialogo-ancho-md: var(--comp-dialogo-ancho-md);
+  --dialogo-z: var(--comp-dialogo-z);
 }

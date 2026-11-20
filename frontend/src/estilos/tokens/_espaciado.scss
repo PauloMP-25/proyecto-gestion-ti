@@ -1,18 +1,19 @@
+/* NIVEL 2 — Espaciado semántico (todo deriva de la escala primitiva de 4 px) */
 :root {
-  --espacio-2xs: 4px;   /* alias existente: --espacio-1 */
-  --espacio-xs:  8px;   /* --espacio-2 */
-  --espacio-sm:  12px;  /* --espacio-3 */
-  --espacio-md:  16px;  /* --espacio-4 */
-  --espacio-lg:  24px;  /* --espacio-6 */
-  --espacio-xl:  32px;  /* --espacio-8 */
-  --espacio-2xl: 48px;
+  --espacio-2xs: var(--prim-espacio-1);
+  --espacio-xs:  var(--prim-espacio-2);
+  --espacio-sm:  var(--prim-espacio-3);
+  --espacio-md:  var(--prim-espacio-4);
+  --espacio-lg:  var(--prim-espacio-6);
+  --espacio-xl:  var(--prim-espacio-8);
+  --espacio-2xl: var(--prim-espacio-12);
 
   /* Compatibilidad con escalas 1-8 ya usadas */
   --espacio-1: var(--espacio-2xs);
   --espacio-2: var(--espacio-xs);
   --espacio-3: var(--espacio-sm);
   --espacio-4: var(--espacio-md);
-  --espacio-5: 20px;
+  --espacio-5: var(--prim-espacio-5);
   --espacio-6: var(--espacio-lg);
   --espacio-8: var(--espacio-xl);
   --space-1: var(--espacio-1);
