@@ -1,3 +1,4 @@
+
 import { Component, ChangeDetectionStrategy, input, output } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
@@ -159,16 +160,21 @@ export interface ColumnaTabla {
       &__icono-lupa {
         position: absolute;
         left: var(--espacio-3);
+        top: 50%;
+        transform: translateY(-50%);
+        display: flex;
+        align-items: center;
         color: var(--color-text-muted);
         font-family: 'Material Symbols Outlined', sans-serif;
         font-size: var(--font-size-md);
         pointer-events: none;
+        line-height: 1;
       }
 
       &__input-busqueda {
         width: 100%;
         height: var(--touch-min);
-        padding: var(--espacio-2) var(--espacio-7) var(--espacio-2) var(--espacio-7);
+        padding: var(--espacio-2) 2.5rem var(--espacio-2) 2.5rem;
         background-color: var(--color-surface-sunken);
         border: 1px solid var(--color-border-subtle);
         border-radius: var(--radius-md);
