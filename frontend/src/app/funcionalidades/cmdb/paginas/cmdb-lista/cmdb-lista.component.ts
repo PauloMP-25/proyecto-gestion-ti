@@ -3,10 +3,15 @@ import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { CmdbService } from '../../servicios/cmdb.service';
 import { ActivoCmdb } from '../../modelos/activo-cmdb.model';
-import { TipoActivo, EstadoActivo, CriticidadActivo } from '../../modelos/tipo-activo.enum';
+import { TipoActivo, EstadoActivo } from '../../modelos/tipo-activo.enum';
 import { DireccionIp, SubredCmdb } from '../../modelos/direccion-ip.model';
 import { IconoComponent } from '../../../../compartido/ui/atomos/icono/icono.component';
 import { BotonComponent } from '../../../../compartido/ui/atomos/boton/boton.component';
+import { PlantillaPaginaComponent } from '../../../../compartido/ui/plantillas/plantilla-pagina/plantilla-pagina.component';
+import { CabeceraPaginaComponent } from '../../../../compartido/ui/moleculas/cabecera-pagina/cabecera-pagina.component';
+import { BarraPestanasComponent, Pestana } from '../../../../compartido/ui/moleculas/barra-pestanas/barra-pestanas.component';
+import { AlertaEnLineaComponent } from '../../../../compartido/ui/moleculas/alerta-en-linea/alerta-en-linea.component';
+import { PanelDetalleComponent } from '../../../../compartido/ui/organismos/panel-detalle/panel-detalle.component';
 import { ActivoFormularioModalComponent } from '../../componentes/activo-formulario-modal/activo-formulario-modal.component';
 
 export type PestanaCmdb = 'INVENTARIO' | 'MATRIZ_IP';
@@ -19,6 +24,11 @@ export type PestanaCmdb = 'INVENTARIO' | 'MATRIZ_IP';
     FormsModule,
     IconoComponent,
     BotonComponent,
+    PlantillaPaginaComponent,
+    CabeceraPaginaComponent,
+    BarraPestanasComponent,
+    AlertaEnLineaComponent,
+    PanelDetalleComponent,
     ActivoFormularioModalComponent,
   ],
   templateUrl: './cmdb-lista.component.html',
@@ -39,6 +49,21 @@ export class CmdbListaComponent {
   readonly totalImpresoras = this.cmdbService.totalImpresoras;
   readonly totalServidoresYRed = this.cmdbService.totalServidoresYRed;
   readonly porcentajeOperativos = this.cmdbService.porcentajeOperativos;
+
+  readonly pestanas = computed<readonly Pestana<PestanaCmdb>[]>(() => [
+    {
+      id: 'INVENTARIO',
+      etiqueta: 'Inventario de Equipos',
+      icono: 'devices',
+      badge: this.totalActivos(),
+    },
+    {
+      id: 'MATRIZ_IP',
+      etiqueta: 'Mapa y Asignación de IPs',
+      icono: 'hub',
+      badge: `${this.subredes().length} Redes`,
+    },
+  ]);
 
   // Filtros del inventario
   readonly busquedaTexto = signal<string>('');
