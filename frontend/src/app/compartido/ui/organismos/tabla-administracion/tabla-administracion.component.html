@@ -1,0 +1,74 @@
+<div class="tabla-admin">
+  <div class="tabla-admin__herramientas">
+    <app-barra-filtros
+      [mostrarBuscador]="mostrarBuscador()"
+      [placeholder]="placeholderBusqueda()"
+      [busqueda]="busqueda()"
+      (busquedaChange)="onBusquedaChange($event)"
+      [filtrosActivos]="filtrosActivos()"
+      (alLimpiar)="limpiarFiltros()"
+    >
+      <div filtros class="tabla-admin__filtros-extra">
+        <ng-content select="[filtros]" />
+      </div>
+
+      <div acciones class="tabla-admin__acciones-cabecera">
+        <ng-content select="[acciones-cabecera]" />
+      </div>
+    </app-barra-filtros>
+  </div>
+
+  <div class="tabla-admin__contenedor-tabla" [attr.aria-busy]="cargando()">
+    <table class="tabla-admin__tabla">
+      @if (tituloAccesible()) {
+        <caption class="sr-only">{{ tituloAccesible() }}</caption>
+      }
+
+      <thead>
+        <tr>
+          @for (col of columnas(); track col.campo) {
+            <th
+              scope="col"
+              [style.width]="col.ancho || null"
+              [class.ocultar-movil]="col.ocultarEnMovil"
+              [class.text-center]="col.alineacion === 'centro'"
+              [class.text-right]="col.alineacion === 'derecha'"
+            >
+              {{ col.titulo }}
+            </th>
+          }
+          @if (tieneAcciones()) {
+            <th scope="col" class="text-right tabla-admin__th-acciones">Acciones</th>
+          }
+        </tr>
+      </thead>
+
+      <tbody>
+        @if (cargando()) {
+          @for (n of [1, 2, 3, 4]; track n) {
+            <tr class="tabla-admin__fila-esqueleto">
+              <td [attr.colspan]="columnas().length + (tieneAcciones() ? 1 : 0)">
+                <div class="esqueleto-linea"></div>
+              </td>
+            </tr>
+          }
+        } @else if (vacio()) {
+          <tr>
+            <td
+              [attr.colspan]="columnas().length + (tieneAcciones() ? 1 : 0)"
+              class="tabla-admin__celda-vacia"
+            >
+              <div class="tabla-admin__estado-vacio">
+                <span class="material-symbols-outlined icono-vacio" aria-hidden="true">inbox</span>
+                <p class="tabla-admin__mensaje-vacio">{{ mensajeVacio() }}</p>
+                <ng-content select="[accion-vacio]" />
+              </div>
+            </td>
+          </tr>
+        } @else {
+          <ng-content select="[filas]" />
+        }
+      </tbody>
+    </table>
+  </div>
+</div>
