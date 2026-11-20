@@ -1,0 +1,103 @@
+<fieldset class="seccion-fieldset" [formGroup]="form()">
+  <legend class="seccion-legend">Cuenta de acceso institucional</legend>
+
+  <div class="grid-dos-columnas">
+    <app-campo-formulario
+      etiqueta="Correo institucional"
+      paraId="correoPersonal"
+      [requerido]="true"
+      ayuda="Dominio @hospital.gob.pe"
+      [error]="obtenerError('correo')"
+    >
+      <input
+        id="correoPersonal"
+        type="email"
+        formControlName="correo"
+        placeholder="usuario@hospital.gob.pe"
+      />
+    </app-campo-formulario>
+
+    <app-campo-formulario
+      etiqueta="Usuario de acceso"
+      paraId="usuarioPersonal"
+      ayuda="Identificador único (letras, números y punto)."
+      [error]="obtenerError('nombreUsuario')"
+    >
+      <input
+        id="usuarioPersonal"
+        type="text"
+        formControlName="nombreUsuario"
+        placeholder="Ej. pramos"
+      />
+    </app-campo-formulario>
+  </div>
+
+  <div class="campo-rol">
+    <label class="label-rol">Perfil de acceso:</label>
+    <div class="opciones-radio">
+      <label class="radio-card" [class.radio-card--seleccionado]="form().get('rol')?.value === 'USUARIO_FINAL'">
+        <input
+          type="radio"
+          formControlName="rol"
+          value="USUARIO_FINAL"
+        />
+        <div class="radio-card__contenido">
+          <span class="radio-card__titulo">Personal asistencial</span>
+          <span class="radio-card__desc">Reporta requerimientos y fallas desde su puesto de trabajo.</span>
+        </div>
+      </label>
+
+      <label class="radio-card" [class.radio-card--seleccionado]="form().get('rol')?.value === 'ADMINISTRADOR'">
+        <input
+          type="radio"
+          formControlName="rol"
+          value="ADMINISTRADOR"
+        />
+        <div class="radio-card__contenido">
+          <span class="radio-card__titulo">Administrador de la Mesa</span>
+          <span class="radio-card__desc">Gestión integral de áreas, colaboradores, inventario y soporte.</span>
+        </div>
+      </label>
+    </div>
+  </div>
+
+  @if (!esEdicion()) {
+    <div class="campo-clave-inicial">
+      <label class="label-clave">Contraseña inicial:</label>
+      <div class="opciones-clave">
+        <label class="radio-inline">
+          <input
+            type="radio"
+            formControlName="generarContrasena"
+            [value]="true"
+          />
+          <span>Generar automáticamente (recomendado, temporal y segura)</span>
+        </label>
+        <label class="radio-inline">
+          <input
+            type="radio"
+            formControlName="generarContrasena"
+            [value]="false"
+          />
+          <span>Definir manualmente</span>
+        </label>
+      </div>
+
+      @if (!form().get('generarContrasena')?.value) {
+        <app-campo-formulario
+          etiqueta="Contraseña inicial"
+          paraId="claveManual"
+          ayuda="Mínimo 8 caracteres, mayúscula, minúscula, número y símbolo."
+          [error]="obtenerError('contrasena')"
+        >
+          <input
+            id="claveManual"
+            type="password"
+            formControlName="contrasena"
+            placeholder="Ingrese la contraseña inicial"
+          />
+        </app-campo-formulario>
+      }
+    </div>
+  }
+</fieldset>

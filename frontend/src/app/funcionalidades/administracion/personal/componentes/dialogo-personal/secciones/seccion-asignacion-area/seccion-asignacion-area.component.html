@@ -1,0 +1,18 @@
+<fieldset class="seccion-fieldset" [formGroup]="form()">
+  <legend class="seccion-legend">Asignación hospitalaria</legend>
+
+  <app-campo-formulario
+    etiqueta="Área hospitalaria adscrita"
+    paraId="areaPersonal"
+    [requerido]="true"
+    ayuda="Servicio o pabellón principal de labores."
+    [error]="obtenerError('idArea')"
+  >
+    <select id="areaPersonal" formControlName="idArea">
+      <option [ngValue]="null" disabled>Seleccione un área...</option>
+      @for (a of areas(); track a.id) {
+        <option [ngValue]="a.id">{{ a.nombre }} ({{ a.ubicacionLegible }})</option>
+      }
+    </select>
+  </app-campo-formulario>
+</fieldset>

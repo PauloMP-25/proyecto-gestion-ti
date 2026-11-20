@@ -1,0 +1,69 @@
+<app-dialogo-formulario
+  [titulo]="personalParaEditar() ? 'Editar colaborador(a)' : 'Registrar nuevo personal'"
+  [subtitulo]="
+    personalParaEditar()
+      ? 'Actualice el grado, área de adscripción y rol institucional.'
+      : 'Complete los datos laborales y genere la cuenta de acceso a la Mesa de Ayuda.'
+  "
+  (cancelar)="cerrar()"
+>
+  <form [formGroup]="form" (ngSubmit)="guardar()" cuerpo class="formulario-personal">
+    @if (errorGeneral(); as err) {
+      <div class="alerta-error" role="alert">
+        <span class="icono-alerta" aria-hidden="true">warning</span>
+        <span>{{ err }}</span>
+      </div>
+    }
+
+    <div class="aviso-privacidad" role="note">
+      <span class="icono-privacidad" aria-hidden="true">verified_user</span>
+      <p>
+        <strong>Privacidad Institucional:</strong> No registre DNI, números telefónicos personales
+        ni correos privados. Utilice únicamente datos estrictamente laborales.
+      </p>
+    </div>
+
+    <!-- SECCIÓN 1: DATOS DEL PERSONAL -->
+    <app-seccion-datos-personales
+      [form]="form"
+      [vistaPreviaNombre]="vistaPreviaNombre()"
+      (alCambiarNombre)="onNombresApellidosChange()"
+    />
+
+    <!-- SECCIÓN 2: ASIGNACIÓN DE ÁREA -->
+    <app-seccion-asignacion-area
+      [form]="form"
+      [areas]="areas()"
+    />
+
+    <!-- SECCIÓN 3: CUENTA DE ACCESO -->
+    <app-seccion-credenciales
+      [form]="form"
+      [esEdicion]="!!personalParaEditar()"
+    />
+  </form>
+
+  <div class="dialogo-acciones" acciones>
+    <button
+      type="button"
+      class="btn btn--secundario"
+      (click)="cerrar()"
+      [disabled]="guardando()"
+    >
+      Cancelar
+    </button>
+    <button
+      type="button"
+      class="btn btn--primario"
+      (click)="guardar()"
+      [disabled]="guardando() || form.invalid"
+    >
+      @if (guardando()) {
+        <span class="spinner" aria-hidden="true"></span>
+        <span>Guardando...</span>
+      } @else {
+        <span>{{ personalParaEditar() ? 'Actualizar datos' : 'Registrar y generar cuenta' }}</span>
+      }
+    </button>
+  </div>
+</app-dialogo-formulario>

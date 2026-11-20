@@ -1,0 +1,69 @@
+<fieldset class="seccion-fieldset" [formGroup]="form()">
+  <legend class="seccion-legend">Identificación del Equipo</legend>
+
+  <div class="grid-dos-columnas">
+    <app-campo-formulario
+      etiqueta="Tipo de equipo"
+      paraId="tipoEquipo"
+      [requerido]="true"
+      [error]="obtenerError('tipo')"
+    >
+      <select
+        id="tipoEquipo"
+        formControlName="tipo"
+        (change)="alCambiarTipo.emit()"
+      >
+        <option value="COMPUTADORA">Computadora / Estación de trabajo</option>
+        <option value="IMPRESORA">Impresora de red</option>
+        <option value="OTRO">Otro equipo hospitalario</option>
+      </select>
+    </app-campo-formulario>
+
+    <app-campo-formulario
+      etiqueta="Marca y modelo"
+      paraId="marcaModelo"
+      ayuda="Ej. HP ProDesk 400 G7"
+      [error]="obtenerError('marcaModelo')"
+    >
+      <input
+        id="marcaModelo"
+        type="text"
+        formControlName="marcaModelo"
+        placeholder="Ej. HP ProDesk 400 G7"
+      />
+    </app-campo-formulario>
+  </div>
+
+  <div class="grid-dos-columnas">
+    <app-campo-formulario
+      etiqueta="Código de inventario"
+      paraId="codigoInventario"
+      [requerido]="true"
+      ayuda="Código patrimonial o identificador hospitalario"
+      [error]="obtenerError('codigoInventario')"
+    >
+      <input
+        id="codigoInventario"
+        type="text"
+        formControlName="codigoInventario"
+        placeholder="Ej. PC-ADM-01"
+        (input)="alEditarCodigo.emit()"
+      />
+    </app-campo-formulario>
+
+    <app-campo-formulario
+      etiqueta="Nombre descriptivo"
+      paraId="nombreEquipo"
+      [requerido]="true"
+      ayuda="Ej. Computadora Admisión 2"
+      [error]="obtenerError('nombre')"
+    >
+      <input
+        id="nombreEquipo"
+        type="text"
+        formControlName="nombre"
+        placeholder="Ej. Computadora Admisión Ventanilla 2"
+      />
+    </app-campo-formulario>
+  </div>
+</fieldset>

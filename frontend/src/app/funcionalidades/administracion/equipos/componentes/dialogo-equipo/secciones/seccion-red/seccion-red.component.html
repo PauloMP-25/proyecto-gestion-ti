@@ -1,0 +1,65 @@
+<fieldset class="seccion-fieldset" [formGroup]="form()">
+  <legend class="seccion-legend">Red y Conectividad</legend>
+
+  <div class="grid-dos-columnas">
+    <app-campo-formulario
+      etiqueta="Dirección IP estática"
+      paraId="ipEstatica"
+      ayuda="IPv4 estricta asignada en el hospital"
+      [error]="obtenerErrorIp()"
+    >
+      <div class="contenedor-ip-input">
+        <input
+          id="ipEstatica"
+          type="text"
+          formControlName="ipEstatica"
+          placeholder="Ej. 192.168.10.15"
+          class="input-ip"
+        />
+        @if (form().get('ipEstatica')?.pending) {
+          <span class="indicador-validacion validando" aria-live="polite">
+            Comprobando...
+          </span>
+        } @else if (
+          form().get('ipEstatica')?.valid &&
+          form().get('ipEstatica')?.value &&
+          !form().get('ipEstatica')?.errors
+        ) {
+          <span class="indicador-validacion disponible" aria-live="polite">
+            ✓ Disponible
+          </span>
+        }
+      </div>
+    </app-campo-formulario>
+
+    <app-campo-formulario
+      etiqueta="Nombre de red (hostname)"
+      paraId="hostname"
+      ayuda="Identificador DNS o NetBIOS"
+      [error]="obtenerError('hostname')"
+    >
+      <input
+        id="hostname"
+        type="text"
+        formControlName="hostname"
+        placeholder="Ej. pc-adm-02"
+      />
+    </app-campo-formulario>
+  </div>
+
+  <div class="grid-dos-columnas">
+    <app-campo-formulario
+      etiqueta="Dirección física (MAC)"
+      paraId="mac"
+      ayuda="Formato: AA:BB:CC:DD:EE:FF"
+      [error]="obtenerError('mac')"
+    >
+      <input
+        id="mac"
+        type="text"
+        formControlName="mac"
+        placeholder="00:1A:2B:3C:4D:5E"
+      />
+    </app-campo-formulario>
+  </div>
+</fieldset>

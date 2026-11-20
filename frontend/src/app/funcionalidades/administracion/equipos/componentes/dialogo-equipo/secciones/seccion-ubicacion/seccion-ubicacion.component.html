@@ -1,0 +1,37 @@
+<fieldset class="seccion-fieldset" [formGroup]="form()">
+  <legend class="seccion-legend">Ubicación Hospitalaria</legend>
+
+  <div class="grid-dos-columnas">
+    <app-campo-formulario
+      etiqueta="Área hospitalaria"
+      paraId="areaEquipo"
+      [requerido]="true"
+      [error]="obtenerError('idArea')"
+    >
+      <select
+        id="areaEquipo"
+        formControlName="idArea"
+        (change)="alCambiarArea.emit()"
+      >
+        <option [ngValue]="null" disabled>Seleccione un área...</option>
+        @for (a of areas(); track a.id) {
+          <option [ngValue]="a.id">{{ a.nombre }}</option>
+        }
+      </select>
+    </app-campo-formulario>
+
+    <app-campo-formulario
+      etiqueta="Referencia de ubicación"
+      paraId="referenciaUbicacion"
+      ayuda="Ej. Ventanilla 2, Frente al módulo de triaje"
+      [error]="obtenerError('referenciaUbicacion')"
+    >
+      <input
+        id="referenciaUbicacion"
+        type="text"
+        formControlName="referenciaUbicacion"
+        placeholder="Ej. Ventanilla 2"
+      />
+    </app-campo-formulario>
+  </div>
+</fieldset>

@@ -1,0 +1,119 @@
+<app-dialogo-formulario
+  [titulo]="areaParaEditar() ? 'Editar área' : 'Nueva área hospitalaria'"
+  [subtitulo]="
+    areaParaEditar()
+      ? 'Actualice los datos de ubicación, anexo y encargado del servicio.'
+      : 'Registre el servicio hospitalario, su nivel de piso y referencia física.'
+  "
+  (cancelar)="cerrar()"
+>
+  <form [formGroup]="form" (ngSubmit)="guardar()" cuerpo>
+    @if (errorGeneral(); as err) {
+      <div class="alerta-error" role="alert">
+        <span class="icono-alerta" aria-hidden="true">warning</span>
+        <span>{{ err }}</span>
+      </div>
+    }
+
+    <app-campo-formulario
+      etiqueta="Nombre del área"
+      paraId="nombreArea"
+      [requerido]="true"
+      ayuda="Ejemplo: Admisión, Emergencia, Farmacia Central."
+      [error]="obtenerError('nombre')"
+    >
+      <input
+        id="nombreArea"
+        type="text"
+        formControlName="nombre"
+        placeholder="Ingrese el nombre del área"
+        maxlength="80"
+        autocomplete="off"
+      />
+    </app-campo-formulario>
+
+    <div class="grid-dos-columnas">
+      <app-campo-formulario
+        etiqueta="Piso"
+        paraId="pisoArea"
+        ayuda="Nivel físico del hospital."
+        [error]="obtenerError('piso')"
+      >
+        <select id="pisoArea" formControlName="piso">
+          @for (p of pisos; track p.valor) {
+            <option [ngValue]="p.valor">{{ p.etiqueta }}</option>
+          }
+        </select>
+      </app-campo-formulario>
+
+      <app-campo-formulario
+        etiqueta="Anexo telefónico"
+        paraId="anexoArea"
+        ayuda="Solo dígitos (interno)."
+        [error]="obtenerError('anexo')"
+      >
+        <input
+          id="anexoArea"
+          type="text"
+          formControlName="anexo"
+          placeholder="Ej. 105"
+          maxlength="20"
+          inputmode="numeric"
+        />
+      </app-campo-formulario>
+    </div>
+
+    <app-campo-formulario
+      etiqueta="Referencia de ubicación"
+      paraId="referenciaArea"
+      ayuda="Ejemplo: Frente a la Oficina de la Jefatura de Estadística."
+      [error]="obtenerError('referenciaUbicacion')"
+    >
+      <textarea
+        id="referenciaArea"
+        formControlName="referenciaUbicacion"
+        rows="2"
+        maxlength="150"
+        placeholder="Detalle puntos de referencia visibles para guiar al personal..."
+      ></textarea>
+    </app-campo-formulario>
+
+    <app-campo-formulario
+      etiqueta="Encargado(a) del área"
+      paraId="encargadoArea"
+      ayuda="Personal responsable de coordinar solicitudes y turnos."
+      [error]="obtenerError('idEncargado')"
+    >
+      <select id="encargadoArea" formControlName="idEncargado">
+        <option [ngValue]="null">Sin encargado(a) asignado(a)</option>
+        @for (p of personalDisponible(); track p.id) {
+          <option [ngValue]="p.id">{{ p.nombreVisible }}</option>
+        }
+      </select>
+    </app-campo-formulario>
+  </form>
+
+  <div class="dialogo-acciones" acciones>
+    <button
+      type="button"
+      class="btn btn--secundario"
+      (click)="cerrar()"
+      [disabled]="guardando()"
+    >
+      Cancelar
+    </button>
+    <button
+      type="button"
+      class="btn btn--primario"
+      (click)="guardar()"
+      [disabled]="guardando() || form.invalid"
+    >
+      @if (guardando()) {
+        <span class="spinner" aria-hidden="true"></span>
+        <span>Guardando...</span>
+      } @else {
+        <span>{{ areaParaEditar() ? 'Actualizar área' : 'Registrar área' }}</span>
+      }
+    </button>
+  </div>
+</app-dialogo-formulario>

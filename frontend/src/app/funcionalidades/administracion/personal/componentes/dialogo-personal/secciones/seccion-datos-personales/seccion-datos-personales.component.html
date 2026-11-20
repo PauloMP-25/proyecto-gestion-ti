@@ -1,0 +1,54 @@
+<fieldset class="seccion-fieldset" [formGroup]="form()">
+  <legend class="seccion-legend">Datos del personal</legend>
+
+  <div class="grid-tres-columnas">
+    <app-campo-formulario
+      etiqueta="Grado profesional"
+      paraId="gradoPersonal"
+      [requerido]="true"
+      [error]="obtenerError('grado')"
+    >
+      <select id="gradoPersonal" formControlName="grado" (change)="alCambiarNombre.emit()">
+        @for (g of catalogosStore.grados(); track g.codigo) {
+          <option [value]="g.codigo">{{ g.etiqueta }}</option>
+        }
+      </select>
+    </app-campo-formulario>
+
+    <app-campo-formulario
+      etiqueta="Nombres"
+      paraId="nombresPersonal"
+      [requerido]="true"
+      [error]="obtenerError('nombres')"
+    >
+      <input
+        id="nombresPersonal"
+        type="text"
+        formControlName="nombres"
+        placeholder="Ej. Patricia Elena"
+        (input)="alCambiarNombre.emit()"
+      />
+    </app-campo-formulario>
+
+    <app-campo-formulario
+      etiqueta="Apellidos"
+      paraId="apellidosPersonal"
+      [requerido]="true"
+      [error]="obtenerError('apellidos')"
+    >
+      <input
+        id="apellidosPersonal"
+        type="text"
+        formControlName="apellidos"
+        placeholder="Ej. Ramos Quispe"
+        (input)="alCambiarNombre.emit()"
+      />
+    </app-campo-formulario>
+  </div>
+
+  <!-- Vista previa institucional reactiva -->
+  <div class="vista-previa-nombre" aria-live="polite">
+    <span class="vista-previa-label">Se mostrará en el hospital como:</span>
+    <strong class="vista-previa-valor">{{ vistaPreviaNombre() || '—' }}</strong>
+  </div>
+</fieldset>

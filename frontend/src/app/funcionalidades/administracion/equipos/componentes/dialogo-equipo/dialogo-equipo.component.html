@@ -1,0 +1,61 @@
+<app-dialogo-formulario
+  [titulo]="equipoParaEditar() ? 'Editar equipo hospitalario' : 'Registrar nuevo equipo'"
+  [subtitulo]="
+    equipoParaEditar()
+      ? 'Actualice la configuración de red, ubicación y especificaciones técnicas.'
+      : 'Asigne un código de inventario, ubicación hospitalaria y dirección IP estática.'
+  "
+  (cancelar)="cerrar()"
+>
+  <form [formGroup]="form" (ngSubmit)="guardar()" cuerpo class="formulario-equipo">
+    @if (errorGeneral(); as err) {
+      <div class="alerta-error" role="alert">
+        <span class="icono-alerta" aria-hidden="true">warning</span>
+        <span>{{ err }}</span>
+      </div>
+    }
+
+    <!-- SECCIÓN 1: IDENTIFICACIÓN -->
+    <app-seccion-identificacion
+      [form]="form"
+      (alCambiarTipo)="onTipoOAreaChange()"
+      (alEditarCodigo)="onCodigoInput()"
+    />
+
+    <!-- SECCIÓN 2: UBICACIÓN -->
+    <app-seccion-ubicacion
+      [form]="form"
+      [areas]="areas()"
+      (alCambiarArea)="onTipoOAreaChange()"
+    />
+
+    <!-- SECCIÓN 3: RED -->
+    <app-seccion-red
+      [form]="form"
+    />
+  </form>
+
+  <div pie class="acciones-dialogo">
+    <button
+      type="button"
+      class="btn-cancelar"
+      (click)="cerrar()"
+      [disabled]="guardando()"
+    >
+      Cancelar
+    </button>
+    <button
+      type="button"
+      class="btn-guardar"
+      (click)="guardar()"
+      [disabled]="form.invalid || guardando() || form.pending"
+    >
+      @if (guardando()) {
+        <span class="spinner" aria-hidden="true"></span>
+        <span>Guardando...</span>
+      } @else {
+        <span>{{ equipoParaEditar() ? 'Actualizar equipo' : 'Registrar equipo' }}</span>
+      }
+    </button>
+  </div>
+</app-dialogo-formulario>

@@ -1,0 +1,53 @@
+<app-dialogo-formulario
+  titulo="Contraseña temporal generada"
+  subtitulo="Credencial provisional de primer acceso hospitalario."
+  (cancelar)="cerrar()"
+>
+  <div class="cuerpo-clave" cuerpo>
+    <div class="aviso-seguridad" role="alert">
+      <span class="icono-aviso" aria-hidden="true">lock_reset</span>
+      <div class="texto-aviso">
+        <p class="aviso-titulo">Entréguela personalmente al colaborador.</p>
+        <p class="aviso-desc">
+          El sistema exigirá el cambio obligatorio de contraseña en su primer inicio de sesión.
+          <strong>Esta clave no se volverá a mostrar en pantalla.</strong>
+        </p>
+      </div>
+    </div>
+
+    <div class="tarjeta-clave">
+      <span class="etiqueta-clave">Contraseña provisional:</span>
+      <div class="fila-clave">
+        <code class="codigo-clave">{{ contrasena() }}</code>
+        <button
+          type="button"
+          class="btn-copiar"
+          (click)="copiar()"
+          [attr.aria-label]="copiado() ? 'Contraseña copiada' : 'Copiar contraseña al portapapeles'"
+          [title]="copiado() ? '¡Copiado!' : 'Copiar al portapapeles'"
+        >
+          <span class="icono-btn" aria-hidden="true">
+            {{ copiado() ? 'check' : 'content_copy' }}
+          </span>
+          <span>{{ copiado() ? 'Copiado' : 'Copiar' }}</span>
+        </button>
+      </div>
+    </div>
+
+    @if (nombreUsuario(); as usuario) {
+      <p class="info-usuario">
+        Usuario asignado: <strong>{{ usuario }}</strong>
+      </p>
+    }
+  </div>
+
+  <div class="dialogo-acciones" acciones>
+    <button
+      type="button"
+      class="btn btn--primario"
+      (click)="cerrar()"
+    >
+      Entendido y entregado
+    </button>
+  </div>
+</app-dialogo-formulario>
