@@ -1,0 +1,26 @@
+<div class="medidor-requisitos" aria-live="polite">
+  <div class="requisito-item" [class.cumplido]="tieneLongitudMinima()">
+    <span class="material-symbols-outlined icono-req" aria-hidden="true">
+      {{ tieneLongitudMinima() ? 'check_circle' : 'radio_button_unchecked' }}
+    </span>
+    <span>Mínimo 8 caracteres</span>
+  </div>
+  <div class="requisito-item" [class.cumplido]="tieneMayuscula()">
+    <span class="material-symbols-outlined icono-req" aria-hidden="true">
+      {{ tieneMayuscula() ? 'check_circle' : 'radio_button_unchecked' }}
+    </span>
+    <span>Al menos una letra mayúscula</span>
+  </div>
+  <div class="requisito-item" [class.cumplido]="tieneMinuscula()">
+    <span class="material-symbols-outlined icono-req" aria-hidden="true">
+      {{ tieneMinuscula() ? 'check_circle' : 'radio_button_unchecked' }}
+    </span>
+    <span>Al menos una letra minúscula</span>
+  </div>
+  <div class="requisito-item" [class.cumplido]="tieneNumero()">
+    <span class="material-symbols-outlined icono-req" aria-hidden="true">
+      {{ tieneNumero() ? 'check_circle' : 'radio_button_unchecked' }}
+    </span>
+    <span>Al menos un número (0-9)</span>
+  </div>
+</div>

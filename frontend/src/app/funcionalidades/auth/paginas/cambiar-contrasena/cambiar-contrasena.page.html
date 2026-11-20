@@ -1,0 +1,125 @@
+<div class="pagina-cambiar-clave">
+  <div class="tarjeta-cambio">
+    <header class="tarjeta-cambio__cabecera">
+      <div class="icono-candado-wrapper" aria-hidden="true">
+        <span class="icono-candado">lock_reset</span>
+      </div>
+      <h1 class="tarjeta-cambio__titulo">Actualización de contraseña</h1>
+      <p class="tarjeta-cambio__subtitulo">
+        Por política de seguridad institucional, debe definir una nueva contraseña personal antes de continuar en la Mesa de Ayuda.
+      </p>
+    </header>
+
+    @if (errorGeneral(); as err) {
+      <div class="alerta-error" role="alert">
+        <span class="icono-alerta" aria-hidden="true">warning</span>
+        <span>{{ err }}</span>
+      </div>
+    }
+
+    <form [formGroup]="form" (ngSubmit)="guardar()" class="formulario-cambio">
+      <app-campo-formulario
+        etiqueta="Contraseña actual"
+        paraId="contrasenaActual"
+        [requerido]="true"
+        ayuda="Ingrese la clave temporal que le fue asignada"
+        [error]="obtenerError('contrasenaActual')"
+      >
+        <div class="campo-password-wrapper">
+          <input
+            id="contrasenaActual"
+            [type]="mostrarActual() ? 'text' : 'password'"
+            formControlName="contrasenaActual"
+            placeholder="••••••••••••"
+            autocomplete="current-password"
+          />
+          <button
+            type="button"
+            class="btn-toggle-password"
+            (click)="mostrarActual.set(!mostrarActual())"
+            [attr.aria-label]="mostrarActual() ? 'Ocultar contraseña' : 'Ver contraseña'"
+          >
+            <span class="icono-btn-pass" aria-hidden="true">
+              {{ mostrarActual() ? 'visibility_off' : 'visibility' }}
+            </span>
+          </button>
+        </div>
+      </app-campo-formulario>
+
+      <app-campo-formulario
+        etiqueta="Nueva contraseña personal"
+        paraId="nuevaContrasena"
+        [requerido]="true"
+        ayuda="Mínimo 8 caracteres, al menos una mayúscula, minúscula y un número"
+        [error]="obtenerError('nuevaContrasena')"
+      >
+        <div class="campo-password-wrapper">
+          <input
+            id="nuevaContrasena"
+            [type]="mostrarNueva() ? 'text' : 'password'"
+            formControlName="nuevaContrasena"
+            (input)="actualizarValorClave()"
+            placeholder="••••••••••••"
+            autocomplete="new-password"
+          />
+          <button
+            type="button"
+            class="btn-toggle-password"
+            (click)="mostrarNueva.set(!mostrarNueva())"
+            [attr.aria-label]="mostrarNueva() ? 'Ocultar contraseña' : 'Ver contraseña'"
+          >
+            <span class="icono-btn-pass" aria-hidden="true">
+              {{ mostrarNueva() ? 'visibility_off' : 'visibility' }}
+            </span>
+          </button>
+        </div>
+      </app-campo-formulario>
+
+      <!-- Indicador de fortaleza y requisitos en subcomponentes -->
+      <app-indicador-fortaleza [contrasena]="valorClaveActual()" />
+      <app-requisitos-contrasena [contrasena]="valorClaveActual()" />
+
+      <app-campo-formulario
+        etiqueta="Confirmar nueva contraseña"
+        paraId="confirmarContrasena"
+        [requerido]="true"
+        [error]="obtenerError('confirmarContrasena')"
+      >
+        <div class="campo-password-wrapper">
+          <input
+            id="confirmarContrasena"
+            [type]="mostrarConfirmar() ? 'text' : 'password'"
+            formControlName="confirmarContrasena"
+            placeholder="••••••••••••"
+            autocomplete="new-password"
+          />
+          <button
+            type="button"
+            class="btn-toggle-password"
+            (click)="mostrarConfirmar.set(!mostrarConfirmar())"
+            [attr.aria-label]="mostrarConfirmar() ? 'Ocultar contraseña' : 'Ver contraseña'"
+          >
+            <span class="icono-btn-pass" aria-hidden="true">
+              {{ mostrarConfirmar() ? 'visibility_off' : 'visibility' }}
+            </span>
+          </button>
+        </div>
+      </app-campo-formulario>
+
+      <div class="acciones-formulario">
+        <button
+          type="submit"
+          class="btn-actualizar"
+          [disabled]="form.invalid || guardando()"
+        >
+          @if (guardando()) {
+            <span class="spinner" aria-hidden="true"></span>
+            <span>Actualizando contraseña...</span>
+          } @else {
+            <span>Actualizar contraseña y continuar</span>
+          }
+        </button>
+      </div>
+    </form>
+  </div>
+</div>

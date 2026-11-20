@@ -1,0 +1,14 @@
+<div class="indicador-fortaleza">
+  <div class="indicador-cabecera">
+    <span class="indicador-etiqueta">Seguridad de la clave:</span>
+    <strong class="indicador-nivel" [class]="'nivel--' + tonoNivel()">
+      {{ etiquetaNivel() }}
+    </strong>
+  </div>
+
+  <app-barra-progreso
+    [segmentos]="segmentos()"
+    [total]="4"
+    etiquetaAccesible="Nivel de seguridad de la contraseña"
+  />
+</div>

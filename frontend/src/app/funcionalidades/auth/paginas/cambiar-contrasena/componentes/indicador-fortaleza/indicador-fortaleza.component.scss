@@ -1,0 +1,40 @@
+:host {
+  display: block;
+}
+
+.indicador-fortaleza {
+  display: flex;
+  flex-direction: column;
+  gap: var(--espacio-1);
+}
+
+.indicador-cabecera {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  font-size: var(--tipo-cuerpo-xs-size);
+}
+
+.indicador-etiqueta {
+  color: var(--color-text-muted);
+}
+
+.indicador-nivel {
+  font-weight: 600;
+
+  &.nivel--neutro {
+    color: var(--color-text-muted);
+  }
+
+  &.nivel--peligro {
+    color: var(--color-danger-text);
+  }
+
+  &.nivel--aviso {
+    color: var(--color-warning-text);
+  }
+
+  &.nivel--exito {
+    color: var(--color-success-text);
+  }
+}
