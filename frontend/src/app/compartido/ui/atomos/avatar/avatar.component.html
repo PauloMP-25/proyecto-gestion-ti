@@ -1,0 +1,8 @@
+<div
+  class="avatar"
+  [class]="'avatar avatar--' + tamano() + ' ' + claseRol()"
+  [attr.data-rol]="rol() ?? 'USUARIO_FINAL'"
+  aria-hidden="true"
+>
+  {{ iniciales() }}
+</div>

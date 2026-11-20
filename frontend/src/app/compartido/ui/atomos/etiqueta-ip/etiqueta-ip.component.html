@@ -1,0 +1,18 @@
+@if (ip()) {
+  <div class="etiqueta-ip" [class.etiqueta-ip--copiado]="copiado()">
+    <code class="etiqueta-ip__codigo">{{ ip() }}</code>
+    @if (copiable()) {
+      <button
+        type="button"
+        class="etiqueta-ip__btn"
+        [attr.aria-label]="'Copiar dirección IP ' + ip()"
+        (click)="copiar()"
+        [title]="copiado() ? '¡Copiado!' : 'Copiar IP'"
+      >
+        <span class="etiqueta-ip__icono" aria-hidden="true">
+          {{ copiado() ? 'check' : 'content_copy' }}
+        </span>
+      </button>
+    }
+  </div>
+}

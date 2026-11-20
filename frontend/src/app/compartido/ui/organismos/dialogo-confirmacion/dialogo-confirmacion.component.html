@@ -1,1 +1,41 @@
-<p>dialogo-confirmacion works!</p>
+<div class="confirmacion-overlay" (click)="alHacerClicFondo($event)" role="presentation">
+  <div
+    class="confirmacion-modal"
+    role="alertdialog"
+    aria-modal="true"
+    [attr.aria-labelledby]="'confirmacion-titulo'"
+    [attr.aria-describedby]="'confirmacion-mensaje'"
+  >
+    <header class="confirmacion-cabecera">
+      <div class="confirmacion-icono" [class.confirmacion-icono--peligro]="esPeligroso()">
+        <span class="icono" aria-hidden="true">
+          {{ esPeligroso() ? 'warning' : 'help' }}
+        </span>
+      </div>
+      <h2 id="confirmacion-titulo" class="confirmacion-titulo">{{ titulo() }}</h2>
+    </header>
+
+    <div class="confirmacion-cuerpo">
+      <p id="confirmacion-mensaje" class="confirmacion-mensaje">{{ mensaje() }}</p>
+    </div>
+
+    <footer class="confirmacion-pie">
+      <button
+        type="button"
+        class="btn btn--secundario"
+        (click)="alCancelar()"
+      >
+        {{ textoCancelar() }}
+      </button>
+      <button
+        type="button"
+        class="btn"
+        [class.btn--peligro]="esPeligroso()"
+        [class.btn--primario]="!esPeligroso()"
+        (click)="alConfirmar()"
+      >
+        {{ textoConfirmar() }}
+      </button>
+    </footer>
+  </div>
+</div>

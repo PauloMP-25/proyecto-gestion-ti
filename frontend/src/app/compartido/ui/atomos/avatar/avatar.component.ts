@@ -7,16 +7,7 @@ export type TamanoAvatar = 'sm' | 'md' | 'lg';
   selector: 'app-avatar',
   standalone: true,
   changeDetection: ChangeDetectionStrategy.OnPush,
-  template: `
-    <div
-      class="avatar"
-      [class]="'avatar avatar--' + tamano() + ' ' + claseRol()"
-      [attr.data-rol]="rol() ?? 'USUARIO_FINAL'"
-      aria-hidden="true"
-    >
-      {{ iniciales() }}
-    </div>
-  `,
+  templateUrl: './avatar.component.html',
   styleUrl: './avatar.component.scss',
 })
 export class AvatarComponent {

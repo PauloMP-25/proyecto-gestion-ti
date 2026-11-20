@@ -1,0 +1,38 @@
+<div
+  class="dialogo-overlay"
+  (click)="alHacerClicFondo($event)"
+  role="presentation"
+>
+  <div
+    #dialogoContenedor
+    class="dialogo-contenedor"
+    role="dialog"
+    aria-modal="true"
+    [attr.aria-labelledby]="idTitulo()"
+  >
+    <header class="dialogo-cabecera">
+      <div>
+        <h2 [id]="idTitulo()" class="dialogo-titulo">{{ titulo() }}</h2>
+        @if (subtitulo()) {
+          <p class="dialogo-subtitulo">{{ subtitulo() }}</p>
+        }
+      </div>
+      <button
+        type="button"
+        class="dialogo-btn-cerrar"
+        aria-label="Cerrar diálogo"
+        (click)="cerrar()"
+      >
+        <span class="icono-cerrar" aria-hidden="true">close</span>
+      </button>
+    </header>
+
+    <div class="dialogo-cuerpo">
+      <ng-content select="[cuerpo]"></ng-content>
+    </div>
+
+    <footer class="dialogo-pie">
+      <ng-content select="[acciones]"></ng-content>
+    </footer>
+  </div>
+</div>

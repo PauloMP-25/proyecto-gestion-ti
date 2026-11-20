@@ -1,0 +1,51 @@
+:host {
+  display: inline-flex;
+  vertical-align: middle;
+}
+
+.etiqueta-ip {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--espacio-xs, var(--prim-espacio-2, 0.5rem));
+  background-color: var(--color-surface-sunken, #f8fafc);
+  border: 1px solid var(--color-border-subtle, #e2e8f0);
+  border-radius: var(--radius-sm, 4px);
+  padding: var(--espacio-2xs, 0.125rem) var(--espacio-xs, 0.5rem);
+  transition: border-color var(--trans-fast, 150ms ease-in-out);
+
+  &--copiado {
+    border-color: var(--color-secondary-base, var(--hsmsi-verde, #1b5e20));
+  }
+
+  &__codigo {
+    font-family: monospace;
+    font-size: var(--font-size-xs, 0.75rem);
+    color: var(--color-text-main, #0f172a);
+    letter-spacing: 0.04em;
+  }
+
+  &__btn {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    background: transparent;
+    border: none;
+    cursor: pointer;
+    padding: 0;
+    color: var(--color-text-muted, #64748b);
+    border-radius: var(--radius-xs, 2px);
+    transition: color var(--trans-fast, 150ms ease-in-out);
+
+    &:hover,
+    &:focus-visible {
+      color: var(--color-text-main, #0f172a);
+      outline: none;
+    }
+  }
+
+  &__icono {
+    font-family: 'Material Symbols Outlined', sans-serif;
+    font-size: var(--font-size-sm, 0.875rem);
+    line-height: 1;
+  }
+}
