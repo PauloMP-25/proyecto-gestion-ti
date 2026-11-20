@@ -1,15 +1,14 @@
-
 package com.hospital.servicedesk.services.impl;
 
 import com.hospital.servicedesk.dtos.TicketDTOs.*;
 import com.hospital.servicedesk.entities.*;
+import com.hospital.servicedesk.exceptions.RecursoNoEncontradoException;
+import com.hospital.servicedesk.exceptions.ReglaNegocioException;
 import com.hospital.servicedesk.repositories.*;
 import com.hospital.servicedesk.services.TicketService;
 import lombok.RequiredArgsConstructor;
-import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import org.springframework.web.server.ResponseStatusException;
 
 import java.time.LocalDateTime;
 import java.util.List;
@@ -32,14 +31,19 @@ public class TicketServiceImpl implements TicketService {
     @Override
     @Transactional
     public TicketResponse createTicket(CreateTicketRequest req, String clientIp) {
-        Area area = null; ElementoConfiguracion ci = null;
+        Area area = null;
+        ElementoConfiguracion ci = null;
         if (clientIp != null && !clientIp.isBlank()) {
             if ("0:0:0:0:0:0:0:1".equals(clientIp) || "::1".equals(clientIp)) clientIp = "127.0.0.1";
             Optional<HistorialAsignacionIP> assignment = ipRepo.findActiveAssignmentByIp(clientIp);
-            if (assignment.isPresent()) { ci = assignment.get().getElementoConfiguracion(); if (ci != null) area = ci.getArea(); }
+            if (assignment.isPresent()) {
+                ci = assignment.get().getElementoConfiguracion();
+                if (ci != null) area = ci.getArea();
+            }
         }
         if (area == null) {
-            area = areaRepo.findAll().stream().findFirst().orElseThrow(() -> new ResponseStatusException(HttpStatus.BAD_REQUEST, "No hay áreas configuradas"));
+            area = areaRepo.findAll().stream().findFirst()
+                    .orElseThrow(() -> new ReglaNegocioException("No hay áreas configuradas en el sistema hospitalario"));
         }
 
         Prioridad pri = calcPri(req.getImpacto(), req.getUrgencia());
@@ -84,21 +88,25 @@ public class TicketServiceImpl implements TicketService {
 
     @Override
     public TicketResponse getTicketById(Integer id) {
-        Ticket t = tRepo.findById(id).orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Ticket no encontrado"));
+        Ticket t = tRepo.findById(id)
+                .orElseThrow(() -> new RecursoNoEncontradoException("Ticket", id));
         return map(t);
     }
 
     @Override
     public List<Object> getHistorialTicket(Integer id) {
-        Ticket t = tRepo.findById(id).orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Ticket no encontrado"));
+        Ticket t = tRepo.findById(id)
+                .orElseThrow(() -> new RecursoNoEncontradoException("Ticket", id));
         return auditRepo.findByTicketIdTicket(id).stream().map(h -> (Object) h).collect(Collectors.toList());
     }
 
     @Override
     @Transactional
     public TicketResponse assignTicket(Integer id, AssignRequest req, String userEmail) {
-        Ticket t = tRepo.findById(id).orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Ticket no encontrado"));
-        Usuario tech = userRepo.findById(req.getTecnicoId()).orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Técnico no encontrado"));
+        Ticket t = tRepo.findById(id)
+                .orElseThrow(() -> new RecursoNoEncontradoException("Ticket", id));
+        Usuario tech = userRepo.findById(req.getTecnicoId())
+                .orElseThrow(() -> new RecursoNoEncontradoException("Técnico", req.getTecnicoId()));
         t.setTecnicoAsignado(tech);
         t.setEstado(EstadoTicket.EN_PROGRESO);
         t = tRepo.save(t);
@@ -117,7 +125,8 @@ public class TicketServiceImpl implements TicketService {
     @Override
     @Transactional
     public TicketResponse tomarTicket(Integer id, String userEmail) {
-        Ticket t = tRepo.findById(id).orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Ticket no encontrado"));
+        Ticket t = tRepo.findById(id)
+                .orElseThrow(() -> new RecursoNoEncontradoException("Ticket", id));
         if (userEmail != null) {
             userRepo.findByCorreo(userEmail).ifPresent(t::setTecnicoAsignado);
         }
@@ -129,7 +138,8 @@ public class TicketServiceImpl implements TicketService {
     @Override
     @Transactional
     public TicketResponse iniciarTicket(Integer id) {
-        Ticket t = tRepo.findById(id).orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Ticket no encontrado"));
+        Ticket t = tRepo.findById(id)
+                .orElseThrow(() -> new RecursoNoEncontradoException("Ticket", id));
         t.setEstado(EstadoTicket.EN_PROGRESO);
         t = tRepo.save(t);
         return map(t);
@@ -138,7 +148,8 @@ public class TicketServiceImpl implements TicketService {
     @Override
     @Transactional
     public TicketResponse escalarTicket(Integer id, Map<String, Object> req) {
-        Ticket t = tRepo.findById(id).orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Ticket no encontrado"));
+        Ticket t = tRepo.findById(id)
+                .orElseThrow(() -> new RecursoNoEncontradoException("Ticket", id));
         t.setEstado(EstadoTicket.ESCALADO);
         t = tRepo.save(t);
         return map(t);
@@ -147,7 +158,8 @@ public class TicketServiceImpl implements TicketService {
     @Override
     @Transactional
     public TicketResponse resolverTicket(Integer id, Map<String, Object> req) {
-        Ticket t = tRepo.findById(id).orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Ticket no encontrado"));
+        Ticket t = tRepo.findById(id)
+                .orElseThrow(() -> new RecursoNoEncontradoException("Ticket", id));
         t.setEstado(EstadoTicket.RESUELTO);
         t = tRepo.save(t);
         return map(t);
@@ -156,7 +168,8 @@ public class TicketServiceImpl implements TicketService {
     @Override
     @Transactional
     public TicketResponse cerrarTicket(Integer id) {
-        Ticket t = tRepo.findById(id).orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Ticket no encontrado"));
+        Ticket t = tRepo.findById(id)
+                .orElseThrow(() -> new RecursoNoEncontradoException("Ticket", id));
         t.setEstado(EstadoTicket.CERRADO);
         t = tRepo.save(t);
         return map(t);
@@ -165,7 +178,8 @@ public class TicketServiceImpl implements TicketService {
     @Override
     @Transactional
     public TicketResponse reabrirTicket(Integer id, Map<String, Object> req) {
-        Ticket t = tRepo.findById(id).orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Ticket no encontrado"));
+        Ticket t = tRepo.findById(id)
+                .orElseThrow(() -> new RecursoNoEncontradoException("Ticket", id));
         t.setEstado(EstadoTicket.ABIERTO);
         t = tRepo.save(t);
         return map(t);
@@ -186,7 +200,8 @@ public class TicketServiceImpl implements TicketService {
     @Override
     @Transactional
     public TicketResponse vincularEquipo(Integer id, Map<String, Object> req) {
-        Ticket t = tRepo.findById(id).orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Ticket no encontrado"));
+        Ticket t = tRepo.findById(id)
+                .orElseThrow(() -> new RecursoNoEncontradoException("Ticket", id));
         if (req.get("idCi") != null) {
             Integer idCi = (Integer) req.get("idCi");
             ciRepo.findById(idCi).ifPresent(t::setElementoConfiguracion);
@@ -247,4 +262,3 @@ public class TicketServiceImpl implements TicketService {
                 .build();
     }
 }
-

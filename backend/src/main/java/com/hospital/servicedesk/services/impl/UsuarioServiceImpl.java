@@ -5,16 +5,17 @@ import com.hospital.servicedesk.dtos.UsuarioDTOs.UsuarioRegistroRequest;
 import com.hospital.servicedesk.dtos.UsuarioDTOs.UsuarioRespuesta;
 import com.hospital.servicedesk.entities.Area;
 import com.hospital.servicedesk.entities.Usuario;
+import com.hospital.servicedesk.exceptions.ConflictoNegocioException;
+import com.hospital.servicedesk.exceptions.RecursoNoEncontradoException;
+import com.hospital.servicedesk.exceptions.ReglaNegocioException;
 import com.hospital.servicedesk.mappers.UsuarioMapper;
 import com.hospital.servicedesk.repositories.AreaRepository;
 import com.hospital.servicedesk.repositories.UsuarioRepository;
 import com.hospital.servicedesk.services.UsuarioService;
 import lombok.RequiredArgsConstructor;
-import org.springframework.http.HttpStatus;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import org.springframework.web.server.ResponseStatusException;
 
 import java.nio.charset.StandardCharsets;
 import java.security.SecureRandom;
@@ -56,11 +57,11 @@ public class UsuarioServiceImpl implements UsuarioService {
     public UsuarioRespuesta createUsuario(UsuarioRegistroRequest req) {
         String correo = req.correo().trim().toLowerCase();
         if (usuarioRepo.findByCorreo(correo).isPresent()) {
-            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "El correo electrónico ya está registrado");
+            throw new ConflictoNegocioException("El correo electrónico ya está registrado");
         }
 
         Area area = areaRepo.findById(req.idArea())
-                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Área hospitalaria no encontrada"));
+                .orElseThrow(() -> new RecursoNoEncontradoException("Área hospitalaria", req.idArea()));
 
         String rawPassword = (req.contrasena() != null && !req.contrasena().isBlank())
                 ? req.contrasena()
@@ -86,7 +87,7 @@ public class UsuarioServiceImpl implements UsuarioService {
     @Transactional
     public UsuarioRespuesta updateUsuario(Integer id, UsuarioActualizarRequest req) {
         Usuario usuario = usuarioRepo.findById(id)
-                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Usuario no encontrado"));
+                .orElseThrow(() -> new RecursoNoEncontradoException("Usuario", id));
 
         if (req.nombres() != null && !req.nombres().isBlank()) {
             usuario.setNombres(req.nombres().trim());
@@ -97,7 +98,7 @@ public class UsuarioServiceImpl implements UsuarioService {
         if (req.correo() != null && !req.correo().isBlank()) {
             String nuevoCorreo = req.correo().trim().toLowerCase();
             if (!nuevoCorreo.equalsIgnoreCase(usuario.getCorreo()) && usuarioRepo.findByCorreo(nuevoCorreo).isPresent()) {
-                throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "El correo electrónico ya está registrado por otro usuario");
+                throw new ConflictoNegocioException("El correo electrónico ya está registrado por otro usuario");
             }
             usuario.setCorreo(nuevoCorreo);
         }
@@ -109,7 +110,7 @@ public class UsuarioServiceImpl implements UsuarioService {
         }
         if (req.idArea() != null) {
             Area area = areaRepo.findById(req.idArea())
-                    .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Área hospitalaria no encontrada"));
+                    .orElseThrow(() -> new RecursoNoEncontradoException("Área hospitalaria", req.idArea()));
             usuario.setArea(area);
         }
         if (req.activo() != null) {
@@ -123,7 +124,7 @@ public class UsuarioServiceImpl implements UsuarioService {
     @Transactional
     public UsuarioRespuesta toggleActivo(Integer id) {
         Usuario usuario = usuarioRepo.findById(id)
-                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Usuario no encontrado"));
+                .orElseThrow(() -> new RecursoNoEncontradoException("Usuario", id));
         usuario.setActivo(usuario.getActivo() == null || !usuario.getActivo());
         return UsuarioMapper.toResponse(usuarioRepo.save(usuario));
     }
@@ -132,12 +133,12 @@ public class UsuarioServiceImpl implements UsuarioService {
     @Transactional
     public void cambiarContrasena(String email, String actual, String nuevaContrasena) {
         Usuario usuario = usuarioRepo.findByCorreo(email)
-                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Usuario no encontrado"));
+                .orElseThrow(() -> new RecursoNoEncontradoException("Usuario", email));
 
         if (actual != null && !actual.isBlank()) {
             String hashAlmacenado = new String(usuario.getContrasenaHash(), StandardCharsets.UTF_8);
             if (!passwordEncoder.matches(actual, hashAlmacenado)) {
-                throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "La contraseña actual no es correcta");
+                throw new ReglaNegocioException("La contraseña actual no es correcta");
             }
         }
 

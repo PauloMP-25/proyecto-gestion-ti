@@ -2,13 +2,12 @@ package com.hospital.servicedesk.services.impl;
 
 import com.hospital.servicedesk.dtos.ErrorConocidoDTOs.*;
 import com.hospital.servicedesk.entities.ErrorConocido;
+import com.hospital.servicedesk.exceptions.RecursoNoEncontradoException;
 import com.hospital.servicedesk.repositories.ErrorConocidoRepository;
 import com.hospital.servicedesk.services.ErrorConocidoService;
 import lombok.RequiredArgsConstructor;
-import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import org.springframework.web.server.ResponseStatusException;
 
 import java.util.List;
 import java.util.stream.Collectors;
@@ -60,7 +59,7 @@ public class ErrorConocidoServiceImpl implements ErrorConocidoService {
     }
 
     private ErrorConocido findOrThrow(Integer id) {
-        return repo.findById(id).orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Error conocido no encontrado"));
+        return repo.findById(id).orElseThrow(() -> new RecursoNoEncontradoException("Error conocido", id));
     }
 
     private ErrorConocidoResponse map(ErrorConocido e) {

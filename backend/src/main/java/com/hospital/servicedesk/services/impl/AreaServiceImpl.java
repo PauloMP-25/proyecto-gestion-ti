@@ -1,13 +1,12 @@
 package com.hospital.servicedesk.services.impl;
 
 import com.hospital.servicedesk.entities.Area;
+import com.hospital.servicedesk.exceptions.RecursoNoEncontradoException;
 import com.hospital.servicedesk.repositories.AreaRepository;
 import com.hospital.servicedesk.services.AreaService;
 import lombok.RequiredArgsConstructor;
-import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import org.springframework.web.server.ResponseStatusException;
 
 import java.util.List;
 
@@ -36,7 +35,7 @@ public class AreaServiceImpl implements AreaService {
     @Transactional
     public Area updateArea(Integer id, String nombre, String anexo) {
         Area area = areaRepo.findById(id)
-                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Área no encontrada"));
+                .orElseThrow(() -> new RecursoNoEncontradoException("Área", id));
         area.setNombre(nombre);
         area.setAnexo(anexo);
         return areaRepo.save(area);

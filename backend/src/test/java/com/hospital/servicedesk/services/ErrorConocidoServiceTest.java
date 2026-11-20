@@ -2,6 +2,7 @@ package com.hospital.servicedesk.services;
 
 import com.hospital.servicedesk.dtos.ErrorConocidoDTOs.*;
 import com.hospital.servicedesk.entities.ErrorConocido;
+import com.hospital.servicedesk.exceptions.RecursoNoEncontradoException;
 import com.hospital.servicedesk.repositories.ErrorConocidoRepository;
 import com.hospital.servicedesk.services.impl.ErrorConocidoServiceImpl;
 import org.junit.jupiter.api.BeforeEach;
@@ -9,7 +10,6 @@ import org.junit.jupiter.api.Test;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
-import org.springframework.web.server.ResponseStatusException;
 
 import java.time.LocalDateTime;
 import java.util.Optional;
@@ -59,7 +59,7 @@ class ErrorConocidoServiceTest {
     void testGetErrorConocidoNotFound() {
         when(repo.findById(99)).thenReturn(Optional.empty());
 
-        assertThrows(ResponseStatusException.class, () -> {
+        assertThrows(RecursoNoEncontradoException.class, () -> {
             service.getErrorById(99);
         });
     }

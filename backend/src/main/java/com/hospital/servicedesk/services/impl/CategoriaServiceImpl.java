@@ -1,14 +1,12 @@
-
 package com.hospital.servicedesk.services.impl;
 
 import com.hospital.servicedesk.entities.Categoria;
+import com.hospital.servicedesk.exceptions.RecursoNoEncontradoException;
 import com.hospital.servicedesk.repositories.CategoriaRepository;
 import com.hospital.servicedesk.services.CategoriaService;
 import lombok.RequiredArgsConstructor;
-import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import org.springframework.web.server.ResponseStatusException;
 
 import java.util.List;
 
@@ -41,7 +39,7 @@ public class CategoriaServiceImpl implements CategoriaService {
     @Transactional
     public Categoria updateCategoria(Integer id, String nombre, Integer idPadre) {
         Categoria categoria = categoriaRepo.findById(id)
-                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Categoría no encontrada"));
+                .orElseThrow(() -> new RecursoNoEncontradoException("Categoría", id));
         categoria.setNombre(nombre);
         if (idPadre != null) {
             Categoria padre = categoriaRepo.findById(idPadre).orElse(null);
@@ -52,4 +50,3 @@ public class CategoriaServiceImpl implements CategoriaService {
         return categoriaRepo.save(categoria);
     }
 }
-

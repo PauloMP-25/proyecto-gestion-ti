@@ -1,19 +1,18 @@
-
 package com.hospital.servicedesk.services.impl;
 
 import com.hospital.servicedesk.entities.DireccionIP;
 import com.hospital.servicedesk.entities.ElementoConfiguracion;
 import com.hospital.servicedesk.entities.EstadoIP;
 import com.hospital.servicedesk.entities.HistorialAsignacionIP;
+import com.hospital.servicedesk.exceptions.ConflictoNegocioException;
+import com.hospital.servicedesk.exceptions.RecursoNoEncontradoException;
 import com.hospital.servicedesk.repositories.DireccionIpRepository;
 import com.hospital.servicedesk.repositories.ElementoConfiguracionRepository;
 import com.hospital.servicedesk.repositories.HistorialAsignacionIpRepository;
 import com.hospital.servicedesk.services.DireccionIpService;
 import lombok.RequiredArgsConstructor;
-import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import org.springframework.web.server.ResponseStatusException;
 
 import java.time.LocalDateTime;
 import java.util.List;
@@ -37,7 +36,7 @@ public class DireccionIpServiceImpl implements DireccionIpService {
     public DireccionIP createDireccionIp(Map<String, Object> req) {
         String direccion = (String) req.get("direccion");
         if (ipRepo.findByDireccion(direccion).isPresent()) {
-            throw new ResponseStatusException(HttpStatus.CONFLICT, "La dirección IP ya está registrada");
+            throw new ConflictoNegocioException("La dirección IP ya está registrada");
         }
         DireccionIP ip = DireccionIP.builder()
                 .direccion(direccion)
@@ -51,15 +50,15 @@ public class DireccionIpServiceImpl implements DireccionIpService {
     @Transactional
     public HistorialAsignacionIP asignarIp(Integer idIp, Map<String, Object> req) {
         DireccionIP ip = ipRepo.findById(idIp)
-                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Dirección IP no encontrada"));
+                .orElseThrow(() -> new RecursoNoEncontradoException("Dirección IP", idIp));
 
         if (ip.getEstado() == EstadoIP.ASIGNADA) {
-            throw new ResponseStatusException(HttpStatus.CONFLICT, "La dirección IP ya se encuentra asignada");
+            throw new ConflictoNegocioException("La dirección IP ya se encuentra asignada");
         }
 
         Integer idCi = (Integer) req.get("idCi");
         ElementoConfiguracion ci = ciRepo.findById(idCi)
-                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Equipo CI no encontrado"));
+                .orElseThrow(() -> new RecursoNoEncontradoException("Equipo CI", idCi));
 
         ip.setEstado(EstadoIP.ASIGNADA);
         ipRepo.save(ip);
@@ -76,13 +75,13 @@ public class DireccionIpServiceImpl implements DireccionIpService {
     @Transactional
     public HistorialAsignacionIP liberarIp(Integer idIp) {
         DireccionIP ip = ipRepo.findById(idIp)
-                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Dirección IP no encontrada"));
+                .orElseThrow(() -> new RecursoNoEncontradoException("Dirección IP", idIp));
 
         ip.setEstado(EstadoIP.DISPONIBLE);
         ipRepo.save(ip);
 
         HistorialAsignacionIP active = historialIpRepo.findActiveAssignmentByIp(ip.getDireccion())
-                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "No hay asignación activa para esta IP"));
+                .orElseThrow(() -> new RecursoNoEncontradoException("No hay asignación activa para esta IP"));
 
         active.setFechaLiberacion(LocalDateTime.now());
         return historialIpRepo.save(active);
@@ -91,10 +90,9 @@ public class DireccionIpServiceImpl implements DireccionIpService {
     @Override
     public List<HistorialAsignacionIP> getHistorialIp(Integer idIp) {
         DireccionIP ip = ipRepo.findById(idIp)
-                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Dirección IP no encontrada"));
+                .orElseThrow(() -> new RecursoNoEncontradoException("Dirección IP", idIp));
         return historialIpRepo.findAll().stream()
                 .filter(h -> h.getDireccionIp().getIdDireccionIp().equals(idIp))
                 .toList();
     }
 }
-

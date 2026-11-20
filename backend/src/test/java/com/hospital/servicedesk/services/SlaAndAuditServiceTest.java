@@ -1,8 +1,8 @@
-
 package com.hospital.servicedesk.services;
 
 import com.hospital.servicedesk.dtos.TicketDTOs.*;
 import com.hospital.servicedesk.entities.*;
+import com.hospital.servicedesk.exceptions.RecursoNoEncontradoException;
 import com.hospital.servicedesk.repositories.*;
 import com.hospital.servicedesk.services.impl.TicketServiceImpl;
 import org.junit.jupiter.api.BeforeEach;
@@ -10,7 +10,6 @@ import org.junit.jupiter.api.Test;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
-import org.springframework.web.server.ResponseStatusException;
 
 import java.time.LocalDateTime;
 import java.util.Optional;
@@ -103,7 +102,7 @@ class SlaAndAuditServiceTest {
     void testTicketNotFoundThrowsException() {
         when(ticketRepository.findById(999)).thenReturn(Optional.empty());
 
-        assertThrows(ResponseStatusException.class, () -> {
+        assertThrows(RecursoNoEncontradoException.class, () -> {
             ticketService.getTicketById(999);
         });
     }
@@ -114,4 +113,3 @@ class SlaAndAuditServiceTest {
         }
     }
 }
-

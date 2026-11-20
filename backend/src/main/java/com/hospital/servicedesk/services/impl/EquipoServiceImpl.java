@@ -1,18 +1,16 @@
-
 package com.hospital.servicedesk.services.impl;
 
 import com.hospital.servicedesk.entities.Area;
 import com.hospital.servicedesk.entities.ElementoConfiguracion;
 import com.hospital.servicedesk.entities.EstadoCI;
 import com.hospital.servicedesk.entities.TipoCI;
+import com.hospital.servicedesk.exceptions.RecursoNoEncontradoException;
 import com.hospital.servicedesk.repositories.AreaRepository;
 import com.hospital.servicedesk.repositories.ElementoConfiguracionRepository;
 import com.hospital.servicedesk.services.EquipoService;
 import lombok.RequiredArgsConstructor;
-import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import org.springframework.web.server.ResponseStatusException;
 
 import java.util.List;
 import java.util.Map;
@@ -32,7 +30,7 @@ public class EquipoServiceImpl implements EquipoService {
     @Override
     public ElementoConfiguracion getEquipoById(Integer id) {
         return ciRepo.findById(id)
-                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Equipo no encontrado"));
+                .orElseThrow(() -> new RecursoNoEncontradoException("Equipo", id));
     }
 
     @Override
@@ -40,7 +38,7 @@ public class EquipoServiceImpl implements EquipoService {
     public ElementoConfiguracion createEquipo(Map<String, Object> req) {
         Integer idArea = (Integer) req.get("idArea");
         Area area = areaRepo.findById(idArea)
-                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Área no encontrada"));
+                .orElseThrow(() -> new RecursoNoEncontradoException("Área", idArea));
 
         ElementoConfiguracion ci = ElementoConfiguracion.builder()
                 .nombre((String) req.get("nombre"))
@@ -78,4 +76,3 @@ public class EquipoServiceImpl implements EquipoService {
         return ciRepo.save(ci);
     }
 }
-

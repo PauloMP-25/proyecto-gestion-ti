@@ -3,15 +3,15 @@ package com.hospital.servicedesk.services.impl;
 import com.hospital.servicedesk.entities.ElementoConfiguracion;
 import com.hospital.servicedesk.entities.PrestamoEquipo;
 import com.hospital.servicedesk.entities.Usuario;
+import com.hospital.servicedesk.exceptions.RecursoNoEncontradoException;
+import com.hospital.servicedesk.exceptions.ReglaNegocioException;
 import com.hospital.servicedesk.repositories.ElementoConfiguracionRepository;
 import com.hospital.servicedesk.repositories.PrestamoEquipoRepository;
 import com.hospital.servicedesk.repositories.UsuarioRepository;
 import com.hospital.servicedesk.services.PrestamoEquipoService;
 import lombok.RequiredArgsConstructor;
-import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import org.springframework.web.server.ResponseStatusException;
 
 import java.time.LocalDateTime;
 import java.util.List;
@@ -32,17 +32,17 @@ public class PrestamoEquipoServiceImpl implements PrestamoEquipoService {
     @Override
     public PrestamoEquipo getPrestamoById(Integer id) {
         return prestamoRepo.findById(id)
-                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Préstamo no encontrado"));
+                .orElseThrow(() -> new RecursoNoEncontradoException("Préstamo", id));
     }
 
     @Override
     @Transactional
     public PrestamoEquipo crearPrestamo(Integer idCi, Integer idTicket, String solicitante, String fechaDevolucionEsperada) {
         ElementoConfiguracion ci = ciRepo.findById(idCi)
-                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Elemento de configuración no encontrado"));
+                .orElseThrow(() -> new RecursoNoEncontradoException("Elemento de configuración", idCi));
 
         Usuario receptor = usuarioRepo.findAll().stream().findFirst()
-                .orElseThrow(() -> new ResponseStatusException(HttpStatus.BAD_REQUEST, "No hay usuarios en el sistema"));
+                .orElseThrow(() -> new ReglaNegocioException("No hay usuarios registrados en el sistema"));
 
         PrestamoEquipo prestamo = PrestamoEquipo.builder()
                 .elementoConfiguracion(ci)
