@@ -1,0 +1,10 @@
+:host {
+  display: block;
+}
+
+.personal-filtros {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: var(--espacio-3, 0.75rem);
+}

@@ -1,0 +1,27 @@
+:host {
+  display: block;
+}
+
+.btn-nuevo {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--espacio-2, 0.5rem);
+  height: var(--touch-min, 40px);
+  padding: 0 var(--espacio-4, 1rem);
+  background-color: var(--color-primary-base, #701c1c);
+  color: var(--prim-blanco, #ffffff);
+  border: none;
+  border-radius: var(--radius-md, 6px);
+  font-size: var(--font-size-sm, 0.875rem);
+  font-weight: var(--font-weight-medium, 500);
+  cursor: pointer;
+  transition: background-color var(--trans-fast, 150ms);
+
+  &:hover {
+    background-color: var(--color-primary-hover, #5a1616);
+  }
+
+  .icono-btn {
+    font-size: 1.125rem;
+  }
+}

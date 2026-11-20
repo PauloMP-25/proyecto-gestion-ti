@@ -1,0 +1,104 @@
+<app-tabla-administracion
+  [columnas]="columnas"
+  tituloAccesible="Listado de personal y cuentas del hospital"
+  [cargando]="cargando()"
+  [vacio]="vacio()"
+  mensajeVacio="No se encontraron colaboradores registrados con los filtros aplicados."
+  placeholderBusqueda="Buscar por nombre, usuario o correo..."
+  [(busqueda)]="busqueda"
+>
+  <div filtros>
+    <ng-content select="[filtros]"></ng-content>
+  </div>
+
+  <button
+    accion-vacio
+    type="button"
+    class="btn-nuevo btn-nuevo--sm"
+    (click)="alRegistrar.emit()"
+  >
+    <span class="material-symbols-outlined icono-btn" aria-hidden="true">person_add</span>
+    <span>Registrar colaborador</span>
+  </button>
+
+  <ng-container filas>
+    @for (p of personal(); track p.id) {
+      <tr class="fila-personal" [class.fila-personal--inactiva]="!p.activo">
+        <td>
+          <div class="celda-colaborador">
+            <div class="fila-nombre">
+              <app-insignia-grado [grado]="p.grado"></app-insignia-grado>
+              <span class="nombre-visible">{{ p.nombreVisible }}</span>
+            </div>
+            <span class="nombre-completo">{{ p.nombreCompleto }}</span>
+          </div>
+        </td>
+        <td>{{ p.nombreArea || 'Sin área asignada' }}</td>
+        <td>
+          @if (p.nombreUsuario) {
+            <code class="codigo-usuario">{{ p.nombreUsuario }}</code>
+          } @else {
+            <span class="texto-apagado">—</span>
+          }
+        </td>
+        <td>
+          <span class="celda-correo">{{ p.correo }}</span>
+        </td>
+        <td>
+          <span class="badge-rol" [class.badge-rol--admin]="p.rol === 'ADMINISTRADOR'">
+            {{ p.rol === 'ADMINISTRADOR' ? 'Administrador' : 'Asistencial' }}
+          </span>
+        </td>
+        <td>
+          <span
+            class="badge-estado"
+            [class.badge-estado--activo]="p.activo"
+            [class.badge-estado--bloqueado]="!!p.bloqueadoHasta"
+          >
+            {{
+              p.bloqueadoHasta
+                ? 'Bloqueada temporalmente'
+                : p.activo
+                ? 'En servicio'
+                : 'Inactivo'
+            }}
+          </span>
+        </td>
+        <td class="text-right" (click)="$event.stopPropagation()">
+          <div class="acciones-fila">
+            <button
+              type="button"
+              class="btn-accion"
+              [attr.aria-label]="'Editar colaborador ' + p.nombreVisible"
+              (click)="alEditar.emit(p)"
+              title="Editar colaborador"
+            >
+              <span class="material-symbols-outlined icono-accion" aria-hidden="true">edit</span>
+            </button>
+            <button
+              type="button"
+              class="btn-accion"
+              [attr.aria-label]="'Restablecer contraseña de ' + p.nombreVisible"
+              (click)="alRestablecer.emit(p)"
+              title="Restablecer contraseña"
+            >
+              <span class="material-symbols-outlined icono-accion" aria-hidden="true">password</span>
+            </button>
+            <button
+              type="button"
+              class="btn-accion"
+              [class.btn-accion--reactivar]="!p.activo"
+              [attr.aria-label]="(p.activo ? 'Desactivar' : 'Reactivar') + ' cuenta de ' + p.nombreVisible"
+              (click)="alToggleActivo.emit(p)"
+              [title]="p.activo ? 'Desactivar cuenta' : 'Reactivar cuenta'"
+            >
+              <span class="material-symbols-outlined icono-accion" aria-hidden="true">
+                {{ p.activo ? 'person_off' : 'check_circle' }}
+              </span>
+            </button>
+          </div>
+        </td>
+      </tr>
+    }
+  </ng-container>
+</app-tabla-administracion>

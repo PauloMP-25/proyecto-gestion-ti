@@ -1,0 +1,150 @@
+:host {
+  display: block;
+}
+
+.fila-personal {
+  &--inactiva {
+    opacity: 0.65;
+    background-color: var(--color-surface-sunken, #f8fafc);
+  }
+}
+
+.celda-colaborador {
+  display: flex;
+  flex-direction: column;
+  gap: 0.15rem;
+}
+
+.fila-nombre {
+  display: flex;
+  align-items: center;
+  gap: var(--espacio-xs, 0.5rem);
+}
+
+.nombre-visible {
+  font-weight: var(--font-weight-semibold, 600);
+  color: var(--color-text-main, #0f172a);
+}
+
+.nombre-completo {
+  font-size: var(--font-size-xs, 0.75rem);
+  color: var(--color-text-muted, #64748b);
+}
+
+.codigo-usuario {
+  font-family: monospace;
+  font-size: var(--font-size-xs, 0.75rem);
+  color: var(--color-text-main, #0f172a);
+  background-color: var(--color-surface-sunken, #f1f5f9);
+  padding: 0.1rem var(--espacio-xs, 0.5rem);
+  border-radius: var(--radius-xs, 2px);
+}
+
+.celda-correo {
+  font-size: var(--font-size-xs, 0.75rem);
+  color: var(--color-text-muted, #64748b);
+}
+
+.badge-rol {
+  display: inline-flex;
+  font-size: var(--font-size-xs, 0.75rem);
+  padding: var(--espacio-2xs, 0.125rem) var(--espacio-xs, 0.5rem);
+  border-radius: var(--radius-sm, 4px);
+  background-color: var(--color-surface-sunken, #f1f5f9);
+  color: var(--color-text-main, #0f172a);
+  border: 1px solid var(--color-border-subtle, #e2e8f0);
+
+  &--admin {
+    background-color: var(--color-primary-sunken, #fee2e2);
+    color: var(--color-primary-base, #701c1c);
+    border-color: var(--color-primary-sunken, #fee2e2);
+    font-weight: var(--font-weight-medium, 500);
+  }
+}
+
+.badge-estado {
+  display: inline-flex;
+  font-size: var(--font-size-xs, 0.75rem);
+  padding: var(--espacio-2xs, 0.125rem) var(--espacio-xs, 0.5rem);
+  border-radius: var(--radius-sm, 4px);
+  background-color: var(--color-surface-sunken, #f1f5f9);
+  color: var(--color-text-muted, #64748b);
+
+  &--activo {
+    background-color: var(--color-secondary-sunken, #dcfce7);
+    color: var(--color-secondary-base, #166534);
+    font-weight: var(--font-weight-medium, 500);
+  }
+
+  &--bloqueado {
+    background-color: var(--color-error-bg, #fef2f2);
+    color: var(--color-error-text, #dc2626);
+    font-weight: var(--font-weight-medium, 500);
+  }
+}
+
+.acciones-fila {
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  gap: var(--espacio-xs, 0.25rem);
+}
+
+.btn-accion {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 2rem;
+  height: 2rem;
+  border: none;
+  background: transparent;
+  border-radius: var(--radius-sm, 4px);
+  color: var(--color-text-muted, #64748b);
+  cursor: pointer;
+  transition: background-color var(--trans-fast, 150ms), color var(--trans-fast, 150ms);
+
+  &:hover {
+    background-color: var(--color-surface-hover, #f1f5f9);
+    color: var(--color-text-main, #0f172a);
+  }
+
+  &--reactivar:hover {
+    color: var(--color-secondary-base, var(--hsmsi-verde, #1b5e20));
+  }
+}
+
+.icono-accion {
+  font-family: 'Material Symbols Outlined', sans-serif;
+  font-size: var(--font-size-md, 1rem);
+}
+
+.texto-apagado {
+  color: var(--color-text-muted, #94a3b8);
+}
+
+.text-right {
+  text-align: right;
+}
+
+.btn-nuevo {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--espacio-2, 0.5rem);
+  padding: var(--espacio-1, 0.25rem) var(--espacio-3, 0.75rem);
+  background-color: var(--color-primary-base, #701c1c);
+  color: var(--prim-blanco, #ffffff);
+  border: none;
+  border-radius: var(--radius-md, 6px);
+  font-size: var(--font-size-xs, 0.75rem);
+  font-weight: var(--font-weight-medium, 500);
+  cursor: pointer;
+  transition: background-color var(--trans-fast, 150ms);
+
+  &:hover {
+    background-color: var(--color-primary-hover, #5a1616);
+  }
+
+  .icono-btn {
+    font-size: 1rem;
+  }
+}

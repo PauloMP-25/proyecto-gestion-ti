@@ -1,0 +1,88 @@
+<app-plantilla-pagina>
+  <!-- CABECERA -->
+  <app-cabecera-pagina
+    cabecera
+    icono="badge"
+    titulo="Personal y cuentas de acceso"
+    subtitulo="Administre al personal de salud y asistencial del hospital, sus credenciales y áreas de adscripción."
+  >
+    <button
+      acciones
+      type="button"
+      class="btn-nuevo"
+      (click)="abrirModalNuevo()"
+      aria-label="Registrar nuevo colaborador"
+    >
+      <span class="material-symbols-outlined icono-btn" aria-hidden="true">person_add</span>
+      <span>Registrar personal</span>
+    </button>
+  </app-cabecera-pagina>
+
+  <!-- TABLA DE PERSONAL -->
+  <app-personal-tabla
+    [personal]="store.personal()"
+    [cargando]="store.cargando()"
+    [vacio]="store.vacio()"
+    [(busqueda)]="busquedaTexto"
+    (alEditar)="abrirModalEditar($event)"
+    (alRestablecer)="confirmarRestablecer($event)"
+    (alToggleActivo)="confirmarToggleActivo($event)"
+    (alRegistrar)="abrirModalNuevo()"
+  >
+    <app-personal-filtros
+      filtros
+      [areas]="areas()"
+      [(area)]="filtroArea"
+      [(rol)]="filtroRol"
+    ></app-personal-filtros>
+  </app-personal-tabla>
+</app-plantilla-pagina>
+
+<!-- MODAL REGISTRO / EDICIÓN -->
+@if (modalPersonalAbierto()) {
+  <app-dialogo-personal
+    [personalParaEditar]="personalParaEditar()"
+    (guardado)="alGuardarPersonal($event)"
+    (cancelado)="modalPersonalAbierto.set(false)"
+  ></app-dialogo-personal>
+}
+
+<!-- MODAL CONTRASEÑA TEMPORAL GENERADA -->
+@if (claveTemporalGenerada()) {
+  <app-dialogo-contrasena-temporal
+    [contrasena]="claveTemporalGenerada()!"
+    [nombreUsuario]="usuarioClaveTemporal()"
+    (cerrado)="claveTemporalGenerada.set(null)"
+  ></app-dialogo-contrasena-temporal>
+}
+
+<!-- CONFIRMACIÓN DE DESACTIVAR / REACTIVAR -->
+@if (itemParaToggle(); as item) {
+  <app-dialogo-confirmacion
+    [titulo]="item.activo ? '¿Desactivar cuenta de acceso?' : '¿Reactivar cuenta?'"
+    [mensaje]="
+      item.activo
+        ? 'Al desactivar a ' + item.nombreVisible + ', no podrá ingresar a la Mesa de Ayuda ni reportar incidencias.'
+        : '¿Desea volver a activar la cuenta de ' + item.nombreVisible + '?'
+    "
+    [textoConfirmar]="item.activo ? 'Desactivar cuenta' : 'Reactivar cuenta'"
+    [esPeligroso]="item.activo"
+    (confirmar)="ejecutarToggleActivo()"
+    (cancelar)="itemParaToggle.set(null)"
+  ></app-dialogo-confirmacion>
+}
+
+<!-- CONFIRMACIÓN DE RESTABLECER CONTRASEÑA -->
+@if (itemParaRestablecer(); as item) {
+  <app-dialogo-confirmacion
+    titulo="¿Restablecer contraseña de acceso?"
+    [mensaje]="
+      'Se generará una nueva contraseña temporal para ' +
+      item.nombreVisible +
+      '. Se le exigirá cambiarla en su siguiente ingreso.'
+    "
+    textoConfirmar="Generar contraseña"
+    (confirmar)="ejecutarRestablecerContrasena()"
+    (cancelar)="itemParaRestablecer.set(null)"
+  ></app-dialogo-confirmacion>
+}

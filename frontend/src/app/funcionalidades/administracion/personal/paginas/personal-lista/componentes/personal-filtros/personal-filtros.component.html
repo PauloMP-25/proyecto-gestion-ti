@@ -1,0 +1,15 @@
+<div class="personal-filtros">
+  <app-campo-filtro
+    etiqueta="Área hospitalaria"
+    textoTodos="Todas las áreas"
+    [opciones]="opcionesArea()"
+    [(valor)]="area"
+  ></app-campo-filtro>
+
+  <app-campo-filtro
+    etiqueta="Perfil de acceso"
+    textoTodos="Todos los perfiles"
+    [opciones]="opcionesRol"
+    [(valor)]="rol"
+  ></app-campo-filtro>
+</div>
