@@ -1,4 +1,3 @@
-
 package com.hospital.servicedesk.entities;
 
 import jakarta.persistence.*;
@@ -20,10 +19,23 @@ public class Area {
     @Column(name = "id_area")
     private Integer idArea;
 
-    @Column(name = "nombre", nullable = false, length = 80)
+    @Column(name = "nombre", nullable = false, length = 80, unique = true)
     private String nombre;
+
+    @Column(name = "piso", length = 30)
+    private String piso;
+
+    @Column(name = "referencia_ubicacion", length = 150)
+    private String referenciaUbicacion;
 
     @Column(name = "anexo", length = 20)
     private String anexo;
-}
 
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "id_encargado")
+    private Usuario encargado;
+
+    @Builder.Default
+    @Column(name = "activo", nullable = false)
+    private Boolean activo = true;
+}

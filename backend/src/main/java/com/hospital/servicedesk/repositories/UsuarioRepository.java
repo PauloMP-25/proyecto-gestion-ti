@@ -8,7 +8,9 @@ import java.util.Optional;
 
 @Repository
 public interface UsuarioRepository extends JpaRepository<Usuario, Integer> {
-
-    // Método necesario para buscar usuarios por su correo en el login
     Optional<Usuario> findByCorreo(String correo);
+    Optional<Usuario> findByCorreoIgnoreCase(String correo);
+    Optional<Usuario> findByNombreUsuario(String nombreUsuario);
+    boolean existsByCorreoIgnoreCase(String correo);
+    boolean existsByNombreUsuarioIgnoreCase(String nombreUsuario);
 }
