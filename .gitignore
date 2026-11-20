@@ -75,3 +75,5 @@ backend/pom.xml
 
 # Agentes y configuraciones locales
 .agents/
+.claude/
+CLAUDE.md
