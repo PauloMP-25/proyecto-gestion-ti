@@ -1,0 +1,70 @@
+<div class="barra-filtros">
+  <div class="barra-filtros__principal">
+    @if (mostrarBuscador()) {
+      <div class="barra-filtros__buscador-wrapper">
+        <span class="barra-filtros__icono-lupa" aria-hidden="true">
+          <app-icono nombre="search" tamano="sm" />
+        </span>
+
+        <input
+          type="search"
+          class="barra-filtros__input"
+          [placeholder]="placeholder()"
+          [value]="valorInput()"
+          (input)="onInput($event)"
+          aria-label="Campo de búsqueda"
+        />
+
+        @if (valorInput()) {
+          <button
+            type="button"
+            class="barra-filtros__btn-limpiar"
+            aria-label="Borrar texto de búsqueda"
+            (click)="limpiarBusqueda()"
+          >
+            <span class="material-symbols-outlined icono-limpiar">close</span>
+          </button>
+        }
+      </div>
+    }
+
+    <!-- Botón para alternar filtros en pantallas móviles -->
+    <button
+      type="button"
+      class="barra-filtros__btn-toggle-movil"
+      [class.activo]="filtrosMovilAbiertos()"
+      (click)="alternarFiltrosMovil()"
+      aria-label="Alternar panel de filtros adicionales"
+    >
+      <app-icono nombre="filter_list" tamano="sm" aria-hidden="true" />
+      <span>Filtros</span>
+      @if (filtrosActivos() > 0) {
+        <app-insignia [texto]="String(filtrosActivos())" tono="marca" forma="pildora" />
+      }
+    </button>
+
+    <!-- Zona de filtros (desplegada en escritorio, colapsable en móvil) -->
+    <div
+      class="barra-filtros__zona-filtros"
+      [class.abierta-movil]="filtrosMovilAbiertos()"
+    >
+      <ng-content select="[filtros]" />
+
+      @if (filtrosActivos() > 0) {
+        <button
+          type="button"
+          class="barra-filtros__btn-limpiar-filtros"
+          (click)="limpiarTodos()"
+        >
+          <span class="material-symbols-outlined icono-reset">restart_alt</span>
+          <span>Limpiar filtros ({{ filtrosActivos() }})</span>
+        </button>
+      }
+    </div>
+  </div>
+
+  <!-- Zona de acciones (botones a la derecha) -->
+  <div class="barra-filtros__acciones">
+    <ng-content select="[acciones]" />
+  </div>
+</div>
