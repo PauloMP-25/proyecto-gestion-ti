@@ -1,0 +1,73 @@
+:host {
+  display: inline-flex;
+}
+
+.btn-icono {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: var(--hsmsi-radio-md, 8px);
+  border: 1px solid transparent;
+  background: transparent;
+  color: var(--hsmsi-texto, #0f172a);
+  cursor: pointer;
+  transition: all 0.15s ease-in-out;
+  padding: 0;
+
+  &:focus-visible {
+    outline: 2px solid var(--hsmsi-primario, #701c1c);
+    outline-offset: 2px;
+  }
+
+  &:disabled {
+    opacity: 0.45;
+    cursor: not-allowed;
+    pointer-events: none;
+  }
+
+  // Tamaños
+  &--sm {
+    width: 2rem;
+    height: 2rem;
+    font-size: 1.125rem;
+  }
+
+  &--md {
+    width: 2.5rem;
+    height: 2.5rem;
+    font-size: 1.375rem;
+  }
+
+  // Variantes
+  &--fantasma {
+    background: transparent;
+    color: var(--hsmsi-texto-secundario, #64748b);
+
+    &:hover:not(:disabled) {
+      background-color: var(--hsmsi-superficie-hover, rgba(0, 0, 0, 0.04));
+      color: var(--hsmsi-texto, #0f172a);
+    }
+
+    &:active:not(:disabled) {
+      background-color: var(--hsmsi-superficie-activa, rgba(0, 0, 0, 0.08));
+    }
+  }
+
+  &--suave {
+    background-color: var(--hsmsi-superficie-suave, #f1f5f9);
+    color: var(--hsmsi-texto, #0f172a);
+
+    &:hover:not(:disabled) {
+      background-color: var(--hsmsi-superficie-hover, #e2e8f0);
+    }
+  }
+
+  &--peligro {
+    background: transparent;
+    color: var(--hsmsi-peligro, #dc2626);
+
+    &:hover:not(:disabled) {
+      background-color: rgba(220, 38, 38, 0.1);
+    }
+  }
+}

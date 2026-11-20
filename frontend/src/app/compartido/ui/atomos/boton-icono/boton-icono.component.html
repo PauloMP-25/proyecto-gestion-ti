@@ -1,0 +1,10 @@
+<button
+  type="button"
+  class="btn-icono btn-icono--{{ variante() }} btn-icono--{{ tamano() }}"
+  [attr.aria-label]="etiqueta()"
+  [attr.title]="etiqueta()"
+  [disabled]="deshabilitado()"
+  (click)="alHacerClick.emit($event)"
+>
+  <app-icono [nombre]="icono()" [tamano]="tamano() === 'sm' ? 'sm' : 'md'" />
+</button>
