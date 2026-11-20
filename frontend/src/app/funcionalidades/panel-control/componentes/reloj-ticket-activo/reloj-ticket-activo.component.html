@@ -164,12 +164,12 @@
           [class.tiempo-card--vencido]="slaData.vencido">
           <div class="tiempo-card__header">
             <app-icono nombre="alarm" tamano="xs"></app-icono>
-            <span>Ventana de SLA Restante</span>
+            <span>Ventana de atención restante</span>
           </div>
           <div class="tiempo-card__display">
             <span class="reloj-digitos reloj-digitos--sla">{{ slaData.texto }}</span>
             <span class="reloj-subtexto">
-              {{ slaData.vencido ? 'Tiempo de SLA Excedido' : 'para vencimiento pactado' }}
+              {{ slaData.vencido ? 'Tiempo de atención excedido' : 'para vencimiento pactado' }}
             </span>
           </div>
           <div class="tiempo-card__pie">
@@ -178,11 +178,11 @@
         </div>
       </div>
 
-      <!-- BARRA DE PROGRESO DEL SLA HOSPITALARIO -->
+      <!-- BARRA DE PROGRESO DE ATENCIÓN HOSPITALARIA -->
       @let porcentajeConsumido = calcularPorcentajeSLA(60);
       <div class="reloj-sla-barra-container">
         <div class="sla-barra-info">
-          <span>CONSUMO DE TIEMPO DE SLA: <strong>{{ porcentajeConsumido }}%</strong></span>
+          <span>CONSUMO DE TIEMPO DE ATENCIÓN: <strong>{{ porcentajeConsumido }}%</strong></span>
           <span 
             class="sla-estado-tag"
             [class.tag--ok]="porcentajeConsumido < 80"
@@ -193,7 +193,7 @@
             } @else if (porcentajeConsumido < 100) {
               Alerta (Riesgo de incumplimiento)
             } @else {
-              Incumplido (SLA Vencido)
+              Incumplido (Plazo vencido)
             }
           </span>
         </div>
@@ -245,7 +245,7 @@
         <app-icono nombre="timer" tamano="md"></app-icono>
       </div>
       <h4>No hay ticket activo en el cronómetro</h4>
-      <p>Seleccione un ticket de la Cola Activa para iniciar la atención y el cronómetro de SLA en vivo.</p>
+      <p>Seleccione un ticket de la Cola Activa para iniciar la atención y el cronómetro de atención en vivo.</p>
       @if (ticketsDisponibles().length > 0) {
         <app-boton 
           variante="primario" 

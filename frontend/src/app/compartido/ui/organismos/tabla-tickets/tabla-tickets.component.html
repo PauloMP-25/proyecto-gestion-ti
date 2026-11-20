@@ -9,7 +9,7 @@
           <th scope="col">Área Clínica</th>
           <th scope="col">Prioridad</th>
           <th scope="col">Estado</th>
-          <th scope="col">SLA Restante</th>
+          <th scope="col">Tiempo restante de atención</th>
           <th scope="col">Responsable</th>
           <th scope="col" class="th-acciones">Acción</th>
         </tr>
@@ -116,7 +116,7 @@
         </div>
 
         <div class="tarjeta-ticket-movil__sla">
-          <span class="detalle-label">SLA Restante:</span>
+          <span class="detalle-label">Tiempo restante de atención:</span>
           <app-cronometro-atencion [sla]="t.slaResolucion"></app-cronometro-atencion>
         </div>
 
