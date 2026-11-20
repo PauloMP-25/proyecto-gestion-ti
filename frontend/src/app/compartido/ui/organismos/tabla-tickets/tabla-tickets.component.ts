@@ -4,7 +4,7 @@ import { TicketResumen } from '../../../modelos/ticket-resumen.model';
 import { PrioridadInsigniaComponent } from '../../atomos/prioridad-insignia/prioridad-insignia.component';
 import { EstadoEtiquetaComponent } from '../../atomos/estado-etiqueta/estado-etiqueta.component';
 import { NivelInsigniaComponent } from '../../atomos/nivel-insignia/nivel-insignia.component';
-import { TemporizadorSlaComponent } from '../../moleculas/temporizador-sla/temporizador-sla.component';
+import { CronometroAtencionComponent } from '../../moleculas/cronometro-atencion/cronometro-atencion.component';
 import { BotonComponent } from '../../atomos/boton/boton.component';
 import { IconoComponent } from '../../atomos/icono/icono.component';
 
@@ -16,7 +16,7 @@ import { IconoComponent } from '../../atomos/icono/icono.component';
     PrioridadInsigniaComponent,
     EstadoEtiquetaComponent,
     NivelInsigniaComponent,
-    TemporizadorSlaComponent,
+    CronometroAtencionComponent,
     BotonComponent,
     IconoComponent,
   ],

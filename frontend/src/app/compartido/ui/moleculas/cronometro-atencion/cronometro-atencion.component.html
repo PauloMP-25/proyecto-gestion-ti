@@ -1,0 +1,38 @@
+<div
+  class="cronometro-atencion"
+  [class.cronometro-atencion--compacto]="compacto()"
+  [class]="claseEstado()"
+  [attr.aria-label]="etiquetaAccesible()"
+  role="timer"
+>
+  <div class="cronometro-atencion__cabecera">
+    <span class="cronometro-atencion__icono" aria-hidden="true">
+      <app-icono [nombre]="icono()" tamano="xs" />
+    </span>
+
+    <span class="cronometro-atencion__texto">
+      {{ datosCalculados().texto }}
+    </span>
+
+    @if (!compacto()) {
+      <span class="cronometro-atencion__badge-estado">
+        {{ etiquetaEstado() }}
+      </span>
+    }
+  </div>
+
+  @if (mostrarBarra() && !compacto()) {
+    <div
+      class="cronometro-atencion__barra-fondo"
+      role="progressbar"
+      [attr.aria-valuenow]="datosCalculados().porcentajeConsumido"
+      aria-valuemin="0"
+      aria-valuemax="100"
+    >
+      <div
+        class="cronometro-atencion__barra-progreso"
+        [style.width.%]="datosCalculados().porcentajeConsumido"
+      ></div>
+    </div>
+  }
+</div>

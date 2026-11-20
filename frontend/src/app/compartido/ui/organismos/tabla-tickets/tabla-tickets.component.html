@@ -47,7 +47,7 @@
               <app-estado-etiqueta [estado]="t.estado"></app-estado-etiqueta>
             </td>
             <td class="td-sla">
-              <app-temporizador-sla [sla]="t.slaResolucion"></app-temporizador-sla>
+              <app-cronometro-atencion [sla]="t.slaResolucion"></app-cronometro-atencion>
             </td>
             <td class="td-responsable">
               <div class="responsable-box">
@@ -117,7 +117,7 @@
 
         <div class="tarjeta-ticket-movil__sla">
           <span class="detalle-label">SLA Restante:</span>
-          <app-temporizador-sla [sla]="t.slaResolucion"></app-temporizador-sla>
+          <app-cronometro-atencion [sla]="t.slaResolucion"></app-cronometro-atencion>
         </div>
 
         <div class="tarjeta-ticket-movil__footer">

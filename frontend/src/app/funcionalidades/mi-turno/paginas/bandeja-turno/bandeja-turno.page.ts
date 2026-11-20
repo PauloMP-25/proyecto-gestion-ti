@@ -29,7 +29,7 @@ import { calcularSla } from '../../../../compartido/utilidades/calculo-sla';
 import { SlaCalculado } from '../../../../compartido/modelos/sla-vista.model';
 import { EstadoSla } from '../../../../compartido/modelos/estado-sla.enum';
 import { IconoComponent } from '../../../../compartido/ui/atomos/icono/icono.component';
-import { SlaCronometroComponent } from '../../../../compartido/ui/moleculas/sla-cronometro/sla-cronometro.component';
+import { CronometroAtencionComponent } from '../../../../compartido/ui/moleculas/cronometro-atencion/cronometro-atencion.component';
 import { ResumenTurnoComponent } from '../../componentes/resumen-turno/resumen-turno.component';
 import { DialogoResolverTicketComponent } from '../../../../compartido/ui/organismos/dialogo-resolver-ticket/dialogo-resolver-ticket.component';
 import { ResolverTicketPayload } from '../../../../compartido/modelos/dialogos-acciones.model';
@@ -45,7 +45,7 @@ import { AlertasTurnoService } from '../../servicios/alertas-turno.service';
     FormsModule,
     RouterModule,
     IconoComponent,
-    SlaCronometroComponent,
+    CronometroAtencionComponent,
     ResumenTurnoComponent,
     DialogoResolverTicketComponent,
   ],

@@ -237,10 +237,10 @@
           <!-- Cronómetro de compromiso SLA -->
           @if (ticket.sla.fase !== 'COMPLETADO') {
             <div class="tarjeta-turno__cronometro" (click)="$event.stopPropagation()">
-              <app-sla-cronometro
+              <app-cronometro-atencion
                 [sla]="obtenerSlaCalculado(ticket)"
                 [compacto]="true">
-              </app-sla-cronometro>
+              </app-cronometro-atencion>
             </div>
           } @else if (ticket.estado === 'ESCALADO') {
             <div class="insignia-escalado">
@@ -329,10 +329,10 @@
 
               <td class="col-cronometro" (click)="$event.stopPropagation()">
                 @if (ticket.sla.fase !== 'COMPLETADO') {
-                  <app-sla-cronometro
+                  <app-cronometro-atencion
                     [sla]="obtenerSlaCalculado(ticket)"
                     [compacto]="true">
-                  </app-sla-cronometro>
+                  </app-cronometro-atencion>
                 } @else {
                   <span class="texto-completado">Completado</span>
                 }

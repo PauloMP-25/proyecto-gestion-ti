@@ -19,7 +19,7 @@ import { EstadoTicket } from '../../../../compartido/modelos/estado-ticket.enum'
 import { calcularSla } from '../../../../compartido/utilidades/calculo-sla';
 import { SlaCalculado } from '../../../../compartido/modelos/sla-vista.model';
 import { IconoComponent } from '../../../../compartido/ui/atomos/icono/icono.component';
-import { SlaCronometroComponent } from '../../../../compartido/ui/moleculas/sla-cronometro/sla-cronometro.component';
+import { CronometroAtencionComponent } from '../../../../compartido/ui/moleculas/cronometro-atencion/cronometro-atencion.component';
 import { BarraAccionesTicketComponent } from '../../componentes/barra-acciones-ticket/barra-acciones-ticket.component';
 import { DialogoResolverTicketComponent } from '../../../../compartido/ui/organismos/dialogo-resolver-ticket/dialogo-resolver-ticket.component';
 import { DialogoEscalarTicketComponent } from '../../../../compartido/ui/organismos/dialogo-escalar-ticket/dialogo-escalar-ticket.component';
@@ -42,7 +42,7 @@ export interface HitoInternoTurno {
     CommonModule,
     RouterModule,
     IconoComponent,
-    SlaCronometroComponent,
+    CronometroAtencionComponent,
     BarraAccionesTicketComponent,
     DialogoResolverTicketComponent,
     DialogoEscalarTicketComponent,

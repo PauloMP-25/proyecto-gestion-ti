@@ -192,10 +192,10 @@
           @if (slaCalculado(); as sla) {
             @if (sla.fase !== 'COMPLETADO') {
               <div class="sla-cronometro-envoltorio">
-                <app-sla-cronometro
+                <app-cronometro-atencion
                   [sla]="sla"
                   [compacto]="false">
-                </app-sla-cronometro>
+                </app-cronometro-atencion>
                 <div class="sla-explicacion">
                   @if (sla.fase === 'RESPUESTA') {
                     <span>Fase actual: <strong>Primera respuesta</strong></span>
