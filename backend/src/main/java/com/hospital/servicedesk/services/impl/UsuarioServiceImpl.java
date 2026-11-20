@@ -53,6 +53,34 @@ public class UsuarioServiceImpl implements UsuarioService {
     }
 
     @Override
+    @Transactional(readOnly = true)
+    public com.hospital.servicedesk.dtos.PaginaRespuesta<UsuarioRespuesta> getUsuariosPaginados(int pagina, int tamano, String busqueda) {
+        List<Usuario> usuarios = usuarioRepo.findAll();
+
+        List<UsuarioRespuesta> filtrados = usuarios.stream()
+                .filter(u -> {
+                    if (busqueda != null && !busqueda.isBlank()) {
+                        String b = busqueda.toLowerCase().trim();
+                        boolean matchNombre = u.getNombres() != null && u.getNombres().toLowerCase().contains(b);
+                        boolean matchApellido = u.getApellidos() != null && u.getApellidos().toLowerCase().contains(b);
+                        boolean matchCorreo = u.getCorreo() != null && u.getCorreo().toLowerCase().contains(b);
+                        boolean matchRol = u.getRol() != null && u.getRol().toLowerCase().contains(b);
+                        return matchNombre || matchApellido || matchCorreo || matchRol;
+                    }
+                    return true;
+                })
+                .sorted((a, b) -> {
+                    String nomA = (a.getNombres() != null ? a.getNombres() : "") + " " + (a.getApellidos() != null ? a.getApellidos() : "");
+                    String nomB = (b.getNombres() != null ? b.getNombres() : "") + " " + (b.getApellidos() != null ? b.getApellidos() : "");
+                    return nomA.compareToIgnoreCase(nomB);
+                })
+                .map(UsuarioMapper::toResponse)
+                .toList();
+
+        return com.hospital.servicedesk.dtos.PaginaRespuesta.of(filtrados, pagina, tamano);
+    }
+
+    @Override
     @Transactional
     public UsuarioRespuesta createUsuario(UsuarioRegistroRequest req) {
         String correo = req.correo().trim().toLowerCase();

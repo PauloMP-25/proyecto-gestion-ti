@@ -1,4 +1,3 @@
-
 package com.hospital.servicedesk.controllers;
 
 import com.hospital.servicedesk.entities.DireccionIP;
@@ -20,8 +19,11 @@ public class DireccionIpController {
     private final DireccionIpService ipService;
 
     @GetMapping
-    public ResponseEntity<List<DireccionIP>> getAllDireccionesIp() {
-        return ResponseEntity.ok(ipService.getAllDireccionesIp());
+    public ResponseEntity<com.hospital.servicedesk.dtos.PaginaRespuesta<DireccionIP>> getAllDireccionesIp(
+            @RequestParam(defaultValue = "0") int pagina,
+            @RequestParam(defaultValue = "10") int tamano,
+            @RequestParam(required = false) String estado) {
+        return ResponseEntity.ok(ipService.getDireccionesIpPaginadas(pagina, tamano, estado));
     }
 
     @PostMapping

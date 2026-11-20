@@ -9,6 +9,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.time.LocalDateTime;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -21,6 +22,33 @@ public class ErrorConocidoServiceImpl implements ErrorConocidoService {
     @Override
     public List<ErrorConocidoResponse> getAllErrors() {
         return repo.findAll().stream().map(this::map).collect(Collectors.toList());
+    }
+
+    @Override
+    @Transactional(readOnly = true)
+    public com.hospital.servicedesk.dtos.PaginaRespuesta<ErrorConocidoResponse> getErrorsPaginados(int pagina, int tamano, String texto) {
+        List<ErrorConocido> todos = repo.findAll();
+
+        List<ErrorConocidoResponse> filtrados = todos.stream()
+                .filter(e -> {
+                    if (texto != null && !texto.isBlank()) {
+                        String t = texto.toLowerCase().trim();
+                        boolean matchTitulo = e.getTitulo() != null && e.getTitulo().toLowerCase().contains(t);
+                        boolean matchDesc = e.getDescripcionProblema() != null && e.getDescripcionProblema().toLowerCase().contains(t);
+                        boolean matchSol = e.getSolucionTrabajo() != null && e.getSolucionTrabajo().toLowerCase().contains(t);
+                        return matchTitulo || matchDesc || matchSol;
+                    }
+                    return true;
+                })
+                .sorted((a, b) -> {
+                    LocalDateTime fA = a.getFechaCreacion() != null ? a.getFechaCreacion() : LocalDateTime.MIN;
+                    LocalDateTime fB = b.getFechaCreacion() != null ? b.getFechaCreacion() : LocalDateTime.MIN;
+                    return fB.compareTo(fA);
+                })
+                .map(this::map)
+                .toList();
+
+        return com.hospital.servicedesk.dtos.PaginaRespuesta.of(filtrados, pagina, tamano);
     }
 
     @Override

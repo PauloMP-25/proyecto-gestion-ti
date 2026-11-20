@@ -28,6 +28,43 @@ public class EquipoServiceImpl implements EquipoService {
     }
 
     @Override
+    @Transactional(readOnly = true)
+    public com.hospital.servicedesk.dtos.PaginaRespuesta<ElementoConfiguracion> getEquiposPaginados(
+            int pagina,
+            int tamano,
+            Integer idArea,
+            String tipoCi,
+            String texto) {
+        List<ElementoConfiguracion> todos = ciRepo.findAll();
+
+        List<ElementoConfiguracion> filtrados = todos.stream()
+                .filter(ci -> {
+                    if (idArea != null && idArea > 0) {
+                        if (ci.getArea() == null || !idArea.equals(ci.getArea().getIdArea())) return false;
+                    }
+                    if (tipoCi != null && !tipoCi.isBlank()) {
+                        if (ci.getTipoCi() == null || !ci.getTipoCi().name().equalsIgnoreCase(tipoCi)) return false;
+                    }
+                    if (texto != null && !texto.isBlank()) {
+                        String t = texto.toLowerCase().trim();
+                        boolean matchNom = ci.getNombre() != null && ci.getNombre().toLowerCase().contains(t);
+                        boolean matchHost = ci.getHostname() != null && ci.getHostname().toLowerCase().contains(t);
+                        boolean matchMac = ci.getMac() != null && ci.getMac().toLowerCase().contains(t);
+                        return matchNom || matchHost || matchMac;
+                    }
+                    return true;
+                })
+                .sorted((a, b) -> {
+                    String nomA = a.getNombre() != null ? a.getNombre() : "";
+                    String nomB = b.getNombre() != null ? b.getNombre() : "";
+                    return nomA.compareToIgnoreCase(nomB);
+                })
+                .toList();
+
+        return com.hospital.servicedesk.dtos.PaginaRespuesta.of(filtrados, pagina, tamano);
+    }
+
+    @Override
     public ElementoConfiguracion getEquipoById(Integer id) {
         return ciRepo.findById(id)
                 .orElseThrow(() -> new RecursoNoEncontradoException("Equipo", id));

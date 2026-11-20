@@ -1,14 +1,19 @@
-
 package com.hospital.servicedesk.services;
 
+import com.hospital.servicedesk.dtos.PaginaRespuesta;
 import com.hospital.servicedesk.dtos.TicketDTOs.*;
 import java.util.List;
 import java.util.Map;
 
+/**
+ * Contrato de servicio para el ciclo de vida y gestión de tickets hospitalarios.
+ */
 public interface TicketService {
     TicketResponse createTicket(CreateTicketRequest request, String clientIp);
     List<TicketResponse> getAllTickets();
+    PaginaRespuesta<TicketResponse> getTicketsPaginados(int pagina, int tamano, String estado, String prioridad, Integer idArea, String texto);
     List<TicketResponse> getMisTickets(String userEmail);
+    PaginaRespuesta<TicketResponse> getMisTicketsPaginados(String userEmail, int pagina, int tamano);
     TicketResponse getTicketById(Integer id);
     List<Object> getHistorialTicket(Integer id);
     TicketResponse assignTicket(Integer id, AssignRequest request, String userEmail);
@@ -23,4 +28,3 @@ public interface TicketService {
     TicketResponse vincularEquipo(Integer id, Map<String, Object> request);
     Map<String, Object> getContextoCliente(String clientIp);
 }
-

@@ -32,14 +32,23 @@ public class TicketController {
     }
 
     @GetMapping
-    public ResponseEntity<List<TicketResponse>> getAllTickets() {
-        return ResponseEntity.ok(ticketService.getAllTickets());
+    public ResponseEntity<com.hospital.servicedesk.dtos.PaginaRespuesta<TicketResponse>> getAllTickets(
+            @RequestParam(defaultValue = "0") int pagina,
+            @RequestParam(defaultValue = "10") int tamano,
+            @RequestParam(required = false) String estado,
+            @RequestParam(required = false) String prioridad,
+            @RequestParam(required = false) Integer idArea,
+            @RequestParam(required = false) String texto) {
+        return ResponseEntity.ok(ticketService.getTicketsPaginados(pagina, tamano, estado, prioridad, idArea, texto));
     }
 
     @GetMapping("/mis-tickets")
-    public ResponseEntity<List<TicketResponse>> getMisTickets(Authentication authentication) {
+    public ResponseEntity<com.hospital.servicedesk.dtos.PaginaRespuesta<TicketResponse>> getMisTickets(
+            @RequestParam(defaultValue = "0") int pagina,
+            @RequestParam(defaultValue = "10") int tamano,
+            Authentication authentication) {
         String userEmail = authentication != null ? authentication.getName() : null;
-        return ResponseEntity.ok(ticketService.getMisTickets(userEmail));
+        return ResponseEntity.ok(ticketService.getMisTicketsPaginados(userEmail, pagina, tamano));
     }
 
     @GetMapping("/{id}")

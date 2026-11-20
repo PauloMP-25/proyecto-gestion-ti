@@ -19,8 +19,13 @@ public class EquipoController {
     private final EquipoService equipoService;
 
     @GetMapping
-    public ResponseEntity<List<ElementoConfiguracion>> getAllEquipos() {
-        return ResponseEntity.ok(equipoService.getAllEquipos());
+    public ResponseEntity<com.hospital.servicedesk.dtos.PaginaRespuesta<ElementoConfiguracion>> getAllEquipos(
+            @RequestParam(defaultValue = "0") int pagina,
+            @RequestParam(defaultValue = "10") int tamano,
+            @RequestParam(required = false) Integer idArea,
+            @RequestParam(required = false) String tipoCi,
+            @RequestParam(required = false) String texto) {
+        return ResponseEntity.ok(equipoService.getEquiposPaginados(pagina, tamano, idArea, tipoCi, texto));
     }
 
     @GetMapping("/{id}")

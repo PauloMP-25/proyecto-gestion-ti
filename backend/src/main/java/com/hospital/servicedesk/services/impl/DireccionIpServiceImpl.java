@@ -32,6 +32,28 @@ public class DireccionIpServiceImpl implements DireccionIpService {
     }
 
     @Override
+    @Transactional(readOnly = true)
+    public com.hospital.servicedesk.dtos.PaginaRespuesta<DireccionIP> getDireccionesIpPaginadas(int pagina, int tamano, String estado) {
+        List<DireccionIP> todas = ipRepo.findAll();
+
+        List<DireccionIP> filtradas = todas.stream()
+                .filter(ip -> {
+                    if (estado != null && !estado.isBlank()) {
+                        if (ip.getEstado() == null || !ip.getEstado().name().equalsIgnoreCase(estado)) return false;
+                    }
+                    return true;
+                })
+                .sorted((a, b) -> {
+                    String dirA = a.getDireccion() != null ? a.getDireccion() : "";
+                    String dirB = b.getDireccion() != null ? b.getDireccion() : "";
+                    return dirA.compareTo(dirB);
+                })
+                .toList();
+
+        return com.hospital.servicedesk.dtos.PaginaRespuesta.of(filtradas, pagina, tamano);
+    }
+
+    @Override
     @Transactional
     public DireccionIP createDireccionIp(Map<String, Object> req) {
         String direccion = (String) req.get("direccion");

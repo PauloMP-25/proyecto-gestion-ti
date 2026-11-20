@@ -18,8 +18,11 @@ public class ErrorConocidoController {
     private final ErrorConocidoService service;
 
     @GetMapping
-    public ResponseEntity<List<ErrorConocidoResponse>> getAllErrors() {
-        return ResponseEntity.ok(service.getAllErrors());
+    public ResponseEntity<com.hospital.servicedesk.dtos.PaginaRespuesta<ErrorConocidoResponse>> getAllErrors(
+            @RequestParam(defaultValue = "0") int pagina,
+            @RequestParam(defaultValue = "10") int tamano,
+            @RequestParam(required = false) String texto) {
+        return ResponseEntity.ok(service.getErrorsPaginados(pagina, tamano, texto));
     }
 
     @GetMapping("/{id}")

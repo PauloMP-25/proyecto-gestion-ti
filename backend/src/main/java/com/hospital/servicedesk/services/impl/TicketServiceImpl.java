@@ -82,8 +82,81 @@ public class TicketServiceImpl implements TicketService {
     }
 
     @Override
+    @Transactional(readOnly = true)
+    public com.hospital.servicedesk.dtos.PaginaRespuesta<TicketResponse> getTicketsPaginados(
+            int pagina,
+            int tamano,
+            String estado,
+            String prioridad,
+            Integer idArea,
+            String texto) {
+        List<Ticket> todos = tRepo.findAll();
+
+        List<TicketResponse> filtrados = todos.stream()
+                .filter(t -> {
+                    if (estado != null && !estado.isBlank() && !estado.equalsIgnoreCase("TODAS")) {
+                        if (t.getEstado() == null || !t.getEstado().name().equalsIgnoreCase(estado)) {
+                            boolean matchAlias = ("NUEVO".equalsIgnoreCase(estado) && t.getEstado() == EstadoTicket.ABIERTO)
+                                    || ("EN_PROCESO".equalsIgnoreCase(estado) && t.getEstado() == EstadoTicket.EN_PROGRESO);
+                            if (!matchAlias) return false;
+                        }
+                    }
+                    if (prioridad != null && !prioridad.isBlank()) {
+                        if (t.getPrioridad() == null) return false;
+                        String priName = t.getPrioridad().name();
+                        boolean match = priName.equalsIgnoreCase(prioridad)
+                                || ("P1".equalsIgnoreCase(prioridad) && "CRITICA".equalsIgnoreCase(priName))
+                                || ("P2".equalsIgnoreCase(prioridad) && "ALTA".equalsIgnoreCase(priName))
+                                || ("P3".equalsIgnoreCase(prioridad) && "MEDIA".equalsIgnoreCase(priName))
+                                || ("P4".equalsIgnoreCase(prioridad) && "BAJA".equalsIgnoreCase(priName));
+                        if (!match) return false;
+                    }
+                    if (idArea != null && idArea > 0) {
+                        if (t.getArea() == null || !idArea.equals(t.getArea().getIdArea())) return false;
+                    }
+                    if (texto != null && !texto.isBlank()) {
+                        String txtLower = texto.toLowerCase().trim();
+                        boolean coincideAsunto = t.getAsunto() != null && t.getAsunto().toLowerCase().contains(txtLower);
+                        boolean coincideDesc = t.getDescripcion() != null && t.getDescripcion().toLowerCase().contains(txtLower);
+                        boolean coincideId = String.valueOf(t.getIdTicket()).contains(txtLower);
+                        if (!coincideAsunto && !coincideDesc && !coincideId) return false;
+                    }
+                    return true;
+                })
+                .sorted((a, b) -> {
+                    LocalDateTime fA = a.getFechaCreacion() != null ? a.getFechaCreacion() : LocalDateTime.MIN;
+                    LocalDateTime fB = b.getFechaCreacion() != null ? b.getFechaCreacion() : LocalDateTime.MIN;
+                    return fB.compareTo(fA);
+                })
+                .map(this::map)
+                .toList();
+
+        return com.hospital.servicedesk.dtos.PaginaRespuesta.of(filtrados, pagina, tamano);
+    }
+
+    @Override
     public List<TicketResponse> getMisTickets(String userEmail) {
         return tRepo.findAll().stream().map(this::map).collect(Collectors.toList());
+    }
+
+    @Override
+    @Transactional(readOnly = true)
+    public com.hospital.servicedesk.dtos.PaginaRespuesta<TicketResponse> getMisTicketsPaginados(String userEmail, int pagina, int tamano) {
+        List<Ticket> todos = tRepo.findAll();
+        List<TicketResponse> mis = todos.stream()
+                .filter(t -> {
+                    if (userEmail == null || userEmail.isBlank()) return true;
+                    return t.getTecnicoAsignado() != null && userEmail.equalsIgnoreCase(t.getTecnicoAsignado().getCorreo());
+                })
+                .sorted((a, b) -> {
+                    LocalDateTime fA = a.getFechaCreacion() != null ? a.getFechaCreacion() : LocalDateTime.MIN;
+                    LocalDateTime fB = b.getFechaCreacion() != null ? b.getFechaCreacion() : LocalDateTime.MIN;
+                    return fB.compareTo(fA);
+                })
+                .map(this::map)
+                .toList();
+
+        return com.hospital.servicedesk.dtos.PaginaRespuesta.of(mis, pagina, tamano);
     }
 
     @Override

@@ -30,8 +30,11 @@ public class UsuarioController {
 
     @GetMapping("/usuarios")
     @PreAuthorize("hasRole('ADMINISTRADOR')")
-    public ResponseEntity<List<UsuarioRespuesta>> getAllUsuarios() {
-        return ResponseEntity.ok(usuarioService.getAllUsuarios());
+    public ResponseEntity<com.hospital.servicedesk.dtos.PaginaRespuesta<UsuarioRespuesta>> getAllUsuarios(
+            @RequestParam(defaultValue = "0") int pagina,
+            @RequestParam(defaultValue = "10") int tamano,
+            @RequestParam(required = false) String busqueda) {
+        return ResponseEntity.ok(usuarioService.getUsuariosPaginados(pagina, tamano, busqueda));
     }
 
     @PostMapping("/usuarios")
