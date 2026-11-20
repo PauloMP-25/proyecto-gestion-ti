@@ -1,0 +1,9 @@
+:host {
+  display: block;
+}
+
+.areas-filtros {
+  display: flex;
+  align-items: center;
+  gap: var(--espacio-3, 0.75rem);
+}

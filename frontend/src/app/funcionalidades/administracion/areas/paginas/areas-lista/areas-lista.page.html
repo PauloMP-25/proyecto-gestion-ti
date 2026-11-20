@@ -1,0 +1,61 @@
+<app-plantilla-pagina>
+  <!-- CABECERA -->
+  <app-cabecera-pagina
+    cabecera
+    icono="apartment"
+    titulo="Áreas del hospital"
+    subtitulo="Registre y gestione las áreas hospitalarias, pisos, anexos telefónicos y asignación de encargados."
+  >
+    <button
+      acciones
+      type="button"
+      class="btn-nuevo"
+      (click)="abrirModalNuevaArea()"
+      aria-label="Registrar nueva área hospitalaria"
+    >
+      <span class="material-symbols-outlined icono-btn" aria-hidden="true">add</span>
+      <span>Nueva área</span>
+    </button>
+  </app-cabecera-pagina>
+
+  <!-- TABLA DE ÁREAS -->
+  <app-areas-tabla
+    [areas]="store.areas()"
+    [cargando]="store.cargando()"
+    [vacio]="store.vacio()"
+    [(busqueda)]="textoBusqueda"
+    (alVerDetalle)="verDetalle($event)"
+    (alEditar)="abrirModalEditar($event)"
+    (alCambiarEstado)="confirmarCambioEstado($event)"
+    (alRegistrar)="abrirModalNuevaArea()"
+  >
+    <app-areas-filtros
+      filtros
+      [(incluirInactivas)]="incluirInactivas"
+    ></app-areas-filtros>
+  </app-areas-tabla>
+</app-plantilla-pagina>
+
+<!-- MODAL REGISTRO / EDICIÓN -->
+@if (modalAbierto()) {
+  <app-dialogo-area
+    [areaParaEditar]="areaParaEditar()"
+    (cerrado)="alCerrarModal($event)"
+  ></app-dialogo-area>
+}
+
+<!-- CONFIRMACIÓN DE CAMBIO DE ESTADO -->
+@if (areaParaCambiarEstado(); as area) {
+  <app-dialogo-confirmacion
+    [titulo]="area.activo ? '¿Desactivar área hospitalaria?' : '¿Reactivar área?'"
+    [mensaje]="
+      area.activo
+        ? 'Al desactivar el área ' + area.nombre + ', no se podrán registrar nuevos tickets ni equipos en ella.'
+        : '¿Desea volver a activar el área ' + area.nombre + '?'
+    "
+    [textoConfirmar]="area.activo ? 'Desactivar área' : 'Reactivar área'"
+    textoCancelar="Cancelar"
+    (confirmar)="ejecutarCambioEstado()"
+    (cancelar)="cancelarCambioEstado()"
+  ></app-dialogo-confirmacion>
+}

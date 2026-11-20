@@ -1,0 +1,99 @@
+<app-tabla-administracion
+  [columnas]="columnas"
+  tituloAccesible="Listado de áreas hospitalarias"
+  [cargando]="cargando()"
+  [vacio]="vacio()"
+  mensajeVacio="Aún no hay áreas registradas. Empiece por Admisión y Emergencia."
+  placeholderBusqueda="Buscar área por nombre..."
+  [(busqueda)]="busqueda"
+>
+  <div filtros>
+    <ng-content select="[filtros]"></ng-content>
+  </div>
+
+  <button
+    accion-vacio
+    type="button"
+    class="btn-nuevo btn-nuevo--sm"
+    (click)="alRegistrar.emit()"
+  >
+    <span class="material-symbols-outlined icono-btn" aria-hidden="true">add</span>
+    <span>Registrar primera área</span>
+  </button>
+
+  <ng-container filas>
+    @for (area of areas(); track area.id) {
+      <tr
+        class="fila-area"
+        [class.fila-area--inactiva]="!area.activo"
+        (click)="alVerDetalle.emit(area.id)"
+        tabindex="0"
+        (keydown.enter)="alVerDetalle.emit(area.id)"
+        role="button"
+        [attr.aria-label]="'Ver detalle del área ' + area.nombre"
+      >
+        <td>
+          <div class="celda-nombre">
+            <span class="nombre-area">{{ area.nombre }}</span>
+            @if (!area.activo) {
+              <span class="badge-inactiva">Inactiva</span>
+            }
+          </div>
+        </td>
+        <td>{{ area.ubicacionLegible }}</td>
+        <td>
+          @if (area.anexo) {
+            <span class="celda-anexo">
+              <span class="material-symbols-outlined icono-anexo" aria-hidden="true">call</span>
+              <span>{{ area.anexo }}</span>
+            </span>
+          } @else {
+            <span class="texto-apagado">—</span>
+          }
+        </td>
+        <td>
+          @if (area.encargado) {
+            <span class="nombre-encargado">{{ area.encargado.nombreVisible }}</span>
+          } @else {
+            <span class="texto-apagado">Sin encargado asignado</span>
+          }
+        </td>
+        <td>
+          <span
+            class="badge-equipos"
+            [title]="area.totalComputadoras + ' computadoras · ' + area.totalImpresoras + ' impresoras en red'"
+            [attr.aria-label]="area.totalComputadoras + ' computadoras y ' + area.totalImpresoras + ' impresoras'"
+          >
+            <span class="material-symbols-outlined icono-equipo" aria-hidden="true">devices</span>
+            <span>{{ area.totalComputadoras }} · {{ area.totalImpresoras }}</span>
+          </span>
+        </td>
+        <td class="text-right" (click)="$event.stopPropagation()">
+          <div class="acciones-fila">
+            <button
+              type="button"
+              class="btn-accion"
+              [attr.aria-label]="'Editar área ' + area.nombre"
+              (click)="alEditar.emit(area)"
+              title="Editar área"
+            >
+              <span class="material-symbols-outlined icono-accion" aria-hidden="true">edit</span>
+            </button>
+            <button
+              type="button"
+              class="btn-accion"
+              [class.btn-accion--reactivar]="!area.activo"
+              [attr.aria-label]="(area.activo ? 'Desactivar' : 'Reactivar') + ' área ' + area.nombre"
+              (click)="alCambiarEstado.emit(area)"
+              [title]="area.activo ? 'Desactivar área' : 'Reactivar área'"
+            >
+              <span class="material-symbols-outlined icono-accion" aria-hidden="true">
+                {{ area.activo ? 'block' : 'check_circle' }}
+              </span>
+            </button>
+          </div>
+        </td>
+      </tr>
+    }
+  </ng-container>
+</app-tabla-administracion>
