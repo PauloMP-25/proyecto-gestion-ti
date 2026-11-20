@@ -8,7 +8,7 @@
     "watch": "ng build --watch --configuration development",
     "test": "ng test",
     "verificar:tokens": "node scripts/verificar-tokens.mjs",
-    "verificar": "node scripts/verificar-vocabulario.mjs && node scripts/verificar-iconos.mjs && stylelint \"src/**/*.scss\"",
+    "verificar": "node scripts/verificar-vocabulario.mjs && node scripts/verificar-capas.mjs && node scripts/verificar-iconos.mjs && stylelint \"src/**/*.scss\"",
     "test:ci": "ng test --watch=false && npm run verificar"
   },
   "private": true,

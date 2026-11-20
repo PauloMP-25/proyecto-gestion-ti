@@ -9,6 +9,7 @@ import { TicketsMockService } from './compartido/servicios/tickets/tickets-mock.
 import { TicketsHttpService } from './compartido/servicios/tickets/tickets-http.service';
 import { jwtInterceptor } from './nucleo/interceptores/jwt.interceptor';
 import { errorInterceptor } from './nucleo/interceptores/error.interceptor';
+import { CATALOGOS_PROVIDERS } from './compartido/catalogos/catalogos.providers';
 
 export const appConfig: ApplicationConfig = {
   providers: [
@@ -16,5 +17,6 @@ export const appConfig: ApplicationConfig = {
     provideRouter(routes),
     provideHttpClient(withInterceptors([jwtInterceptor, errorInterceptor])),
     { provide: TicketsService, useClass: environment.usarMocks ? TicketsMockService : TicketsHttpService },
+    ...CATALOGOS_PROVIDERS,
   ]
 };

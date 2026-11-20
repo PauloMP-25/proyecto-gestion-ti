@@ -35,13 +35,24 @@
   --comp-campo-borde: 1px solid var(--color-border-strong);
   --comp-campo-texto: var(--color-text-main);
   --comp-campo-placeholder: var(--color-text-muted);
+  --comp-campo-error-color: var(--color-error-text);
+  --comp-campo-ayuda-color: var(--color-text-muted);
 
   /* Diálogo */
   --comp-dialogo-bg: var(--color-surface-card);
   --comp-dialogo-radio: var(--radius-lg);
   --comp-dialogo-ancho-md: var(--prim-medida-540);
+  --comp-dialogo-padding: var(--espacio-6);
+  --comp-dialogo-overlay: var(--color-surface-overlay);
   --comp-dialogo-sombra: var(--shadow-modal);
   --comp-dialogo-z: var(--z-modal);
+
+  /* Tabla de administración */
+  --comp-tabla-bg: var(--color-surface-card);
+  --comp-tabla-cabecera-bg: var(--color-surface-sunken);
+  --comp-tabla-fila-hover-bg: var(--color-surface-hover);
+  --comp-tabla-borde: 1px solid var(--color-border-subtle);
+  --comp-tabla-padding-celda: var(--espacio-3);
 
   /* Menú flotante (dropdowns, selectores) */
   --comp-menu-flotante-bg: var(--color-surface-card);

@@ -102,6 +102,14 @@ export class MenuLateralComponent {
             ],
           },
           {
+            encabezado: 'Administración Hospitalaria',
+            items: [
+              { titulo: 'Áreas del hospital', ruta: '/administracion/areas', icono: 'apartment' },
+              { titulo: 'Personal y cuentas', ruta: '/administracion/personal', icono: 'group' },
+              { titulo: 'Equipos e impresoras', ruta: '/administracion/equipos', icono: 'devices' },
+            ],
+          },
+          {
             encabezado: 'Gobierno de TI & CMDB',
             items: [
               { titulo: 'Activos y Red (CMDB)', ruta: '/cmdb/activos', icono: 'lan' },

@@ -57,6 +57,15 @@ export const routes: Routes = [
         pathMatch: 'full',
       },
       {
+        path: 'administracion',
+        canActivate: [rolGuard],
+        data: { roles: [RolUsuario.ADMINISTRADOR] },
+        loadChildren: () =>
+          import('./funcionalidades/administracion/administracion.routes').then(
+            (m) => m.ADMINISTRACION_ROUTES
+          ),
+      },
+      {
         path: 'cmdb',
         loadChildren: () => import('./funcionalidades/cmdb/cmdb.routes').then(m => m.CMDB_ROUTES),
       },
