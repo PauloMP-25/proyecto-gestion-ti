@@ -158,6 +158,50 @@
   --comp-soporte-pie-titulo-texto: var(--color-text-main);
   --comp-soporte-pie-detalle-texto: var(--color-text-muted);
 
+  /* Gráficos (Chart.js) — se leen con leerToken() */
+  --comp-grafico-eje-x-texto: var(--color-text-secondary);
+  --comp-grafico-eje-y-texto: var(--color-text-muted);
+  --comp-grafico-grilla: var(--color-border-subtle);
+  --comp-grafico-etiqueta-texto: var(--color-text-main);
+  --comp-grafico-etiqueta-sobre-segmento: var(--color-text-on-primary);
+  --comp-grafico-leyenda-texto: var(--color-text-main);
+  --comp-grafico-segmento-borde: var(--color-surface-card);
+  --comp-grafico-tooltip-bg: var(--color-tooltip-bg);
+  --comp-grafico-tooltip-texto: var(--color-tooltip-text);
+  --comp-grafico-barras-1: var(--color-categoria-1);
+  --comp-grafico-barras-2: var(--color-categoria-2);
+  --comp-grafico-barras-3: var(--color-categoria-3);
+  --comp-grafico-barras-4: var(--color-categoria-4);
+  --comp-grafico-barras-5: var(--color-categoria-5);
+  --comp-grafico-barras-6: var(--color-categoria-6);
+  --comp-grafico-barras-7: var(--color-categoria-7);
+  --comp-grafico-barras-8: var(--color-categoria-8);
+  --comp-grafico-barras-9: var(--color-categoria-9);
+  --comp-grafico-barras-10: var(--color-categoria-10);
+  --comp-grafico-dona-1: var(--color-categoria-1);
+  --comp-grafico-dona-2: var(--color-categoria-4);
+  --comp-grafico-dona-3: var(--color-categoria-2);
+  --comp-grafico-dona-4: var(--color-categoria-3);
+  --comp-grafico-dona-5: var(--color-categoria-5);
+
+  /* Banner de confirmación pendiente */
+  --comp-banner-aviso-bg: var(--color-aviso-suave-bg);
+  --comp-banner-aviso-borde: var(--color-aviso-suave-borde);
+  --comp-banner-aviso-acento: var(--color-aviso-acento);
+  --comp-banner-aviso-icono: var(--color-aviso-icono);
+  --comp-banner-aviso-titulo: var(--color-aviso-suave-titulo);
+  --comp-banner-aviso-texto: var(--color-aviso-suave-texto);
+  --comp-banner-aviso-boton-bg: var(--color-aviso-accion-bg);
+  --comp-banner-aviso-boton-hover-bg: var(--color-aviso-accion-hover);
+  --comp-banner-aviso-boton-texto: var(--color-text-on-primary);
+
+  /* CMDB — Identificadores de Subredes / VLANs */
+  --comp-cmdb-vlan-10: var(--color-primary-base);
+  --comp-cmdb-vlan-20: var(--color-secondary-base);
+  --comp-cmdb-vlan-30: var(--color-p3-base);
+  --comp-cmdb-vlan-40: var(--color-categoria-6);
+  --comp-cmdb-vlan-50: var(--color-text-muted);
+
   /* ═══════════════ ALIAS DEPRECADOS (nombres previos) ═══════════════ */
   --boton-altura: var(--comp-boton-altura);
   --boton-altura-compacto: var(--comp-boton-altura);

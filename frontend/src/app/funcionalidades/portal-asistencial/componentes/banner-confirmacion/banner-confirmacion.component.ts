@@ -37,17 +37,17 @@ import { IconoComponent } from '../../../../compartido/ui/atomos/icono/icono.com
     .banner-confirmacion {
       display: flex;
       align-items: center;
-      gap: 16px;
-      padding: 16px 20px;
-      background-color: #fffbeb;
-      border: 1px solid #fef3c7;
-      border-left: 6px solid #f59e0b;
-      border-radius: var(--radius-md, 8px);
-      box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05);
-      margin-bottom: 20px;
+      gap: var(--espacio-md);
+      padding: var(--espacio-md) var(--prim-espacio-5);
+      background-color: var(--comp-banner-aviso-bg);
+      border: 1px solid var(--comp-banner-aviso-borde);
+      border-left: var(--espacio-2xs) solid var(--comp-banner-aviso-acento);
+      border-radius: var(--radius-md);
+      box-shadow: var(--shadow-sm);
+      margin-bottom: var(--prim-espacio-5);
 
       &__icono {
-        color: #d97706;
+        color: var(--comp-banner-aviso-icono);
         display: flex;
         align-items: center;
         justify-content: center;
@@ -58,17 +58,17 @@ import { IconoComponent } from '../../../../compartido/ui/atomos/icono/icono.com
       }
 
       &__titulo {
-        font-size: 1rem;
-        font-weight: 700;
-        color: #92400e;
-        margin: 0 0 4px;
+        font-size: var(--font-size-base);
+        font-weight: var(--font-weight-bold);
+        color: var(--comp-banner-aviso-titulo);
+        margin: 0 0 var(--espacio-2xs);
       }
 
       &__texto {
-        font-size: 0.875rem;
-        color: #78350f;
+        font-size: var(--font-size-sm);
+        color: var(--comp-banner-aviso-texto);
         margin: 0;
-        line-height: 1.4;
+        line-height: var(--text-caption-lh);
       }
 
       &__accion {
@@ -79,23 +79,23 @@ import { IconoComponent } from '../../../../compartido/ui/atomos/icono/icono.com
         display: inline-flex;
         align-items: center;
         justify-content: center;
-        min-height: 44px;
-        padding: 8px 16px;
-        background-color: #d97706;
-        color: #ffffff;
-        font-size: 0.875rem;
-        font-weight: 600;
+        min-height: var(--touch-min);
+        padding: var(--espacio-xs) var(--espacio-md);
+        background-color: var(--comp-banner-aviso-boton-bg);
+        color: var(--comp-banner-aviso-boton-texto);
+        font-size: var(--font-size-sm);
+        font-weight: var(--font-weight-semibold);
         text-decoration: none;
-        border-radius: var(--radius-md, 8px);
-        transition: background-color 0.15s ease;
+        border-radius: var(--radius-md);
+        transition: background-color var(--transition-fast);
 
         &:hover {
-          background-color: #b45309;
+          background-color: var(--comp-banner-aviso-boton-hover-bg);
         }
 
         &:focus-visible {
-          outline: 3px solid #1b5e20;
-          outline-offset: 2px;
+          outline: var(--foco-anillo);
+          outline-offset: var(--foco-offset);
         }
       }
     }

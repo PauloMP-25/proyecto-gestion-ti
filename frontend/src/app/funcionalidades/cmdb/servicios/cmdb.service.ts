@@ -15,7 +15,7 @@ export class CmdbService {
       segmento: '192.168.10.0/24',
       gateway: '192.168.10.1',
       mascara: '255.255.255.0',
-      colorIdentificador: '#701C1C', // Guinda institucional
+      colorIdentificador: 'var(--comp-cmdb-vlan-10)',
       totalIps: 60, // Mapeo de visualización inicial
       ipsOcupadas: 6,
       ipsDisponibles: 50,
@@ -28,7 +28,7 @@ export class CmdbService {
       segmento: '192.168.20.0/24',
       gateway: '192.168.20.1',
       mascara: '255.255.255.0',
-      colorIdentificador: '#1B5E20', // Verde hospitalario
+      colorIdentificador: 'var(--comp-cmdb-vlan-20)',
       totalIps: 60,
       ipsOcupadas: 4,
       ipsDisponibles: 52,
@@ -41,7 +41,7 @@ export class CmdbService {
       segmento: '192.168.30.0/24',
       gateway: '192.168.30.1',
       mascara: '255.255.255.0',
-      colorIdentificador: '#D97706', // Ámbar
+      colorIdentificador: 'var(--comp-cmdb-vlan-30)',
       totalIps: 60,
       ipsOcupadas: 5,
       ipsDisponibles: 51,
@@ -54,7 +54,7 @@ export class CmdbService {
       segmento: '192.168.1.0/24',
       gateway: '192.168.1.1',
       mascara: '255.255.255.0',
-      colorIdentificador: '#0284C7', // Azul clínico
+      colorIdentificador: 'var(--comp-cmdb-vlan-40)',
       totalIps: 40,
       ipsOcupadas: 6,
       ipsDisponibles: 30,
@@ -67,7 +67,7 @@ export class CmdbService {
       segmento: '192.168.100.0/24',
       gateway: '192.168.100.1',
       mascara: '255.255.255.0',
-      colorIdentificador: '#475569', // Slate
+      colorIdentificador: 'var(--comp-cmdb-vlan-50)',
       totalIps: 40,
       ipsOcupadas: 4,
       ipsDisponibles: 32,

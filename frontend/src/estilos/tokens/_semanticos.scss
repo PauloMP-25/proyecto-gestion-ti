@@ -30,7 +30,7 @@
   /* ── Texto (todos ≥ 4.5:1 sobre blanco Y sobre crema) ── */
   --color-text-main:        var(--prim-slate-900);
   --color-text-secondary:   var(--prim-slate-700);
-  --color-text-muted:       var(--prim-slate-600);  /* #475569 */
+  --color-text-muted:       var(--prim-slate-600);
   --color-text-disabled:    var(--prim-slate-500);
   --color-text-inverse:     var(--prim-blanco);
   --color-text-on-primary:  var(--prim-blanco);
@@ -67,6 +67,32 @@
   --color-escalado-bg:     var(--prim-violeta-100);
   --color-escalado-text:   var(--prim-violeta-800);
   --color-escalado-border: var(--prim-violeta-300);
+
+  /* ── Aviso suave (banners de confirmación pendiente) ───── */
+  --color-aviso-suave-bg:     var(--prim-ambar-50);
+  --color-aviso-suave-borde:  var(--prim-ambar-100);
+  --color-aviso-acento:       var(--prim-dorado-500);
+  --color-aviso-icono:        var(--prim-ambar-600);
+  --color-aviso-suave-titulo: var(--prim-ambar-800);
+  --color-aviso-suave-texto:  var(--prim-ambar-900);
+  --color-aviso-accion-bg:    var(--prim-ambar-600);
+  --color-aviso-accion-hover: var(--prim-ambar-700);
+
+  /* ── Tooltip ──────────────────────────────────────────── */
+  --color-tooltip-bg:   var(--prim-noche-950);
+  --color-tooltip-text: var(--prim-blanco);
+
+  /* ── Paleta categórica (series de gráficos) ───────────── */
+  --color-categoria-1:  var(--prim-guinda-700);
+  --color-categoria-2:  var(--prim-azul-600);
+  --color-categoria-3:  var(--prim-turquesa-600);
+  --color-categoria-4:  var(--prim-naranja-600);
+  --color-categoria-5:  var(--prim-violeta-600);
+  --color-categoria-6:  var(--prim-celeste-600);
+  --color-categoria-7:  var(--prim-esmeralda-600);
+  --color-categoria-8:  var(--prim-ambar-600);
+  --color-categoria-9:  var(--prim-rojo-600);
+  --color-categoria-10: var(--prim-indigo-600);
 
   /* ── Foco accesible ───────────────────────────────────── */
   --foco-anillo: 3px solid var(--color-secondary-base);

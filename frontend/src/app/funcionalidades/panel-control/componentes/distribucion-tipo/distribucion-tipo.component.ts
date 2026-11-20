@@ -11,13 +11,14 @@ import { FormsModule } from '@angular/forms';
 import { Chart, registerables } from 'chart.js';
 import ChartDataLabels from 'chartjs-plugin-datalabels';
 
+import { leerToken, leerTokensNumerados } from '../../../../compartido/utilidades/tokens-css';
+
 // Registrar componentes de barras y datalabels en Chart.js
 Chart.register(...registerables, ChartDataLabels);
 
 export interface ActivoCMDB {
   elemento: string;
   casos: number;
-  color: string;
 }
 
 @Component({
@@ -34,18 +35,19 @@ export class DistribucionTipoComponent implements AfterViewInit, OnDestroy {
   private chartInstance: Chart | null = null;
   topSeleccionado: number = 5;
 
-  // Catálogo de Elementos de Configuración de la CMDB Hospitalaria (Ordenados de mayor a menor)
+  // Catálogo de Elementos de Configuración (ordenados de mayor a menor).
+  // El color de cada barra sale del token --comp-grafico-barras-N según su posición.
   readonly activosCMDB: ActivoCMDB[] = [
-    { elemento: 'Software EHR/HIS', casos: 18, color: '#701c1c' },
-    { elemento: 'Redes & VLANs', casos: 12, color: '#2563eb' },
-    { elemento: 'Estaciones PC', casos: 8, color: '#0d9488' },
-    { elemento: 'Impresoras SIS', casos: 5, color: '#ea580c' },
-    { elemento: 'Servidores BD', casos: 4, color: '#7c3aed' },
-    { elemento: 'Telefonía IP', casos: 3, color: '#0284c7' },
-    { elemento: 'Switches Core', casos: 3, color: '#059669' },
-    { elemento: 'Lectoras Código', casos: 2, color: '#d97706' },
-    { elemento: 'UPS / SAIs UCI', casos: 2, color: '#dc2626' },
-    { elemento: 'Servidor PACS', casos: 1, color: '#4f46e5' },
+    { elemento: 'Software EHR/HIS', casos: 18 },
+    { elemento: 'Redes & VLANs', casos: 12 },
+    { elemento: 'Estaciones PC', casos: 8 },
+    { elemento: 'Impresoras SIS', casos: 5 },
+    { elemento: 'Servidores BD', casos: 4 },
+    { elemento: 'Telefonía IP', casos: 3 },
+    { elemento: 'Switches Core', casos: 3 },
+    { elemento: 'Lectoras Código', casos: 2 },
+    { elemento: 'UPS / SAIs UCI', casos: 2 },
+    { elemento: 'Servidor PACS', casos: 1 },
   ];
 
   ngAfterViewInit(): void {
@@ -61,10 +63,11 @@ export class DistribucionTipoComponent implements AfterViewInit, OnDestroy {
 
   private obtenerDatosTop() {
     const seleccionados = this.activosCMDB.slice(0, this.topSeleccionado);
+    const paleta = leerTokensNumerados('--comp-grafico-barras', this.activosCMDB.length);
     return {
       labels: seleccionados.map(a => a.elemento),
       casos: seleccionados.map(a => a.casos),
-      colores: seleccionados.map(a => a.color),
+      colores: seleccionados.map((_, i) => paleta[i]),
     };
   }
 
@@ -125,7 +128,7 @@ export class DistribucionTipoComponent implements AfterViewInit, OnDestroy {
               display: false,
             },
             ticks: {
-              color: '#334155',
+              color: leerToken('--comp-grafico-eje-x-texto'),
               font: {
                 family: "'Inter', system-ui, sans-serif",
                 size: 11,
@@ -137,11 +140,11 @@ export class DistribucionTipoComponent implements AfterViewInit, OnDestroy {
             beginAtZero: true,
             suggestedMax: 22,
             grid: {
-              color: 'rgba(226, 232, 240, 0.8)',
+              color: leerToken('--comp-grafico-grilla'),
             },
             ticks: {
               stepSize: 5,
-              color: '#64748b',
+              color: leerToken('--comp-grafico-eje-y-texto'),
               font: {
                 family: "'Inter', system-ui, sans-serif",
                 size: 10,
@@ -154,7 +157,9 @@ export class DistribucionTipoComponent implements AfterViewInit, OnDestroy {
             display: false, // En gráfico de barras con eje etiquetado no se necesita leyenda
           },
           tooltip: {
-            backgroundColor: '#0b1c30',
+            backgroundColor: leerToken('--comp-grafico-tooltip-bg'),
+            titleColor: leerToken('--comp-grafico-tooltip-texto'),
+            bodyColor: leerToken('--comp-grafico-tooltip-texto'),
             titleFont: { family: "'Inter', sans-serif", size: 12, weight: 'bold' },
             bodyFont: { family: "'Inter', sans-serif", size: 11 },
             padding: 10,
@@ -167,7 +172,7 @@ export class DistribucionTipoComponent implements AfterViewInit, OnDestroy {
             anchor: 'end',
             align: 'top',
             offset: 2,
-            color: '#0f172a',
+            color: leerToken('--comp-grafico-etiqueta-texto'),
             font: {
               family: "'Inter', system-ui, sans-serif",
               weight: 'bold',

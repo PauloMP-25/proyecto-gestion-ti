@@ -13,6 +13,7 @@ import { FormsModule } from '@angular/forms';
 import { PanelControlService } from '../../servicios/panel-control.service';
 import { Chart, registerables } from 'chart.js';
 import ChartDataLabels from 'chartjs-plugin-datalabels';
+import { leerToken, leerTokensNumerados } from '../../../../compartido/utilidades/tokens-css';
 
 // Registrar componentes estándar de Chart.js y el plugin de etiquetas de datos
 Chart.register(...registerables, ChartDataLabels);
@@ -107,14 +108,8 @@ export class GraficoPorServicioComponent implements AfterViewInit, OnDestroy {
         datasets: [
           {
             data: datos.valores,
-            backgroundColor: [
-              '#701c1c', // Guinda MINSA
-              '#ea580c', // Naranja clínico
-              '#2563eb', // Azul asistencial
-              '#0d9488', // Teal diagnóstico
-              '#7c3aed', // Púrpura farmacia
-            ],
-            borderColor: '#ffffff',
+            backgroundColor: leerTokensNumerados('--comp-grafico-dona', 5),
+            borderColor: leerToken('--comp-grafico-segmento-borde'),
             borderWidth: 2,
             hoverOffset: 6,
           }
@@ -137,7 +132,7 @@ export class GraficoPorServicioComponent implements AfterViewInit, OnDestroy {
               borderRadius: 3,
               useBorderRadius: true,
               padding: 10,
-              color: '#1e293b',
+              color: leerToken('--comp-grafico-leyenda-texto'),
               font: {
                 family: "'Inter', system-ui, sans-serif",
                 size: 11,
@@ -165,7 +160,9 @@ export class GraficoPorServicioComponent implements AfterViewInit, OnDestroy {
             }
           },
           tooltip: {
-            backgroundColor: '#0b1c30',
+            backgroundColor: leerToken('--comp-grafico-tooltip-bg'),
+            titleColor: leerToken('--comp-grafico-tooltip-texto'),
+            bodyColor: leerToken('--comp-grafico-tooltip-texto'),
             titleFont: { family: "'Inter', sans-serif", size: 12, weight: 'bold' },
             bodyFont: { family: "'Inter', sans-serif", size: 11 },
             padding: 10,
@@ -180,7 +177,7 @@ export class GraficoPorServicioComponent implements AfterViewInit, OnDestroy {
             }
           },
           datalabels: {
-            color: '#ffffff',
+            color: leerToken('--comp-grafico-etiqueta-sobre-segmento'),
             font: {
               family: "'Inter', system-ui, sans-serif",
               weight: 'bold',
