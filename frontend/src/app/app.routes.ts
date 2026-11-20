@@ -24,7 +24,7 @@ export const routes: Routes = [
       {
         path: 'portal',
         canActivate: [rolGuard],
-        data: { roles: [RolUsuario.USUARIO_FINAL] },
+        data: { roles: [RolUsuario.USUARIO_FINAL], miga: 'Portal Asistencial' },
         loadChildren: () =>
           import('./funcionalidades/portal-asistencial/portal-asistencial.routes').then(
             (m) => m.PORTAL_ASISTENCIAL_ROUTES
@@ -33,7 +33,7 @@ export const routes: Routes = [
       {
         path: 'mi-turno',
         canActivate: [rolGuard],
-        data: { roles: [RolUsuario.PRACTICANTE] },
+        data: { roles: [RolUsuario.PRACTICANTE], miga: 'Mi Turno' },
         loadChildren: () =>
           import('./funcionalidades/mi-turno/mi-turno.routes').then(
             (m) => m.MI_TURNO_ROUTES
@@ -41,14 +41,17 @@ export const routes: Routes = [
       },
       {
         path: 'panel-control',
+        data: { miga: 'Panel de Control' },
         loadChildren: () => import('./funcionalidades/panel-control/panel-control.routes').then(m => m.PANEL_CONTROL_ROUTES),
       },
       {
         path: 'incidentes',
+        data: { miga: 'Gestión de Incidentes' },
         loadChildren: () => import('./funcionalidades/incidentes/incidentes.routes').then(m => m.INCIDENTES_ROUTES),
       },
       {
         path: 'sla',
+        data: { miga: 'Compromisos de Atención' },
         loadChildren: () => import('./funcionalidades/sla/sla.routes').then(m => m.SLA_ROUTES),
       },
       {
@@ -59,7 +62,7 @@ export const routes: Routes = [
       {
         path: 'administracion',
         canActivate: [rolGuard],
-        data: { roles: [RolUsuario.ADMINISTRADOR] },
+        data: { roles: [RolUsuario.ADMINISTRADOR], miga: 'Administración' },
         loadChildren: () =>
           import('./funcionalidades/administracion/administracion.routes').then(
             (m) => m.ADMINISTRACION_ROUTES
@@ -67,10 +70,12 @@ export const routes: Routes = [
       },
       {
         path: 'cmdb',
-        loadChildren: () => import('./funcionalidades/cmdb/cmdb.routes').then(m => m.CMDB_ROUTES),
+        redirectTo: 'administracion/equipos',
+        pathMatch: 'full',
       },
       {
         path: 'solicitudes',
+        data: { miga: 'Solicitudes' },
         loadChildren: () => import('./funcionalidades/solicitudes/solicitudes.routes').then(m => m.SOLICITUDES_ROUTES),
       },
       {
@@ -85,11 +90,13 @@ export const routes: Routes = [
             './funcionalidades/auth/paginas/cambiar-contrasena/cambiar-contrasena.page'
           ).then((m) => m.CambiarContrasenaPage),
         title: 'Cambiar contraseña - Mesa de Ayuda HSMSI',
+        data: { miga: 'Cambiar contraseña' },
       },
       {
         path: '403',
         loadComponent: () => import('./funcionalidades/errores/paginas/acceso-denegado/acceso-denegado.component').then(m => m.AccesoDenegadoComponent),
-        title: 'Acceso denegado - Service Desk HSMSI',
+        title: 'Acceso denegado - Mesa de Ayuda HSMSI',
+        data: { miga: 'Acceso denegado' },
       },
     ]
   },

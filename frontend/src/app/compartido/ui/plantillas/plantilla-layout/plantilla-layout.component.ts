@@ -1,4 +1,4 @@
-import { ChangeDetectionStrategy, Component } from '@angular/core';
+import { ChangeDetectionStrategy, Component, input } from '@angular/core';
 
 @Component({
   selector: 'app-plantilla-layout',
@@ -7,4 +7,6 @@ import { ChangeDetectionStrategy, Component } from '@angular/core';
   templateUrl: './plantilla-layout.component.html',
   styleUrl: './plantilla-layout.component.scss',
 })
-export class PlantillaLayoutComponent {}
+export class PlantillaLayoutComponent {
+  readonly colapsado = input<boolean>(false);
+}

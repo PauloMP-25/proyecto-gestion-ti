@@ -1,0 +1,22 @@
+@if (migas().length > 0) {
+  <nav aria-label="Ruta de navegación" class="migas-pan">
+    <ol class="migas-lista" role="list">
+      @for (miga of migas(); track miga.etiqueta + $index; let ultimo = $last) {
+        <li class="miga-item" [class.es-ultimo]="ultimo" role="listitem">
+          @if (!ultimo && miga.ruta) {
+            <a [routerLink]="miga.ruta" class="miga-enlace">
+              {{ miga.etiqueta }}
+            </a>
+            <span class="miga-separador" aria-hidden="true">
+              <span class="material-symbols-outlined icono-separador">chevron_right</span>
+            </span>
+          } @else {
+            <span class="miga-actual" aria-current="page">
+              {{ miga.etiqueta }}
+            </span>
+          }
+        </li>
+      }
+    </ol>
+  </nav>
+}

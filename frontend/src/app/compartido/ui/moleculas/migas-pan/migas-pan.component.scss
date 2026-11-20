@@ -1,0 +1,50 @@
+.migas-pan {
+  padding: 0.5rem 0 0.75rem 0;
+  display: flex;
+  align-items: center;
+}
+
+.migas-lista {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  list-style: none;
+  padding: 0;
+  margin: 0;
+  gap: 0.25rem;
+}
+
+.miga-item {
+  display: inline-flex;
+  align-items: center;
+  font-size: 0.8125rem;
+}
+
+.miga-enlace {
+  color: var(--color-text-secondary, #64748b);
+  text-decoration: none;
+  font-weight: 500;
+  transition: color 0.15s ease;
+
+  &:hover {
+    color: var(--hsmsi-primario, #701c1c);
+    text-decoration: underline;
+  }
+}
+
+.miga-separador {
+  display: inline-flex;
+  align-items: center;
+  color: var(--color-text-muted, #94a3b8);
+  margin: 0 0.15rem;
+
+  .icono-separador {
+    font-size: 1rem;
+    line-height: 1;
+  }
+}
+
+.miga-actual {
+  color: var(--hsmsi-texto, #0f172a);
+  font-weight: 600;
+}

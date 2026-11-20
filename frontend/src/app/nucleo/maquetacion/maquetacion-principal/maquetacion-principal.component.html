@@ -1,5 +1,5 @@
-<app-plantilla-layout>
+<app-plantilla-layout [colapsado]="sidebarColapsado()">
   <app-barra-superior cabecera />
   <app-menu-lateral lateral />
-  <router-outlet />
+  <app-panel-contenido />
 </app-plantilla-layout>
