@@ -1,0 +1,6 @@
+<span class="insignia insignia--{{ tono() }} insignia--{{ forma() }}">
+  @if (icono(); as iconoNombre) {
+    <app-icono [nombre]="iconoNombre" tamano="xs" aria-hidden="true" />
+  }
+  <span class="insignia__texto">{{ texto() }}</span>
+</span>

@@ -1,0 +1,66 @@
+:host {
+  display: inline-flex;
+}
+
+.insignia {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.25rem;
+  padding: 0.125rem 0.5rem;
+  font-size: 0.75rem;
+  font-weight: 600;
+  line-height: 1.25;
+  border-width: 1px;
+  border-style: solid;
+  transition: background-color 0.15s ease, border-color 0.15s ease;
+
+  // Formas
+  &--pildora {
+    border-radius: 9999px;
+  }
+
+  &--cuadrada {
+    border-radius: var(--hsmsi-radio-sm, 4px);
+  }
+
+  // Tonos
+  &--neutro {
+    background-color: var(--color-surface-sunken, #f1f5f9);
+    border-color: var(--color-border-subtle, #e2e8f0);
+    color: var(--color-text-secondary, #475569);
+  }
+
+  &--exito {
+    background-color: rgba(27, 94, 32, 0.08);
+    border-color: rgba(27, 94, 32, 0.2);
+    color: #1b5e20;
+  }
+
+  &--aviso {
+    background-color: rgba(217, 119, 6, 0.1);
+    border-color: rgba(217, 119, 6, 0.25);
+    color: #b45309;
+  }
+
+  &--peligro {
+    background-color: rgba(220, 38, 38, 0.08);
+    border-color: rgba(220, 38, 38, 0.25);
+    color: #b91c1c;
+  }
+
+  &--info {
+    background-color: rgba(2, 132, 199, 0.08);
+    border-color: rgba(2, 132, 199, 0.25);
+    color: #0369a1;
+  }
+
+  &--marca {
+    background-color: rgba(112, 28, 28, 0.08);
+    border-color: rgba(112, 28, 28, 0.25);
+    color: var(--hsmsi-primario, #701c1c);
+  }
+
+  &__texto {
+    white-space: nowrap;
+  }
+}
