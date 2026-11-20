@@ -463,19 +463,6 @@ export class CambiarContrasenaPage {
     this.guardando.set(true);
     const { contrasenaActual, nuevaContrasena } = this.form.value;
 
-    if (environment.usarMocks) {
-      // Simular cambio exitoso
-      setTimeout(() => {
-        this.guardando.set(false);
-        this.authService.marcarContrasenaCambiada();
-        this.notificacion.exito(
-          'Su contraseña ha sido actualizada exitosamente. Bienvenido(a) al sistema.'
-        );
-        this.router.navigate(['/']);
-      }, 500);
-      return;
-    }
-
     this.http
       .put(API_ENDPOINTS.cuenta.contrasena, {
         contrasenaActual,

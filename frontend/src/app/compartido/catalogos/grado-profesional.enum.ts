@@ -19,7 +19,7 @@ export interface OpcionGrado {
   readonly orden: number;
 }
 
-/** Respaldo local: lo usa el Mock y la vista previa si el catálogo aún no cargó. */
+/** Respaldo estático institucional utilizado durante la vista previa si el catálogo dinámico aún no ha respondido. */
 export const GRADOS_PROFESIONALES: readonly OpcionGrado[] = [
   { codigo: GradoProfesional.LIC,       etiqueta: 'Lic.',      prefijo: 'Lic.', orden: 1 },
   { codigo: GradoProfesional.TEC,       etiqueta: 'Téc.',      prefijo: 'Téc.', orden: 2 },

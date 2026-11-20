@@ -14,15 +14,8 @@
     <app-marca-hospital subtitulo="Mesa de Ayuda" />
   </div>
 
-  <!-- Centro / Derecha: Contexto Dinámico del Usuario y Acciones -->
+  <!-- Derecha: Perfil del Usuario Autenticado y Menú de Sesión -->
   <div class="seccion-derecha" *ngIf="usuarioActual() as usuario">
-    <!-- Selector rápido de rol RBAC (Simular rol) -->
-    <app-selector-rol-simulador
-      [rolActivo]="usuario.rol"
-      (cambioRol)="cambiarRol($event)"
-    />
-
-    <!-- Perfil del Usuario y Menú desplegable -->
     <app-usuario-perfil-menu
       [usuario]="usuario"
       (cerrarSesion)="cerrarSesion()"

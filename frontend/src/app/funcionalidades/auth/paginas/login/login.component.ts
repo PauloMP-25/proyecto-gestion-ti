@@ -67,56 +67,37 @@ export class LoginComponent {
 
     this.errorMensaje.set(null);
 
-    // Modo con Mocks desactivados: Autenticación Real contra Spring Boot
-    if (!environment.usarMocks) {
-      this.cargando.set(true);
-      this.http.post<AuthResponse>('/api/auth/login', {
-        correo: user,
-        contrasena: pass,
-      }).pipe(
-        switchMap(authRes => {
-          this.tokenStorage.guardarToken(authRes.token);
-          return this.http.get<UsuarioMeResponse>('/api/auth/me');
-        })
-      ).subscribe({
-        next: (me) => {
-          this.cargando.set(false);
-          const rolNormalizado = this.normalizarRol(me.rol);
-          const sesion: UsuarioSesion = {
-            id: String(me.idUsuario ?? me.id ?? '1'),
-            nombreCompleto: me.nombreVisible || `${me.nombres ?? ''} ${me.apellidos ?? ''}`.trim() || me.correo,
-            correo: me.correo,
-            rol: rolNormalizado,
-            areaProcedencia: me.areaProcedencia || '',
-            cargo: this.obtenerCargoPorRol(rolNormalizado),
-            debeCambiarContrasena: !!me.debeCambiarContrasena,
-          };
-          this.authService.establecerUsuario(sesion);
-          this.router.navigateByUrl(rutaInicioPorRol(rolNormalizado));
-        },
-        error: (err) => {
-          this.cargando.set(false);
-          const mensaje = err.error?.message || err.error?.error || 'Usuario o contraseña incorrectos. Verifique sus credenciales.';
-          this.errorMensaje.set(mensaje);
-        }
-      });
-      return;
-    }
-
-    // Modo con Mocks activados (desarrollo frontend sin backend)
-    const userLower = user.toLowerCase();
-    if (userLower === 'admin' && pass === 'admin') {
-      this.authService.cambiarRol(RolUsuario.ADMINISTRADOR);
-      this.router.navigateByUrl(rutaInicioPorRol(RolUsuario.ADMINISTRADOR));
-    } else if (userLower === 'practicante' && pass === 'practicante') {
-      this.authService.cambiarRol(RolUsuario.PRACTICANTE);
-      this.router.navigateByUrl(rutaInicioPorRol(RolUsuario.PRACTICANTE));
-    } else if ((userLower === 'usuario' || userLower === 'medico') && (pass === 'usuario' || pass === 'medico')) {
-      this.authService.cambiarRol(RolUsuario.USUARIO_FINAL);
-      this.router.navigateByUrl(rutaInicioPorRol(RolUsuario.USUARIO_FINAL));
-    } else {
-      this.errorMensaje.set('Credenciales no válidas. Para pruebas use admin, practicante o usuario.');
-    }
+    this.cargando.set(true);
+    this.http.post<AuthResponse>('/api/auth/login', {
+      correo: user,
+      contrasena: pass,
+    }).pipe(
+      switchMap(authRes => {
+        this.tokenStorage.guardarToken(authRes.token);
+        return this.http.get<UsuarioMeResponse>('/api/auth/me');
+      })
+    ).subscribe({
+      next: (me) => {
+        this.cargando.set(false);
+        const rolNormalizado = this.normalizarRol(me.rol);
+        const sesion: UsuarioSesion = {
+          id: String(me.idUsuario ?? me.id ?? '1'),
+          nombreCompleto: me.nombreVisible || `${me.nombres ?? ''} ${me.apellidos ?? ''}`.trim() || me.correo,
+          correo: me.correo,
+          rol: rolNormalizado,
+          areaProcedencia: me.areaProcedencia || '',
+          cargo: this.obtenerCargoPorRol(rolNormalizado),
+          debeCambiarContrasena: !!me.debeCambiarContrasena,
+        };
+        this.authService.establecerUsuario(sesion);
+        this.router.navigateByUrl(rutaInicioPorRol(rolNormalizado));
+      },
+      error: (err) => {
+        this.cargando.set(false);
+        const mensaje = err.error?.message || err.error?.error || 'Usuario o contraseña incorrectos. Verifique sus credenciales.';
+        this.errorMensaje.set(mensaje);
+      }
+    });
   }
 
   private normalizarRol(rol: string): RolUsuario {
