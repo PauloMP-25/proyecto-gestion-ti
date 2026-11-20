@@ -1,0 +1,34 @@
+@if (tipo() === 'seleccion') {
+  <div class="campo-filtro campo-filtro--seleccion">
+    <label [for]="id()" class="campo-filtro__etiqueta">{{ etiqueta() }}</label>
+    <div class="campo-filtro__select-wrapper">
+      <select
+        [id]="id()"
+        class="campo-filtro__select"
+        [value]="valor() !== null && valor() !== undefined ? String(valor()) : ''"
+        (change)="alCambiarSelect($event)"
+      >
+        <option value="">{{ textoTodos() }}</option>
+        @for (op of opciones(); track op.valor) {
+          <option [value]="op.valor">{{ op.etiqueta }}</option>
+        }
+      </select>
+      <span class="material-symbols-outlined campo-filtro__flecha" aria-hidden="true">
+        expand_more
+      </span>
+    </div>
+  </div>
+} @else {
+  <div class="campo-filtro campo-filtro--casilla">
+    <label [for]="id()" class="campo-filtro__casilla-label">
+      <input
+        type="checkbox"
+        [id]="id()"
+        class="campo-filtro__checkbox"
+        [checked]="Boolean(valor())"
+        (change)="alCambiarCheckbox($event)"
+      />
+      <span class="campo-filtro__casilla-texto">{{ etiqueta() }}</span>
+    </label>
+  </div>
+}
