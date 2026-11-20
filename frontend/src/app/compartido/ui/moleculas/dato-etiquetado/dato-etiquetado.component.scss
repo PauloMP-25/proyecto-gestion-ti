@@ -1,0 +1,44 @@
+:host {
+  display: block;
+}
+
+.dato-etiquetado {
+  display: flex;
+
+  &--vertical {
+    flex-direction: column;
+    gap: 0.25rem;
+  }
+
+  &--horizontal {
+    flex-direction: row;
+    align-items: baseline;
+    justify-content: space-between;
+    gap: 0.75rem;
+  }
+
+  &__etiqueta {
+    font-size: 0.75rem;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.04em;
+    color: var(--color-text-secondary, #64748b);
+  }
+
+  &__valor {
+    font-size: 0.875rem;
+    font-weight: 500;
+    color: var(--hsmsi-texto, #0f172a);
+    word-break: break-word;
+
+    &--mono {
+      font-family: var(--hsmsi-fuente-mono, ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace);
+      font-size: 0.8125rem;
+      letter-spacing: -0.01em;
+    }
+  }
+
+  &__sin-valor {
+    color: var(--color-text-muted, #94a3b8);
+  }
+}

@@ -1,0 +1,15 @@
+<div class="dato-etiquetado dato-etiquetado--{{ orientacion() }}">
+  <span class="dato-etiquetado__etiqueta">{{ etiqueta() }}</span>
+  <div
+    class="dato-etiquetado__valor"
+    [class.dato-etiquetado__valor--mono]="monoespaciado()"
+  >
+    <ng-content>
+      @if (valor() !== null && valor() !== undefined) {
+        {{ valor() }}
+      } @else {
+        <span class="dato-etiquetado__sin-valor">—</span>
+      }
+    </ng-content>
+  </div>
+</div>
