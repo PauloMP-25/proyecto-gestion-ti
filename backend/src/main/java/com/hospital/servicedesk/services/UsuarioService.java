@@ -1,16 +1,20 @@
-
 package com.hospital.servicedesk.services;
 
-import com.hospital.servicedesk.entities.Usuario;
+import com.hospital.servicedesk.dtos.UsuarioDTOs.UsuarioActualizarRequest;
+import com.hospital.servicedesk.dtos.UsuarioDTOs.UsuarioRegistroRequest;
+import com.hospital.servicedesk.dtos.UsuarioDTOs.UsuarioRespuesta;
+
 import java.util.List;
-import java.util.Map;
 
+/**
+ * Contrato de servicio para la gestión de usuarios y personal.
+ * Desacoplado de la persistencia mediante DTOs inmutables.
+ */
 public interface UsuarioService {
-    List<Usuario> getTecnicosActivos();
-    List<Usuario> getAllUsuarios();
-    Usuario createUsuario(Map<String, Object> request);
-    Usuario updateUsuario(Integer id, Map<String, Object> request);
-    Usuario toggleActivo(Integer id);
-    void cambiarContrasena(String email, String nuevaContrasena);
+    List<UsuarioRespuesta> getTecnicosActivos();
+    List<UsuarioRespuesta> getAllUsuarios();
+    UsuarioRespuesta createUsuario(UsuarioRegistroRequest request);
+    UsuarioRespuesta updateUsuario(Integer id, UsuarioActualizarRequest request);
+    UsuarioRespuesta toggleActivo(Integer id);
+    void cambiarContrasena(String email, String actual, String nuevaContrasena);
 }
-

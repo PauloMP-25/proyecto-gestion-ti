@@ -30,6 +30,7 @@ public class Usuario {
     @Column(name = "correo", nullable = false, unique = true, length = 100)
     private String correo;
 
+    @com.fasterxml.jackson.annotation.JsonIgnore
     @Column(name = "contrasena_hash", nullable = false)
     private byte[] contrasenaHash;
 

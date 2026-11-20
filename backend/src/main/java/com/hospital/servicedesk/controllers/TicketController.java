@@ -2,6 +2,7 @@
 package com.hospital.servicedesk.controllers;
 
 import com.hospital.servicedesk.dtos.TicketDTOs.*;
+import com.hospital.servicedesk.security.red.ResolutorIpCliente;
 import com.hospital.servicedesk.services.TicketService;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.validation.Valid;
@@ -20,12 +21,13 @@ import java.util.Map;
 public class TicketController {
 
     private final TicketService ticketService;
+    private final ResolutorIpCliente resolutorIpCliente;
 
     @PostMapping
     public ResponseEntity<TicketResponse> createTicket(
             @Valid @RequestBody CreateTicketRequest request,
             HttpServletRequest httpRequest) {
-        String clientIp = extractClientIp(httpRequest);
+        String clientIp = resolutorIpCliente.resolverIp(httpRequest);
         return new ResponseEntity<>(ticketService.createTicket(request, clientIp), HttpStatus.CREATED);
     }
 
@@ -52,7 +54,7 @@ public class TicketController {
 
     @GetMapping("/contexto-cliente")
     public ResponseEntity<Map<String, Object>> getContextoCliente(HttpServletRequest httpRequest) {
-        String clientIp = extractClientIp(httpRequest);
+        String clientIp = resolutorIpCliente.resolverIp(httpRequest);
         return ResponseEntity.ok(ticketService.getContextoCliente(clientIp));
     }
 
@@ -123,14 +125,6 @@ public class TicketController {
             @PathVariable Integer id,
             @RequestBody(required = false) Map<String, Object> request) {
         return ResponseEntity.ok(ticketService.vincularEquipo(id, request != null ? request : Map.of()));
-    }
-
-    private String extractClientIp(HttpServletRequest request) {
-        String xfHeader = request.getHeader("X-Forwarded-For");
-        if (xfHeader == null || xfHeader.isEmpty()) {
-            return request.getRemoteAddr();
-        }
-        return xfHeader.split(",")[0];
     }
 }
 

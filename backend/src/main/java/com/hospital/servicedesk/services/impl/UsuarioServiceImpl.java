@@ -1,8 +1,11 @@
-
 package com.hospital.servicedesk.services.impl;
 
+import com.hospital.servicedesk.dtos.UsuarioDTOs.UsuarioActualizarRequest;
+import com.hospital.servicedesk.dtos.UsuarioDTOs.UsuarioRegistroRequest;
+import com.hospital.servicedesk.dtos.UsuarioDTOs.UsuarioRespuesta;
 import com.hospital.servicedesk.entities.Area;
 import com.hospital.servicedesk.entities.Usuario;
+import com.hospital.servicedesk.mappers.UsuarioMapper;
 import com.hospital.servicedesk.repositories.AreaRepository;
 import com.hospital.servicedesk.repositories.UsuarioRepository;
 import com.hospital.servicedesk.services.UsuarioService;
@@ -14,8 +17,8 @@ import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.server.ResponseStatusException;
 
 import java.nio.charset.StandardCharsets;
+import java.security.SecureRandom;
 import java.util.List;
-import java.util.Map;
 import java.util.stream.Collectors;
 
 @Service
@@ -25,83 +28,130 @@ public class UsuarioServiceImpl implements UsuarioService {
     private final UsuarioRepository usuarioRepo;
     private final AreaRepository areaRepo;
     private final PasswordEncoder passwordEncoder;
+    private static final SecureRandom RANDOM = new SecureRandom();
 
     @Override
-    public List<Usuario> getTecnicosActivos() {
+    @Transactional(readOnly = true)
+    public List<UsuarioRespuesta> getTecnicosActivos() {
         return usuarioRepo.findAll().stream()
-                .filter(u -> (u.getRol() != null && ("TECNICO".equalsIgnoreCase(u.getRol()) || "PRACTICANTE".equalsIgnoreCase(u.getRol()) || "ADMINISTRADOR".equalsIgnoreCase(u.getRol()))) && (u.getActivo() == null || u.getActivo()))
+                .filter(u -> (u.getRol() != null && (
+                        "TECNICO".equalsIgnoreCase(u.getRol()) ||
+                        "PRACTICANTE".equalsIgnoreCase(u.getRol()) ||
+                        "ADMINISTRADOR".equalsIgnoreCase(u.getRol())
+                )) && (u.getActivo() == null || u.getActivo()))
+                .map(UsuarioMapper::toResponse)
                 .collect(Collectors.toList());
     }
 
     @Override
-    public List<Usuario> getAllUsuarios() {
-        return usuarioRepo.findAll();
+    @Transactional(readOnly = true)
+    public List<UsuarioRespuesta> getAllUsuarios() {
+        return usuarioRepo.findAll().stream()
+                .map(UsuarioMapper::toResponse)
+                .collect(Collectors.toList());
     }
 
     @Override
     @Transactional
-    public Usuario createUsuario(Map<String, Object> req) {
-        String correo = (String) req.get("correo");
+    public UsuarioRespuesta createUsuario(UsuarioRegistroRequest req) {
+        String correo = req.correo().trim().toLowerCase();
         if (usuarioRepo.findByCorreo(correo).isPresent()) {
-            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "El correo ya está registrado");
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "El correo electrónico ya está registrado");
         }
-        Integer idArea = (Integer) req.get("idArea");
-        Area area = areaRepo.findById(idArea)
-                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Área no encontrada"));
 
-        String rawPassword = req.get("contrasena") != null ? (String) req.get("contrasena") : "Temp2026*";
+        Area area = areaRepo.findById(req.idArea())
+                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Área hospitalaria no encontrada"));
+
+        String rawPassword = (req.contrasena() != null && !req.contrasena().isBlank())
+                ? req.contrasena()
+                : generarContrasenaSegura();
+
         byte[] hash = passwordEncoder.encode(rawPassword).getBytes(StandardCharsets.UTF_8);
 
         Usuario usuario = Usuario.builder()
-                .nombres((String) req.get("nombres"))
-                .apellidos((String) req.get("apellidos"))
+                .nombres(req.nombres().trim())
+                .apellidos(req.apellidos().trim())
                 .correo(correo)
                 .contrasenaHash(hash)
-                .rol((String) req.get("rol"))
-                .nivelSoporte((String) req.get("nivelSoporte"))
+                .rol(req.rol())
+                .nivelSoporte(req.nivelSoporte())
                 .area(area)
                 .activo(true)
                 .build();
 
-        return usuarioRepo.save(usuario);
+        return UsuarioMapper.toResponse(usuarioRepo.save(usuario));
     }
 
     @Override
     @Transactional
-    public Usuario updateUsuario(Integer id, Map<String, Object> req) {
+    public UsuarioRespuesta updateUsuario(Integer id, UsuarioActualizarRequest req) {
         Usuario usuario = usuarioRepo.findById(id)
                 .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Usuario no encontrado"));
 
-        if (req.get("nombres") != null) usuario.setNombres((String) req.get("nombres"));
-        if (req.get("apellidos") != null) usuario.setApellidos((String) req.get("apellidos"));
-        if (req.get("rol") != null) usuario.setRol((String) req.get("rol"));
-        if (req.get("nivelSoporte") != null) usuario.setNivelSoporte((String) req.get("nivelSoporte"));
-        if (req.get("idArea") != null) {
-            Integer idArea = (Integer) req.get("idArea");
-            Area area = areaRepo.findById(idArea).orElse(null);
-            if (area != null) usuario.setArea(area);
+        if (req.nombres() != null && !req.nombres().isBlank()) {
+            usuario.setNombres(req.nombres().trim());
+        }
+        if (req.apellidos() != null && !req.apellidos().isBlank()) {
+            usuario.setApellidos(req.apellidos().trim());
+        }
+        if (req.correo() != null && !req.correo().isBlank()) {
+            String nuevoCorreo = req.correo().trim().toLowerCase();
+            if (!nuevoCorreo.equalsIgnoreCase(usuario.getCorreo()) && usuarioRepo.findByCorreo(nuevoCorreo).isPresent()) {
+                throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "El correo electrónico ya está registrado por otro usuario");
+            }
+            usuario.setCorreo(nuevoCorreo);
+        }
+        if (req.rol() != null && !req.rol().isBlank()) {
+            usuario.setRol(req.rol());
+        }
+        if (req.nivelSoporte() != null) {
+            usuario.setNivelSoporte(req.nivelSoporte());
+        }
+        if (req.idArea() != null) {
+            Area area = areaRepo.findById(req.idArea())
+                    .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Área hospitalaria no encontrada"));
+            usuario.setArea(area);
+        }
+        if (req.activo() != null) {
+            usuario.setActivo(req.activo());
         }
 
-        return usuarioRepo.save(usuario);
+        return UsuarioMapper.toResponse(usuarioRepo.save(usuario));
     }
 
     @Override
     @Transactional
-    public Usuario toggleActivo(Integer id) {
+    public UsuarioRespuesta toggleActivo(Integer id) {
         Usuario usuario = usuarioRepo.findById(id)
                 .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Usuario no encontrado"));
         usuario.setActivo(usuario.getActivo() == null || !usuario.getActivo());
-        return usuarioRepo.save(usuario);
+        return UsuarioMapper.toResponse(usuarioRepo.save(usuario));
     }
 
     @Override
     @Transactional
-    public void cambiarContrasena(String email, String nuevaContrasena) {
+    public void cambiarContrasena(String email, String actual, String nuevaContrasena) {
         Usuario usuario = usuarioRepo.findByCorreo(email)
                 .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Usuario no encontrado"));
-        byte[] hash = passwordEncoder.encode(nuevaContrasena).getBytes(StandardCharsets.UTF_8);
-        usuario.setContrasenaHash(hash);
+
+        if (actual != null && !actual.isBlank()) {
+            String hashAlmacenado = new String(usuario.getContrasenaHash(), StandardCharsets.UTF_8);
+            if (!passwordEncoder.matches(actual, hashAlmacenado)) {
+                throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "La contraseña actual no es correcta");
+            }
+        }
+
+        byte[] nuevoHash = passwordEncoder.encode(nuevaContrasena).getBytes(StandardCharsets.UTF_8);
+        usuario.setContrasenaHash(nuevoHash);
         usuarioRepo.save(usuario);
     }
-}
 
+    private String generarContrasenaSegura() {
+        final String caracteres = "ABCDEFGHJKLMNPQRSTUVWXYZabcdefghijkmnpqrstuvwxyz23456789!@#$%";
+        StringBuilder sb = new StringBuilder(10);
+        for (int i = 0; i < 10; i++) {
+            sb.append(caracteres.charAt(RANDOM.nextInt(caracteres.length())));
+        }
+        return sb.toString();
+    }
+}

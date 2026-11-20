@@ -8,6 +8,7 @@ import org.springframework.context.annotation.Configuration;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.dao.DaoAuthenticationProvider;
 import org.springframework.security.config.annotation.authentication.configuration.AuthenticationConfiguration;
+import org.springframework.security.config.annotation.method.configuration.EnableMethodSecurity;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.annotation.web.configurers.AbstractHttpConfigurer;
@@ -19,6 +20,7 @@ import org.springframework.security.web.authentication.UsernamePasswordAuthentic
 
 @Configuration
 @EnableWebSecurity
+@EnableMethodSecurity
 @RequiredArgsConstructor
 public class SecurityConfig {
 
@@ -39,16 +41,13 @@ public class SecurityConfig {
             )
 
             .authorizeHttpRequests(auth -> auth
+                // Único endpoint público sin autenticación: Login
+                .requestMatchers(org.springframework.http.HttpMethod.POST, "/api/auth/login").permitAll()
 
-                // Login público y creación pública de tickets por IP
-                .requestMatchers("/api/auth/login", "/api/tickets").permitAll()
-                .requestMatchers(org.springframework.http.HttpMethod.POST, "/api/tickets").permitAll()
+                // Endpoints administrativos restringidos exclusivamente al rol ADMINISTRADOR
+                .requestMatchers("/api/admin/**").hasRole("ADMINISTRADOR")
 
-                // Solo usuarios con ROLE_TECNICO
-                .requestMatchers("/api/tecnicos/**")
-                .hasRole("TECNICO")
-
-                // Todo lo demás requiere autenticación
+                // Todo lo demás requiere sesión activa autenticada
                 .anyRequest().authenticated()
             )
 
