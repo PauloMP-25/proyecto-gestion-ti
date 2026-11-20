@@ -1,0 +1,24 @@
+<div class="menu-grupo" [class.colapsado]="colapsado()" role="group" [attr.aria-label]="seccion().encabezado">
+  @if (seccion().encabezado) {
+    <h3 class="encabezado-grupo" [class.sr-only]="colapsado()">
+      {{ seccion().encabezado }}
+    </h3>
+  }
+
+  <ul class="lista-items" role="list">
+    @for (item of seccion().items; track item.ruta) {
+      <li class="item-lista" role="listitem">
+        <app-item-nav
+          [titulo]="item.titulo"
+          [ruta]="item.ruta"
+          [icono]="item.icono"
+          [badge]="item.badge"
+          [badgeTipo]="item.badgeTipo"
+          [colapsado]="colapsado()"
+          [exacto]="item.exacto ?? false"
+          (alNavegar)="alNavegar.emit()"
+        />
+      </li>
+    }
+  </ul>
+</div>

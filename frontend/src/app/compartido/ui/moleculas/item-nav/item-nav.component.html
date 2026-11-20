@@ -1,0 +1,22 @@
+<a
+  [routerLink]="ruta()"
+  routerLinkActive="activo"
+  [routerLinkActiveOptions]="{ exact: exacto() }"
+  class="enlace-menu"
+  [class.colapsado]="colapsado()"
+  [attr.title]="colapsado() ? titulo() : null"
+  [attr.aria-label]="titulo()"
+  (click)="alNavegar.emit()"
+>
+  <span class="material-symbols-outlined item-icono" aria-hidden="true">{{ icono() }}</span>
+
+  <span class="item-etiqueta" [class.oculto-colapsado]="colapsado()">
+    {{ titulo() }}
+  </span>
+
+  @if (badge() && !colapsado()) {
+    <span class="item-badge" [class]="badgeTipo() ?? 'info'">
+      {{ badge() }}
+    </span>
+  }
+</a>

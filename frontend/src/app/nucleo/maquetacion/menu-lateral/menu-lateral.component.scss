@@ -1,16 +1,15 @@
 @use 'estilos/mixins/responsive' as r;
-@use 'estilos/mixins/a11y' as a11y;
 
 /* Backdrop en móvil */
 .sidebar-backdrop {
   display: none;
   position: fixed;
   inset: 0;
-  background-color: var(--comp-sidebar-backdrop-bg);
+  background-color: var(--comp-sidebar-backdrop-bg, rgba(15, 23, 42, 0.4));
   backdrop-filter: blur(2px);
-  z-index: var(--comp-sidebar-backdrop-z);
+  z-index: var(--comp-sidebar-backdrop-z, 90);
   opacity: 0;
-  transition: opacity var(--transition-normal);
+  transition: opacity var(--transition-normal, 0.2s ease);
 
   &.abierto {
     display: block;
@@ -25,69 +24,31 @@
 /* Menú lateral: drawer en móvil/tablet, anclado en escritorio */
 .menu-lateral {
   position: fixed;
-  top: var(--comp-navbar-alto);
+  top: var(--comp-navbar-alto, 4rem);
   bottom: 0;
   left: 0;
   display: flex;
   flex-direction: column;
-  width: min(var(--comp-sidebar-ancho), 85vw);
-  background-color: var(--comp-sidebar-bg);
-  border-right: var(--comp-sidebar-borde);
-  z-index: var(--comp-sidebar-backdrop-z);
+  width: min(var(--comp-sidebar-ancho, 16.5rem), 85vw);
+  background-color: var(--comp-sidebar-bg, var(--color-surface-card, #ffffff));
+  border-right: 1px solid var(--color-border-subtle, #e2e8f0);
+  z-index: var(--comp-sidebar-z, 95);
   transform: translateX(-100%);
-  transition: width var(--transition-normal), transform var(--transition-normal);
+  transition: width var(--transition-normal, 0.2s ease), transform var(--transition-normal, 0.2s ease);
 
   &.movil-abierto {
     transform: translateX(0);
-    box-shadow: var(--comp-sidebar-sombra-movil);
+    box-shadow: var(--comp-sidebar-sombra-movil, 4px 0 24px rgba(0, 0, 0, 0.15));
   }
 
   @include r.desde(lg) {
     position: static;
-    width: var(--comp-sidebar-ancho);
-    height: calc(100vh - var(--comp-navbar-alto));
-    z-index: var(--comp-sidebar-z);
+    width: var(--comp-sidebar-ancho, 16.5rem);
+    height: calc(100vh - var(--comp-navbar-alto, 4rem));
     transform: none;
 
     &.colapsado {
-      width: var(--comp-sidebar-ancho-colapsado);
-
-      .seccion-titulo {
-        display: none;
-      }
-    }
-  }
-}
-
-/* Cabecera solo en móvil */
-.sidebar-header-movil {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  padding: var(--espacio-sm);
-  border-bottom: var(--comp-sidebar-borde);
-
-  @include r.desde(lg) {
-    display: none;
-  }
-
-  .btn-cerrar-movil {
-    display: inline-flex;
-    align-items: center;
-    justify-content: center;
-    width: var(--comp-boton-altura);
-    height: var(--comp-boton-altura);
-    background: transparent;
-    border: none;
-    border-radius: var(--comp-boton-radio);
-    color: var(--comp-sidebar-titulo-texto);
-    cursor: pointer;
-
-    @include a11y.foco-visible;
-
-    &:hover {
-      background-color: var(--comp-boton-fantasma-hover-bg);
-      color: var(--comp-boton-fantasma-texto);
+      width: var(--comp-sidebar-ancho-colapsado, 4.5rem);
     }
   }
 }
@@ -96,36 +57,7 @@
   display: flex;
   flex: 1;
   flex-direction: column;
-  gap: var(--espacio-md);
-  padding: var(--espacio-sm);
+  gap: var(--espacio-sm, 0.5rem);
+  padding: var(--espacio-sm, 0.5rem);
   overflow-y: auto;
-}
-
-.seccion-grupo {
-  display: flex;
-  flex-direction: column;
-  gap: var(--espacio-2xs);
-}
-
-.seccion-titulo {
-  margin: 0 0 var(--espacio-2xs);
-  padding: 0 var(--espacio-sm);
-  font-size: var(--font-size-xs);
-  font-weight: var(--font-weight-bold);
-  color: var(--comp-sidebar-titulo-texto);
-  text-transform: uppercase;
-  letter-spacing: 0.05em;
-}
-
-.lista-items {
-  display: flex;
-  flex-direction: column;
-  gap: var(--espacio-2xs);
-  margin: 0;
-  padding: 0;
-  list-style: none;
-}
-
-.item-fila {
-  display: block;
 }

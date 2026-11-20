@@ -2,52 +2,31 @@
 <div 
   class="sidebar-backdrop" 
   [class.abierto]="sidebarAbierto()" 
-  (click)="cerrarSidebarMovil()">
+  (click)="cerrarEnMovil()"
+  aria-hidden="true">
 </div>
 
 <aside 
+  id="menu-lateral"
   class="menu-lateral" 
   [class.movil-abierto]="sidebarAbierto()"
-  [class.colapsado]="sidebarColapsado()">
+  [class.colapsado]="sidebarColapsado()"
+  aria-label="Menú principal de navegación">
 
-  <div class="sidebar-header-movil">
-    <app-marca-hospital [modoCompacto]="true" subtitulo="TI" />
-    <button 
-      type="button" 
-      class="btn-cerrar-movil" 
-      (click)="cerrarSidebarMovil()" 
-      aria-label="Cerrar menú">
-      <span class="material-symbols-outlined">close</span>
-    </button>
-  </div>
+  <!-- Cabecera visible en móvil -->
+  <app-cabecera-menu-movil (alCerrar)="cerrarEnMovil()" />
 
+  <!-- Navegación por grupos -->
   <nav class="sidebar-nav">
-    @for (seccion of seccionesMenu(); track seccion.encabezado) {
-      <div class="seccion-grupo">
-        @if (seccion.encabezado && !sidebarColapsado()) {
-          <h3 class="seccion-titulo">{{ seccion.encabezado }}</h3>
-        }
-
-        <ul class="lista-items">
-          @for (item of seccion.items; track item.ruta) {
-            <li class="item-fila">
-              <app-item-nav
-                [titulo]="item.titulo"
-                [ruta]="item.ruta"
-                [icono]="item.icono"
-                [badge]="item.badge"
-                [badgeTipo]="item.badgeTipo"
-                [colapsado]="sidebarColapsado()"
-                [exacto]="item.ruta === '/portal' || item.ruta === '/mi-turno' || item.ruta === '/panel-control'"
-                (clickItem)="cerrarSidebarMovil()"
-              />
-            </li>
-          }
-        </ul>
-      </div>
+    @for (seccion of seccionesMenu(); track seccion.encabezado || $index) {
+      <app-menu-grupo
+        [seccion]="seccion"
+        [colapsado]="sidebarColapsado()"
+        (alNavegar)="alNavegar()"
+      />
     }
   </nav>
 
-  <!-- Pie del menú lateral -->
+  <!-- Pie del menú lateral con anexo de soporte -->
   <app-info-soporte-pie [colapsado]="sidebarColapsado()" />
 </aside>

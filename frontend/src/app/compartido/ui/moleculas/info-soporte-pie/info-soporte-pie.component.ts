@@ -3,22 +3,12 @@ import { ChangeDetectionStrategy, Component, input } from '@angular/core';
 @Component({
   selector: 'app-info-soporte-pie',
   standalone: true,
-  changeDetection: ChangeDetectionStrategy.OnPush,
-  template: `
-    <div class="sidebar-footer" [class.oculto-colapsado]="colapsado()">
-      <div class="sla-soporte-info">
-        <span class="material-symbols-outlined icono-help" aria-hidden="true">headset_mic</span>
-        <div class="soporte-detalles">
-          <span class="titulo-soporte">{{ titulo() }}</span>
-          <span class="anexo-soporte">Anexo interno: {{ anexo() }}</span>
-        </div>
-      </div>
-    </div>
-  `,
+  templateUrl: './info-soporte-pie.component.html',
   styleUrl: './info-soporte-pie.component.scss',
+  changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class InfoSoportePieComponent {
-  readonly colapsado = input(false);
-  readonly titulo = input('Mesa de Ayuda TI');
-  readonly anexo = input('2400');
+  readonly colapsado = input<boolean>(false);
+  readonly titulo = input<string>('Mesa de Ayuda');
+  readonly anexo = input<string>('2400');
 }
