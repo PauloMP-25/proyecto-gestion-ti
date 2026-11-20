@@ -1,0 +1,101 @@
+@use 'estilos/mixins/a11y' as a11y;
+
+:host {
+  display: block;
+}
+
+.enlace-menu {
+  display: flex;
+  align-items: center;
+  gap: var(--space-3, 0.75rem);
+  min-height: var(--touch-min, 44px);
+  padding: 0.65rem var(--space-3, 0.75rem);
+  border-radius: var(--radius-md, 8px);
+  color: var(--color-text-muted, #64748b);
+  text-decoration: none;
+  font-size: var(--font-size-sm, 0.8125rem);
+  font-weight: var(--font-weight-medium, 500);
+  transition: all var(--transition-fast, 150ms ease);
+  position: relative;
+
+  @include a11y.foco-visible;
+
+  &:hover {
+    background-color: var(--color-surface-hover, #f1f5f9);
+    color: var(--color-text-main, #0f172a);
+
+    .item-icono {
+      color: var(--color-primary-base, #701c1c);
+    }
+  }
+
+  &.activo {
+    background-color: var(--color-primary-light, #fdf2f2);
+    color: var(--color-primary-base, #701c1c);
+    font-weight: var(--font-weight-semibold, 600);
+
+    .item-icono {
+      color: var(--color-primary-base, #701c1c);
+      font-variation-settings: 'FILL' 1;
+    }
+
+    &::before {
+      content: '';
+      position: absolute;
+      left: 0;
+      top: 6px;
+      bottom: 6px;
+      width: 4px;
+      background-color: var(--color-primary-base, #701c1c);
+      border-radius: 0 4px 4px 0;
+    }
+  }
+
+  &.colapsado {
+    justify-content: center;
+    padding-left: 0;
+    padding-right: 0;
+  }
+
+  .item-icono {
+    font-size: 22px;
+    flex-shrink: 0;
+    color: var(--color-text-muted, #64748b);
+    transition: color var(--transition-fast, 150ms ease);
+  }
+
+  .item-etiqueta {
+    flex: 1;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+
+    &.oculto-colapsado {
+      display: none;
+    }
+  }
+}
+
+.item-badge {
+  font-size: 11px;
+  font-weight: var(--font-weight-semibold, 600);
+  padding: 0.15rem 0.5rem;
+  border-radius: var(--radius-full, 9999px);
+  line-height: 1.2;
+  white-space: nowrap;
+
+  &.info {
+    background-color: var(--color-p4-bg, #eff6ff);
+    color: var(--color-p4-text, #1e40af);
+  }
+
+  &.sla-incumplido {
+    background-color: var(--color-sla-incumplido-bg, #fef2f2);
+    color: var(--color-sla-incumplido-text, #991b1b);
+  }
+
+  &.sla-alerta {
+    background-color: var(--color-sla-alerta-bg, #fff7ed);
+    color: var(--color-sla-alerta-text, #9a3412);
+  }
+}

@@ -4,13 +4,16 @@ import { RouterModule } from '@angular/router';
 import { AuthService } from '../../auth/auth.service';
 import { LayoutService } from '../layout.service';
 import { RolUsuario } from '../../modelos/rol.enum';
+import { ItemNavComponent, TipoBadgeNav } from '../../../compartido/ui/moleculas/item-nav/item-nav.component';
+import { MarcaHospitalComponent } from '../../../compartido/ui/moleculas/marca-hospital/marca-hospital.component';
+import { InfoSoportePieComponent } from '../../../compartido/ui/moleculas/info-soporte-pie/info-soporte-pie.component';
 
 export interface ItemMenu {
   titulo: string;
   ruta: string;
   icono: string;
   badge?: string;
-  badgeTipo?: 'sla-alerta' | 'sla-incumplido' | 'info';
+  badgeTipo?: TipoBadgeNav;
 }
 
 export interface SeccionMenu {
@@ -21,7 +24,13 @@ export interface SeccionMenu {
 @Component({
   selector: 'app-menu-lateral',
   standalone: true,
-  imports: [CommonModule, RouterModule],
+  imports: [
+    CommonModule,
+    RouterModule,
+    ItemNavComponent,
+    MarcaHospitalComponent,
+    InfoSoportePieComponent,
+  ],
   templateUrl: './menu-lateral.component.html',
   styleUrl: './menu-lateral.component.scss',
 })
@@ -33,7 +42,6 @@ export class MenuLateralComponent {
   readonly sidebarAbierto = this.layoutService.sidebarAbierto;
   readonly sidebarColapsado = this.layoutService.sidebarColapsado;
 
-  // Secciones y opciones dinámicas estrictamente filtradas según el rol activo
   readonly seccionesMenu = computed<SeccionMenu[]>(() => {
     const rol = this.rolActual();
     if (!rol) return [];
@@ -98,8 +106,8 @@ export class MenuLateralComponent {
             items: [
               { titulo: 'Activos y Red (CMDB)', ruta: '/cmdb/activos', icono: 'lan' },
               { titulo: 'Solicitudes de Cambio (RFC)', ruta: '/administracion/cambios', icono: 'change_circle' },
-              { titulo: 'Control de SLAs', ruta: '/sla/metricas', icono: 'timer' },
-              { titulo: 'Usuarios y Permisos', ruta: '/administracion/usuarios', icono: 'manage_accounts' },
+              { titulo: 'Centro de Soluciones (KEDB)', ruta: '/administracion/conocimiento', icono: 'menu_book' },
+              { titulo: 'Compromisos de Atención', ruta: '/administracion/sla-config', icono: 'tune' },
             ],
           },
         ];

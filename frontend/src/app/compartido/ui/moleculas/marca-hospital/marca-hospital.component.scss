@@ -1,0 +1,48 @@
+.marca-hospital {
+  display: flex;
+  align-items: center;
+  gap: var(--space-3, 0.75rem);
+  user-select: none;
+
+  &__logo {
+    width: 36px;
+    height: 36px;
+    object-fit: contain;
+    border-radius: var(--radius-sm, 6px);
+    transition: transform var(--transition-fast, 150ms ease);
+
+    &:hover {
+      transform: scale(1.05);
+    }
+  }
+
+  &__textos {
+    display: flex;
+    flex-direction: column;
+    line-height: 1.2;
+  }
+
+  &__titulo {
+    font-size: var(--font-size-sm, 0.8125rem);
+    font-weight: var(--font-weight-bold, 700);
+    color: var(--color-text-main, #0f172a);
+    letter-spacing: -0.01em;
+  }
+
+  &__subtitulo {
+    font-size: var(--font-size-xs, 0.6875rem);
+    color: var(--hsmsi-guinda-principal, #701c1c);
+    font-weight: var(--font-weight-semibold, 600);
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+  }
+
+  &--compacto {
+    gap: 0;
+
+    .marca-hospital__logo {
+      width: 28px;
+      height: 28px;
+    }
+  }
+}

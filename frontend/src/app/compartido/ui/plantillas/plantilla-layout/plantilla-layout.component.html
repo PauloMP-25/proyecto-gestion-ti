@@ -1,0 +1,17 @@
+<div class="shell-layout">
+  <div class="shell-layout__cabecera">
+    <ng-content select="app-barra-superior,[cabecera]" />
+  </div>
+
+  <div class="shell-layout__cuerpo">
+    <div class="shell-layout__lateral">
+      <ng-content select="app-menu-lateral,[lateral]" />
+    </div>
+
+    <main class="shell-layout__contenido area-contenido" role="main">
+      <div class="shell-layout__lienzo lienzo-vista">
+        <ng-content />
+      </div>
+    </main>
+  </div>
+</div>

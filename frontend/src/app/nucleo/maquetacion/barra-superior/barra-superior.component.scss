@@ -2,54 +2,45 @@
 @use 'estilos/mixins/a11y' as a11y;
 
 .barra-superior {
-  position: sticky;
+  position: fixed;
   top: 0;
   left: 0;
   right: 0;
   height: 64px;
-  background-color: var(--color-surface-card);
-  border-bottom: 1px solid var(--color-border-subtle);
+  background-color: var(--color-surface-card, #ffffff);
+  border-bottom: 1px solid var(--color-border-subtle, #e2e8f0);
   display: flex;
   align-items: center;
   justify-content: space-between;
-  padding: 0 var(--space-4);
-  z-index: var(--z-sticky);
-  box-shadow: var(--shadow-sm);
-  transition: all var(--transition-normal);
-
-  @include r.desde(md) {
-    padding: 0 var(--space-6);
-  }
+  padding: 0 var(--space-4, 1rem);
+  z-index: var(--z-header, 30);
+  box-shadow: var(--shadow-sm, 0 1px 2px 0 rgba(0, 0, 0, 0.05));
 }
 
-/* Sección Izquierda */
 .seccion-izquierda {
   display: flex;
   align-items: center;
-  gap: var(--space-3);
-  min-width: 0;
+  gap: var(--space-3, 0.75rem);
 }
 
-.btn-icono {
-  background: transparent;
-  border: none;
-  cursor: pointer;
+.btn-icono.hamburguesa {
   display: inline-flex;
   align-items: center;
   justify-content: center;
-
-  @include a11y.touch-target;
-
-  width: 44px;
-  height: 44px;
-  border-radius: var(--radius-md);
-  color: var(--color-text-main);
-  transition: background-color var(--transition-fast);
+  width: var(--touch-min, 44px);
+  height: var(--touch-min, 44px);
+  background: transparent;
+  border: none;
+  border-radius: var(--radius-md, 8px);
+  color: var(--color-text-main, #0f172a);
+  cursor: pointer;
+  transition: background-color var(--transition-fast, 150ms ease);
 
   @include a11y.foco-visible;
 
   &:hover {
-    background-color: var(--color-surface-hover);
+    background-color: var(--color-surface-hover, #f1f5f9);
+    color: var(--color-primary-base, #701c1c);
   }
 
   .material-symbols-outlined {
@@ -57,411 +48,8 @@
   }
 }
 
-.identidad-institucional {
-  display: flex;
-  align-items: center;
-  gap: var(--space-3);
-  user-select: none;
-}
-
-.logo-hospital {
-  height: 40px;
-  width: 40px;
-  object-fit: contain;
-  background-color: var(--color-surface-card);
-  border-radius: var(--radius-md);
-  box-shadow: var(--shadow-sm);
-  border: 1px solid var(--color-border-subtle);
-}
-
-.textos-marca {
-  display: flex;
-  flex-direction: column;
-  line-height: 1.2;
-
-  .marca-titulo {
-    font-size: var(--font-size-sm);
-    font-weight: var(--font-weight-bold);
-    color: var(--color-primary-base);
-    white-space: nowrap;
-    overflow: hidden;
-    text-overflow: ellipsis;
-
-    @include r.desde(md) {
-      font-size: var(--font-size-base);
-    }
-  }
-
-  .marca-subtitulo {
-    font-size: var(--font-size-xs);
-    color: var(--color-text-muted);
-    font-weight: var(--font-weight-medium);
-    display: none;
-
-    @include r.desde(sm) {
-      display: inline-block;
-    }
-  }
-}
-
-/* Sección Derecha */
 .seccion-derecha {
   display: flex;
   align-items: center;
-  gap: var(--space-3);
-  flex-shrink: 0;
-}
-
-/* Switcher Rápido de Rol */
-.rol-switcher-container {
-  position: relative;
-}
-
-.btn-cambiar-rol {
-  display: inline-flex;
-  align-items: center;
-  gap: var(--space-1);
-  padding: 0.35rem 0.65rem;
-  min-height: var(--touch-min);
-  background-color: var(--color-bg-app);
-  border: 1px solid var(--color-border-subtle);
-  border-radius: var(--radius-md);
-  color: var(--color-text-muted);
-  font-size: var(--font-size-xs);
-  font-weight: var(--font-weight-medium);
-  cursor: pointer;
-  transition: all var(--transition-fast);
-
-  @include a11y.foco-visible;
-
-  &:hover {
-    background-color: var(--color-surface-hover);
-    color: var(--color-primary-base);
-    border-color: var(--color-primary-base);
-  }
-
-  .icono-swap {
-    font-size: 16px;
-  }
-
-  .texto-cambiar-rol {
-    display: none;
-
-    @include r.desde(md) {
-      display: inline;
-    }
-  }
-}
-
-.dropdown-selector-rol {
-  position: absolute;
-  top: calc(100% + 8px);
-  right: 0;
-  width: 260px;
-  background-color: var(--color-surface-card);
-  border: 1px solid var(--color-border-subtle);
-  border-radius: var(--radius-lg);
-  box-shadow: var(--shadow-lg);
-  padding: var(--space-2);
-  z-index: var(--z-dropdown);
-  animation: fadeIn 150ms ease-out;
-
-  .dropdown-header {
-    padding: var(--space-2) var(--space-3);
-    font-size: var(--font-size-xs);
-    font-weight: var(--font-weight-bold);
-    color: var(--color-text-muted);
-    text-transform: uppercase;
-    letter-spacing: 0.05em;
-  }
-
-  .opcion-rol {
-    width: 100%;
-    display: flex;
-    align-items: center;
-    gap: var(--space-2);
-    padding: var(--space-2) var(--space-3);
-    min-height: var(--touch-min);
-    background: transparent;
-    border: none;
-    border-radius: var(--radius-md);
-    cursor: pointer;
-    text-align: left;
-    transition: background-color var(--transition-fast);
-
-    @include a11y.foco-visible;
-
-    &:hover {
-      background-color: var(--color-surface-hover);
-    }
-
-    &.seleccionada {
-      background-color: var(--color-primary-light);
-      color: var(--color-primary-base);
-
-      strong {
-        color: var(--color-primary-base);
-      }
-    }
-
-    .material-symbols-outlined {
-      font-size: 20px;
-      color: var(--color-text-muted);
-    }
-
-    .info-rol {
-      display: flex;
-      flex-direction: column;
-
-      strong {
-        font-size: var(--font-size-xs);
-        color: var(--color-text-main);
-      }
-
-      span {
-        font-size: 11px;
-        color: var(--color-text-muted);
-      }
-    }
-  }
-}
-
-/* Badges Dinámicos de Rol */
-.badge-rol-wrapper {
-  display: none;
-
-  @include r.desde(sm) {
-    display: flex;
-    align-items: center;
-  }
-}
-
-.badge-rol {
-  display: inline-flex;
-  align-items: center;
-  gap: 0.35rem;
-  padding: 0.3rem 0.75rem;
-  font-size: var(--font-size-xs);
-  font-weight: var(--font-weight-semibold);
-  border-radius: var(--radius-full);
-  line-height: 1.2;
-
-  .icono-rol {
-    font-size: 16px;
-  }
-
-  .separador-punto {
-    opacity: 0.5;
-  }
-
-  .area-procedencia {
-    font-weight: var(--font-weight-regular);
-    max-width: 160px;
-    white-space: nowrap;
-    overflow: hidden;
-    text-overflow: ellipsis;
-  }
-
-  /* USUARIO_FINAL */
-  &.badge-usuario-final {
-    background-color: var(--color-surface-sunken);
-    color: var(--color-text-secondary);
-    border: 1px solid var(--color-border-subtle);
-  }
-
-  /* PRACTICANTE */
-  &.badge-practicante {
-    background-color: var(--color-info-bg);
-    color: var(--color-info-text);
-    border: 1px solid var(--color-info-border);
-  }
-
-  /* ADMINISTRADOR */
-  &.badge-administrador {
-    background-color: var(--color-primary-light);
-    color: var(--color-primary-base);
-    border: 1px solid var(--color-primary-focus-ring);
-  }
-}
-
-/* Perfil y Avatar */
-.perfil-menu-container {
-  position: relative;
-}
-
-.btn-perfil {
-  display: flex;
-  align-items: center;
-  gap: var(--space-2);
-  min-height: var(--touch-min);
-  background: transparent;
-  border: 1px solid transparent;
-  border-radius: var(--radius-full);
-  padding: 0.25rem 0.5rem 0.25rem 0.25rem;
-  cursor: pointer;
-  transition: all var(--transition-fast);
-
-  @include a11y.foco-visible;
-
-  &:hover {
-    background-color: var(--color-surface-hover);
-    border-color: var(--color-border-subtle);
-  }
-
-  .perfil-info {
-    display: none;
-    flex-direction: column;
-    text-align: left;
-    line-height: 1.2;
-
-    @include r.desde(lg) {
-      display: flex;
-    }
-
-    .perfil-nombre {
-      font-size: var(--font-size-sm);
-      font-weight: var(--font-weight-semibold);
-      color: var(--color-text-main);
-    }
-
-    .perfil-cargo {
-      font-size: var(--font-size-xs);
-      color: var(--color-text-muted);
-    }
-  }
-
-  .flecha-desplegable {
-    font-size: 18px;
-    color: var(--color-text-muted);
-    display: none;
-
-    @include r.desde(lg) {
-      display: inline-block;
-    }
-  }
-}
-
-.avatar-circulo {
-  width: 36px;
-  height: 36px;
-  border-radius: 50%;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  font-weight: var(--font-weight-bold);
-  font-size: var(--font-size-sm);
-  color: var(--color-text-on-primary);
-  background-color: var(--color-text-muted);
-
-  &[data-rol="USUARIO_FINAL"] {
-    background-color: var(--color-text-muted);
-  }
-
-  &[data-rol="PRACTICANTE"] {
-    background-color: var(--color-info-border);
-  }
-
-  &[data-rol="ADMINISTRADOR"] {
-    background-color: var(--color-primary-base);
-  }
-}
-
-/* Dropdown Perfil */
-.dropdown-perfil {
-  position: absolute;
-  top: calc(100% + 8px);
-  right: 0;
-  width: 240px;
-  background-color: var(--color-surface-card);
-  border: 1px solid var(--color-border-subtle);
-  border-radius: var(--radius-lg);
-  box-shadow: var(--shadow-lg);
-  padding: var(--space-2);
-  z-index: var(--z-dropdown);
-  animation: fadeIn 150ms ease-out;
-
-  .dropdown-usuario-resumen {
-    padding: var(--space-2) var(--space-3);
-
-    .resumen-nombre {
-      margin: 0;
-      font-size: var(--font-size-sm);
-      font-weight: var(--font-weight-bold);
-      color: var(--color-text-main);
-    }
-
-    .resumen-correo {
-      margin: 0.15rem 0 0.35rem;
-      font-size: var(--font-size-xs);
-      color: var(--color-text-muted);
-      overflow: hidden;
-      text-overflow: ellipsis;
-      white-space: nowrap;
-    }
-
-    .resumen-rol {
-      display: inline-block;
-      font-size: 11px;
-      color: var(--color-primary-base);
-      font-weight: var(--font-weight-semibold);
-    }
-  }
-
-  .dropdown-divisor {
-    height: 1px;
-    background-color: var(--color-border-subtle);
-    margin: var(--space-2) 0;
-  }
-
-  .dropdown-item {
-    display: flex;
-    align-items: center;
-    gap: var(--space-2);
-    width: 100%;
-    min-height: var(--touch-min);
-    padding: var(--space-2) var(--space-3);
-    background: transparent;
-    border: none;
-    border-radius: var(--radius-md);
-    font-size: var(--font-size-sm);
-    color: var(--color-text-main);
-    cursor: pointer;
-    text-decoration: none;
-    transition: background-color var(--transition-fast);
-
-    @include a11y.foco-visible;
-
-    &:hover {
-      background-color: var(--color-surface-hover);
-    }
-
-    .material-symbols-outlined {
-      font-size: 20px;
-      color: var(--color-text-muted);
-    }
-
-    &.item-logout {
-      color: var(--color-p1-base);
-
-      .material-symbols-outlined {
-        color: var(--color-p1-base);
-      }
-
-      &:hover {
-        background-color: var(--color-p1-bg);
-      }
-    }
-  }
-}
-
-@keyframes fadeIn {
-  from {
-    opacity: 0;
-    transform: translateY(-6px);
-  }
-
-  to {
-    opacity: 1;
-    transform: translateY(0);
-  }
+  gap: var(--space-3, 0.75rem);
 }

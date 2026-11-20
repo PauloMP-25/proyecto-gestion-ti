@@ -1,0 +1,41 @@
+@use 'estilos/mixins/responsive' as r;
+
+.shell-layout {
+  display: flex;
+  flex-direction: column;
+  min-height: 100vh;
+  width: 100%;
+  background-color: var(--color-bg-app, #faf6f0);
+  overflow-x: hidden;
+
+  &__cuerpo {
+    display: flex;
+    flex: 1;
+    position: relative;
+    min-height: calc(100vh - 64px);
+    width: 100%;
+  }
+
+  &__contenido {
+    flex: 1;
+    min-width: 0;
+    display: flex;
+    flex-direction: column;
+    overflow: hidden auto;
+    height: calc(100vh - 64px);
+    scroll-padding-top: var(--espacio-md, 1rem);
+  }
+
+  &__lienzo {
+    flex: 1;
+    padding: var(--espacio-xs, 0.5rem) var(--espacio-md, 1rem) var(--espacio-md, 1rem);
+    max-width: 1440px;
+    width: 100%;
+    margin: 0 auto;
+    box-sizing: border-box;
+
+    @include r.desde(md) {
+      padding: var(--espacio-sm, 0.75rem) var(--espacio-lg, 1.5rem) var(--espacio-lg, 1.5rem);
+    }
+  }
+}

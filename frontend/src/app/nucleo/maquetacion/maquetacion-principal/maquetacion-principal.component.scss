@@ -1,45 +1,4 @@
-@use 'estilos/mixins/responsive' as r;
-
-.shell-layout {
-  display: flex;
-  flex-direction: column;
-  min-height: 100vh;
+:host {
+  display: block;
   width: 100%;
-  background-color: var(--color-bg-app);
-  overflow-x: hidden;
-}
-
-.cuerpo-aplicacion {
-  display: flex;
-  flex: 1;
-  position: relative;
-  min-height: calc(100vh - 64px);
-  width: 100%;
-}
-
-.area-contenido {
-  flex: 1;
-  min-width: 0; // Previene overflow en Flexbox
-  display: flex;
-  flex-direction: column;
-  overflow: hidden auto;
-  height: calc(100vh - 64px);
-  scroll-padding-top: var(--espacio-md);
-}
-
-.lienzo-vista {
-  flex: 1;
-  padding: var(--espacio-xs) var(--espacio-md) var(--espacio-md);
-  max-width: 1440px;
-  width: 100%;
-  margin: 0 auto;
-  box-sizing: border-box;
-
-  @include r.desde(md) {
-    padding: var(--espacio-sm) var(--espacio-lg) var(--espacio-lg);
-  }
-
-  @include r.desde(xl) {
-    padding: var(--espacio-sm) var(--espacio-lg) var(--espacio-lg);
-  }
 }
