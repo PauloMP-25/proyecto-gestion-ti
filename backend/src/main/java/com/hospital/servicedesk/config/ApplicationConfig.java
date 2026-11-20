@@ -1,5 +1,7 @@
 package com.hospital.servicedesk.config;
 
+import com.hospital.servicedesk.administrativo.equipos.config.PropiedadesRed;
+import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
@@ -9,6 +11,7 @@ import java.time.Clock;
  * Configuración general de beans de infraestructura y utilitarios para el backend hospitalario.
  */
 @Configuration
+@EnableConfigurationProperties(PropiedadesRed.class)
 public class ApplicationConfig {
 
     /**

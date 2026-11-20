@@ -35,6 +35,21 @@ public final class UsuarioDTOs {
     ) {}
 
     /**
+     * DTO de resumen ligero para listados hospitalarios y colaboradores adscritos a áreas.
+     */
+    public record UsuarioResumen(
+        Integer id,
+        String nombreVisible,
+        String grado,
+        String correo,
+        String nombreUsuario,
+        String rol,
+        com.hospital.servicedesk.administrativo.areas.dto.AreaMini area,
+        boolean activo,
+        LocalDateTime ultimoAcceso
+    ) {}
+
+    /**
      * Solicitud para registrar un nuevo personal o usuario.
      */
     public record UsuarioRegistroRequest(

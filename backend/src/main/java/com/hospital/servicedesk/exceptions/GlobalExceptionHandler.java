@@ -130,6 +130,32 @@ public class GlobalExceptionHandler {
         return new ResponseEntity<>(response, HttpStatus.BAD_REQUEST);
     }
 
+    @ExceptionHandler(org.springframework.dao.DataIntegrityViolationException.class)
+    public ResponseEntity<ErrorResponse> handleDataIntegrityViolation(
+            org.springframework.dao.DataIntegrityViolationException ex, HttpServletRequest request) {
+        log.warn("Violación de integridad de datos en {}: {}", request.getRequestURI(), ex.getMessage());
+        String msg = "Conflicto con los datos existentes en el sistema.";
+        String exMsg = ex.getMessage() != null ? ex.getMessage() : "";
+
+        if (exMsg.contains("UX_area_nombre") || exMsg.contains("area") && exMsg.contains("nombre")) {
+            msg = "Ya existe un área registrada con ese nombre.";
+        } else if (exMsg.contains("UQ_ci_codigo_inventario") || exMsg.contains("codigo_inventario")) {
+            msg = "Ya existe un equipo registrado con ese código de inventario.";
+        } else if (exMsg.contains("UQ_usuario_nombre_usuario") || exMsg.contains("nombre_usuario")) {
+            msg = "El nombre de usuario ya está en uso.";
+        } else if (exMsg.contains("historial_asignacion_ip") || exMsg.contains("direccion_ip")) {
+            msg = "La dirección IP ya se encuentra asignada activamente a otro equipo.";
+        }
+
+        ErrorResponse response = ErrorResponse.builder()
+                .status(HttpStatus.CONFLICT.value())
+                .error(HttpStatus.CONFLICT.getReasonPhrase())
+                .message(msg)
+                .path(request.getRequestURI())
+                .build();
+        return new ResponseEntity<>(response, HttpStatus.CONFLICT);
+    }
+
     @ExceptionHandler(ResponseStatusException.class)
     public ResponseEntity<ErrorResponse> handleResponseStatusException(
             ResponseStatusException ex, HttpServletRequest request) {

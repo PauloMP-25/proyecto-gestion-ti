@@ -27,18 +27,21 @@ public class DireccionIpController {
     }
 
     @PostMapping
+    @org.springframework.security.access.prepost.PreAuthorize("hasRole('ADMINISTRADOR')")
     public ResponseEntity<DireccionIP> createDireccionIp(@RequestBody Map<String, Object> request) {
         DireccionIP ip = ipService.createDireccionIp(request);
         return new ResponseEntity<>(ip, HttpStatus.CREATED);
     }
 
     @PostMapping("/{id}/asignar")
+    @org.springframework.security.access.prepost.PreAuthorize("hasRole('ADMINISTRADOR')")
     public ResponseEntity<HistorialAsignacionIP> asignarIp(@PathVariable Integer id, @RequestBody Map<String, Object> request) {
         HistorialAsignacionIP historial = ipService.asignarIp(id, request);
         return new ResponseEntity<>(historial, HttpStatus.CREATED);
     }
 
     @PostMapping("/{id}/liberar")
+    @org.springframework.security.access.prepost.PreAuthorize("hasRole('ADMINISTRADOR')")
     public ResponseEntity<HistorialAsignacionIP> liberarIp(@PathVariable Integer id) {
         HistorialAsignacionIP historial = ipService.liberarIp(id);
         return ResponseEntity.ok(historial);

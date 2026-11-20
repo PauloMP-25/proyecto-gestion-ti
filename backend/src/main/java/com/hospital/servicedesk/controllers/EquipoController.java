@@ -34,18 +34,21 @@ public class EquipoController {
     }
 
     @PostMapping
+    @org.springframework.security.access.prepost.PreAuthorize("hasRole('ADMINISTRADOR')")
     public ResponseEntity<ElementoConfiguracion> createEquipo(@RequestBody Map<String, Object> request) {
         ElementoConfiguracion ci = equipoService.createEquipo(request);
         return new ResponseEntity<>(ci, HttpStatus.CREATED);
     }
 
     @PutMapping("/{id}")
+    @org.springframework.security.access.prepost.PreAuthorize("hasRole('ADMINISTRADOR')")
     public ResponseEntity<ElementoConfiguracion> updateEquipo(@PathVariable Integer id, @RequestBody Map<String, Object> request) {
         ElementoConfiguracion ci = equipoService.updateEquipo(id, request);
         return ResponseEntity.ok(ci);
     }
 
     @PatchMapping("/{id}/estado")
+    @org.springframework.security.access.prepost.PreAuthorize("hasRole('ADMINISTRADOR')")
     public ResponseEntity<ElementoConfiguracion> updateEstado(@PathVariable Integer id, @RequestBody Map<String, String> request) {
         ElementoConfiguracion ci = equipoService.updateEstado(id, request.get("estado"));
         return ResponseEntity.ok(ci);

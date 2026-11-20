@@ -24,12 +24,14 @@ public class AreaController {
     }
 
     @PostMapping
+    @org.springframework.security.access.prepost.PreAuthorize("hasRole('ADMINISTRADOR')")
     public ResponseEntity<Area> createArea(@RequestBody Map<String, String> request) {
         Area area = areaService.createArea(request.get("nombre"), request.get("anexo"));
         return new ResponseEntity<>(area, HttpStatus.CREATED);
     }
 
     @PutMapping("/{id}")
+    @org.springframework.security.access.prepost.PreAuthorize("hasRole('ADMINISTRADOR')")
     public ResponseEntity<Area> updateArea(@PathVariable Integer id, @RequestBody Map<String, String> request) {
         Area area = areaService.updateArea(id, request.get("nombre"), request.get("anexo"));
         return ResponseEntity.ok(area);

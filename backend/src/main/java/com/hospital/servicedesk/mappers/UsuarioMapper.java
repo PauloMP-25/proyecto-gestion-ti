@@ -43,4 +43,28 @@ public final class UsuarioMapper {
             contrasenaTemporal
         );
     }
+
+    public static com.hospital.servicedesk.dtos.UsuarioDTOs.UsuarioResumen toResumen(Usuario usuario) {
+        if (usuario == null) {
+            return null;
+        }
+
+        com.hospital.servicedesk.administrativo.areas.dto.AreaMini areaMini = usuario.getArea() != null
+                ? new com.hospital.servicedesk.administrativo.areas.dto.AreaMini(usuario.getArea().getIdArea(), usuario.getArea().getNombre())
+                : null;
+
+        String grado = usuario.getGradoProfesional() != null ? usuario.getGradoProfesional().name() : "SIN_GRADO";
+
+        return new com.hospital.servicedesk.dtos.UsuarioDTOs.UsuarioResumen(
+                usuario.getIdUsuario(),
+                usuario.getNombreVisible(),
+                grado,
+                usuario.getCorreo(),
+                usuario.getNombreUsuario(),
+                usuario.getRol(),
+                areaMini,
+                Boolean.TRUE.equals(usuario.getActivo()),
+                usuario.getUltimoAcceso()
+        );
+    }
 }
