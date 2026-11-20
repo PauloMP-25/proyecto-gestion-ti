@@ -12,6 +12,9 @@ public interface TicketService {
     TicketResponse createTicket(CreateTicketRequest request, String clientIp);
     List<TicketResponse> getAllTickets();
     PaginaRespuesta<TicketResponse> getTicketsPaginados(int pagina, int tamano, String estado, String prioridad, Integer idArea, String texto);
+    PaginaRespuesta<TicketResponse> getTicketsPaginados(int pagina, int tamano, String estado, String prioridad, Integer idArea, String texto, String asignadoA, String estados, String prioridades, String userEmail);
+    Map<String, Object> getResumenTurno(String userEmail);
+    long contarPorConfirmar(String userEmail);
     List<TicketResponse> getMisTickets(String userEmail);
     PaginaRespuesta<TicketResponse> getMisTicketsPaginados(String userEmail, int pagina, int tamano);
     TicketResponse getTicketById(Integer id);

@@ -83,6 +83,42 @@ public class TicketDTOs {
         private LocalDateTime fechaCreacion;
         private LocalDateTime fechaLimiteResolucion;
         private String estadoSla;
+        private String tecnicoNombre;
+        private Integer tecnicoId;
+        private String solicitanteNombre;
+
+        public Integer getId() {
+            return idTicket;
+        }
+
+        public String getCodigo() {
+            return "TCK-" + String.format("%05d", idTicket != null ? idTicket : 0);
+        }
+
+        public String getTitulo() {
+            return asunto;
+        }
+
+        public String getArea() {
+            return areaNombre;
+        }
+
+        public java.util.Map<String, Object> getAsignadoA() {
+            if (tecnicoNombre == null && tecnicoId == null) return null;
+            java.util.Map<String, Object> a = new java.util.HashMap<>();
+            a.put("id", tecnicoId);
+            a.put("nombre", tecnicoNombre);
+            return a;
+        }
+
+        public java.util.Map<String, Object> getSlaVista() {
+            java.util.Map<String, Object> s = new java.util.HashMap<>();
+            s.put("inicioIso", fechaCreacion != null ? fechaCreacion.toString() : java.time.LocalDateTime.now().toString());
+            s.put("limiteRespuestaIso", fechaCreacion != null ? fechaCreacion.plusHours(1).toString() : java.time.LocalDateTime.now().toString());
+            s.put("limiteResolucionIso", fechaLimiteResolucion != null ? fechaLimiteResolucion.toString() : java.time.LocalDateTime.now().plusHours(4).toString());
+            s.put("fase", "EN_PROGRESO".equalsIgnoreCase(estado) ? "RESOLUCION" : "RESPUESTA");
+            return s;
+        }
     }
 
 

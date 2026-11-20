@@ -90,18 +90,72 @@ public class TicketServiceImpl implements TicketService {
             String prioridad,
             Integer idArea,
             String texto) {
+        return getTicketsPaginados(pagina, tamano, estado, prioridad, idArea, texto, null, null, null, null);
+    }
+
+    @Override
+    @Transactional(readOnly = true)
+    public com.hospital.servicedesk.dtos.PaginaRespuesta<TicketResponse> getTicketsPaginados(
+            int pagina,
+            int tamano,
+            String estado,
+            String prioridad,
+            Integer idArea,
+            String texto,
+            String asignadoA,
+            String estados,
+            String prioridades,
+            String userEmail) {
         List<Ticket> todos = tRepo.findAll();
 
         List<TicketResponse> filtrados = todos.stream()
                 .filter(t -> {
-                    if (estado != null && !estado.isBlank() && !estado.equalsIgnoreCase("TODAS")) {
+                    // Filtro de asignadoA: 'sinAsignar' o 'me'
+                    if (asignadoA != null && !asignadoA.isBlank()) {
+                        if ("sinAsignar".equalsIgnoreCase(asignadoA)) {
+                            if (t.getTecnicoAsignado() != null) return false;
+                        } else if ("me".equalsIgnoreCase(asignadoA)) {
+                            if (userEmail == null || t.getTecnicoAsignado() == null || !userEmail.equalsIgnoreCase(t.getTecnicoAsignado().getCorreo())) {
+                                return false;
+                            }
+                        }
+                    }
+
+                    // Filtro de múltiples estados (ej: "ASIGNADO,EN_PROCESO,REABIERTO")
+                    if (estados != null && !estados.isBlank()) {
+                        List<String> listEstados = java.util.Arrays.stream(estados.split(","))
+                                .map(String::trim)
+                                .map(String::toUpperCase)
+                                .toList();
+                        String estadoActual = t.getEstado() != null ? t.getEstado().name() : "";
+                        boolean coincide = listEstados.contains(estadoActual)
+                                || (listEstados.contains("NUEVO") && t.getEstado() == EstadoTicket.ABIERTO)
+                                || (listEstados.contains("ASIGNADO") && t.getEstado() == EstadoTicket.EN_PROGRESO)
+                                || (listEstados.contains("EN_PROCESO") && t.getEstado() == EstadoTicket.EN_PROGRESO)
+                                || (listEstados.contains("REABIERTO") && t.getEstado() == EstadoTicket.ABIERTO);
+                        if (!coincide) return false;
+                    } else if (estado != null && !estado.isBlank() && !estado.equalsIgnoreCase("TODAS")) {
                         if (t.getEstado() == null || !t.getEstado().name().equalsIgnoreCase(estado)) {
                             boolean matchAlias = ("NUEVO".equalsIgnoreCase(estado) && t.getEstado() == EstadoTicket.ABIERTO)
                                     || ("EN_PROCESO".equalsIgnoreCase(estado) && t.getEstado() == EstadoTicket.EN_PROGRESO);
                             if (!matchAlias) return false;
                         }
                     }
-                    if (prioridad != null && !prioridad.isBlank()) {
+
+                    // Filtro de múltiples prioridades o prioridad individual
+                    if (prioridades != null && !prioridades.isBlank()) {
+                        List<String> listP = java.util.Arrays.stream(prioridades.split(","))
+                                .map(String::trim)
+                                .map(String::toUpperCase)
+                                .toList();
+                        String pActual = t.getPrioridad() != null ? t.getPrioridad().name() : "";
+                        boolean match = listP.contains(pActual)
+                                || (listP.contains("P1_CRITICA") && "CRITICA".equalsIgnoreCase(pActual))
+                                || (listP.contains("P2_ALTA") && "ALTA".equalsIgnoreCase(pActual))
+                                || (listP.contains("P3_MEDIA") && "MEDIA".equalsIgnoreCase(pActual))
+                                || (listP.contains("P4_BAJA") && "BAJA".equalsIgnoreCase(pActual));
+                        if (!match) return false;
+                    } else if (prioridad != null && !prioridad.isBlank()) {
                         if (t.getPrioridad() == null) return false;
                         String priName = t.getPrioridad().name();
                         boolean match = priName.equalsIgnoreCase(prioridad)
@@ -111,6 +165,7 @@ public class TicketServiceImpl implements TicketService {
                                 || ("P4".equalsIgnoreCase(prioridad) && "BAJA".equalsIgnoreCase(priName));
                         if (!match) return false;
                     }
+
                     if (idArea != null && idArea > 0) {
                         if (t.getArea() == null || !idArea.equals(t.getArea().getIdArea())) return false;
                     }
@@ -132,6 +187,48 @@ public class TicketServiceImpl implements TicketService {
                 .toList();
 
         return com.hospital.servicedesk.dtos.PaginaRespuesta.of(filtrados, pagina, tamano);
+    }
+
+    @Override
+    @Transactional(readOnly = true)
+    public Map<String, Object> getResumenTurno(String userEmail) {
+        List<Ticket> todos = tRepo.findAll();
+        long asignados = todos.stream()
+                .filter(t -> userEmail != null && t.getTecnicoAsignado() != null && userEmail.equalsIgnoreCase(t.getTecnicoAsignado().getCorreo()))
+                .filter(t -> t.getEstado() == EstadoTicket.EN_PROGRESO || t.getEstado() == EstadoTicket.ABIERTO)
+                .count();
+
+        long porVencer = todos.stream()
+                .filter(t -> t.getEstadoSla() == EstadoSLA.POR_VENCER)
+                .count();
+
+        long vencidos = todos.stream()
+                .filter(t -> t.getEstadoSla() == EstadoSLA.VENCIDO)
+                .count();
+
+        long resueltosHoy = todos.stream()
+                .filter(t -> t.getEstado() == EstadoTicket.RESUELTO)
+                .count();
+
+        boolean hayP1SinTomar = todos.stream()
+                .anyMatch(t -> t.getPrioridad() == Prioridad.CRITICA && t.getTecnicoAsignado() == null && t.getEstado() == EstadoTicket.ABIERTO);
+
+        Map<String, Object> res = new HashMap<>();
+        res.put("asignados", asignados);
+        res.put("porVencer", porVencer);
+        res.put("vencidos", vencidos);
+        res.put("resueltosHoy", resueltosHoy);
+        res.put("hayP1SinTomar", hayP1SinTomar);
+        res.put("ahoraServidorIso", LocalDateTime.now().toString());
+        return res;
+    }
+
+    @Override
+    @Transactional(readOnly = true)
+    public long contarPorConfirmar(String userEmail) {
+        return tRepo.findAll().stream()
+                .filter(t -> t.getEstado() == EstadoTicket.RESUELTO)
+                .count();
     }
 
     @Override
@@ -224,7 +321,18 @@ public class TicketServiceImpl implements TicketService {
         Ticket t = tRepo.findById(id)
                 .orElseThrow(() -> new RecursoNoEncontradoException("Ticket", id));
         t.setEstado(EstadoTicket.ESCALADO);
+        t.setTecnicoAsignado(null);
         t = tRepo.save(t);
+
+        String motivo = req != null && req.get("motivo") != null ? req.get("motivo").toString() : "Derivado a Soporte Nivel 2";
+        HistorialTicket audit = HistorialTicket.builder()
+                .ticket(t)
+                .accion("ESCALAMIENTO")
+                .detalle("Ticket derivado a Soporte Nivel 2. Motivo: " + motivo)
+                .fechaAccion(LocalDateTime.now())
+                .build();
+        auditRepo.save(audit);
+
         return map(t);
     }
 
@@ -235,6 +343,18 @@ public class TicketServiceImpl implements TicketService {
                 .orElseThrow(() -> new RecursoNoEncontradoException("Ticket", id));
         t.setEstado(EstadoTicket.RESUELTO);
         t = tRepo.save(t);
+
+        String solucion = req != null && req.get("solucion") != null 
+                ? req.get("solucion").toString() 
+                : (req != null && req.get("diagnostico") != null ? req.get("diagnostico").toString() : "Problema resuelto satisfactoriamente.");
+        HistorialTicket audit = HistorialTicket.builder()
+                .ticket(t)
+                .accion("RESOLUCION")
+                .detalle("Ticket resuelto. Detalle técnico: " + solucion)
+                .fechaAccion(LocalDateTime.now())
+                .build();
+        auditRepo.save(audit);
+
         return map(t);
     }
 
@@ -245,6 +365,15 @@ public class TicketServiceImpl implements TicketService {
                 .orElseThrow(() -> new RecursoNoEncontradoException("Ticket", id));
         t.setEstado(EstadoTicket.CERRADO);
         t = tRepo.save(t);
+
+        HistorialTicket audit = HistorialTicket.builder()
+                .ticket(t)
+                .accion("CIERRE")
+                .detalle("Ticket cerrado formalmente en el sistema.")
+                .fechaAccion(LocalDateTime.now())
+                .build();
+        auditRepo.save(audit);
+
         return map(t);
     }
 
@@ -255,13 +384,23 @@ public class TicketServiceImpl implements TicketService {
                 .orElseThrow(() -> new RecursoNoEncontradoException("Ticket", id));
         t.setEstado(EstadoTicket.ABIERTO);
         t = tRepo.save(t);
+
+        String motivo = req != null && req.get("motivo") != null ? req.get("motivo").toString() : "Reapertura de ticket por disconformidad";
+        HistorialTicket audit = HistorialTicket.builder()
+                .ticket(t)
+                .accion("REAPERTURA")
+                .detalle("Ticket reabierto. Motivo indicado: " + motivo)
+                .fechaAccion(LocalDateTime.now())
+                .build();
+        auditRepo.save(audit);
+
         return map(t);
     }
 
     @Override
     @Transactional
     public TicketResponse registrarConformidad(Integer id, Map<String, Object> req) {
-        return getTicketById(id);
+        return cerrarTicket(id);
     }
 
     @Override
@@ -332,6 +471,9 @@ public class TicketServiceImpl implements TicketService {
                 .fechaCreacion(t.getFechaCreacion())
                 .fechaLimiteResolucion(t.getFechaLimiteResolucion())
                 .estadoSla(t.getEstadoSla() != null ? t.getEstadoSla().name() : null)
+                .tecnicoId(t.getTecnicoAsignado() != null ? t.getTecnicoAsignado().getIdUsuario() : null)
+                .tecnicoNombre(t.getTecnicoAsignado() != null ? t.getTecnicoAsignado().getNombreVisible() : null)
+                .solicitanteNombre(t.getUsuarioReporta() != null ? t.getUsuarioReporta().getNombreVisible() : "Personal Asistencial")
                 .build();
     }
 }
