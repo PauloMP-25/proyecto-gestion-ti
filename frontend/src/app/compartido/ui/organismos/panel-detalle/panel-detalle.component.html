@@ -1,0 +1,52 @@
+@if (abierto()) {
+  @if (modo() === 'lateral') {
+    <div
+      class="panel-backdrop"
+      (click)="onBackdropClick()"
+      aria-hidden="true"
+    ></div>
+  }
+
+  <aside
+    class="panel-detalle panel-detalle--{{ modo() }} panel-detalle--{{ ancho() }}"
+    role="dialog"
+    aria-modal="true"
+    [attr.aria-label]="titulo()"
+  >
+    <!-- Cabecera del panel -->
+    <div class="panel-detalle__cabecera">
+      <div class="panel-detalle__titulo-fila">
+        @if (icono(); as iconoNombre) {
+          <span class="panel-detalle__icono" aria-hidden="true">
+            <app-icono [nombre]="iconoNombre" tamano="md" />
+          </span>
+        }
+
+        <div class="panel-detalle__textos">
+          <h2 class="panel-detalle__titulo">{{ titulo() }}</h2>
+          @if (subtitulo()) {
+            <p class="panel-detalle__subtitulo">{{ subtitulo() }}</p>
+          }
+        </div>
+      </div>
+
+      <app-boton-icono
+        icono="close"
+        etiqueta="Cerrar panel de detalle"
+        variante="fantasma"
+        tamano="sm"
+        (alHacerClick)="cerrar()"
+      />
+    </div>
+
+    <!-- Cuerpo del panel -->
+    <div class="panel-detalle__cuerpo">
+      <ng-content />
+    </div>
+
+    <!-- Pie del panel (acciones opcionales) -->
+    <div class="panel-detalle__pie">
+      <ng-content select="[acciones]" />
+    </div>
+  </aside>
+}
