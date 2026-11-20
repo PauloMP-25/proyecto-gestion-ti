@@ -95,9 +95,13 @@ describe('MenuLateralComponent', () => {
     fixture.detectChanges();
 
     const secciones = component.seccionesMenu();
-    expect(secciones.length).toBe(2);
+    expect(secciones.length).toBe(3);
 
     const textoHtml = fixture.nativeElement.textContent;
     expect(textoHtml).toContain('Panel de Control');
+    expect(textoHtml).toContain('Inventario de equipos y red');
+    expect(textoHtml).not.toContain('CMDB');
+    expect(textoHtml).not.toContain('RFC');
+    expect(textoHtml).not.toContain('KEDB');
   });
 });

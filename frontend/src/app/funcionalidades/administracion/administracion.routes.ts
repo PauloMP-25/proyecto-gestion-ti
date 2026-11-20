@@ -36,7 +36,7 @@ export const ADMINISTRACION_ROUTES: Routes = [
           import('./equipos/paginas/equipos-lista/equipos-lista.page').then(
             (m) => m.EquiposListaPage
           ),
-        title: 'Equipos e impresoras - Mesa de Ayuda HSMSI',
+        title: 'Inventario de equipos y red - Mesa de Ayuda HSMSI',
       },
       { path: '', pathMatch: 'full', redirectTo: 'areas' },
     ],

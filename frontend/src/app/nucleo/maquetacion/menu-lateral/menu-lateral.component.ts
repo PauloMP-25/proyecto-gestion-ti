@@ -106,16 +106,15 @@ export class MenuLateralComponent {
             items: [
               { titulo: 'Áreas del hospital', ruta: '/administracion/areas', icono: 'apartment' },
               { titulo: 'Personal y cuentas', ruta: '/administracion/personal', icono: 'group' },
-              { titulo: 'Equipos e impresoras', ruta: '/administracion/equipos', icono: 'devices' },
+              { titulo: 'Inventario de equipos y red', ruta: '/administracion/equipos', icono: 'devices' },
             ],
           },
           {
-            encabezado: 'Gobierno de TI & CMDB',
+            encabezado: 'Gobierno de TI',
             items: [
-              { titulo: 'Activos y Red (CMDB)', ruta: '/cmdb/activos', icono: 'lan' },
-              { titulo: 'Solicitudes de Cambio (RFC)', ruta: '/administracion/cambios', icono: 'change_circle' },
-              { titulo: 'Centro de Soluciones (KEDB)', ruta: '/administracion/conocimiento', icono: 'menu_book' },
-              { titulo: 'Compromisos de Atención', ruta: '/administracion/sla-config', icono: 'tune' },
+              { titulo: 'Solicitudes de cambio', ruta: '/administracion/cambios', icono: 'change_circle' },
+              { titulo: 'Centro de soluciones y guías', ruta: '/administracion/conocimiento', icono: 'menu_book' },
+              { titulo: 'Compromisos de atención (SLA)', ruta: '/administracion/sla-config', icono: 'tune' },
             ],
           },
         ];
