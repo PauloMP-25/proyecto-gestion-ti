@@ -1,0 +1,36 @@
+<div
+  class="barra-pestanas"
+  role="tablist"
+  [attr.aria-label]="etiquetaAccesible()"
+>
+  @for (tab of pestanas(); track tab.id; let i = $index) {
+    <button
+      type="button"
+      role="tab"
+      class="pestana"
+      [class.pestana--activa]="activa() === tab.id"
+      [class.pestana--deshabilitada]="tab.deshabilitada"
+      [attr.aria-selected]="activa() === tab.id"
+      [attr.aria-controls]="'panel-' + tab.id"
+      [id]="'tab-' + tab.id"
+      [disabled]="tab.deshabilitada"
+      [tabindex]="activa() === tab.id ? 0 : -1"
+      (click)="seleccionar(tab)"
+      (keydown)="manejarTeclado($event, i)"
+    >
+      @if (tab.icono) {
+        <app-icono [nombre]="tab.icono" tamano="sm" aria-hidden="true" />
+      }
+
+      <span class="pestana__etiqueta">{{ tab.etiqueta }}</span>
+
+      @if (tab.conteo !== undefined) {
+        <app-insignia
+          [texto]="String(tab.conteo)"
+          [tono]="tab.conteoDestacado ? 'marca' : 'neutro'"
+          forma="pildora"
+        />
+      }
+    </button>
+  }
+</div>
