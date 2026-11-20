@@ -96,5 +96,27 @@
       </div>
     </div>
   }
+
+  <!-- Modales Accesibles de Resolución y Escalamiento -->
+  @if (modalEscalarAbierto() && ticketParaAccion(); as t) {
+    <app-dialogo-escalar-ticket
+      [ticketId]="t.id"
+      [codigo]="t.codigo"
+      [titulo]="t.titulo"
+      [procesando]="procesandoAccion()"
+      (alCancelar)="modalEscalarAbierto.set(false)"
+      (alConfirmarTexto)="confirmarEscalamiento($event)">
+    </app-dialogo-escalar-ticket>
+  }
+
+  @if (modalResolverAbierto() && ticketParaAccion(); as t) {
+    <app-dialogo-resolver-ticket
+      [ticketId]="t.id"
+      [codigo]="t.codigo"
+      [procesando]="procesandoAccion()"
+      (alCancelar)="modalResolverAbierto.set(false)"
+      (alConfirmar)="confirmarResolucion($event.accionRealizada)">
+    </app-dialogo-resolver-ticket>
+  }
 </div>
 

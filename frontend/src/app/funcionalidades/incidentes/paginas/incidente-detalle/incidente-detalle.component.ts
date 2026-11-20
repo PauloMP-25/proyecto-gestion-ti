@@ -103,7 +103,13 @@ export class IncidenteDetalleComponent implements OnInit {
           { tipo: 'escalar', etiqueta: 'Escalar a N2', icono: 'trending_up' },
         ];
       case EstadoTicket.ESCALADO:
-        return esAdmin ? [{ tipo: 'resolver', etiqueta: 'Resolver', icono: 'check_circle', destacada: true }] : [];
+        return esAdmin
+          ? [
+              { tipo: 'asignar', etiqueta: 'Asignar especialista N2', icono: 'person_add', destacada: true },
+              { tipo: 'tomar', etiqueta: 'Asumir atención N2', icono: 'pan_tool' },
+              { tipo: 'resolver', etiqueta: 'Resolver', icono: 'check_circle' },
+            ]
+          : [];
       case EstadoTicket.RESUELTO:
         return esAdmin
           ? [

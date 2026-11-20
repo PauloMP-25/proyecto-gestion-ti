@@ -14,6 +14,11 @@ import { BotonComponent } from '../../../../compartido/ui/atomos/boton/boton.com
 import { IconoComponent } from '../../../../compartido/ui/atomos/icono/icono.component';
 import { TicketResumen } from '../../../../compartido/modelos/ticket-resumen.model';
 
+import { DialogoEscalarTicketComponent } from '../../../../compartido/ui/organismos/dialogo-escalar-ticket/dialogo-escalar-ticket.component';
+import { DialogoResolverTicketComponent } from '../../../../compartido/ui/organismos/dialogo-resolver-ticket/dialogo-resolver-ticket.component';
+import { TicketsService } from '../../../../compartido/servicios/tickets/tickets.service';
+import { NotificacionService } from '../../../../nucleo/servicios/notificacion.service';
+
 export type TipoPestanaPanel = 'metricas' | 'graficos';
 
 @Component({
@@ -30,6 +35,8 @@ export type TipoPestanaPanel = 'metricas' | 'graficos';
     RelojTicketActivoComponent,
     BotonComponent,
     IconoComponent,
+    DialogoEscalarTicketComponent,
+    DialogoResolverTicketComponent,
   ],
   templateUrl: './panel-control.component.html',
   styleUrl: './panel-control.component.scss',
@@ -38,6 +45,8 @@ export type TipoPestanaPanel = 'metricas' | 'graficos';
 export class PanelControlComponent {
   private authService = inject(AuthService);
   private panelService = inject(PanelControlService);
+  private ticketsService = inject(TicketsService);
+  private notificacion = inject(NotificacionService);
   private router = inject(Router);
 
   onNuevoIncidente(): void {
@@ -57,6 +66,12 @@ export class PanelControlComponent {
   // Ticket en atención activa para el cronómetro de la Pestaña 1
   readonly ticketEnAtencion = signal<TicketResumen | null>(null);
 
+  // Modales de resolución y escalamiento
+  readonly modalEscalarAbierto = signal<boolean>(false);
+  readonly modalResolverAbierto = signal<boolean>(false);
+  readonly procesandoAccion = signal<boolean>(false);
+  readonly ticketParaAccion = signal<TicketResumen | null>(null);
+
   constructor() {
     // Inicializar el ticket en atención con el primer ticket crítico si existe
     const tickets = this.panelService.ticketsFiltrados();
@@ -74,11 +89,51 @@ export class PanelControlComponent {
   }
 
   onResolverTicket(ticket: TicketResumen): void {
-    this.panelService.refrescarDatos();
+    this.ticketParaAccion.set(ticket);
+    this.modalResolverAbierto.set(true);
   }
 
   onEscalarTicket(ticket: TicketResumen): void {
-    console.log('Escalando ticket a Nivel 2:', ticket.codigo);
+    this.ticketParaAccion.set(ticket);
+    this.modalEscalarAbierto.set(true);
+  }
+
+  confirmarEscalamiento(motivo: string): void {
+    const t = this.ticketParaAccion();
+    if (!t || this.procesandoAccion()) return;
+
+    this.procesandoAccion.set(true);
+    this.ticketsService.escalar(t.id, motivo).subscribe({
+      next: () => {
+        this.procesandoAccion.set(false);
+        this.modalEscalarAbierto.set(false);
+        this.notificacion.exito('Ticket derivado al Nivel 2 (Especialista TI).');
+        this.panelService.refrescarDatos();
+      },
+      error: () => {
+        this.procesandoAccion.set(false);
+        this.notificacion.error('No se pudo derivar el ticket. Intente nuevamente.');
+      },
+    });
+  }
+
+  confirmarResolucion(solucion: string): void {
+    const t = this.ticketParaAccion();
+    if (!t || this.procesandoAccion()) return;
+
+    this.procesandoAccion.set(true);
+    this.ticketsService.resolver(t.id, solucion).subscribe({
+      next: () => {
+        this.procesandoAccion.set(false);
+        this.modalResolverAbierto.set(false);
+        this.notificacion.exito('Ticket resuelto exitosamente.');
+        this.panelService.refrescarDatos();
+      },
+      error: () => {
+        this.procesandoAccion.set(false);
+        this.notificacion.error('No se pudo registrar la solución del ticket.');
+      },
+    });
   }
 
   refrescar(): void {
