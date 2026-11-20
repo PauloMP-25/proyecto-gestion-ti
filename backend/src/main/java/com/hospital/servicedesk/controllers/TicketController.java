@@ -22,6 +22,7 @@ public class TicketController {
 
     private final TicketService ticketService;
     private final ResolutorIpCliente resolutorIpCliente;
+    private final com.hospital.servicedesk.asistencial.atencion.aplicacion.ReportarProblemaService reportarProblemaService;
 
     @PostMapping
     public ResponseEntity<TicketResponse> createTicket(
@@ -29,6 +30,17 @@ public class TicketController {
             HttpServletRequest httpRequest) {
         String clientIp = resolutorIpCliente.resolverIp(httpRequest);
         return new ResponseEntity<>(ticketService.createTicket(request, clientIp), HttpStatus.CREATED);
+    }
+
+    @PostMapping("/reportar")
+    public ResponseEntity<TicketResponse> reportarProblema(
+            @Valid @RequestBody com.hospital.servicedesk.asistencial.atencion.dto.ReportarProblemaSolicitud request,
+            HttpServletRequest httpRequest,
+            Authentication authentication) {
+        String clientIp = resolutorIpCliente.resolverIp(httpRequest);
+        String correo = authentication != null ? authentication.getName() : null;
+        com.hospital.servicedesk.entities.Ticket ticket = reportarProblemaService.reportar(request, correo, clientIp);
+        return new ResponseEntity<>(ticketService.getTicketById(ticket.getIdTicket()), HttpStatus.CREATED);
     }
 
     @GetMapping
@@ -61,6 +73,7 @@ public class TicketController {
         return ResponseEntity.ok(ticketService.getHistorialTicket(id));
     }
 
+    @Deprecated
     @GetMapping("/contexto-cliente")
     public ResponseEntity<Map<String, Object>> getContextoCliente(HttpServletRequest httpRequest) {
         String clientIp = resolutorIpCliente.resolverIp(httpRequest);
