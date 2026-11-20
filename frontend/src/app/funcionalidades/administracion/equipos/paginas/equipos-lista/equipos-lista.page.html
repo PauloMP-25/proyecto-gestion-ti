@@ -1,0 +1,91 @@
+<app-plantilla-pagina>
+  <!-- CABECERA -->
+  <app-cabecera-pagina
+    cabecera
+    icono="devices"
+    titulo="Inventario de equipos y red"
+    subtitulo="Hospital Santa María del Socorro · Equipamiento hospitalario, direccionamiento IP y trazabilidad por áreas."
+  >
+    <button
+      acciones
+      type="button"
+      class="btn-nuevo"
+      (click)="abrirModalNuevo()"
+      aria-label="Registrar nuevo equipo hospitalario"
+    >
+      <span class="material-symbols-outlined icono-btn" aria-hidden="true">add_to_queue</span>
+      <span>Registrar equipo</span>
+    </button>
+  </app-cabecera-pagina>
+
+  <!-- PESTAÑAS -->
+  <app-barra-pestanas
+    etiquetaAccesible="Secciones del inventario hospitalario"
+    [pestanas]="pestanas()"
+    [(activa)]="pestanaActiva"
+  ></app-barra-pestanas>
+
+  <!-- CONTENIDO SEGÚN PESTAÑA -->
+  @switch (pestanaActiva()) {
+    @case ('equipos') {
+      <app-equipos-tabla
+        [equipos]="store.equipos()"
+        [cargando]="store.cargando()"
+        [vacio]="store.vacio()"
+        [(busqueda)]="busquedaTexto"
+        (alEditar)="abrirModalEditar($event)"
+        (alCambiarEstado)="solicitarCambioEstado($event)"
+        (alRegistrar)="abrirModalNuevo()"
+      >
+        <app-equipos-filtros
+          filtros
+          [areas]="areas()"
+          [(area)]="filtroArea"
+          [(tipo)]="filtroTipo"
+          [(sinIp)]="filtroSinIp"
+        ></app-equipos-filtros>
+      </app-equipos-tabla>
+    }
+    @case ('red') {
+      <app-mapa-red
+        [areas]="areas()"
+        [equipos]="store.equipos()"
+        [(areaSeleccionadaId)]="filtroAreaRed"
+        (alEditarEquipo)="abrirModalEditar($event)"
+        (alRegistrarEquipo)="abrirModalNuevo()"
+      ></app-mapa-red>
+    }
+  }
+</app-plantilla-pagina>
+
+<!-- MODAL REGISTRO / EDICIÓN -->
+@if (modalAbierto()) {
+  <app-dialogo-equipo
+    [equipoParaEditar]="equipoSeleccionado()"
+    (cancelar)="cerrarModal()"
+    (guardado)="alGuardarEquipo($event)"
+  ></app-dialogo-equipo>
+}
+
+<!-- CONFIRMACIÓN DE CAMBIO DE ESTADO -->
+@if (confirmacionEstadoAbierta()) {
+  <app-dialogo-confirmacion
+    [titulo]="
+      equipoParaConfirmar()?.estado === 'EN_SERVICIO'
+        ? '¿Poner equipo en mantenimiento?'
+        : '¿Poner equipo en servicio?'
+    "
+    [mensaje]="
+      'Se cambiará el estado operativo de ' +
+      equipoParaConfirmar()?.codigoInventario +
+      '.'
+    "
+    [textoConfirmar]="
+      equipoParaConfirmar()?.estado === 'EN_SERVICIO'
+        ? 'Poner en mantenimiento'
+        : 'Poner en servicio'
+    "
+    (confirmar)="confirmarCambioEstado()"
+    (cancelar)="cerrarConfirmacionEstado()"
+  ></app-dialogo-confirmacion>
+}

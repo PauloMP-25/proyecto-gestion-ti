@@ -1,0 +1,17 @@
+<section class="seccion-mapa-red" aria-label="Mapa de red y direccionamiento IP por áreas">
+  <!-- SELECTOR DE ÁREAS HOSPITALARIAS -->
+  <app-selector-area-red
+    [areas]="areas()"
+    [equipos]="equipos()"
+    [(areaSeleccionadaId)]="areaSeleccionadaId"
+  ></app-selector-area-red>
+
+  <!-- LISTADO Y AUDITORÍA DE IPS DEL ÁREA -->
+  <app-lista-ips-area
+    [equipos]="equipos()"
+    [areas]="areas()"
+    [areaSeleccionadaId]="areaSeleccionadaId()"
+    (alEditar)="alEditarEquipo.emit($event)"
+    (alRegistrar)="alRegistrarEquipo.emit()"
+  ></app-lista-ips-area>
+</section>

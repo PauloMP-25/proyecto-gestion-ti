@@ -1,0 +1,27 @@
+:host {
+  display: block;
+}
+
+.btn-nuevo {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--espacio-2, 0.5rem);
+  padding: var(--espacio-2, 0.5rem) var(--espacio-4, 1rem);
+  background-color: var(--color-brand-primary, #701c1c);
+  color: #ffffff;
+  border: none;
+  border-radius: var(--radius-md, 6px);
+  font-size: var(--tipo-cuerpo-sm-size, 0.875rem);
+  font-weight: 600;
+  cursor: pointer;
+  transition: background-color 0.2s ease;
+  white-space: nowrap;
+
+  &:hover {
+    background-color: var(--color-brand-secondary, #5a1616);
+  }
+
+  .icono-btn {
+    font-size: 1.25rem;
+  }
+}

@@ -1,0 +1,114 @@
+<div class="panel-ips">
+  <div class="panel-ips__cabecera">
+    <div class="panel-ips__titular">
+      <span class="material-symbols-outlined icono-panel" aria-hidden="true">lan</span>
+      <h3 class="panel-ips__titulo">
+        {{ areaNombre() ? 'Equipos y Direccionamiento IP en: ' + areaNombre() : 'Direccionamiento IP General del Hospital' }}
+      </h3>
+    </div>
+    <div class="panel-ips__resumen">
+      <span class="resumen-tag"><strong>{{ equiposConIp().length }}</strong> con IP asignada</span>
+      <span class="resumen-tag resumen-tag--sin-ip"><strong>{{ equiposSinIp().length }}</strong> sin IP / DHCP</span>
+    </div>
+  </div>
+
+  @if (equiposFiltrados().length === 0) {
+    <div class="panel-ips__vacio">
+      <span class="material-symbols-outlined icono-vacio" aria-hidden="true">devices_off</span>
+      <p class="texto-vacio">No hay equipos registrados en esta área hospitalaria.</p>
+      <button type="button" class="btn-nuevo" (click)="alRegistrar.emit()">
+        <span class="material-symbols-outlined" aria-hidden="true">add_to_queue</span>
+        <span>Registrar equipo aquí</span>
+      </button>
+    </div>
+  } @else {
+    <div class="tabla-envoltorio">
+      <table class="tabla-ips" aria-label="Equipos y direcciones IP asignadas">
+        <thead>
+          <tr>
+            <th scope="col">Dirección IP</th>
+            <th scope="col">Equipo / Modelo</th>
+            <th scope="col">Área / Ubicación</th>
+            <th scope="col">Nombre de Red (Hostname)</th>
+            <th scope="col">Estado</th>
+            <th scope="col" class="th-acciones">Acción</th>
+          </tr>
+        </thead>
+        <tbody>
+          @for (eq of equiposFiltrados(); track eq.id) {
+            <tr [class.fila-sin-ip]="!eq.ipVigente">
+              <!-- IP VIGENTE -->
+              <td class="td-ip">
+                @if (eq.ipVigente) {
+                  <app-etiqueta-ip [ip]="eq.ipVigente"></app-etiqueta-ip>
+                } @else {
+                  <span class="badge-sin-ip">Sin IP estática</span>
+                }
+              </td>
+
+              <!-- EQUIPO / MODELO -->
+              <td>
+                <div class="equipo-bloque">
+                  <strong class="codigo-equipo">{{ eq.codigoInventario }}</strong>
+                  <span class="tipo-equipo">{{ eq.tipo }}</span>
+                  @if (eq.marcaModelo) {
+                    <span class="modelo-equipo">{{ eq.marcaModelo }}</span>
+                  }
+                </div>
+              </td>
+
+              <!-- ÁREA / UBICACIÓN -->
+              <td>
+                <div class="ubicacion-bloque">
+                  <span class="area-nombre">{{ eq.nombreArea }}</span>
+                  @if (eq.referenciaUbicacion) {
+                    <span class="referencia-texto">{{ eq.referenciaUbicacion }}</span>
+                  }
+                </div>
+              </td>
+
+              <!-- HOSTNAME / MAC -->
+              <td>
+                <div class="red-detalles">
+                  @if (eq.hostname) {
+                    <code class="codigo-hostname">{{ eq.hostname }}</code>
+                  } @else {
+                    <span class="sin-dato">—</span>
+                  }
+                  @if (eq.mac) {
+                    <span class="codigo-mac">{{ eq.mac }}</span>
+                  }
+                </div>
+              </td>
+
+              <!-- ESTADO -->
+              <td>
+                <span
+                  class="estado-pill"
+                  [class.estado-pill--servicio]="eq.estado === 'EN_SERVICIO' && eq.activo"
+                  [class.estado-pill--mantenimiento]="eq.estado === 'EN_MANTENIMIENTO'"
+                  [class.estado-pill--baja]="eq.estado === 'DE_BAJA' || !eq.activo"
+                >
+                  {{ eq.estado === 'EN_SERVICIO' ? 'En servicio' : (eq.estado === 'EN_MANTENIMIENTO' ? 'En mantenimiento' : 'De baja') }}
+                </span>
+              </td>
+
+              <!-- ACCIONES -->
+              <td class="td-acciones">
+                <button
+                  type="button"
+                  class="btn-editar"
+                  (click)="alEditar.emit(eq)"
+                  [attr.aria-label]="'Editar equipo ' + eq.codigoInventario"
+                  title="Editar equipo y su IP"
+                >
+                  <span class="material-symbols-outlined" aria-hidden="true">edit</span>
+                </button>
+              </td>
+            </tr>
+          }
+        </tbody>
+      </table>
+    </div>
+  }
+</div>

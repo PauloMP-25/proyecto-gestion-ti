@@ -1,0 +1,57 @@
+<div class="selector-areas">
+  <div class="selector-areas__cabecera">
+    <div class="selector-areas__titular">
+      <span class="material-symbols-outlined icono-titular" aria-hidden="true">domain</span>
+      <h2 class="selector-areas__titulo">Distribución de Red por Áreas Hospitalarias</h2>
+    </div>
+    <span class="selector-areas__ayuda">Seleccione un área para auditar sus direcciones IP y equipos conectados</span>
+  </div>
+
+  <div class="areas-grid" role="tablist" aria-label="Áreas del hospital">
+    <!-- Opción: Todas las áreas -->
+    <button
+      type="button"
+      class="area-card"
+      [class.area-card--activa]="areaSeleccionadaId() === null"
+      (click)="seleccionarArea(null)"
+      role="tab"
+      [attr.aria-selected]="areaSeleccionadaId() === null"
+    >
+      <div class="area-card__cabecera">
+        <span class="material-symbols-outlined area-card__icono" aria-hidden="true">hub</span>
+        <span class="area-card__badge">{{ conteoTotalIps() }} IPs en total</span>
+      </div>
+      <h3 class="area-card__nombre">Todas las áreas del hospital</h3>
+      <div class="area-card__pie">
+        <span><strong>{{ totalEquipos() }}</strong> equipos registrados</span>
+      </div>
+    </button>
+
+    <!-- Lista de áreas -->
+    @for (area of areas(); track area.id) {
+      @let stats = metricasArea(area.id);
+      <button
+        type="button"
+        class="area-card"
+        [class.area-card--activa]="areaSeleccionadaId() === area.id"
+        (click)="seleccionarArea(area.id)"
+        role="tab"
+        [attr.aria-selected]="areaSeleccionadaId() === area.id"
+      >
+        <div class="area-card__cabecera">
+          <span class="material-symbols-outlined area-card__icono" aria-hidden="true">apartment</span>
+          <span class="area-card__badge" [class.area-card__badge--activo]="stats.conIp > 0">
+            {{ stats.conIp }} {{ stats.conIp === 1 ? 'IP' : 'IPs' }}
+          </span>
+        </div>
+        <h3 class="area-card__nombre">{{ area.nombre }}</h3>
+        <div class="area-card__pie">
+          <span><strong>{{ stats.total }}</strong> {{ stats.total === 1 ? 'equipo' : 'equipos' }}</span>
+          @if (stats.sinIp > 0) {
+            <span class="area-card__sin-ip">{{ stats.sinIp }} sin IP</span>
+          }
+        </div>
+      </button>
+    }
+  </div>
+</div>

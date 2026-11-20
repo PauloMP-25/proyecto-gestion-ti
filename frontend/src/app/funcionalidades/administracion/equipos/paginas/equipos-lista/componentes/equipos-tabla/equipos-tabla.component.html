@@ -1,0 +1,92 @@
+<app-tabla-administracion
+  [columnas]="columnas"
+  tituloAccesible="Listado de computadoras e impresoras del hospital"
+  [cargando]="cargando()"
+  [vacio]="vacio()"
+  mensajeVacio="No se encontraron equipos registrados con los filtros aplicados."
+  placeholderBusqueda="Buscar por código, IP, área o ubicación..."
+  [(busqueda)]="busqueda"
+>
+  <div filtros>
+    <ng-content select="[filtros]"></ng-content>
+  </div>
+
+  <button
+    accion-vacio
+    type="button"
+    class="btn-nuevo btn-nuevo--sm"
+    (click)="alRegistrar.emit()"
+  >
+    <span class="material-symbols-outlined icono-btn" aria-hidden="true">add_to_queue</span>
+    <span>Registrar equipo</span>
+  </button>
+
+  <ng-template #celdaPersonalizada let-columna="columna" let-item="item">
+    @if (columna.campo === 'codigoInventario') {
+      <div class="celda-codigo">
+        <strong class="codigo-texto">{{ item.codigoInventario }}</strong>
+        @if (item.marcaModelo) {
+          <span class="modelo-texto">{{ item.marcaModelo }}</span>
+        }
+      </div>
+    } @else if (columna.campo === 'tipo') {
+      <span class="insignia-tipo" [class]="'insignia-tipo--' + item.tipo?.toLowerCase()">
+        {{ etiquetaTipo(item.tipo) }}
+      </span>
+    } @else if (columna.campo === 'nombreArea') {
+      <div class="celda-ubicacion">
+        <span class="area-texto">{{ item.nombreArea }}</span>
+        @if (item.referenciaUbicacion) {
+          <span class="referencia-texto">{{ item.referenciaUbicacion }}</span>
+        }
+      </div>
+    } @else if (columna.campo === 'ipVigente') {
+      @if (item.ipVigente) {
+        <app-etiqueta-ip [ip]="item.ipVigente"></app-etiqueta-ip>
+      } @else {
+        <span class="sin-ip" aria-label="Sin IP asignada">Sin IP</span>
+      }
+    } @else if (columna.campo === 'estado') {
+      <span
+        class="insignia-estado"
+        [class.insignia-estado--activo]="item.activo && item.estado === 'EN_SERVICIO'"
+        [class.insignia-estado--mantenimiento]="item.estado === 'EN_MANTENIMIENTO'"
+        [class.insignia-estado--inactivo]="item.estado === 'DE_BAJA' || !item.activo"
+      >
+        {{ etiquetaEstado(item.estado) }}
+      </span>
+    } @else if (columna.campo === 'acciones') {
+      <div class="celda-acciones">
+        <button
+          type="button"
+          class="btn-accion"
+          (click)="alEditar.emit(item)"
+          [attr.aria-label]="'Editar equipo ' + item.codigoInventario"
+          title="Editar equipo"
+        >
+          <span class="material-symbols-outlined" aria-hidden="true">edit</span>
+        </button>
+
+        <button
+          type="button"
+          class="btn-accion"
+          (click)="alCambiarEstado.emit(item)"
+          [attr.aria-label]="
+            item.estado === 'EN_SERVICIO'
+              ? 'Poner en mantenimiento a ' + item.codigoInventario
+              : 'Poner en servicio a ' + item.codigoInventario
+          "
+          [title]="
+            item.estado === 'EN_SERVICIO'
+              ? 'Poner en mantenimiento'
+              : 'Poner en servicio'
+          "
+        >
+          <span class="material-symbols-outlined" aria-hidden="true">
+            {{ item.estado === 'EN_SERVICIO' ? 'build' : 'check_circle' }}
+          </span>
+        </button>
+      </div>
+    }
+  </ng-template>
+</app-tabla-administracion>
