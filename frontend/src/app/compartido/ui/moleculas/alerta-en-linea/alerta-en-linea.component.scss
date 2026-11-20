@@ -1,0 +1,73 @@
+:host {
+  display: block;
+  width: 100%;
+}
+
+.alerta-en-linea {
+  display: flex;
+  align-items: flex-start;
+  gap: 0.75rem;
+  padding: 0.75rem 1rem;
+  border-radius: var(--hsmsi-radio-md, 8px);
+  border-width: 1px;
+  border-style: solid;
+  font-size: 0.875rem;
+  line-height: 1.4;
+
+  &__icono {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+    margin-top: 0.1rem;
+  }
+
+  &__contenido {
+    flex: 1;
+    min-width: 0;
+    color: var(--hsmsi-texto, #0f172a);
+  }
+
+  &__accion-cerrar {
+    flex-shrink: 0;
+    margin-top: -0.25rem;
+    margin-right: -0.25rem;
+  }
+
+  // Tonos
+  &--exito {
+    background-color: rgba(27, 94, 32, 0.08);
+    border-color: rgba(27, 94, 32, 0.25);
+
+    .alerta-en-linea__icono {
+      color: #1b5e20;
+    }
+  }
+
+  &--info {
+    background-color: rgba(2, 132, 199, 0.08);
+    border-color: rgba(2, 132, 199, 0.25);
+
+    .alerta-en-linea__icono {
+      color: #0284c7;
+    }
+  }
+
+  &--aviso {
+    background-color: rgba(217, 119, 6, 0.08);
+    border-color: rgba(217, 119, 6, 0.25);
+
+    .alerta-en-linea__icono {
+      color: #d97706;
+    }
+  }
+
+  &--peligro {
+    background-color: rgba(220, 38, 38, 0.08);
+    border-color: rgba(220, 38, 38, 0.25);
+
+    .alerta-en-linea__icono {
+      color: #dc2626;
+    }
+  }
+}

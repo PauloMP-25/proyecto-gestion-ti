@@ -1,0 +1,25 @@
+<div
+  class="alerta-en-linea alerta-en-linea--{{ tono() }}"
+  [attr.role]="roleAria()"
+  [attr.aria-live]="ariaLive()"
+>
+  <span class="alerta-en-linea__icono" aria-hidden="true">
+    <app-icono [nombre]="iconoEfectivo()" tamano="md" />
+  </span>
+
+  <div class="alerta-en-linea__contenido">
+    <ng-content />
+  </div>
+
+  @if (descartable()) {
+    <div class="alerta-en-linea__accion-cerrar">
+      <app-boton-icono
+        icono="close"
+        etiqueta="Cerrar aviso"
+        variante="fantasma"
+        tamano="sm"
+        (alHacerClick)="alDescartar.emit()"
+      />
+    </div>
+  }
+</div>
