@@ -2,6 +2,8 @@ import { environment } from '../../../environments/environment';
 
 export const API_ENDPOINTS = {
   tickets: `${environment.apiUrl}/tickets`,
+  reportarProblema: `${environment.apiUrl}/tickets/reportar`,
+  contextoAtencion: `${environment.apiUrl}/contexto-atencion`,
   contextoCliente: `${environment.apiUrl}/tickets/contexto-cliente`,
   misTickets: `${environment.apiUrl}/tickets/mis-tickets`,
   tecnicos: `${environment.apiUrl}/usuarios/tecnicos`,

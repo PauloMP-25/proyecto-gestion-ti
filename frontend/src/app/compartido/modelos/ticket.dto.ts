@@ -12,16 +12,6 @@ export interface CrearTicketDto {
   anexoContacto?: string;
 }
 
-export interface ContextoCliente {
-  ip: string;
-  hostname: string | null;
-  idArea: number | null;
-  area: string | null;
-  anexo: string | null;
-  idEquipo: number | null;
-  ipRegistrada: boolean;
-}
-
 export interface Tecnico {
   id: number;
   nombreCompleto: string;

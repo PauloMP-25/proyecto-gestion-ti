@@ -7,6 +7,10 @@ import { PortalAyudaApi } from './portal-ayuda.api';
 import { PortalAyudaMock } from './portal-ayuda.mock';
 import { PortalAyudaHttp } from './portal-ayuda.http';
 
+import { ContextoAtencionApi } from './contexto-atencion.api';
+import { ContextoAtencionMock } from './contexto-atencion.mock';
+import { ContextoAtencionHttp } from './contexto-atencion.http';
+
 export const PORTAL_PROVIDERS: Provider[] = [
   {
     provide: PortalSolicitudesApi,
@@ -15,5 +19,9 @@ export const PORTAL_PROVIDERS: Provider[] = [
   {
     provide: PortalAyudaApi,
     useClass: environment.usarMocks ? PortalAyudaMock : PortalAyudaHttp,
+  },
+  {
+    provide: ContextoAtencionApi,
+    useClass: environment.usarMocks ? ContextoAtencionMock : ContextoAtencionHttp,
   },
 ];

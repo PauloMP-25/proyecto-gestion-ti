@@ -65,8 +65,8 @@ public class ApiContractTest {
     }
 
     @Test
-    public void testContextoClienteExists() throws Exception {
-        mockMvc.perform(get("/api/tickets/contexto-cliente"))
+    public void testContextoAtencionExists() throws Exception {
+        mockMvc.perform(get("/api/contexto-atencion"))
                 .andExpect(result -> org.junit.jupiter.api.Assertions.assertNotEquals(404, result.getResponse().getStatus()));
     }
 

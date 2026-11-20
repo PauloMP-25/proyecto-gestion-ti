@@ -3,24 +3,36 @@ import { CommonModule } from '@angular/common';
 import { ActivatedRoute } from '@angular/router';
 import { FormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
-import { Categoria, ContextoCliente, CrearTicketDto } from '../../../../compartido/modelos/ticket.dto';
+import { Area, Categoria } from '../../../../compartido/modelos/ticket.dto';
 import { Impacto, TipoTicket, Urgencia } from '../../../../compartido/modelos/impacto-urgencia.enum';
 import { Ticket } from '../../../../compartido/modelos/ticket.model';
 import { TicketsService } from '../../../../compartido/servicios/tickets/tickets.service';
-import { ContextoClienteService } from '../../../../nucleo/servicios/contexto-cliente.service';
+import { ContextoAtencionApi } from '../../../portal-asistencial/servicios/contexto-atencion.api';
+import {
+  ContextoAtencion,
+  ObjetivoFalla,
+  ReportarProblemaSolicitud,
+} from '../../../portal-asistencial/modelos/contexto-atencion.model';
 import { PrioridadPreviaService } from '../../servicios/prioridad-previa.service';
 import { ContextoEquipoComponent } from '../../../../compartido/ui/moleculas/contexto-equipo/contexto-equipo.component';
+import {
+  SelectorObjetivoFallaComponent,
+  SeleccionObjetivo,
+} from '../../../../compartido/ui/moleculas/selector-objetivo-falla/selector-objetivo-falla.component';
 import { PrioridadInsigniaComponent } from '../../../../compartido/ui/atomos/prioridad-insignia/prioridad-insignia.component';
 import { EsqueletoComponent } from '../../../../compartido/ui/atomos/esqueleto/esqueleto.component';
 import { IconoComponent } from '../../../../compartido/ui/atomos/icono/icono.component';
 
-const CLAVE_BORRADOR = 'hsmsi_borrador_ticket';
+const CLAVE_BORRADOR = 'hsmsi_borrador_ticket_v2';
 
 interface BorradorTicket {
   tipo: TipoTicket;
   idCategoria: number | null;
   impacto: Impacto;
   urgencia: Urgencia;
+  objetivo: ObjetivoFalla;
+  idImpresora: number | null;
+  idAreaManual: number | null;
   titulo: string;
   descripcion: string;
   anexoContacto: string;
@@ -34,6 +46,7 @@ interface BorradorTicket {
     CommonModule,
     ReactiveFormsModule,
     ContextoEquipoComponent,
+    SelectorObjetivoFallaComponent,
     PrioridadInsigniaComponent,
     EsqueletoComponent,
     IconoComponent,
@@ -45,7 +58,7 @@ interface BorradorTicket {
 export class SolicitudFormularioComponent implements OnInit {
   private fb = inject(FormBuilder);
   private ticketsService = inject(TicketsService);
-  private contextoService = inject(ContextoClienteService);
+  private contextoApi = inject(ContextoAtencionApi);
   private prioridadPrevia = inject(PrioridadPreviaService);
   private destroyRef = inject(DestroyRef);
   private route = inject(ActivatedRoute);
@@ -56,15 +69,27 @@ export class SolicitudFormularioComponent implements OnInit {
   readonly tipo = signal<TipoTicket>('INCIDENTE');
   readonly impacto = signal<Impacto>('ALTO');
   readonly urgencia = signal<Urgencia>('ALTA');
-  readonly contexto = signal<ContextoCliente | null>(null);
+  readonly contexto = signal<ContextoAtencion | null>(null);
+  readonly objetivo = signal<ObjetivoFalla>('EQUIPO_ACTUAL');
+  readonly idImpresora = signal<number | null>(null);
+  readonly idAreaManual = signal<number | null>(null);
+
   readonly categorias = signal<Categoria[]>([]);
+  readonly areas = signal<Area[]>([]);
   readonly guardando = signal(false);
+  readonly errorServidor = signal<string | null>(null);
   readonly horaBorrador = signal<string | null>(null);
 
   readonly previa = computed(() => this.prioridadPrevia.calcular(this.impacto(), this.urgencia()));
 
+  readonly esNoDetectado = computed(() => {
+    const c = this.contexto();
+    return c != null && c.estadoDeteccion !== 'DETECTADO';
+  });
+
   readonly formulario = this.fb.group({
-    idCategoria: this.fb.control<number | null>(null, Validators.required),
+    idCategoria: this.fb.control<number | null>(null),
+    idAreaManual: this.fb.control<number | null>(null),
     titulo: this.fb.control('', [Validators.required, Validators.maxLength(150)]),
     descripcion: this.fb.control('', [Validators.required, Validators.minLength(15), Validators.maxLength(2000)]),
     anexoContacto: this.fb.control('', Validators.maxLength(10)),
@@ -83,21 +108,52 @@ export class SolicitudFormularioComponent implements OnInit {
     const catParam = this.route.snapshot.queryParamMap.get('categoria');
     const catIdUrl = catParam ? parseInt(catParam, 10) : null;
 
-    this.contextoService.obtener().pipe(takeUntilDestroyed(this.destroyRef)).subscribe(c => {
-      this.contexto.set(c);
-      if (!this.formulario.controls.anexoContacto.value && c.anexo) {
-        this.formulario.controls.anexoContacto.setValue(c.anexo);
-      }
-    });
+    this.contextoApi
+      .obtenerContexto()
+      .pipe(takeUntilDestroyed(this.destroyRef))
+      .subscribe({
+        next: c => {
+          this.contexto.set(c);
 
-    this.ticketsService.categorias().pipe(takeUntilDestroyed(this.destroyRef)).subscribe(lista => {
-      this.categorias.set(lista);
-      if (catIdUrl && !isNaN(catIdUrl) && lista.some(c => c.id === catIdUrl)) {
-        this.formulario.controls.idCategoria.setValue(catIdUrl);
-      } else if (this.formulario.controls.idCategoria.value == null && lista.length > 0) {
-        this.formulario.controls.idCategoria.setValue(lista[0].id);
-      }
-    });
+          if (c.estadoDeteccion !== 'DETECTADO') {
+            this.objetivo.set('OTRO');
+            if (c.persona?.areaAdscrita?.id && !this.formulario.controls.idAreaManual.value) {
+              this.formulario.controls.idAreaManual.setValue(c.persona.areaAdscrita.id);
+              this.idAreaManual.set(c.persona.areaAdscrita.id);
+            }
+          }
+
+          if (!this.formulario.controls.anexoContacto.value && c.area?.anexo) {
+            this.formulario.controls.anexoContacto.setValue(c.area.anexo);
+          }
+        },
+        error: () => {
+          this.objetivo.set('OTRO');
+        },
+      });
+
+    this.ticketsService
+      .areas()
+      .pipe(takeUntilDestroyed(this.destroyRef))
+      .subscribe(lista => {
+        this.areas.set(lista);
+      });
+
+    this.ticketsService
+      .categorias()
+      .pipe(takeUntilDestroyed(this.destroyRef))
+      .subscribe(lista => {
+        this.categorias.set(lista);
+        if (catIdUrl && !isNaN(catIdUrl) && lista.some(c => c.id === catIdUrl)) {
+          this.formulario.controls.idCategoria.setValue(catIdUrl);
+        } else if (this.formulario.controls.idCategoria.value == null && lista.length > 0) {
+          this.formulario.controls.idCategoria.setValue(lista[0].id);
+        }
+      });
+
+    this.formulario.controls.idAreaManual.valueChanges
+      .pipe(takeUntilDestroyed(this.destroyRef))
+      .subscribe(val => this.idAreaManual.set(val));
   }
 
   seleccionarTipo(tipo: TipoTicket): void {
@@ -112,30 +168,51 @@ export class SolicitudFormularioComponent implements OnInit {
     this.urgencia.set(urgencia);
   }
 
+  alCambiarObjetivo(seleccion: SeleccionObjetivo): void {
+    this.objetivo.set(seleccion.objetivo);
+    this.idImpresora.set(seleccion.idImpresora ?? null);
+  }
+
   enviar(): void {
     if (this.guardando()) return;
+    this.errorServidor.set(null);
+
     if (this.formulario.invalid) {
       this.formulario.markAllAsTouched();
       return;
     }
+
     this.guardando.set(true);
     const valores = this.formulario.getRawValue();
-    const dto: CrearTicketDto = {
+
+    const solicitud: ReportarProblemaSolicitud = {
       tipo: this.tipo(),
-      idCategoria: valores.idCategoria!,
+      asunto: valores.titulo!.trim(),
+      descripcion: valores.descripcion!.trim(),
       impacto: this.impacto(),
       urgencia: this.urgencia(),
-      titulo: valores.titulo!.trim(),
-      descripcion: valores.descripcion!.trim(),
-      anexoContacto: valores.anexoContacto!.trim() || undefined,
+      objetivo: this.objetivo(),
+      idImpresora: this.idImpresora(),
+      idAreaManual: this.esNoDetectado() ? valores.idAreaManual : null,
     };
-    this.ticketsService.crear(dto).pipe(takeUntilDestroyed(this.destroyRef)).subscribe({
-      next: ticket => {
-        localStorage.removeItem(CLAVE_BORRADOR);
-        this.alRegistrarExitoso.emit(ticket);
-      },
-      error: () => this.guardando.set(false),
-    });
+
+    this.contextoApi
+      .reportarProblema(solicitud)
+      .pipe(takeUntilDestroyed(this.destroyRef))
+      .subscribe({
+        next: ticket => {
+          localStorage.removeItem(CLAVE_BORRADOR);
+          this.alRegistrarExitoso.emit(ticket);
+        },
+        error: err => {
+          this.guardando.set(false);
+          const msg =
+            err?.error?.message ??
+            err?.message ??
+            'Ocurrió un error al registrar el ticket. Por favor intente nuevamente.';
+          this.errorServidor.set(msg);
+        },
+      });
   }
 
   cancelar(): void {
@@ -149,6 +226,9 @@ export class SolicitudFormularioComponent implements OnInit {
       idCategoria: v.idCategoria,
       impacto: this.impacto(),
       urgencia: this.urgencia(),
+      objetivo: this.objetivo(),
+      idImpresora: this.idImpresora(),
+      idAreaManual: v.idAreaManual,
       titulo: v.titulo ?? '',
       descripcion: v.descripcion ?? '',
       anexoContacto: v.anexoContacto ?? '',
@@ -176,8 +256,11 @@ export class SolicitudFormularioComponent implements OnInit {
       this.tipo.set(b.tipo);
       this.impacto.set(b.impacto);
       this.urgencia.set(b.urgencia);
+      if (b.objetivo) this.objetivo.set(b.objetivo);
+      if (b.idImpresora) this.idImpresora.set(b.idImpresora);
       this.formulario.patchValue({
         idCategoria: b.idCategoria,
+        idAreaManual: b.idAreaManual,
         titulo: b.titulo,
         descripcion: b.descripcion,
         anexoContacto: b.anexoContacto,

@@ -1,4 +1,4 @@
-import { Area, Categoria, ContextoCliente, Tecnico } from '../../../modelos/ticket.dto';
+import { Area, Categoria, Tecnico } from '../../../modelos/ticket.dto';
 import { Ticket, TicketResumen } from '../../../modelos/ticket.model';
 import { EstadoTicket } from '../../../modelos/estado-ticket.enum';
 import { EstadoSLA } from '../../../modelos/estado-sla.enum';
@@ -31,7 +31,7 @@ export const TECNICOS_MOCK: Tecnico[] = [
   { id: 2, nombreCompleto: 'Ing. Carlos Mendoza', rol: RolUsuario.ADMINISTRADOR, nivelSoporte: NivelSoporte.N2, ticketsAbiertos: 1 },
 ];
 
-export const CONTEXTO_MOCK: ContextoCliente = {
+export const CONTEXTO_MOCK = {
   ip: '192.168.10.24',
   hostname: 'PC-ADM-03',
   idArea: 2,
@@ -41,8 +41,8 @@ export const CONTEXTO_MOCK: ContextoCliente = {
   ipRegistrada: true,
 };
 
-// Para probar el aviso de IP no registrada, usar este contexto en TicketsMockService.contextoCliente()
-export const CONTEXTO_NO_REGISTRADO_MOCK: ContextoCliente = {
+// Para probar el aviso de IP no registrada
+export const CONTEXTO_NO_REGISTRADO_MOCK = {
   ip: '192.168.99.120',
   hostname: null,
   idArea: null,

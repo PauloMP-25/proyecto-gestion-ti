@@ -213,6 +213,17 @@
   --comp-cmdb-vlan-40: var(--color-categoria-6);
   --comp-cmdb-vlan-50: var(--color-text-muted);
 
+  /* ═══════════════ NIVEL 4 · ESPECÍFICOS  ═══════════════ */
+  --comp-contexto-atencion-bg: var(--color-primary-light);
+  --comp-contexto-atencion-borde: var(--color-border-subtle);
+  --comp-objetivo-falla-seleccion-bg: var(--color-secondary-light);
+  --comp-objetivo-falla-seleccion-borde: var(--color-secondary-base);
+  --comp-etiqueta-ip-fuente: var(--font-family-mono);
+  --comp-insignia-grado-bg: var(--color-surface-sunken);
+  --comp-insignia-grado-texto: var(--color-text-secondary);
+  --comp-ip-disponible-color: var(--color-exito-text);
+  --comp-ip-ocupada-color: var(--color-error-text);
+
   /* ═══════════════ ALIAS DEPRECADOS (nombres previos) ═══════════════ */
   --boton-altura: var(--comp-boton-altura);
   --boton-altura-compacto: var(--comp-boton-altura);

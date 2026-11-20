@@ -1,32 +1,78 @@
 <div class="tarjeta-contexto">
   <div class="tarjeta-contexto__header">
-    <app-icono nombre="lan" tamano="sm"></app-icono>
-    <h4 class="tarjeta-contexto__titulo">Equipo detectado por la red del hospital</h4>
+    <app-icono nombre="location_on" tamano="sm"></app-icono>
+    <h4 class="tarjeta-contexto__titulo">Detectamos dónde está</h4>
   </div>
 
-  @if (!contexto().ipRegistrada) {
-    <p class="aviso-no-registrado" role="note">
-      <app-icono nombre="info" tamano="xs"></app-icono>
-      <span>No se identificó su equipo. El técnico lo vinculará al atenderlo.</span>
-    </p>
+  @if (esNoRegistrado()) {
+    <div class="aviso-contexto aviso-contexto--alerta" role="note">
+      <app-icono nombre="info" tamano="sm"></app-icono>
+      <div class="aviso-contexto__contenido">
+        <strong>No reconocimos esta computadora</strong>
+        <p>Esta computadora aún no está registrada en la red. El equipo de soporte técnico la identificará al atender su solicitud.</p>
+      </div>
+    </div>
   }
 
-  <dl class="grid-detalles">
-    <div class="detalle">
-      <dt>Nombre del equipo (Hostname)</dt>
-      <dd><app-icono nombre="computer" tamano="xs"></app-icono> {{ contexto().hostname ?? 'No identificado' }}</dd>
+  @if (personaEnOtraArea()) {
+    <div class="aviso-contexto aviso-contexto--info" role="note">
+      <app-icono nombre="swap_horiz" tamano="sm"></app-icono>
+      <div class="aviso-contexto__contenido">
+        <span>Está reportando desde <strong>{{ contexto().area?.nombre }}</strong>; su área habitual es <strong>{{ contexto().persona?.areaAdscrita?.nombre }}</strong>.</span>
+      </div>
     </div>
-    <div class="detalle">
-      <dt>Dirección IP local</dt>
-      <dd><app-icono nombre="dns" tamano="xs"></app-icono> <code>{{ contexto().ip }}</code></dd>
+  }
+
+  <div class="filas-contexto">
+    @if (contexto().persona; as p) {
+      <div class="fila-contexto">
+        <app-icono nombre="person" tamano="sm"></app-icono>
+        <span class="fila-contexto__texto">
+          <strong>{{ p.nombreVisible }}</strong>
+        </span>
+      </div>
+    }
+
+    @if (esDetectado() && textoEquipo()) {
+      <div class="fila-contexto">
+        <app-icono nombre="computer" tamano="sm"></app-icono>
+        <span class="fila-contexto__texto">{{ textoEquipo() }}</span>
+      </div>
+    }
+
+    <div class="fila-contexto">
+      <app-icono nombre="local_hospital" tamano="sm"></app-icono>
+      <span class="fila-contexto__texto">
+        {{ textoUbicacion() }}
+        @if (contexto().area?.anexo) {
+          <span class="anexo"> · Anexo {{ contexto().area?.anexo }}</span>
+        }
+      </span>
     </div>
-    <div class="detalle">
-      <dt>Área / Servicio</dt>
-      <dd><app-icono nombre="local_hospital" tamano="xs"></app-icono> {{ contexto().area ?? 'Por asignar' }}</dd>
+
+    <div class="fila-contexto fila-contexto--secundaria">
+      <app-icono nombre="lan" tamano="xs"></app-icono>
+      <span class="fila-contexto__texto">IP detectada: <code>{{ contexto().ipOrigen }}</code></span>
     </div>
-    <div class="detalle">
-      <dt>Anexo telefónico</dt>
-      <dd><app-icono nombre="call" tamano="xs"></app-icono> {{ contexto().anexo ?? '—' }}</dd>
-    </div>
-  </dl>
+  </div>
+
+  <div class="tarjeta-contexto__pie">
+    <button
+      type="button"
+      class="btn-ayuda-contexto"
+      (click)="alternarAyuda()"
+      [attr.aria-expanded]="mostrarAyudaDiferente()"
+    >
+      <app-icono nombre="help_outline" tamano="xs"></app-icono>
+      <span>¿No es correcto?</span>
+    </button>
+
+    @if (mostrarAyudaDiferente()) {
+      <div class="ayuda-diferente" role="region" aria-label="Ayuda sobre ubicación">
+        <p>
+          Si no se encuentra en esta ubicación o la computadora no corresponde a su puesto, seleccione la opción <strong>«Otro equipo o no estoy seguro(a)»</strong> en la sección siguiente y mencione su ubicación en la descripción del problema.
+        </p>
+      </div>
+    }
+  </div>
 </div>

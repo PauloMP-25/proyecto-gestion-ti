@@ -1,5 +1,12 @@
 <form [formGroup]="formulario" (ngSubmit)="enviar()" class="formulario-ticket" novalidate>
 
+  @if (errorServidor(); as err) {
+    <div class="mensaje-error-servidor" role="alert">
+      <app-icono nombre="error" tamano="sm"></app-icono>
+      <span>{{ err }}</span>
+    </div>
+  }
+
   <!-- 1. Tipo de ticket -->
   <section class="seccion-form" aria-label="Tipo de ticket">
     <span class="label-seccion" id="label-tipo">¿Qué desea registrar?</span>
@@ -32,21 +39,51 @@
     }
   </section>
 
+  <!-- 2.5 ¿Dónde está la falla? Selector de objetivo -->
+  <section class="seccion-form" aria-label="Objetivo de la falla">
+    <app-selector-objetivo-falla
+      [contexto]="contexto()"
+      [objetivo]="objetivo()"
+      [idImpresora]="idImpresora()"
+      (seleccionCambiada)="alCambiarObjetivo($event)"
+    ></app-selector-objetivo-falla>
+  </section>
+
+  <!-- Si no se detectó el equipo por IP, permitir seleccionar el área manualmente -->
+  @if (esNoDetectado()) {
+    <section class="seccion-form" aria-label="Área hospitalaria">
+      <div class="campo-grupo">
+        <label for="campo-area-manual" class="label-campo">
+          Área o servicio donde se encuentra el equipo <span class="asterisco">*</span>
+        </label>
+        <select
+          id="campo-area-manual"
+          formControlName="idAreaManual"
+          class="input-texto"
+          aria-describedby="ayuda-area-manual"
+        >
+          <option [ngValue]="null" disabled>Seleccione el área</option>
+          @for (a of areas(); track a.id) {
+            <option [ngValue]="a.id">{{ a.nombre }}</option>
+          }
+        </select>
+        <span class="texto-ayuda" id="ayuda-area-manual">
+          Al no reconocer la computadora por la red, indique en qué área hospitalaria se encuentra.
+        </span>
+      </div>
+    </section>
+  }
+
   <!-- 3. Categoría -->
   <section class="seccion-form">
     <div class="campo-grupo">
-      <label for="campo-categoria" class="label-campo">Categoría <span class="asterisco">*</span></label>
-      <select id="campo-categoria" formControlName="idCategoria" class="input-texto"
-        [attr.aria-invalid]="formulario.controls.idCategoria.touched && formulario.controls.idCategoria.invalid"
-        aria-describedby="error-categoria">
-        <option [ngValue]="null" disabled>Seleccione una categoría</option>
+      <label for="campo-categoria" class="label-campo">Categoría</label>
+      <select id="campo-categoria" formControlName="idCategoria" class="input-texto">
+        <option [ngValue]="null">General / Sin categoría específica</option>
         @for (cat of categorias(); track cat.id) {
           <option [ngValue]="cat.id">{{ cat.nombre }}</option>
         }
       </select>
-      @if (formulario.controls.idCategoria.touched && formulario.controls.idCategoria.hasError('required')) {
-        <span class="mensaje-error" id="error-categoria">Seleccione la categoría del servicio afectado.</span>
-      }
     </div>
   </section>
 
@@ -96,26 +133,26 @@
   <section class="seccion-form" aria-label="Detalle del ticket">
     <div class="campo-grupo">
       <div class="campo-header">
-        <label for="campo-titulo" class="label-campo">Título <span class="asterisco">*</span></label>
-        <span class="contador-caracteres">{{ formulario.controls.titulo.value?.length }}/150</span>
+        <label for="campo-titulo" class="label-campo">Asunto o título <span class="asterisco">*</span></label>
+        <span class="contador-caracteres">{{ formulario.controls.titulo.value?.length || 0 }}/150</span>
       </div>
       <input id="campo-titulo" type="text" formControlName="titulo" class="input-texto" maxlength="150"
-        placeholder="Ej. Sin red en la estación de triaje"
+        placeholder="Ej. Impresora atascada en ventanilla de Admisión"
         [class.input--error]="formulario.controls.titulo.touched && formulario.controls.titulo.invalid"
         [attr.aria-invalid]="formulario.controls.titulo.touched && formulario.controls.titulo.invalid"
         aria-describedby="error-titulo" />
       @if (formulario.controls.titulo.touched && formulario.controls.titulo.hasError('required')) {
-        <span class="mensaje-error" id="error-titulo">El título es obligatorio.</span>
+        <span class="mensaje-error" id="error-titulo">El asunto es obligatorio.</span>
       }
       @if (formulario.controls.titulo.touched && formulario.controls.titulo.hasError('maxlength')) {
-        <span class="mensaje-error" id="error-titulo">El título no puede superar los 150 caracteres.</span>
+        <span class="mensaje-error" id="error-titulo">El asunto no puede superar los 150 caracteres.</span>
       }
     </div>
 
     <div class="campo-grupo">
       <div class="campo-header">
-        <label for="campo-descripcion" class="label-campo">Descripción <span class="asterisco">*</span></label>
-        <span class="contador-caracteres">{{ formulario.controls.descripcion.value?.length }}/2000</span>
+        <label for="campo-descripcion" class="label-campo">Descripción detallada <span class="asterisco">*</span></label>
+        <span class="contador-caracteres">{{ formulario.controls.descripcion.value?.length || 0 }}/2000</span>
       </div>
       <textarea id="campo-descripcion" formControlName="descripcion" rows="4" class="input-texto input-textarea" maxlength="2000"
         placeholder="Describa qué ocurre, desde cuándo y cualquier mensaje de error en pantalla..."
@@ -136,7 +173,7 @@
     <div class="campo-grupo">
       <label for="campo-anexo" class="label-campo">Anexo de contacto (opcional)</label>
       <input id="campo-anexo" type="text" formControlName="anexoContacto" class="input-texto" maxlength="10"
-        placeholder="Ej. 2314" aria-describedby="ayuda-anexo" />
+        placeholder="Ej. 105" aria-describedby="ayuda-anexo" />
       <span class="texto-ayuda" id="ayuda-anexo">Puede corregir el anexo detectado si reporta desde otra estación.</span>
     </div>
   </section>

@@ -73,13 +73,6 @@ public class TicketController {
         return ResponseEntity.ok(ticketService.getHistorialTicket(id));
     }
 
-    @Deprecated
-    @GetMapping("/contexto-cliente")
-    public ResponseEntity<Map<String, Object>> getContextoCliente(HttpServletRequest httpRequest) {
-        String clientIp = resolutorIpCliente.resolverIp(httpRequest);
-        return ResponseEntity.ok(ticketService.getContextoCliente(clientIp));
-    }
-
     @PutMapping("/{id}/asignar")
     public ResponseEntity<TicketResponse> assignTicket(
             @PathVariable Integer id,

@@ -1,7 +1,7 @@
 import { Injectable, inject } from '@angular/core';
 import { Observable, delay, of, throwError } from 'rxjs';
 import { AuthService } from '../../../nucleo/auth/auth.service';
-import { Area, Categoria, ContextoCliente, CrearTicketDto, Tecnico } from '../../modelos/ticket.dto';
+import { Area, Categoria, CrearTicketDto, Tecnico } from '../../modelos/ticket.dto';
 import { Ticket, TicketResumen } from '../../modelos/ticket.model';
 import { TicketFiltros, Paginacion } from '../../modelos/ticket-filtros.model';
 import { Pagina } from '../../modelos/pagina.model';
@@ -31,10 +31,6 @@ function errorMock(status: number, mensaje: string): Observable<never> {
 export class TicketsMockService extends TicketsService {
   private authService = inject(AuthService);
   private tickets: Ticket[] = structuredClone(TICKETS_MOCK);
-
-  contextoCliente(): Observable<ContextoCliente> {
-    return of(CONTEXTO_MOCK).pipe(delay(RETARDO_MS));
-  }
 
   crear(dto: CrearTicketDto): Observable<Ticket> {
     const usuario = this.authService.usuarioActual();

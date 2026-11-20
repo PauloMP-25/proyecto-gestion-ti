@@ -2,7 +2,7 @@ import { Injectable, inject } from '@angular/core';
 import { HttpClient, HttpParams } from '@angular/common/http';
 import { Observable, map } from 'rxjs';
 import { API_ENDPOINTS } from '../../../nucleo/config/api-endpoints';
-import { Area, Categoria, ContextoCliente, CrearTicketDto, Tecnico } from '../../modelos/ticket.dto';
+import { Area, Categoria, CrearTicketDto, Tecnico } from '../../modelos/ticket.dto';
 import { Ticket, TicketResumen } from '../../modelos/ticket.model';
 import { TicketFiltros, Paginacion } from '../../modelos/ticket-filtros.model';
 import { Pagina } from '../../modelos/pagina.model';
@@ -13,10 +13,6 @@ import { AccionEstado, TicketsService } from './tickets.service';
 export class TicketsHttpService extends TicketsService {
   private http = inject(HttpClient);
   private mapper = inject(TicketMapper);
-
-  contextoCliente(): Observable<ContextoCliente> {
-    return this.http.get<ContextoCliente>(API_ENDPOINTS.contextoCliente);
-  }
 
   crear(dto: CrearTicketDto): Observable<Ticket> {
     return this.http.post(API_ENDPOINTS.tickets, dto).pipe(map(r => this.mapper.detalle(r)));

@@ -4,7 +4,7 @@ import { ActivatedRoute, RouterLink } from '@angular/router';
 import { Observable, of, catchError, switchMap } from 'rxjs';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { Ticket } from '../../../../compartido/modelos/ticket.model';
-import { ContextoCliente } from '../../../../compartido/modelos/ticket.dto';
+import { ContextoAtencion } from '../../../portal-asistencial/modelos/contexto-atencion.model';
 import { EstadoTicket } from '../../../../compartido/modelos/estado-ticket.enum';
 import { RolUsuario } from '../../../../nucleo/modelos/rol.enum';
 import { AccionEstado, TicketsService } from '../../../../compartido/servicios/tickets/tickets.service';
@@ -116,17 +116,37 @@ export class IncidenteDetalleComponent implements OnInit {
     }
   });
 
-  readonly contexto = computed<ContextoCliente | null>(() => {
+  readonly contexto = computed<ContextoAtencion | null>(() => {
     const t = this.ticket();
     if (!t) return null;
     return {
-      ip: t.ipOrigen ?? '',
-      hostname: t.equipo?.hostname ?? null,
-      idArea: t.area.id,
-      area: t.area.nombre,
-      anexo: t.anexoContacto,
-      idEquipo: t.equipo?.id ?? null,
-      ipRegistrada: !!t.equipo,
+      estadoDeteccion: t.equipo ? 'DETECTADO' : 'IP_SIN_EQUIPO',
+      ipOrigen: t.ipOrigen ?? '',
+      equipo: t.equipo
+        ? {
+            id: t.equipo.id,
+            codigoInventario: t.equipo.hostname ?? `EQ-${t.equipo.id}`,
+            nombre: t.equipo.hostname ?? 'Equipo',
+            tipo: 'COMPUTADORA',
+            referenciaUbicacion: null,
+          }
+        : null,
+      area: {
+        id: t.area.id,
+        nombre: t.area.nombre,
+        ubicacionLegible: null,
+        referenciaUbicacion: null,
+        anexo: t.anexoContacto,
+        encargado: null,
+      },
+      impresorasArea: [],
+      persona: {
+        id: t.solicitante.id,
+        nombreVisible: t.solicitante.nombre,
+        grado: null,
+        areaAdscrita: { id: t.area.id, nombre: t.area.nombre },
+      },
+      personaEnOtraArea: false,
     };
   });
 
