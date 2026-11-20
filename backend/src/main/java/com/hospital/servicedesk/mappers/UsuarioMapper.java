@@ -8,6 +8,10 @@ public final class UsuarioMapper {
     private UsuarioMapper() {}
 
     public static UsuarioRespuesta toResponse(Usuario usuario) {
+        return toResponse(usuario, null);
+    }
+
+    public static UsuarioRespuesta toResponse(Usuario usuario, String contrasenaTemporal) {
         if (usuario == null) {
             return null;
         }
@@ -17,19 +21,26 @@ public final class UsuarioMapper {
 
         Integer idArea = usuario.getArea() != null ? usuario.getArea().getIdArea() : null;
         String areaNombre = usuario.getArea() != null ? usuario.getArea().getNombre() : null;
+        String grado = usuario.getGradoProfesional() != null ? usuario.getGradoProfesional().name() : "SIN_GRADO";
 
         return new UsuarioRespuesta(
             usuario.getIdUsuario(),
             usuario.getNombres(),
             usuario.getApellidos(),
             nombreCompleto,
+            usuario.getNombreVisible(),
+            usuario.getNombreUsuario(),
+            grado,
             usuario.getCorreo(),
             usuario.getRol(),
             usuario.getNivelSoporte(),
             idArea,
             areaNombre,
+            usuario.getDebeCambiarContrasena(),
+            usuario.getUltimoAcceso(),
             usuario.getActivo(),
-            usuario.getFechaCreacion()
+            usuario.getFechaCreacion(),
+            contrasenaTemporal
         );
     }
 }

@@ -1,9 +1,12 @@
 package com.hospital.servicedesk.controllers;
 
+import com.hospital.servicedesk.dtos.PaginaRespuesta;
 import com.hospital.servicedesk.dtos.UsuarioDTOs.CambioContrasenaRequest;
+import com.hospital.servicedesk.dtos.UsuarioDTOs.RestablecerContrasenaRespuesta;
 import com.hospital.servicedesk.dtos.UsuarioDTOs.UsuarioActualizarRequest;
 import com.hospital.servicedesk.dtos.UsuarioDTOs.UsuarioRegistroRequest;
 import com.hospital.servicedesk.dtos.UsuarioDTOs.UsuarioRespuesta;
+import com.hospital.servicedesk.exceptions.NoAutorizadoException;
 import com.hospital.servicedesk.services.UsuarioService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
@@ -30,11 +33,17 @@ public class UsuarioController {
 
     @GetMapping("/usuarios")
     @PreAuthorize("hasRole('ADMINISTRADOR')")
-    public ResponseEntity<com.hospital.servicedesk.dtos.PaginaRespuesta<UsuarioRespuesta>> getAllUsuarios(
+    public ResponseEntity<PaginaRespuesta<UsuarioRespuesta>> getAllUsuarios(
             @RequestParam(defaultValue = "0") int pagina,
             @RequestParam(defaultValue = "10") int tamano,
             @RequestParam(required = false) String busqueda) {
         return ResponseEntity.ok(usuarioService.getUsuariosPaginados(pagina, tamano, busqueda));
+    }
+
+    @GetMapping("/usuarios/{id}")
+    @PreAuthorize("hasRole('ADMINISTRADOR')")
+    public ResponseEntity<UsuarioRespuesta> getUsuarioById(@PathVariable Integer id) {
+        return ResponseEntity.ok(usuarioService.getUsuarioById(id));
     }
 
     @PostMapping("/usuarios")
@@ -60,13 +69,18 @@ public class UsuarioController {
         return ResponseEntity.ok(usuario);
     }
 
-    @PutMapping("/auth/cambiar-contrasena")
-    public ResponseEntity<?> cambiarContrasena(
+    @PostMapping("/usuarios/{id}/restablecer-contrasena")
+    @PreAuthorize("hasRole('ADMINISTRADOR')")
+    public ResponseEntity<RestablecerContrasenaRespuesta> restablecerContrasena(@PathVariable Integer id) {
+        return ResponseEntity.ok(usuarioService.restablecerContrasena(id));
+    }
+
+    @PutMapping({"/cuenta/contrasena", "/auth/cambiar-contrasena"})
+    public ResponseEntity<Map<String, String>> cambiarContrasena(
             @Valid @RequestBody CambioContrasenaRequest request,
             Authentication authentication) {
         if (authentication == null || !authentication.isAuthenticated()) {
-            return ResponseEntity.status(HttpStatus.UNAUTHORIZED)
-                    .body(Map.of("message", "Debe iniciar sesión para cambiar su contraseña"));
+            throw new NoAutorizadoException("Debe iniciar sesión para cambiar su contraseña");
         }
         String email = authentication.getName();
         usuarioService.cambiarContrasena(email, request.contrasenaActual(), request.nuevaContrasena());

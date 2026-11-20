@@ -19,13 +19,19 @@ public final class UsuarioDTOs {
         String nombres,
         String apellidos,
         String nombreCompleto,
+        String nombreVisible,
+        String nombreUsuario,
+        String gradoProfesional,
         String correo,
         String rol,
         String nivelSoporte,
         Integer idArea,
         String areaNombre,
+        Boolean debeCambiarContrasena,
+        LocalDateTime ultimoAcceso,
         Boolean activo,
-        LocalDateTime fechaCreacion
+        LocalDateTime fechaCreacion,
+        String contrasenaTemporal
     ) {}
 
     /**
@@ -44,6 +50,11 @@ public final class UsuarioDTOs {
         @Email(message = "Formato de correo electrónico no válido")
         @Size(max = 100, message = "El correo no puede superar 100 caracteres")
         String correo,
+
+        @Size(max = 50, message = "El nombre de usuario no puede superar 50 caracteres")
+        String nombreUsuario,
+
+        String gradoProfesional,
 
         String contrasena,
 
@@ -70,6 +81,11 @@ public final class UsuarioDTOs {
         @Size(max = 100, message = "El correo no puede superar 100 caracteres")
         String correo,
 
+        @Size(max = 50, message = "El nombre de usuario no puede superar 50 caracteres")
+        String nombreUsuario,
+
+        String gradoProfesional,
+
         String rol,
         String nivelSoporte,
         Integer idArea,
@@ -85,5 +101,14 @@ public final class UsuarioDTOs {
         @NotBlank(message = "La nueva contraseña es obligatoria")
         @Size(min = 6, max = 50, message = "La nueva contraseña debe tener entre 6 y 50 caracteres")
         String nuevaContrasena
+    ) {}
+
+    /**
+     * Respuesta tras restablecimiento administrativo de contraseña.
+     */
+    public record RestablecerContrasenaRespuesta(
+        String correo,
+        String contrasenaTemporal,
+        String mensaje
     ) {}
 }
