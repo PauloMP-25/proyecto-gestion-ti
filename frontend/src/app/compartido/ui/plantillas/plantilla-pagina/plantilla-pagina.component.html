@@ -1,0 +1,24 @@
+<div
+  class="plantilla-pagina plantilla-pagina--ancho-{{ anchoMaximo() }}"
+  [class.plantilla-pagina--sin-padding]="!conPadding()"
+>
+  <!-- Ranura de cabecera de página (app-cabecera-pagina) -->
+  <header class="plantilla-pagina__cabecera">
+    <ng-content select="app-cabecera-pagina,[cabecera]" />
+  </header>
+
+  <!-- Ranura opcional de pestañas (app-barra-pestanas) -->
+  <div class="plantilla-pagina__pestanas">
+    <ng-content select="app-barra-pestanas,[pestanas]" />
+  </div>
+
+  <!-- Ranura opcional de alertas en línea (app-alerta-en-linea) -->
+  <div class="plantilla-pagina__avisos">
+    <ng-content select="app-alerta-en-linea,[avisos]" />
+  </div>
+
+  <!-- Contenido principal de la vista -->
+  <main class="plantilla-pagina__cuerpo">
+    <ng-content />
+  </main>
+</div>

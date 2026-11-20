@@ -1,0 +1,59 @@
+@use 'estilos/mixins/responsive' as r;
+
+:host {
+  display: block;
+  width: 100%;
+}
+
+.plantilla-pagina {
+  width: 100%;
+  margin-left: auto;
+  margin-right: auto;
+  display: flex;
+  flex-direction: column;
+  gap: 1.25rem;
+  padding: 1rem;
+
+  @include r.desde(sm) {
+    padding: 1.5rem;
+  }
+
+  @include r.desde(lg) {
+    padding: 2rem;
+  }
+
+  &--sin-padding {
+    padding: 0 !important;
+  }
+
+  // Anchos máximos estandarizados
+  &--ancho-sm {
+    max-width: 48rem; // ~768px (formularios, perfiles)
+  }
+
+  &--ancho-md {
+    max-width: 64rem; // ~1024px (fichas de atención)
+  }
+
+  &--ancho-lg {
+    max-width: 88rem; // ~1408px (tablas de administración, CMDB, dashboards)
+  }
+
+  &--ancho-completo {
+    max-width: 100%;
+  }
+
+  &__cabecera:empty,
+  &__pestanas:empty,
+  &__avisos:empty {
+    display: none;
+  }
+
+  &__cuerpo {
+    display: flex;
+    flex-direction: column;
+    gap: 1.25rem;
+    flex: 1;
+    min-width: 0;
+  }
+}
