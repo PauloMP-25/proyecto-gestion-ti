@@ -32,6 +32,16 @@ export const INCIDENTES_ROUTES: Routes = [
     title: 'Mis Tickets - Service Desk HSMSI',
   },
   {
+    path: 'escalados',
+    loadComponent: () =>
+      import('./paginas/incidente-lista/incidente-lista.component').then(
+        (m) => m.IncidenteListaComponent,
+      ),
+    canActivate: [rolGuard],
+    data: { roles: [RolUsuario.ADMINISTRADOR], modo: 'escalados' },
+    title: 'Tickets Derivados a Soporte Nivel 2 - Mesa de Ayuda HSMSI',
+  },
+  {
     path: 'criticos',
     loadComponent: () =>
       import('./paginas/incidentes-criticos/incidentes-criticos.component').then(

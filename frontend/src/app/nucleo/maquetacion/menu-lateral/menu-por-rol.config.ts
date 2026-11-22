@@ -40,6 +40,11 @@ export const MENU_POR_ROL: Record<RolUsuario, readonly SeccionMenu[]> = {
         { titulo: 'Panel de Control', ruta: '/panel-control', icono: 'dashboard', exacto: true },
         { titulo: 'Bandeja de Tickets', ruta: '/incidentes/bandeja', icono: 'inbox' },
         {
+          titulo: 'Tickets derivados (N2)',
+          ruta: '/incidentes/escalados',
+          icono: 'trending_up',
+        },
+        {
           titulo: 'Incidentes Críticos',
           ruta: '/incidentes/criticos',
           icono: 'warning',

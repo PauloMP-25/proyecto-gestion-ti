@@ -70,9 +70,16 @@ export class IncidenteDetalleComponent implements OnInit {
   readonly dialogo = signal<TipoDialogo | null>(null);
   readonly procesando = signal(false);
 
-  readonly rutaVolver = this.authService.rolActual() === RolUsuario.USUARIO_FINAL
-    ? '/incidentes/mis-tickets'
-    : '/incidentes/bandeja';
+  readonly rutaVolver = computed(() => {
+    const rol = this.authService.rolActual();
+    if (rol === RolUsuario.USUARIO_FINAL) {
+      return '/incidentes/mis-tickets';
+    }
+    if (rol === RolUsuario.ADMINISTRADOR && this.ticket()?.estado === EstadoTicket.ESCALADO) {
+      return '/incidentes/escalados';
+    }
+    return '/incidentes/bandeja';
+  });
 
   readonly impactoTexto = (t: Ticket) => ETIQUETAS_IMPACTO[t.impacto];
   readonly urgenciaTexto = (t: Ticket) => ETIQUETAS_URGENCIA[t.urgencia];

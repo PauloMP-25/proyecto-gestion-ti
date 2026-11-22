@@ -17,6 +17,17 @@ import { IncidenteFiltrosComponent } from '../../componentes/incidente-filtros/i
 
 const TAMANO_PAGINA = 10;
 
+const PESO_PRIORIDAD: Record<string, number> = {
+  P1: 1,
+  CRITICA: 1,
+  P2: 2,
+  ALTA: 2,
+  P3: 3,
+  MEDIA: 3,
+  P4: 4,
+  BAJA: 4,
+};
+
 @Component({
   selector: 'app-incidente-lista',
   imports: [
@@ -39,13 +50,29 @@ export class IncidenteListaComponent implements OnInit {
   private route = inject(ActivatedRoute);
   private readonly recargar$ = new Subject<void>();
 
+  protected readonly EstadoTicket = EstadoTicket;
   readonly modoPropios = this.route.snapshot.data['modo'] === 'propios';
-  readonly titulo = this.modoPropios ? 'Mis Tickets' : 'Bandeja de Tickets';
+  readonly modoEscalados = this.route.snapshot.data['modo'] === 'escalados';
+  readonly titulo = this.modoEscalados
+    ? 'Tickets Derivados a Soporte Nivel 2'
+    : this.modoPropios
+      ? 'Mis Tickets'
+      : 'Bandeja de Tickets';
 
   readonly cargando = signal(true);
   readonly resultado = signal<Pagina<TicketResumen> | null>(null);
   readonly pagina = signal(0);
-  private filtros: TicketFiltros = {};
+  private filtros: TicketFiltros = this.modoEscalados ? { estado: EstadoTicket.ESCALADO } : {};
+
+  get mensajeVacio(): string {
+    if (this.modoPropios) {
+      return 'Aún no ha registrado tickets.';
+    }
+    if (this.modoEscalados) {
+      return 'No hay tickets derivados a Nivel 2 en este momento.';
+    }
+    return 'No se encontraron tickets con los filtros seleccionados.';
+  }
 
   constructor() {
     this.recargar$.pipe(
@@ -62,7 +89,10 @@ export class IncidenteListaComponent implements OnInit {
       }),
       takeUntilDestroyed(),
     ).subscribe(pagina => {
-      this.resultado.set(pagina);
+      const contenido = this.modoEscalados
+        ? this.ordenarPorUrgenciaYSla(pagina.contenido)
+        : pagina.contenido;
+      this.resultado.set({ ...pagina, contenido });
       this.cargando.set(false);
     });
   }
@@ -91,5 +121,18 @@ export class IncidenteListaComponent implements OnInit {
   limiteSla(t: TicketResumen): string | null {
     const abierto = t.estado !== EstadoTicket.RESUELTO && t.estado !== EstadoTicket.CERRADO;
     return abierto ? t.fechaLimiteResolucion : null;
+  }
+
+  private ordenarPorUrgenciaYSla(tickets: TicketResumen[]): TicketResumen[] {
+    return [...tickets].sort((a, b) => {
+      const pesoA = PESO_PRIORIDAD[a.prioridad] ?? 99;
+      const pesoB = PESO_PRIORIDAD[b.prioridad] ?? 99;
+      if (pesoA !== pesoB) {
+        return pesoA - pesoB;
+      }
+      const tA = a.fechaLimiteResolucion ? new Date(a.fechaLimiteResolucion).getTime() : Number.MAX_SAFE_INTEGER;
+      const tB = b.fechaLimiteResolucion ? new Date(b.fechaLimiteResolucion).getTime() : Number.MAX_SAFE_INTEGER;
+      return tA - tB;
+    });
   }
 }

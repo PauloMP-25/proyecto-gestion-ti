@@ -1,4 +1,4 @@
-import { ChangeDetectionStrategy, Component, DestroyRef, OnInit, inject, output, signal } from '@angular/core';
+import { ChangeDetectionStrategy, Component, DestroyRef, OnInit, inject, input, output, signal } from '@angular/core';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { Area } from '../../../../compartido/modelos/ticket.dto';
 import { TicketFiltros } from '../../../../compartido/modelos/ticket-filtros.model';
@@ -17,6 +17,7 @@ export class IncidenteFiltrosComponent implements OnInit {
   private destroyRef = inject(DestroyRef);
   private temporizador: ReturnType<typeof setTimeout> | null = null;
 
+  readonly estadoInicial = input<EstadoTicket | ''>('');
   readonly alCambiar = output<TicketFiltros>();
 
   readonly areas = signal<Area[]>([]);
@@ -31,6 +32,9 @@ export class IncidenteFiltrosComponent implements OnInit {
   readonly etiquetaPrioridad = (p: PrioridadTicket) => PrioridadEtiquetas[p];
 
   ngOnInit(): void {
+    if (this.estadoInicial()) {
+      this.estado.set(this.estadoInicial());
+    }
     this.ticketsService.areas().pipe(takeUntilDestroyed(this.destroyRef)).subscribe(a => this.areas.set(a));
     this.destroyRef.onDestroy(() => {
       if (this.temporizador) clearTimeout(this.temporizador);
@@ -59,7 +63,7 @@ export class IncidenteFiltrosComponent implements OnInit {
   }
 
   limpiar(): void {
-    this.estado.set('');
+    this.estado.set(this.estadoInicial() || '');
     this.prioridad.set('');
     this.idArea.set('');
     this.texto.set('');
