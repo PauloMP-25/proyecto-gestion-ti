@@ -8,8 +8,8 @@ import {
 import { CommonModule } from '@angular/common';
 import { ActivatedRoute, Router, RouterModule } from '@angular/router';
 import { IconoComponent } from '../../../../compartido/ui/atomos/icono/icono.component';
-import { PortalAyudaApi } from '../../servicios/portal-ayuda.api';
-import { ArticuloDetalle } from '../../../../compartido/modelos/articulo-conocimiento.model';
+import { ConocimientoApi } from '../../../../compartido/servicios/conocimiento/conocimiento.api';
+import { ArticuloConocimiento } from '../../../../compartido/modelos/articulo-conocimiento.model';
 
 @Component({
   selector: 'app-ayuda-articulo-page',
@@ -20,12 +20,12 @@ import { ArticuloDetalle } from '../../../../compartido/modelos/articulo-conocim
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class AyudaArticuloPage implements OnInit {
-  private route = inject(ActivatedRoute);
-  private router = inject(Router);
-  private ayudaApi = inject(PortalAyudaApi);
+  private readonly route = inject(ActivatedRoute);
+  private readonly router = inject(Router);
+  private readonly conocimientoApi = inject(ConocimientoApi);
 
   readonly cargando = signal(true);
-  readonly articulo = signal<ArticuloDetalle | null>(null);
+  readonly articulo = signal<ArticuloConocimiento | null>(null);
   readonly noEncontrado = signal(false);
   readonly resueltoPorGuia = signal(false);
 
@@ -46,7 +46,7 @@ export class AyudaArticuloPage implements OnInit {
     this.cargando.set(true);
     this.noEncontrado.set(false);
 
-    this.ayudaApi.obtener(id).subscribe({
+    this.conocimientoApi.obtenerPorId(id).subscribe({
       next: (data) => {
         this.articulo.set(data);
         this.cargando.set(false);
@@ -60,12 +60,20 @@ export class AyudaArticuloPage implements OnInit {
   }
 
   marcarComoUtil(): void {
+    const art = this.articulo();
+    if (art) {
+      this.conocimientoApi.votarUtil(art.id, true).subscribe();
+      this.articulo.update((prev) =>
+        prev ? { ...prev, conteoUtil: prev.conteoUtil + 1 } : null
+      );
+    }
     this.resueltoPorGuia.set(true);
   }
 
   reportarProblema(): void {
     const art = this.articulo();
     if (art) {
+      this.conocimientoApi.votarUtil(art.id, false).subscribe();
       this.router.navigate(['/solicitudes/nuevo'], {
         queryParams: {
           categoria: art.categoriaId,
@@ -78,3 +86,4 @@ export class AyudaArticuloPage implements OnInit {
     }
   }
 }
+

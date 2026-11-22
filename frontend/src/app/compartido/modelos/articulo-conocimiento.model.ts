@@ -36,3 +36,10 @@ export interface ArticuloDetalle extends ArticuloResumen {
   equiposCompatibles?: string[];
   esPublico?: boolean;
 }
+
+export {
+  mapearArticuloResumen,
+  mapearArticuloDetalle,
+  mapearArticuloConocimiento,
+} from './articulo-conocimiento.mapper';
+

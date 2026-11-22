@@ -1,34 +1,35 @@
 import { Injectable, inject } from '@angular/core';
-import { HttpClient, HttpParams } from '@angular/common/http';
 import { Observable } from 'rxjs';
-import { environment } from '../../../../environments/environment';
+import { map } from 'rxjs/operators';
 import {
   ArticuloResumen,
   ArticuloDetalle,
+  mapearArticuloResumen,
+  mapearArticuloDetalle,
 } from '../../../compartido/modelos/articulo-conocimiento.model';
+import { ConocimientoApi } from '../../../compartido/servicios/conocimiento/conocimiento.api';
 import { PortalAyudaApi } from './portal-ayuda.api';
 
 @Injectable()
 export class PortalAyudaHttp extends PortalAyudaApi {
-  private readonly http = inject(HttpClient);
-  private readonly base = `${environment.apiUrl}/articulos`;
+  private readonly conocimientoApi = inject(ConocimientoApi);
 
   buscar(texto: string, categoriaId?: number): Observable<ArticuloResumen[]> {
-    let params = new HttpParams();
-    if (texto && texto.trim()) {
-      params = params.set('q', texto.trim());
-    }
-    if (categoriaId) {
-      params = params.set('categoriaId', categoriaId.toString());
-    }
-    return this.http.get<ArticuloResumen[]>(`${this.base}/buscar`, { params });
+    return this.conocimientoApi.listar({ texto, categoriaId, soloPublicos: true }).pipe(
+      map((articulos) => articulos.map((a) => mapearArticuloResumen(a)))
+    );
   }
 
   destacados(): Observable<ArticuloResumen[]> {
-    return this.http.get<ArticuloResumen[]>(`${this.base}/destacados`);
+    return this.conocimientoApi.destacados().pipe(
+      map((articulos) => articulos.map((a) => mapearArticuloResumen(a)))
+    );
   }
 
   obtener(id: number): Observable<ArticuloDetalle> {
-    return this.http.get<ArticuloDetalle>(`${this.base}/${id}`);
+    return this.conocimientoApi.obtenerPorId(id).pipe(
+      map((art) => mapearArticuloDetalle(art))
+    );
   }
 }
+

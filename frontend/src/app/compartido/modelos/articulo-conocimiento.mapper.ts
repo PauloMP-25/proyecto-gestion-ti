@@ -68,3 +68,29 @@ export function mapearArticuloConocimiento(dto: ArticuloConocimientoDto): Articu
     pasos,
   };
 }
+
+import { ArticuloResumen, ArticuloDetalle } from './articulo-conocimiento.model';
+
+export function mapearArticuloResumen(art: ArticuloConocimiento): ArticuloResumen {
+  return {
+    id: art.id,
+    titulo: art.titulo,
+    categoriaId: art.categoriaId,
+    categoriaNombre: art.categoriaNombre,
+    sintoma: art.sintoma || art.resumen,
+  };
+}
+
+export function mapearArticuloDetalle(art: ArticuloConocimiento): ArticuloDetalle {
+  return {
+    id: art.id,
+    titulo: art.titulo,
+    categoriaId: art.categoriaId,
+    categoriaNombre: art.categoriaNombre,
+    sintoma: art.sintoma || art.resumen,
+    causaRaiz: art.causaRaiz ?? null,
+    solucionTemporal: art.solucionTemporal || art.contenidoHtml,
+    pasos: art.pasos && art.pasos.length > 0 ? art.pasos : [art.resumen],
+  };
+}
+

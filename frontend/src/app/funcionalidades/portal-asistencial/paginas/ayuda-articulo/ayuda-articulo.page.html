@@ -30,7 +30,15 @@
 
     <!-- Cabecera del artículo -->
     <header class="ayuda-articulo__cabecera">
-      <span class="ayuda-articulo__categoria">{{ art.categoriaNombre }}</span>
+      <div class="ayuda-articulo__meta-fila">
+        <span class="ayuda-articulo__categoria">{{ art.categoriaNombre }}</span>
+        @if (art.conteoUtil > 0) {
+          <span class="ayuda-articulo__util-badge">
+            <app-icono nombre="thumb_up" tamano="xs"></app-icono>
+            <span>A {{ art.conteoUtil }} profesionales les sirvió esta guía</span>
+          </span>
+        }
+      </div>
       <h1 id="articulo-titulo" class="ayuda-articulo__titulo">
         {{ art.titulo }}
       </h1>
@@ -42,20 +50,26 @@
       }
     </header>
 
-    <!-- Lista de pasos numerada -->
+    <!-- Pasos paso-a-paso o contenido explicativo -->
     <section class="ayuda-articulo__seccion" aria-labelledby="pasos-titulo">
       <h2 id="pasos-titulo" class="ayuda-articulo__seccion-titulo">
         Pruebe estos pasos para solucionarlo:
       </h2>
 
-      <ol class="ayuda-articulo__pasos-lista">
-        @for (paso of art.pasos; track $index) {
-          <li class="ayuda-articulo__paso-item">
-            <span class="ayuda-articulo__paso-numero" aria-hidden="true">{{ $index + 1 }}</span>
-            <p class="ayuda-articulo__paso-texto">{{ paso }}</p>
-          </li>
-        }
-      </ol>
+      @if (art.pasos && art.pasos.length > 0) {
+        <ol class="ayuda-articulo__pasos-lista">
+          @for (paso of art.pasos; track $index) {
+            <li class="ayuda-articulo__paso-item">
+              <span class="ayuda-articulo__paso-numero" aria-hidden="true">{{ $index + 1 }}</span>
+              <p class="ayuda-articulo__paso-texto">{{ paso }}</p>
+            </li>
+          }
+        </ol>
+      } @else if (art.contenidoHtml) {
+        <div class="ayuda-articulo__html-box" [innerHTML]="art.contenidoHtml"></div>
+      } @else {
+        <p class="ayuda-articulo__paso-texto">{{ art.resumen }}</p>
+      }
     </section>
 
     <!-- Feedback: ¿Le sirvió esta guía? -->
