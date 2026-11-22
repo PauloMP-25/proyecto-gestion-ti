@@ -106,10 +106,47 @@ public class TicketServiceImpl implements TicketService {
             String estados,
             String prioridades,
             String userEmail) {
+        return getTicketsPaginados(pagina, tamano, estado, prioridad, idArea, texto, asignadoA, estados, prioridades, userEmail, null);
+    }
+
+    @Override
+    @Transactional(readOnly = true)
+    public com.hospital.servicedesk.dtos.PaginaRespuesta<TicketResponse> getTicketsPaginados(
+            int pagina,
+            int tamano,
+            String estado,
+            String prioridad,
+            Integer idArea,
+            String texto,
+            String asignadoA,
+            String estados,
+            String prioridades,
+            String userEmail,
+            Boolean misSolicitudes) {
+        boolean esUsuarioFinal = false;
+        if (userEmail != null && !userEmail.isBlank()) {
+            Usuario u = userRepo.findByCorreoIgnoreCase(userEmail)
+                    .or(() -> userRepo.findByNombreUsuario(userEmail))
+                    .orElse(null);
+            if (u != null && "USUARIO_FINAL".equalsIgnoreCase(u.getRol())) {
+                esUsuarioFinal = true;
+            }
+        }
+
         List<Ticket> todos = tRepo.findAll();
+
+        boolean soloMios = esUsuarioFinal || Boolean.TRUE.equals(misSolicitudes);
 
         List<TicketResponse> filtrados = todos.stream()
                 .filter(t -> {
+                    // RLS: usuario final o misSolicitudes solo accede a sus propios tickets
+                    if (soloMios) {
+                        if (t.getUsuarioReporta() == null || userEmail == null
+                                || !userEmail.equalsIgnoreCase(t.getUsuarioReporta().getCorreo())) {
+                            return false;
+                        }
+                    }
+
                     // Filtro de asignadoA: 'sinAsignar' o 'me'
                     if (asignadoA != null && !asignadoA.isBlank()) {
                         if ("sinAsignar".equalsIgnoreCase(asignadoA)) {
@@ -228,6 +265,10 @@ public class TicketServiceImpl implements TicketService {
     public long contarPorConfirmar(String userEmail) {
         return tRepo.findAll().stream()
                 .filter(t -> t.getEstado() == EstadoTicket.RESUELTO)
+                .filter(t -> {
+                    if (userEmail == null || userEmail.isBlank()) return true;
+                    return t.getUsuarioReporta() != null && userEmail.equalsIgnoreCase(t.getUsuarioReporta().getCorreo());
+                })
                 .count();
     }
 
@@ -258,8 +299,23 @@ public class TicketServiceImpl implements TicketService {
 
     @Override
     public TicketResponse getTicketById(Integer id) {
+        return getTicketById(id, null);
+    }
+
+    @Override
+    public TicketResponse getTicketById(Integer id, String userEmail) {
         Ticket t = tRepo.findById(id)
                 .orElseThrow(() -> new RecursoNoEncontradoException("Ticket", id));
+        if (userEmail != null && !userEmail.isBlank()) {
+            Usuario u = userRepo.findByCorreoIgnoreCase(userEmail)
+                    .or(() -> userRepo.findByNombreUsuario(userEmail))
+                    .orElse(null);
+            if (u != null && "USUARIO_FINAL".equalsIgnoreCase(u.getRol())) {
+                if (t.getUsuarioReporta() == null || !userEmail.equalsIgnoreCase(t.getUsuarioReporta().getCorreo())) {
+                    throw new org.springframework.security.access.AccessDeniedException("No tiene permisos para acceder a esta solicitud");
+                }
+            }
+        }
         return map(t);
     }
 

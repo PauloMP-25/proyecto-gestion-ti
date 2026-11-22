@@ -54,9 +54,10 @@ public class TicketController {
             @RequestParam(required = false) String asignadoA,
             @RequestParam(required = false) String estados,
             @RequestParam(required = false) String prioridades,
+            @RequestParam(required = false) Boolean misSolicitudes,
             Authentication authentication) {
         String userEmail = authentication != null ? authentication.getName() : null;
-        return ResponseEntity.ok(ticketService.getTicketsPaginados(pagina, tamano, estado, prioridad, idArea, texto, asignadoA, estados, prioridades, userEmail));
+        return ResponseEntity.ok(ticketService.getTicketsPaginados(pagina, tamano, estado, prioridad, idArea, texto, asignadoA, estados, prioridades, userEmail, misSolicitudes));
     }
 
     @GetMapping("/mis-tickets")
@@ -81,8 +82,9 @@ public class TicketController {
     }
 
     @GetMapping("/{id}")
-    public ResponseEntity<TicketResponse> getTicketById(@PathVariable Integer id) {
-        return ResponseEntity.ok(ticketService.getTicketById(id));
+    public ResponseEntity<TicketResponse> getTicketById(@PathVariable Integer id, Authentication authentication) {
+        String userEmail = authentication != null ? authentication.getName() : null;
+        return ResponseEntity.ok(ticketService.getTicketById(id, userEmail));
     }
 
     @GetMapping("/{id}/historial")
