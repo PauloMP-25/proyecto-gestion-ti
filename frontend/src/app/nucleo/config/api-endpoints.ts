@@ -9,6 +9,7 @@ export const API_ENDPOINTS = {
   tecnicos: `${environment.apiUrl}/usuarios/tecnicos`,
   categorias: `${environment.apiUrl}/categorias`,
   areas: `${environment.apiUrl}/areas`,
+  conocimiento: `${environment.apiUrl}/conocimiento`,
   admin: {
     areas: `${environment.apiUrl}/admin/areas`,
     personal: `${environment.apiUrl}/admin/personal`,

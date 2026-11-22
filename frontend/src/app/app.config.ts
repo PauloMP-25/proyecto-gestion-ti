@@ -9,6 +9,7 @@ import { TicketsHttpService } from './compartido/servicios/tickets/tickets-http.
 import { jwtInterceptor } from './nucleo/interceptores/jwt.interceptor';
 import { errorInterceptor } from './nucleo/interceptores/error.interceptor';
 import { CATALOGOS_PROVIDERS } from './compartido/catalogos/catalogos.providers';
+import { CONOCIMIENTO_PROVIDERS } from './compartido/servicios/conocimiento/conocimiento.providers';
 
 export const appConfig: ApplicationConfig = {
   providers: [
@@ -17,5 +18,6 @@ export const appConfig: ApplicationConfig = {
     provideHttpClient(withInterceptors([jwtInterceptor, errorInterceptor])),
     { provide: TicketsService, useClass: TicketsHttpService },
     ...CATALOGOS_PROVIDERS,
+    ...CONOCIMIENTO_PROVIDERS,
   ]
 };
