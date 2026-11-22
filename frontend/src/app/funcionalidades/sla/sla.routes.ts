@@ -1,4 +1,6 @@
 import { Routes } from '@angular/router';
+import { rolGuard } from '../../nucleo/guardias/rol.guard';
+import { RolUsuario } from '../../nucleo/modelos/rol.enum';
 
 export const SLA_ROUTES: Routes = [
   {
@@ -12,7 +14,9 @@ export const SLA_ROUTES: Routes = [
       import('./paginas/sla-monitor/sla-monitor.component').then(
         (m) => m.SlaMonitorComponent
       ),
-    title: 'Control de SLAs - Mesa de Ayuda HSMSI',
+    canActivate: [rolGuard],
+    data: { roles: [RolUsuario.PRACTICANTE, RolUsuario.ADMINISTRADOR] },
+    title: 'Monitor de Compromisos de Atención - Mesa de Ayuda HSMSI',
   },
   {
     path: 'configuracion',
@@ -20,6 +24,8 @@ export const SLA_ROUTES: Routes = [
       import('./paginas/sla-configuracion/sla-configuracion.component').then(
         (m) => m.SlaConfiguracionComponent
       ),
-    title: 'Configuración de SLAs - Mesa de Ayuda HSMSI',
+    canActivate: [rolGuard],
+    data: { roles: [RolUsuario.ADMINISTRADOR] },
+    title: 'Configuración de Compromisos de Atención (SLA) - Mesa de Ayuda HSMSI',
   },
 ];

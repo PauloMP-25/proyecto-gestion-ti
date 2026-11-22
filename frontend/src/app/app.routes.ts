@@ -41,7 +41,8 @@ export const routes: Routes = [
       },
       {
         path: 'panel-control',
-        data: { miga: 'Panel de Control' },
+        canActivate: [rolGuard],
+        data: { roles: [RolUsuario.PRACTICANTE, RolUsuario.ADMINISTRADOR], miga: 'Panel de Control' },
         loadChildren: () => import('./funcionalidades/panel-control/panel-control.routes').then(m => m.PANEL_CONTROL_ROUTES),
       },
       {
@@ -51,11 +52,17 @@ export const routes: Routes = [
       },
       {
         path: 'sla',
-        data: { miga: 'Compromisos de Atención' },
+        canActivate: [rolGuard],
+        data: { roles: [RolUsuario.PRACTICANTE, RolUsuario.ADMINISTRADOR], miga: 'Compromisos de Atención' },
         loadChildren: () => import('./funcionalidades/sla/sla.routes').then(m => m.SLA_ROUTES),
       },
       {
         path: 'administracion/matriz-prioridad',
+        redirectTo: 'sla/configuracion',
+        pathMatch: 'full',
+      },
+      {
+        path: 'administracion/sla-config',
         redirectTo: 'sla/configuracion',
         pathMatch: 'full',
       },
