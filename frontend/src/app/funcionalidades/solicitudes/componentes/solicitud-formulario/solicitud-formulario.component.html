@@ -7,16 +7,103 @@
     </div>
   }
 
+  <!-- Modo Técnico: Registro para un tercero -->
+  @if (esTecnico()) {
+    <section class="seccion-form seccion-form--tecnica" aria-labelledby="label-tecnico">
+      <div class="banner-modo-tecnico">
+        <app-icono nombre="support_agent" tamano="sm"></app-icono>
+        <span id="label-tecnico">Modo Mesa de Ayuda: Registro de ticket para un tercero (atención telefónica o presencial)</span>
+      </div>
+
+      <div class="grid-tecnico">
+        <div class="campo-grupo">
+          <label for="campo-solicitante-nombre" class="label-campo">
+            Nombre del solicitante asistencial <span class="asterisco">*</span>
+          </label>
+          <input
+            id="campo-solicitante-nombre"
+            type="text"
+            formControlName="solicitanteNombre"
+            class="input-texto"
+            placeholder="Ej. Dr. Carlos Mendoza / Lic. Carmen Flores"
+            [class.input--error]="formulario.controls.solicitanteNombre.touched && formulario.controls.solicitanteNombre.invalid"
+          />
+          @if (formulario.controls.solicitanteNombre.touched && formulario.controls.solicitanteNombre.errors?.['required']) {
+            <span class="mensaje-error">Debe ingresar el nombre del personal solicitante.</span>
+          }
+        </div>
+
+        <div class="campo-grupo">
+          <label for="campo-solicitante-cargo" class="label-campo">
+            Servicio / Cargo hospitalario
+          </label>
+          <input
+            id="campo-solicitante-cargo"
+            type="text"
+            formControlName="solicitanteCargo"
+            class="input-texto"
+            placeholder="Ej. Médico Turno UCI / Enfermera Triaje"
+          />
+        </div>
+
+        <div class="campo-grupo">
+          <label for="campo-equipo-inventario" class="label-campo">
+            Equipo o activo reportado (código patrimonial o hostname)
+          </label>
+          <input
+            id="campo-equipo-inventario"
+            type="text"
+            formControlName="equipoInventario"
+            class="input-texto"
+            placeholder="Ej. PC-EMERG-04 / Zebra ZD220"
+          />
+        </div>
+      </div>
+    </section>
+  }
+
+  <!-- Modo Asistencial: Selección rápida guiada de síntomas -->
+  @if (esUsuarioFinal()) {
+    <section class="seccion-form seccion-form--guiada" aria-labelledby="label-sintomas">
+      <span class="label-seccion" id="label-sintomas">
+        ¿Qué problema presenta? (Selección rápida asistencial)
+      </span>
+      <p class="bajada-sintomas">
+        Elija el síntoma más cercano a su necesidad para autocompletar la información técnica de su estación.
+      </p>
+
+      <div class="grid-sintomas" role="radiogroup" aria-labelledby="label-sintomas">
+        @for (s of sintomasAsistenciales; track s.id) {
+          <button
+            type="button"
+            class="card-sintoma"
+            [class.card-sintoma--activo]="sintomaSeleccionadoId() === s.id"
+            [attr.aria-pressed]="sintomaSeleccionadoId() === s.id"
+            (click)="seleccionarSintoma(s)"
+          >
+            <span class="card-sintoma__icono" aria-hidden="true">
+              <app-icono [nombre]="s.icono" tamano="md"></app-icono>
+            </span>
+            <span class="card-sintoma__textos">
+              <strong>{{ s.titulo }}</strong>
+              <span>{{ s.subtitulo }}</span>
+            </span>
+          </button>
+        }
+      </div>
+    </section>
+  }
+
   <!-- 1. Tipo de ticket -->
   <section class="seccion-form" aria-label="Tipo de ticket">
-    <span class="label-seccion" id="label-tipo">¿Qué desea registrar?</span>
+    <span class="label-seccion" id="label-tipo">¿Qué tipo de atención requiere?</span>
     <div class="selector-tipo" role="group" aria-labelledby="label-tipo">
       <button type="button" class="card-tipo" [class.card-tipo--activo]="tipo() === 'INCIDENTE'"
         [attr.aria-pressed]="tipo() === 'INCIDENTE'" (click)="seleccionarTipo('INCIDENTE')">
         <app-icono nombre="report_problem" tamano="md"></app-icono>
         <span class="card-tipo__textos">
           <strong>Incidente</strong>
-          <span>Algo falló o dejó de funcionar (equipo, sistema, red).</span>
+          <span>Algo falló o dejó de funcionar (sistema, equipo, conexión).</span>
         </span>
       </button>
       <button type="button" class="card-tipo" [class.card-tipo--activo]="tipo() === 'SOLICITUD'"
@@ -24,7 +111,7 @@
         <app-icono nombre="assignment" tamano="md"></app-icono>
         <span class="card-tipo__textos">
           <strong>Solicitud</strong>
-          <span>Necesito algo nuevo (acceso, instalación, equipo de apoyo).</span>
+          <span>Requerimiento programado (acceso, insumos o configuración).</span>
         </span>
       </button>
     </div>
@@ -77,7 +164,7 @@
   <!-- 3. Categoría -->
   <section class="seccion-form">
     <div class="campo-grupo">
-      <label for="campo-categoria" class="label-campo">Categoría</label>
+      <label for="campo-categoria" class="label-campo">Categoría de soporte</label>
       <select id="campo-categoria" formControlName="idCategoria" class="input-texto">
         <option [ngValue]="null">General / Sin categoría específica</option>
         @for (cat of categorias(); track cat.id) {
@@ -193,7 +280,7 @@
         <span>Registrando...</span>
       } @else {
         <app-icono nombre="send" tamano="xs"></app-icono>
-        <span>Registrar ticket</span>
+        <span>{{ esUsuarioFinal() ? 'Enviar solicitud de soporte' : 'Registrar ticket para el solicitante' }}</span>
       }
     </button>
   </footer>

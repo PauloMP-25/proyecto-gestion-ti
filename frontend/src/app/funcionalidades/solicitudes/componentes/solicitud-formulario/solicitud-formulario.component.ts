@@ -23,7 +23,22 @@ import { PrioridadInsigniaComponent } from '../../../../compartido/ui/atomos/pri
 import { EsqueletoComponent } from '../../../../compartido/ui/atomos/esqueleto/esqueleto.component';
 import { IconoComponent } from '../../../../compartido/ui/atomos/icono/icono.component';
 
+import { AuthService } from '../../../../nucleo/auth/auth.service';
+import { RolUsuario } from '../../../../nucleo/modelos/rol.enum';
+
 const CLAVE_BORRADOR = 'hsmsi_borrador_ticket_v2';
+
+export interface SintomaAsistencial {
+  id: string;
+  icono: string;
+  titulo: string;
+  subtitulo: string;
+  categoriaSugerida: string;
+  tipoTicket: TipoTicket;
+  impactoSugerido: Impacto;
+  urgenciaSugerida: Urgencia;
+  asuntoSugerido: string;
+}
 
 interface BorradorTicket {
   tipo: TipoTicket;
@@ -36,6 +51,10 @@ interface BorradorTicket {
   titulo: string;
   descripcion: string;
   anexoContacto: string;
+  solicitanteNombre?: string;
+  solicitanteCargo?: string;
+  equipoInventario?: string;
+  sintomaId?: string | null;
   hora: string;
 }
 
@@ -62,9 +81,91 @@ export class SolicitudFormularioComponent implements OnInit {
   private prioridadPrevia = inject(PrioridadPreviaService);
   private destroyRef = inject(DestroyRef);
   private route = inject(ActivatedRoute);
+  private authService = inject(AuthService);
 
   readonly alRegistrarExitoso = output<Ticket>();
   readonly alCancelar = output<void>();
+
+  readonly esUsuarioFinal = computed(
+    () => this.authService.rolActual() === RolUsuario.USUARIO_FINAL
+  );
+
+  readonly esTecnico = computed(
+    () =>
+      this.authService.rolActual() === RolUsuario.PRACTICANTE ||
+      this.authService.rolActual() === RolUsuario.ADMINISTRADOR
+  );
+
+  readonly sintomasAsistenciales: SintomaAsistencial[] = [
+    {
+      id: 'galenhos',
+      icono: 'desktop_windows',
+      titulo: 'GalenHos / Historia Clínica',
+      subtitulo: 'Sistema lento, bloqueado o error al guardar atención médica',
+      categoriaSugerida: 'GalenHos',
+      tipoTicket: 'INCIDENTE',
+      impactoSugerido: 'ALTO',
+      urgenciaSugerida: 'ALTA',
+      asuntoSugerido: 'Falla o lentitud en sistema GalenHos / Historia Clínica',
+    },
+    {
+      id: 'impresora',
+      icono: 'print',
+      titulo: 'Impresora de Recetas / Tickets',
+      subtitulo: 'Atasco de papel, no imprime o desconectada en ventanilla o consultorio',
+      categoriaSugerida: 'Impresora',
+      tipoTicket: 'INCIDENTE',
+      impactoSugerido: 'MEDIO',
+      urgenciaSugerida: 'ALTA',
+      asuntoSugerido: 'Impresora no imprime recetas o tickets de atención',
+    },
+    {
+      id: 'red',
+      icono: 'wifi_off',
+      titulo: 'Sin Red / Internet',
+      subtitulo: 'Cable desconectado o sin acceso a red interna hospitalaria',
+      categoriaSugerida: 'Red',
+      tipoTicket: 'INCIDENTE',
+      impactoSugerido: 'MEDIO',
+      urgenciaSugerida: 'ALTA',
+      asuntoSugerido: 'Sin conexión a la red interna hospitalaria',
+    },
+    {
+      id: 'usuario',
+      icono: 'lock_reset',
+      titulo: 'Usuario o Clave Bloqueada',
+      subtitulo: 'Desbloqueo de cuenta institucional o restablecimiento de contraseña',
+      categoriaSugerida: 'Cuentas',
+      tipoTicket: 'SOLICITUD',
+      impactoSugerido: 'BAJO',
+      urgenciaSugerida: 'MEDIA',
+      asuntoSugerido: 'Desbloqueo o restablecimiento de acceso de usuario',
+    },
+    {
+      id: 'equipo',
+      icono: 'computer',
+      titulo: 'Computadora / Monitor',
+      subtitulo: 'No enciende, pantalla azul o periférico averiado',
+      categoriaSugerida: 'Hardware',
+      tipoTicket: 'INCIDENTE',
+      impactoSugerido: 'BAJO',
+      urgenciaSugerida: 'MEDIA',
+      asuntoSugerido: 'Computadora o monitor no responde en consultorio',
+    },
+    {
+      id: 'otro',
+      icono: 'help_outline',
+      titulo: 'Otro Inconveniente',
+      subtitulo: 'Escriba libremente los detalles de su necesidad',
+      categoriaSugerida: 'General',
+      tipoTicket: 'INCIDENTE',
+      impactoSugerido: 'BAJO',
+      urgenciaSugerida: 'BAJA',
+      asuntoSugerido: '',
+    },
+  ];
+
+  readonly sintomaSeleccionadoId = signal<string | null>(null);
 
   readonly tipo = signal<TipoTicket>('INCIDENTE');
   readonly impacto = signal<Impacto>('ALTO');
@@ -93,6 +194,9 @@ export class SolicitudFormularioComponent implements OnInit {
     titulo: this.fb.control('', [Validators.required, Validators.maxLength(150)]),
     descripcion: this.fb.control('', [Validators.required, Validators.minLength(15), Validators.maxLength(2000)]),
     anexoContacto: this.fb.control('', Validators.maxLength(10)),
+    solicitanteNombre: this.fb.control('', Validators.maxLength(100)),
+    solicitanteCargo: this.fb.control('', Validators.maxLength(80)),
+    equipoInventario: this.fb.control('', Validators.maxLength(50)),
   });
 
   private ultimoBorrador = '';
@@ -168,6 +272,33 @@ export class SolicitudFormularioComponent implements OnInit {
     this.urgencia.set(urgencia);
   }
 
+  seleccionarSintoma(sintoma: SintomaAsistencial): void {
+    this.sintomaSeleccionadoId.set(sintoma.id);
+    this.tipo.set(sintoma.tipoTicket);
+    this.impacto.set(sintoma.impactoSugerido);
+    this.urgencia.set(sintoma.urgenciaSugerida);
+
+    if (sintoma.id === 'impresora') {
+      this.objetivo.set('IMPRESORA_AREA');
+    } else if (sintoma.id === 'equipo') {
+      this.objetivo.set('EQUIPO_ACTUAL');
+    }
+
+    const catEncontrada = this.categorias().find((c) =>
+      c.nombre.toLowerCase().includes(sintoma.categoriaSugerida.toLowerCase())
+    );
+    if (catEncontrada) {
+      this.formulario.controls.idCategoria.setValue(catEncontrada.id);
+    }
+
+    const tituloActual = this.formulario.controls.titulo.value?.trim() || '';
+    if (!tituloActual || this.sintomasAsistenciales.some((s) => s.asuntoSugerido === tituloActual)) {
+      if (sintoma.asuntoSugerido) {
+        this.formulario.controls.titulo.setValue(sintoma.asuntoSugerido);
+      }
+    }
+  }
+
   alCambiarObjetivo(seleccion: SeleccionObjetivo): void {
     this.objetivo.set(seleccion.objetivo);
     this.idImpresora.set(seleccion.idImpresora ?? null);
@@ -177,6 +308,10 @@ export class SolicitudFormularioComponent implements OnInit {
     if (this.guardando()) return;
     this.errorServidor.set(null);
 
+    if (this.esTecnico() && !this.formulario.controls.solicitanteNombre.value?.trim()) {
+      this.formulario.controls.solicitanteNombre.setErrors({ required: true });
+    }
+
     if (this.formulario.invalid) {
       this.formulario.markAllAsTouched();
       return;
@@ -185,10 +320,17 @@ export class SolicitudFormularioComponent implements OnInit {
     this.guardando.set(true);
     const valores = this.formulario.getRawValue();
 
+    let descripcionFinal = valores.descripcion!.trim();
+    if (this.esTecnico() && valores.solicitanteNombre?.trim()) {
+      const cargo = valores.solicitanteCargo?.trim() ? ` (${valores.solicitanteCargo.trim()})` : '';
+      const equipo = valores.equipoInventario?.trim() ? `\n[EQUIPO AFECTADO / CMDB: ${valores.equipoInventario.trim()}]` : '';
+      descripcionFinal = `[REGISTRADO PARA: ${valores.solicitanteNombre.trim()}${cargo}]${equipo}\n\n${descripcionFinal}`;
+    }
+
     const solicitud: ReportarProblemaSolicitud = {
       tipo: this.tipo(),
       asunto: valores.titulo!.trim(),
-      descripcion: valores.descripcion!.trim(),
+      descripcion: descripcionFinal,
       impacto: this.impacto(),
       urgencia: this.urgencia(),
       objetivo: this.objetivo(),
@@ -232,6 +374,10 @@ export class SolicitudFormularioComponent implements OnInit {
       titulo: v.titulo ?? '',
       descripcion: v.descripcion ?? '',
       anexoContacto: v.anexoContacto ?? '',
+      solicitanteNombre: v.solicitanteNombre ?? '',
+      solicitanteCargo: v.solicitanteCargo ?? '',
+      equipoInventario: v.equipoInventario ?? '',
+      sintomaId: this.sintomaSeleccionadoId(),
       hora: '',
     };
   }
@@ -258,12 +404,16 @@ export class SolicitudFormularioComponent implements OnInit {
       this.urgencia.set(b.urgencia);
       if (b.objetivo) this.objetivo.set(b.objetivo);
       if (b.idImpresora) this.idImpresora.set(b.idImpresora);
+      if (b.sintomaId) this.sintomaSeleccionadoId.set(b.sintomaId);
       this.formulario.patchValue({
         idCategoria: b.idCategoria,
         idAreaManual: b.idAreaManual,
         titulo: b.titulo,
         descripcion: b.descripcion,
         anexoContacto: b.anexoContacto,
+        solicitanteNombre: b.solicitanteNombre ?? '',
+        solicitanteCargo: b.solicitanteCargo ?? '',
+        equipoInventario: b.equipoInventario ?? '',
       });
       this.ultimoBorrador = JSON.stringify({ ...b, hora: '' });
       this.horaBorrador.set(b.hora);

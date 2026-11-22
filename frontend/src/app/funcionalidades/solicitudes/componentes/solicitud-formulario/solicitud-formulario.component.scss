@@ -332,3 +332,119 @@
     background-color: var(--color-primary-hover);
   }
 }
+
+/* Modo Técnico: Registro para un tercero */
+.seccion-form--tecnica {
+  background-color: var(--color-surface-sunken);
+  border: 1px solid var(--color-border-subtle);
+  border-left: 4px solid var(--color-primary-base);
+  border-radius: var(--radius-md);
+  padding: var(--espacio-4);
+  gap: var(--espacio-3);
+}
+
+.banner-modo-tecnico {
+  display: flex;
+  align-items: center;
+  gap: var(--espacio-2);
+  color: var(--color-primary-base);
+  font-size: var(--font-size-sm);
+  font-weight: var(--font-weight-semibold);
+}
+
+.grid-tecnico {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: var(--espacio-3);
+
+  @include r.desde(sm) {
+    grid-template-columns: repeat(3, 1fr);
+  }
+}
+
+/* Modo Asistencial: Selección guiada de síntomas */
+.seccion-form--guiada {
+  background-color: var(--color-surface-sunken);
+  border: 1px solid var(--color-border-subtle);
+  border-radius: var(--radius-lg);
+  padding: var(--espacio-4);
+}
+
+.bajada-sintomas {
+  font-size: var(--font-size-xs);
+  color: var(--color-text-muted);
+  margin: 0;
+}
+
+.grid-sintomas {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: var(--espacio-2);
+
+  @include r.desde(sm) {
+    grid-template-columns: repeat(2, 1fr);
+  }
+
+  @include r.desde(lg) {
+    grid-template-columns: repeat(3, 1fr);
+  }
+}
+
+.card-sintoma {
+  display: flex;
+  align-items: flex-start;
+  gap: var(--espacio-3);
+  padding: var(--espacio-3);
+  border: 1px solid var(--color-border-subtle);
+  border-radius: var(--radius-md);
+  background-color: var(--color-surface-card);
+  text-align: start;
+  cursor: pointer;
+  min-height: 44px;
+  transition: all var(--transition-fast);
+
+  &:hover {
+    border-color: var(--color-primary-light);
+    background-color: var(--color-surface-hover);
+    transform: translateY(-1px);
+  }
+
+  &:focus-visible {
+    outline: 3px solid var(--color-primary-base);
+    outline-offset: 2px;
+  }
+
+  &--activo {
+    border-color: var(--color-primary-base);
+    background-color: rgba(112, 28, 28, 0.05);
+    box-shadow: 0 0 0 1px var(--color-primary-base);
+
+    .card-sintoma__icono {
+      color: var(--color-primary-base);
+    }
+  }
+
+  &__icono {
+    color: var(--color-text-muted);
+    flex-shrink: 0;
+    margin-top: 2px;
+  }
+
+  &__textos {
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+
+    strong {
+      font-size: var(--font-size-sm);
+      font-weight: var(--font-weight-semibold);
+      color: var(--color-text-main);
+    }
+
+    span {
+      font-size: 11px;
+      color: var(--color-text-muted);
+      line-height: 1.3;
+    }
+  }
+}

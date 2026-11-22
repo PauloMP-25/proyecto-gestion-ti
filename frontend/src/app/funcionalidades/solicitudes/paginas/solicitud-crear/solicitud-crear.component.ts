@@ -23,6 +23,18 @@ export class SolicitudCrearComponent {
     () => this.authService.rolActual() === RolUsuario.USUARIO_FINAL
   );
 
+  readonly tituloPagina = computed(() =>
+    this.esUsuarioFinal()
+      ? 'Reportar un Inconveniente o Solicitud'
+      : 'Registrar Incidente o Solicitud para un Tercero'
+  );
+
+  readonly subtituloPagina = computed(() =>
+    this.esUsuarioFinal()
+      ? 'Mesa de Ayuda · Hospital Santa María del Socorro'
+      : 'Registro técnico por Mesa de Ayuda en nombre de personal hospitalario'
+  );
+
   readonly rutaMisSolicitudes = computed(() =>
     this.esUsuarioFinal() ? '/portal/mis-solicitudes' : '/incidentes/mis-tickets'
   );
