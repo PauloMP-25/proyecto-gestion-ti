@@ -1,0 +1,186 @@
+<app-plantilla-pagina>
+  <!-- Cabecera principal -->
+  <app-cabecera-pagina
+    titulo="Centro de Soluciones y Guías"
+    subtitulo="Base de conocimientos hospitalaria para autoatención asistencial y procedimientos técnicos N1/N2"
+  >
+    <div acciones-extra>
+      <button
+        type="button"
+        class="btn btn--primario"
+        (click)="abrirNuevo()"
+      >
+        <app-icono nombre="add" tamano="sm"></app-icono>
+        <span>Nueva Guía</span>
+      </button>
+    </div>
+  </app-cabecera-pagina>
+
+  <!-- Filtros y Búsqueda -->
+  <section class="filtros-seccion" aria-label="Filtros de búsqueda">
+    <div class="buscador-box">
+      <span class="buscador-icono" aria-hidden="true">
+        <app-icono nombre="search" tamano="sm"></app-icono>
+      </span>
+      <input
+        type="search"
+        class="buscador-input"
+        placeholder="Buscar por problema, software, equipo o palabra clave..."
+        [ngModel]="textoBusqueda()"
+        (ngModelChange)="textoBusqueda.set($event)"
+      />
+    </div>
+
+    <div class="filtros-ambito" role="radiogroup" aria-label="Ámbito de guías">
+      <button
+        type="button"
+        class="filtro-btn"
+        [class.filtro-btn--activo]="filtroAmbito() === 'TODOS'"
+        (click)="filtroAmbito.set('TODOS')"
+      >
+        Todas ({{ articulos().length }})
+      </button>
+      <button
+        type="button"
+        class="filtro-btn"
+        [class.filtro-btn--activo]="filtroAmbito() === 'PUBLICO'"
+        (click)="filtroAmbito.set('PUBLICO')"
+      >
+        Asistenciales (Públicas)
+      </button>
+      <button
+        type="button"
+        class="filtro-btn"
+        [class.filtro-btn--activo]="filtroAmbito() === 'INTERNO'"
+        (click)="filtroAmbito.set('INTERNO')"
+      >
+        Técnicas (Uso Interno N1/N2)
+      </button>
+    </div>
+  </section>
+
+  <!-- Contenido principal -->
+  @if (cargando()) {
+    <div class="estado-cargando" aria-live="polite">
+      <div class="spinner" aria-hidden="true"></div>
+      <p>Cargando guías y artículos de conocimiento...</p>
+    </div>
+  } @else if (error()) {
+    <div class="alerta-error" role="alert">
+      <p>{{ error() }}</p>
+      <button type="button" class="btn btn--secundario" (click)="cargarArticulos()">
+        Reintentar
+      </button>
+    </div>
+  } @else if (articulosFiltrados().length === 0) {
+    <div class="estado-vacio">
+      <app-icono nombre="search_off" tamano="xl"></app-icono>
+      <h3>No se encontraron artículos con el criterio seleccionado</h3>
+      <p>Intente modificar el texto de búsqueda o cree una nueva guía de solución.</p>
+      <button type="button" class="btn btn--primario" (click)="abrirNuevo()">
+        Registrar Nueva Guía
+      </button>
+    </div>
+  } @else {
+    <div class="grid-articulos">
+      @for (art of articulosFiltrados(); track art.id) {
+        <article class="articulo-card">
+          <header class="articulo-card__header">
+            <div class="articulo-card__badges">
+              <span class="badge badge--categoria">{{ art.categoriaNombre }}</span>
+              @if (art.esPublico) {
+                <span class="badge badge--publico">
+                  <app-icono nombre="public" tamano="xs"></app-icono>
+                  <span>Asistencial</span>
+                </span>
+              } @else {
+                <span class="badge badge--interno">
+                  <app-icono nombre="lock" tamano="xs"></app-icono>
+                  <span>Interno N1/N2</span>
+                </span>
+              }
+            </div>
+            @if (art.conteoUtil > 0) {
+              <span class="badge badge--util" title="Veces que resultó útil">
+                <app-icono nombre="thumb_up" tamano="xs"></app-icono>
+                <span>{{ art.conteoUtil }}</span>
+              </span>
+            }
+          </header>
+
+          <h3 class="articulo-card__titulo">{{ art.titulo }}</h3>
+          <p class="articulo-card__resumen">{{ art.resumen }}</p>
+
+          @if (art.palabrasClave && art.palabrasClave.length > 0) {
+            <div class="articulo-card__tags">
+              @for (tag of art.palabrasClave; track tag) {
+                <span class="tag">#{{ tag }}</span>
+              }
+            </div>
+          }
+
+          <footer class="articulo-card__footer">
+            <div class="articulo-card__meta">
+              <span class="meta-fecha">
+                Actualizado: {{ art.fechaActualizacion | date:'dd/MM/yyyy' }}
+              </span>
+            </div>
+
+            <div class="articulo-card__acciones">
+              @if (art.esPublico) {
+                <a
+                  [routerLink]="['/portal/ayuda', art.id]"
+                  class="btn-accion btn-accion--ver"
+                  title="Ver vista asistencial en portal"
+                  target="_blank"
+                >
+                  <app-icono nombre="visibility" tamano="sm"></app-icono>
+                </a>
+              }
+              <button
+                type="button"
+                class="btn-accion btn-accion--editar"
+                (click)="abrirEditar(art)"
+                title="Editar guía"
+                aria-label="Editar guía"
+              >
+                <app-icono nombre="edit" tamano="sm"></app-icono>
+              </button>
+              <button
+                type="button"
+                class="btn-accion btn-accion--eliminar"
+                (click)="solicitarEliminar(art)"
+                title="Eliminar guía"
+                aria-label="Eliminar guía"
+              >
+                <app-icono nombre="delete" tamano="sm"></app-icono>
+              </button>
+            </div>
+          </footer>
+        </article>
+      }
+    </div>
+  }
+
+  <!-- Modales -->
+  @if (editorAbierto()) {
+    <app-dialogo-articulo-editor
+      [articulo]="articuloParaEditar()"
+      [guardando]="guardando()"
+      (alGuardar)="guardarArticulo($event)"
+      (alCancelar)="cerrarEditor()"
+    ></app-dialogo-articulo-editor>
+  }
+
+  @if (articuloParaEliminar(); as artEliminar) {
+    <app-dialogo-confirmacion
+      titulo="¿Eliminar esta guía de conocimiento?"
+      [mensaje]="'Está a punto de eliminar la guía: \'' + artEliminar.titulo + '\'. Esta acción no se puede deshacer.'"
+      textoConfirmar="Sí, eliminar guía"
+      textoCancelar="Cancelar"
+      tipo="peligro"
+      (confirmar)="confirmarEliminacion()"
+      (cancelar)="cancelarEliminacion()"
+    ></app-dialogo-confirmacion>
+  }
+</app-plantilla-pagina>

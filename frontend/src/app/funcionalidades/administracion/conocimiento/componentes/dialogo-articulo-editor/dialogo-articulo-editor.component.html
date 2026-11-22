@@ -1,0 +1,158 @@
+<div class="modal-backdrop" (click)="alCancelar.emit()">
+  <div
+    class="modal-contenido"
+    role="dialog"
+    aria-modal="true"
+    aria-labelledby="modal-titulo"
+    (click)="$event.stopPropagation()"
+  >
+    <header class="modal-cabecera">
+      <div class="modal-icono" aria-hidden="true">
+        <app-icono nombre="menu_book" tamano="md"></app-icono>
+      </div>
+      <div>
+        <h2 id="modal-titulo" class="modal-titulo">
+          {{ articulo() ? 'Editar Guía de Soporte' : 'Nueva Guía de Conocimiento' }}
+        </h2>
+        <p class="modal-subtitulo">
+          Centro de Soluciones hospitalarias para personal asistencial y técnico
+        </p>
+      </div>
+      <button
+        type="button"
+        class="modal-btn-cerrar"
+        aria-label="Cerrar modal"
+        (click)="alCancelar.emit()"
+      >
+        <app-icono nombre="close" tamano="sm"></app-icono>
+      </button>
+    </header>
+
+    <form [formGroup]="form" (ngSubmit)="guardar()" class="modal-cuerpo">
+      <!-- Título de la guía -->
+      <div class="campo">
+        <label for="editor-titulo" class="campo__label">Título de la guía o solución *</label>
+        <input
+          id="editor-titulo"
+          type="text"
+          class="campo__input"
+          formControlName="titulo"
+          placeholder="Ej.: Desbloqueo de lector biométrico de huella en Triaje"
+        />
+        @if (form.controls.titulo.touched && form.controls.titulo.errors?.['required']) {
+          <span class="campo__error">El título es requerido.</span>
+        }
+        @if (form.controls.titulo.touched && form.controls.titulo.errors?.['minlength']) {
+          <span class="campo__error">Mínimo 5 caracteres.</span>
+        }
+      </div>
+
+      <!-- Categoría y Visibilidad -->
+      <div class="fila-doble">
+        <div class="campo">
+          <label for="editor-categoria" class="campo__label">Categoría hospitalaria *</label>
+          <select id="editor-categoria" class="campo__select" formControlName="categoriaId">
+            @for (cat of categorias; track cat.id) {
+              <option [value]="cat.id">{{ cat.nombre }}</option>
+            }
+          </select>
+        </div>
+
+        <div class="campo campo--switch">
+          <label class="campo__label" for="editor-publico">Ámbito de visibilidad</label>
+          <label class="switch-control">
+            <input id="editor-publico" type="checkbox" formControlName="esPublico" />
+            <span class="switch-slider"></span>
+            <span class="switch-texto">
+              {{ form.controls.esPublico.value ? 'Público (Portal Asistencial)' : 'Interno (Soporte N1/N2)' }}
+            </span>
+          </label>
+        </div>
+      </div>
+
+      <!-- Resumen o Síntoma -->
+      <div class="campo">
+        <label for="editor-resumen" class="campo__label">
+          Síntoma frecuente o resumen del problema *
+        </label>
+        <textarea
+          id="editor-resumen"
+          class="campo__textarea"
+          rows="2"
+          formControlName="resumen"
+          placeholder="Describa el mensaje de error o falla que percibe el usuario..."
+        ></textarea>
+        @if (form.controls.resumen.touched && form.controls.resumen.errors?.['required']) {
+          <span class="campo__error">El resumen del problema es requerido.</span>
+        }
+      </div>
+
+      <!-- Procedimiento / Pasos de solución -->
+      <div class="campo">
+        <label for="editor-contenido" class="campo__label">
+          Procedimiento de solución paso a paso (o contenido HTML) *
+        </label>
+        <textarea
+          id="editor-contenido"
+          class="campo__textarea campo__textarea--grande"
+          rows="6"
+          formControlName="contenidoHtml"
+          placeholder="Paso 1: Verifique el cable...&#10;Paso 2: Reinicie el servicio..."
+        ></textarea>
+        @if (form.controls.contenidoHtml.touched && form.controls.contenidoHtml.errors?.['required']) {
+          <span class="campo__error">Debe especificar los pasos o procedimiento de solución.</span>
+        }
+      </div>
+
+      <!-- Palabras clave y Equipos -->
+      <div class="fila-doble">
+        <div class="campo">
+          <label for="editor-palabras" class="campo__label">Palabras clave (separadas por coma)</label>
+          <input
+            id="editor-palabras"
+            type="text"
+            class="campo__input"
+            formControlName="palabrasClave"
+            placeholder="huella, biométrico, triaje, error 403"
+          />
+        </div>
+
+        <div class="campo">
+          <label for="editor-equipos" class="campo__label">Equipos compatibles (separados por coma)</label>
+          <input
+            id="editor-equipos"
+            type="text"
+            class="campo__input"
+            formControlName="equiposCompatibles"
+            placeholder="DigitalPersona U.are.U, Zebra ZD220"
+          />
+        </div>
+      </div>
+
+      <!-- Acciones de pie -->
+      <footer class="modal-pie">
+        <button
+          type="button"
+          class="btn btn--secundario"
+          (click)="alCancelar.emit()"
+          [disabled]="guardando()"
+        >
+          Cancelar
+        </button>
+        <button
+          type="submit"
+          class="btn btn--primario"
+          [disabled]="guardando() || form.invalid"
+        >
+          @if (guardando()) {
+            <span class="spinner-sm" aria-hidden="true"></span>
+            <span>Guardando...</span>
+          } @else {
+            <app-icono nombre="save" tamano="sm"></app-icono>
+            <span>Guardar Guía</span>
+          }
+        </button>
+      </footer>
+    </form>
+  </div>
+</div>

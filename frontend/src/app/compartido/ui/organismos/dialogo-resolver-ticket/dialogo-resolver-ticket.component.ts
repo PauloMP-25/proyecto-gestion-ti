@@ -24,6 +24,8 @@ import {
   leerBorrador,
   eliminarBorrador,
 } from '../../../utilidades/borrador-local';
+import { ConocimientoApi } from '../../../servicios/conocimiento/conocimiento.api';
+import { ArticuloConocimiento } from '../../../modelos/articulo-conocimiento.model';
 
 @Component({
   selector: 'app-dialogo-resolver-ticket',
@@ -41,12 +43,15 @@ import {
 export class DialogoResolverTicketComponent implements OnInit {
   private readonly fb = inject(NonNullableFormBuilder);
   private readonly destroyRef = inject(DestroyRef);
+  private readonly conocimientoApi = inject(ConocimientoApi, { optional: true });
 
   readonly ticketId = input<number>(0);
   readonly codigo = input.required<string>();
   readonly equipoEtiqueta = input<string | null>(null);
   readonly procesando = input<boolean>(false);
   readonly articuloSugeridoId = input<number | null>(null);
+
+  readonly articulosConocimiento = signal<ArticuloConocimiento[]>([]);
 
   readonly alConfirmar = output<ResolverTicketPayload>();
   /** Para retrocompatibilidad con vistas que reciben texto plano */
@@ -77,8 +82,15 @@ export class DialogoResolverTicketComponent implements OnInit {
     if (this.articuloSugeridoId()) {
       this.form.controls.articuloConocimientoId.setValue(this.articuloSugeridoId());
     }
+    this.cargarArticulosConocimiento();
     this.restaurarBorrador();
     this.iniciarAutoguardado();
+  }
+
+  private cargarArticulosConocimiento(): void {
+    this.conocimientoApi?.listar().subscribe({
+      next: (lista) => this.articulosConocimiento.set(lista),
+    });
   }
 
   private restaurarBorrador(): void {

@@ -38,6 +38,14 @@ export const ADMINISTRACION_ROUTES: Routes = [
           ),
         title: 'Inventario de equipos y red - Mesa de Ayuda HSMSI',
       },
+      {
+        path: 'conocimiento',
+        loadComponent: () =>
+          import(
+            './conocimiento/paginas/conocimiento-lista/conocimiento-lista.page'
+          ).then((m) => m.ConocimientoListaPage),
+        title: 'Centro de Soluciones y Guías - Mesa de Ayuda HSMSI',
+      },
       { path: '', pathMatch: 'full', redirectTo: 'areas' },
     ],
   },

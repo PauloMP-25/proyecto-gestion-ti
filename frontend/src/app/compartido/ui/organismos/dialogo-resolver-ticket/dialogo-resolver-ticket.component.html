@@ -116,6 +116,28 @@
           </div>
         </div>
 
+        <!-- Guía de conocimiento vinculada -->
+        <div class="dialogo__campo">
+          <label class="dialogo__label" for="resolver-articulo">
+            Guía de conocimiento vinculada (opcional)
+          </label>
+          <select
+            id="resolver-articulo"
+            class="dialogo__input"
+            formControlName="articuloConocimientoId"
+          >
+            <option [ngValue]="null">-- Ninguna / Solución sin guía catalogada --</option>
+            @for (art of articulosConocimiento(); track art.id) {
+              <option [ngValue]="art.id">{{ art.titulo }} ({{ art.categoriaNombre }})</option>
+            }
+          </select>
+          <div class="dialogo__pie-campo">
+            <span class="dialogo__hint">
+              Vincular la guía aplicada alimenta las estadísticas de efectividad de soluciones.
+            </span>
+          </div>
+        </div>
+
         <!-- Tipo de solución -->
         <fieldset class="dialogo__fieldset">
           <legend class="dialogo__legend">Tipo de solución aplicada *</legend>
