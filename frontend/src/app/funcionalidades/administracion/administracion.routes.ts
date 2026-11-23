@@ -46,6 +46,15 @@ export const ADMINISTRACION_ROUTES: Routes = [
           ).then((m) => m.ConocimientoListaPage),
         title: 'Centro de Soluciones y Guías - Mesa de Ayuda HSMSI',
       },
+      {
+        path: 'cambios',
+        loadComponent: () =>
+          import(
+            './cambios/paginas/cambios-lista/cambios-lista.page'
+          ).then((m) => m.CambiosListaPage),
+        title: 'Solicitudes de Cambio - Mesa de Ayuda HSMSI',
+        data: { miga: 'Solicitudes de Cambio' },
+      },
       { path: '', pathMatch: 'full', redirectTo: 'areas' },
     ],
   },

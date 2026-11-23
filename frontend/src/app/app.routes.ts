@@ -58,12 +58,12 @@ export const routes: Routes = [
       },
       {
         path: 'administracion/matriz-prioridad',
-        redirectTo: 'sla/configuracion',
+        redirectTo: '/sla/configuracion',
         pathMatch: 'full',
       },
       {
         path: 'administracion/sla-config',
-        redirectTo: 'sla/configuracion',
+        redirectTo: '/sla/configuracion',
         pathMatch: 'full',
       },
       {
@@ -77,7 +77,7 @@ export const routes: Routes = [
       },
       {
         path: 'cmdb',
-        redirectTo: 'administracion/equipos',
+        redirectTo: '/administracion/equipos',
         pathMatch: 'full',
       },
       {
@@ -96,7 +96,7 @@ export const routes: Routes = [
       },
       {
         path: 'incidentes/nuevo',
-        redirectTo: 'solicitudes/nuevo',
+        redirectTo: '/solicitudes/nuevo',
         pathMatch: 'full',
       },
       {
@@ -113,6 +113,24 @@ export const routes: Routes = [
         loadComponent: () => import('./funcionalidades/errores/paginas/acceso-denegado/acceso-denegado.component').then(m => m.AccesoDenegadoComponent),
         title: 'Acceso denegado - Mesa de Ayuda HSMSI',
         data: { miga: 'Acceso denegado' },
+      },
+      {
+        path: '404',
+        loadComponent: () =>
+          import('./funcionalidades/errores/paginas/no-encontrado/no-encontrado.component').then(
+            (m) => m.NoEncontradoComponent
+          ),
+        title: 'Módulo en desarrollo - Mesa de Ayuda HSMSI',
+        data: { miga: 'Módulo en desarrollo' },
+      },
+      {
+        path: '**',
+        loadComponent: () =>
+          import('./funcionalidades/errores/paginas/no-encontrado/no-encontrado.component').then(
+            (m) => m.NoEncontradoComponent
+          ),
+        title: 'Módulo en desarrollo - Mesa de Ayuda HSMSI',
+        data: { miga: 'Módulo en desarrollo' },
       },
     ]
   },
