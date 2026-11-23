@@ -34,14 +34,19 @@ export class MigasPanService {
 
     while (rutaActual) {
       const snapshot = rutaActual.snapshot;
-      const segmentos = snapshot.url.map(s => s.path).filter(Boolean);
+      if (!snapshot) {
+        rutaActual = rutaActual.firstChild;
+        continue;
+      }
+
+      const segmentos = (snapshot.url || []).map(s => s.path).filter(Boolean);
 
       if (segmentos.length > 0) {
         urlAcumulada += '/' + segmentos.join('/');
       }
 
       // Si la ruta declara 'miga' en data o title
-      const etiquetaMiga = snapshot.data['miga'] || snapshot.title;
+      const etiquetaMiga = snapshot.data?.['miga'] || snapshot.title;
       if (etiquetaMiga && typeof etiquetaMiga === 'string') {
         migasResultado.push({
           etiqueta: etiquetaMiga,
