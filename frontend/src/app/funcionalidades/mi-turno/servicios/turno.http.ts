@@ -114,6 +114,8 @@ export class TurnoHttp extends TurnoApi {
   escalar(id: number, p: EscalarTicketPayload): Observable<TicketTurno> {
     const payload: EscalarTicketPayloadDto = {
       motivo: p.motivo,
+      detallesTecnicos: p.detallesTecnicos,
+      categoriaN2Id: p.categoriaN2Id,
     };
     return this.http.put<TicketTurnoDto>(`${this.base}/${id}/escalar`, payload).pipe(
       map(mapearTicketTurno)

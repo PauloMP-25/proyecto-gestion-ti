@@ -12,8 +12,12 @@ export interface ResolverTicketPayload {
 }
 
 export interface EscalarTicketPayload {
-  /** Motivo técnico del escalamiento (20–300 caracteres útiles) */
+  /** Motivo técnico de la derivación (20–300 caracteres útiles) */
   motivo: string;
+  /** Diagnóstico o pruebas técnicas ya efectuadas por N1 (opcional, hasta 1000 caracteres) */
+  detallesTecnicos?: string;
+  /** Tipo de falla o especialidad Nivel 2 sugerida (opcional) */
+  categoriaN2Id?: number | null;
 }
 
 export interface DatosDialogoResolver {

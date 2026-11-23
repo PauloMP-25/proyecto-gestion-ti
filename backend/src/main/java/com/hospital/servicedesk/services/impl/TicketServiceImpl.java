@@ -381,10 +381,16 @@ public class TicketServiceImpl implements TicketService {
         t = tRepo.save(t);
 
         String motivo = req != null && req.get("motivo") != null ? req.get("motivo").toString() : "Derivado a Soporte Nivel 2";
+        String detalles = req != null && req.get("detallesTecnicos") != null ? req.get("detallesTecnicos").toString() : null;
+        String detalleAudit = "Ticket derivado a Soporte Nivel 2. Motivo: " + motivo;
+        if (detalles != null && !detalles.isBlank()) {
+            detalleAudit += " | Pruebas realizadas: " + detalles;
+        }
+
         HistorialTicket audit = HistorialTicket.builder()
                 .ticket(t)
                 .accion("ESCALAMIENTO")
-                .detalle("Ticket derivado a Soporte Nivel 2. Motivo: " + motivo)
+                .detalle(detalleAudit)
                 .fechaAccion(LocalDateTime.now())
                 .build();
         auditRepo.save(audit);

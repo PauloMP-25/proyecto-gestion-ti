@@ -44,6 +44,8 @@ export class DialogoEscalarTicketComponent {
 
   readonly form = this.fb.group({
     motivo: ['', [minimoCaracteresUtiles(20, 300)]],
+    detallesTecnicos: [''],
+    categoriaN2Id: [null as number | null],
   });
 
   readonly confirmandoDescarte = signal<boolean>(false);
@@ -55,7 +57,16 @@ export class DialogoEscalarTicketComponent {
     'Falla física de hardware',
   ];
 
+  readonly especialidadesN2 = [
+    { id: 1, nombre: 'Infraestructura, Redes y Comunicaciones' },
+    { id: 2, nombre: 'Servidores y Bases de Datos Hospitalarias' },
+    { id: 3, nombre: 'Sistemas de Información Clínica y Asistencial' },
+    { id: 4, nombre: 'Hardware y Equipos Críticos' },
+    { id: 5, nombre: 'Seguridad y Políticas de Red' },
+  ];
+
   readonly conteoMotivo = computed(() => textoUtil(this.form.controls.motivo.value).length);
+  readonly conteoDetalles = computed(() => (this.form.controls.detallesTecnicos.value || '').trim().length);
 
   aplicarSugerencia(sugerencia: string): void {
     const actual = this.form.controls.motivo.value.trim();
@@ -93,11 +104,17 @@ export class DialogoEscalarTicketComponent {
     }
 
     const motivoSaneado = textoUtil(this.form.controls.motivo.value);
+    const detalles = (this.form.controls.detallesTecnicos.value || '').trim();
+    const catId = this.form.controls.categoriaN2Id.value;
+
     const payload: EscalarTicketPayload = {
       motivo: motivoSaneado,
+      detallesTecnicos: detalles ? detalles : undefined,
+      categoriaN2Id: catId ? Number(catId) : undefined,
     };
 
     this.alConfirmar.emit(payload);
     this.alConfirmarTexto.emit(motivoSaneado);
   }
 }
+

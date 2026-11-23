@@ -63,17 +63,33 @@
       <!-- Formulario -->
       <form [formGroup]="form" (ngSubmit)="enviar()" id="form-escalar" novalidate>
         <div class="dialogo__campo">
+          <label class="dialogo__label" for="escalar-categoria">
+            Especialidad o área técnica sugerida (opcional)
+          </label>
+          <select
+            id="escalar-categoria"
+            class="dialogo__select"
+            formControlName="categoriaN2Id"
+          >
+            <option [ngValue]="null">-- Sin especialidad específica (Bandeja general N2) --</option>
+            @for (esp of especialidadesN2; track esp.id) {
+              <option [ngValue]="esp.id">{{ esp.nombre }}</option>
+            }
+          </select>
+        </div>
+
+        <div class="dialogo__campo">
           <label class="dialogo__label" for="escalar-motivo">
-            Motivo técnico del escalamiento *
+            Motivo de la derivación a Nivel 2 *
           </label>
           <textarea
             id="escalar-motivo"
             class="dialogo__textarea"
             formControlName="motivo"
-            rows="5"
+            rows="4"
             maxlength="350"
             aria-describedby="ayuda-motivo-escalar error-motivo"
-            placeholder="Describa qué verificaciones realizó y por qué requiere atención de Nivel 2…"
+            placeholder="Describa por qué requiere atención especializada de Nivel 2…"
           ></textarea>
           <div class="dialogo__pie-campo">
             <span id="ayuda-motivo-escalar" class="dialogo__hint">
@@ -87,9 +103,28 @@
           }
         </div>
 
+        <div class="dialogo__campo">
+          <label class="dialogo__label" for="escalar-detalles">
+            Pruebas técnicas y comprobaciones efectuadas (opcional)
+          </label>
+          <textarea
+            id="escalar-detalles"
+            class="dialogo__textarea"
+            formControlName="detallesTecnicos"
+            rows="3"
+            maxlength="1000"
+            placeholder="Ej.: Se validó conectividad física, ping a gateway 10.20.0.1 responde intermitente, switch de piso operativo..."
+          ></textarea>
+          <div class="dialogo__pie-campo">
+            <span class="dialogo__hint">
+              {{ conteoDetalles() }}/1000 caracteres
+            </span>
+          </div>
+        </div>
+
         <p class="dialogo__aviso-ayuda">
           <app-icono nombre="info" tamano="sm" aria-hidden="true" />
-          <span>Indique las pruebas efectuadas para acelerar el diagnóstico del especialista.</span>
+          <span>La información registrada será visible únicamente para el personal técnico y la jefatura.</span>
         </p>
       </form>
     </div>

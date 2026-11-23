@@ -58,4 +58,6 @@ export interface ResolverTicketPayloadDto {
 
 export interface EscalarTicketPayloadDto {
   motivo: string;
+  detallesTecnicos?: string;
+  categoriaN2Id?: number | null;
 }
