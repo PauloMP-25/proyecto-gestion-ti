@@ -10,6 +10,7 @@ import com.hospital.servicedesk.exceptions.ReglaNegocioException;
 import com.hospital.servicedesk.repositories.*;
 import com.hospital.servicedesk.services.PrestamoEquipoService;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -17,6 +18,7 @@ import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.List;
 
+@Slf4j
 @Service
 @RequiredArgsConstructor
 public class PrestamoEquipoServiceImpl implements PrestamoEquipoService {
@@ -119,6 +121,11 @@ public class PrestamoEquipoServiceImpl implements PrestamoEquipoService {
                 .build();
 
         PrestamoEquipo guardado = prestamoRepo.save(nuevo);
+        log.info("Préstamo registrado exitosamente [ID: {}] | Equipo: {} ({}) | Área destino: {} | Solicitante: {} | Técnico responsable: {}",
+                guardado.getIdPrestamo(), ci.getCodigoInventario(), ci.getNombre(),
+                areaDestino != null ? areaDestino.getNombre() : "NO ASIGNADA",
+                guardado.getSolicitante(), tecnico != null ? tecnico.getNombreUsuario() : "SISTEMA");
+
         return mapearAResumen(guardado, LocalDateTime.now());
     }
 
@@ -129,6 +136,7 @@ public class PrestamoEquipoServiceImpl implements PrestamoEquipoService {
                 .orElseThrow(() -> new RecursoNoEncontradoException("Préstamo no encontrado con id: " + id));
 
         if (p.getFechaDevolucion() != null) {
+            log.warn("Intento de doble devolución para préstamo con id: {}", id);
             throw new ReglaNegocioException("fechaDevolucion", "Este préstamo ya fue devuelto con anterioridad.");
         }
 
@@ -144,6 +152,11 @@ public class PrestamoEquipoServiceImpl implements PrestamoEquipoService {
         }
 
         PrestamoEquipo actualizado = prestamoRepo.save(p);
+        log.info("Devolución de préstamo registrada [ID: {}] | Equipo: {} | Estado recibido: {}",
+                actualizado.getIdPrestamo(),
+                p.getElementoConfiguracion() != null ? p.getElementoConfiguracion().getCodigoInventario() : "—",
+                actualizado.getEstadoDevolucion());
+
         return mapearAResumen(actualizado, LocalDateTime.now());
     }
 

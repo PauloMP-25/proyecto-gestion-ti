@@ -52,7 +52,12 @@ public class ReporteController {
         }
 
         String username = auth != null ? auth.getName() : "admin";
+        log.info("Generando informe ejecutivo PDF solicitado por: {} | Filtros: desde='{}', hasta='{}'",
+                username, desde != null ? desde : "TODOS", hasta != null ? hasta : "TODOS");
+
         byte[] pdfBytes = reporteService.generarReporteEjecutivoPdf(fInicio, fFin, username);
+
+        log.info("Informe ejecutivo PDF generado exitosamente para: {} (Tamaño: {} bytes)", username, pdfBytes.length);
 
         HttpHeaders headers = new HttpHeaders();
         headers.setContentType(MediaType.APPLICATION_PDF);
@@ -91,6 +96,8 @@ public class ReporteController {
         }
 
         String username = auth != null ? auth.getName() : "admin";
+        log.info("Iniciando solicitud de envío de informe ejecutivo por correo para administrador: {}", username);
+
         Usuario usuario = usuarioRepository.findByCorreoIgnoreCase(username)
                 .or(() -> usuarioRepository.findByNombreUsuario(username))
                 .orElse(null);
@@ -99,7 +106,10 @@ public class ReporteController {
 
         byte[] pdfBytes = reporteService.generarReporteEjecutivoPdf(fInicio, fFin, username);
         String nombreCompleto = usuario != null ? (usuario.getNombres() + " " + usuario.getApellidos()).trim() : "Administrador";
+        
         correoService.enviarReporteEjecutivo(destinatario, nombreCompleto, pdfBytes, "informe-ejecutivo-hsmsi.pdf");
+        log.info("Informe ejecutivo enviado por correo satisfactoriamente a: {} (Archivo: informe-ejecutivo-hsmsi.pdf, {} bytes)",
+                destinatario, pdfBytes.length);
 
         return ResponseEntity.ok(Map.of(
                 "mensaje", "El informe ejecutivo oficial en formato PDF fue enviado satisfactoriamente al correo institucional: " + destinatario,

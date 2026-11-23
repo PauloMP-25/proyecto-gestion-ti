@@ -21,6 +21,11 @@ import java.util.Map;
 @RestControllerAdvice
 public class GlobalExceptionHandler {
 
+    private String obtenerCorrelationId() {
+        String cid = org.slf4j.MDC.get(com.hospital.servicedesk.config.CorrelationIdFilter.MDC_CORRELATION_ID);
+        return cid != null ? cid : "HSMSI-SYS";
+    }
+
     @ExceptionHandler(RecursoNoEncontradoException.class)
     public ResponseEntity<ErrorResponse> handleRecursoNoEncontrado(
             RecursoNoEncontradoException ex, HttpServletRequest request) {
@@ -30,6 +35,7 @@ public class GlobalExceptionHandler {
                 .error(HttpStatus.NOT_FOUND.getReasonPhrase())
                 .message(ex.getMessage())
                 .path(request.getRequestURI())
+                .correlationId(obtenerCorrelationId())
                 .build();
         return new ResponseEntity<>(response, HttpStatus.NOT_FOUND);
     }
@@ -43,6 +49,7 @@ public class GlobalExceptionHandler {
                 .error(HttpStatus.CONFLICT.getReasonPhrase())
                 .message(ex.getMessage())
                 .path(request.getRequestURI())
+                .correlationId(obtenerCorrelationId())
                 .build();
         return new ResponseEntity<>(response, HttpStatus.CONFLICT);
     }
@@ -56,6 +63,7 @@ public class GlobalExceptionHandler {
                 .error(HttpStatus.BAD_REQUEST.getReasonPhrase())
                 .message(ex.getMessage())
                 .path(request.getRequestURI())
+                .correlationId(obtenerCorrelationId())
                 .build();
         return new ResponseEntity<>(response, HttpStatus.BAD_REQUEST);
     }
@@ -69,6 +77,7 @@ public class GlobalExceptionHandler {
                 .error(HttpStatus.UNAUTHORIZED.getReasonPhrase())
                 .message("Correo electrónico o contraseña incorrectos")
                 .path(request.getRequestURI())
+                .correlationId(obtenerCorrelationId())
                 .build();
         return new ResponseEntity<>(response, HttpStatus.UNAUTHORIZED);
     }
@@ -82,6 +91,7 @@ public class GlobalExceptionHandler {
                 .error(HttpStatus.FORBIDDEN.getReasonPhrase())
                 .message(ex.getMessage() != null ? ex.getMessage() : "El usuario se encuentra inactivo en el sistema")
                 .path(request.getRequestURI())
+                .correlationId(obtenerCorrelationId())
                 .build();
         return new ResponseEntity<>(response, HttpStatus.FORBIDDEN);
     }
@@ -94,6 +104,7 @@ public class GlobalExceptionHandler {
                 .error(HttpStatus.UNAUTHORIZED.getReasonPhrase())
                 .message(ex.getMessage())
                 .path(request.getRequestURI())
+                .correlationId(obtenerCorrelationId())
                 .build();
         return new ResponseEntity<>(response, HttpStatus.UNAUTHORIZED);
     }
@@ -107,6 +118,7 @@ public class GlobalExceptionHandler {
                 .error(HttpStatus.FORBIDDEN.getReasonPhrase())
                 .message("No cuenta con los permisos necesarios para realizar esta acción")
                 .path(request.getRequestURI())
+                .correlationId(obtenerCorrelationId())
                 .build();
         return new ResponseEntity<>(response, HttpStatus.FORBIDDEN);
     }
@@ -124,6 +136,7 @@ public class GlobalExceptionHandler {
                 .error(HttpStatus.BAD_REQUEST.getReasonPhrase())
                 .message("Error de validación en los datos ingresados")
                 .path(request.getRequestURI())
+                .correlationId(obtenerCorrelationId())
                 .errors(validationErrors)
                 .build();
 
@@ -152,6 +165,7 @@ public class GlobalExceptionHandler {
                 .error(HttpStatus.CONFLICT.getReasonPhrase())
                 .message(msg)
                 .path(request.getRequestURI())
+                .correlationId(obtenerCorrelationId())
                 .build();
         return new ResponseEntity<>(response, HttpStatus.CONFLICT);
     }
@@ -164,6 +178,7 @@ public class GlobalExceptionHandler {
                 .error(ex.getStatusCode().toString())
                 .message(ex.getReason())
                 .path(request.getRequestURI())
+                .correlationId(obtenerCorrelationId())
                 .build();
         return new ResponseEntity<>(response, ex.getStatusCode());
     }
@@ -177,6 +192,7 @@ public class GlobalExceptionHandler {
                 .error(HttpStatus.INTERNAL_SERVER_ERROR.getReasonPhrase())
                 .message("Ha ocurrido un error interno en el servidor. Por favor, intente más tarde.")
                 .path(request.getRequestURI())
+                .correlationId(obtenerCorrelationId())
                 .build();
         return new ResponseEntity<>(response, HttpStatus.INTERNAL_SERVER_ERROR);
     }

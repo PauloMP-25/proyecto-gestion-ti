@@ -1,0 +1,89 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<configuration scan="true" scanPeriod="30 seconds">
+
+    <!-- Conversión de colores ANSI para consola Spring Boot -->
+    <conversionRule conversionWord="clr" converterClass="org.springframework.boot.logging.logback.ColorConverter" />
+    <conversionRule conversionWord="wex" converterClass="org.springframework.boot.logging.logback.WhitespaceThrowableProxyConverter" />
+    <conversionRule conversionWord="wEx" converterClass="org.springframework.boot.logging.logback.ExtendedWhitespaceThrowableProxyConverter" />
+
+    <!-- Variables de rutas y patrones -->
+    <property name="LOG_DIR" value="${LOG_PATH:-logs}" />
+    <property name="CONSOLE_LOG_PATTERN"
+              value="%clr(%d{yyyy-MM-dd HH:mm:ss.SSS}){faint} %clr(%-5level) %clr([%15.15t]){faint} %clr(%-35.35logger{34}){cyan} %clr([%X{correlationId:-HSMSI-CORE}]){magenta} %clr([%X{usuario:-SISTEMA}]){yellow} - %msg%n%wEx" />
+    <property name="FILE_LOG_PATTERN"
+              value="%d{yyyy-MM-dd HH:mm:ss.SSS} [%t] %-5level %logger{36} [CID=%X{correlationId:-HSMSI-CORE}] [USER=%X{usuario:-SISTEMA}] [IP=%X{ipRemota:-LOCAL}] - %msg%n%wEx" />
+
+    <!-- 1. Appender Consola (desarrollo y monitoreo en vivo) -->
+    <appender name="CONSOLE" class="ch.qos.logback.core.ConsoleAppender">
+        <encoder>
+            <pattern>${CONSOLE_LOG_PATTERN}</pattern>
+            <charset>UTF-8</charset>
+        </encoder>
+    </appender>
+
+    <!-- 2. Appender Archivo Rotativo de Operaciones y Mantenimiento General -->
+    <appender name="FILE_OPERACIONES" class="ch.qos.logback.core.rolling.RollingFileAppender">
+        <file>${LOG_DIR}/servicedesk-operaciones.log</file>
+        <rollingPolicy class="ch.qos.logback.core.rolling.SizeAndTimeBasedRollingPolicy">
+            <fileNamePattern>${LOG_DIR}/archived/servicedesk-operaciones-%d{yyyy-MM-dd}.%i.log.gz</fileNamePattern>
+            <maxFileSize>10MB</maxFileSize>
+            <maxHistory>30</maxHistory>
+            <totalSizeCap>1GB</totalSizeCap>
+        </rollingPolicy>
+        <encoder>
+            <pattern>${FILE_LOG_PATTERN}</pattern>
+            <charset>UTF-8</charset>
+        </encoder>
+    </appender>
+
+    <!-- 3. Appender Archivo Rotativo de Auditoría, Reportes y Transacciones Críticas -->
+    <appender name="FILE_AUDITORIA" class="ch.qos.logback.core.rolling.RollingFileAppender">
+        <file>${LOG_DIR}/servicedesk-auditoria.log</file>
+        <rollingPolicy class="ch.qos.logback.core.rolling.SizeAndTimeBasedRollingPolicy">
+            <fileNamePattern>${LOG_DIR}/archived/servicedesk-auditoria-%d{yyyy-MM-dd}.%i.log.gz</fileNamePattern>
+            <maxFileSize>10MB</maxFileSize>
+            <maxHistory>90</maxHistory>
+            <totalSizeCap>2GB</totalSizeCap>
+        </rollingPolicy>
+        <encoder>
+            <pattern>${FILE_LOG_PATTERN}</pattern>
+            <charset>UTF-8</charset>
+        </encoder>
+    </appender>
+
+    <!-- Loggers de Auditoría Específica de la Mesa de Ayuda HSMSI -->
+    <logger name="com.hospital.servicedesk.controllers.ReporteController" level="INFO" additivity="true">
+        <appender-ref ref="FILE_AUDITORIA" />
+    </logger>
+    <logger name="com.hospital.servicedesk.services.impl.ReporteEjecutivoPdfServiceImpl" level="INFO" additivity="true">
+        <appender-ref ref="FILE_AUDITORIA" />
+    </logger>
+    <logger name="com.hospital.servicedesk.services.impl.CorreoServiceImpl" level="INFO" additivity="true">
+        <appender-ref ref="FILE_AUDITORIA" />
+    </logger>
+    <logger name="com.hospital.servicedesk.services.impl.PrestamoEquipoServiceImpl" level="INFO" additivity="true">
+        <appender-ref ref="FILE_AUDITORIA" />
+    </logger>
+    <logger name="com.hospital.servicedesk.services.impl.TicketServiceImpl" level="INFO" additivity="true">
+        <appender-ref ref="FILE_AUDITORIA" />
+    </logger>
+    <logger name="com.hospital.servicedesk.security" level="INFO" additivity="true">
+        <appender-ref ref="FILE_AUDITORIA" />
+    </logger>
+
+    <!-- Control de Ruido de Librerías Externas -->
+    <logger name="org.springframework.web" level="INFO" />
+    <logger name="org.springframework.security" level="INFO" />
+    <logger name="org.hibernate" level="WARN" />
+    <logger name="com.zaxxer.hikari" level="WARN" />
+
+    <!-- Logger Base de la Aplicación -->
+    <logger name="com.hospital.servicedesk" level="INFO" />
+
+    <!-- Root Logger -->
+    <root level="INFO">
+        <appender-ref ref="CONSOLE" />
+        <appender-ref ref="FILE_OPERACIONES" />
+    </root>
+
+</configuration>
