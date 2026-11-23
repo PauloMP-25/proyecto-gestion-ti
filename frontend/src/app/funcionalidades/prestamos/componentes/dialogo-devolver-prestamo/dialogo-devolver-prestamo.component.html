@@ -1,0 +1,77 @@
+<app-dialogo-formulario
+  titulo="Registrar devolución de equipo"
+  subtitulo="Confirme la recepción del equipo de contingencia y su estado físico y funcional."
+  (cancelar)="cerrar()"
+>
+  <div class="resumen-equipo">
+    <div class="dato-bloque">
+      <span class="etiqueta">Equipo:</span>
+      <span class="valor">[{{ prestamo().codigoInventario }}] {{ prestamo().nombreEquipo }}</span>
+    </div>
+    <div class="dato-bloque">
+      <span class="etiqueta">Área de procedencia:</span>
+      <span class="valor">{{ prestamo().nombreAreaDestino }}</span>
+    </div>
+    <div class="dato-bloque">
+      <span class="etiqueta">Entregado a:</span>
+      <span class="valor">{{ prestamo().solicitante }}</span>
+    </div>
+  </div>
+
+  <form [formGroup]="form" (ngSubmit)="guardar()" cuerpo>
+    <app-campo-formulario
+      etiqueta="Estado físico y funcional de recepción"
+      paraId="estadoDevolucion"
+      [requerido]="true"
+      ayuda="Seleccione la condición en que retorna el equipo al inventario."
+      [error]="obtenerError('estadoDevolucion')"
+    >
+      <select id="estadoDevolucion" formControlName="estadoDevolucion">
+        @for (est of estadosRetorno; track est.valor) {
+          <option [value]="est.valor">
+            {{ est.etiqueta }}
+          </option>
+        }
+      </select>
+    </app-campo-formulario>
+
+    <app-campo-formulario
+      etiqueta="Observaciones de recepción"
+      paraId="obsDevolucion"
+      ayuda="Detalle pruebas realizadas o accesorios devueltos."
+      [error]="obtenerError('observaciones')"
+    >
+      <textarea
+        id="obsDevolucion"
+        formControlName="observaciones"
+        rows="3"
+        maxlength="250"
+        placeholder="Ej: Se prueba inicio de sistema operativo, mouse y fuente de poder en perfecto estado..."
+      ></textarea>
+    </app-campo-formulario>
+  </form>
+
+  <div class="dialogo-acciones" acciones>
+    <button
+      type="button"
+      class="btn btn--secundario"
+      (click)="cerrar()"
+      [disabled]="store.guardando()"
+    >
+      Cancelar
+    </button>
+    <button
+      type="button"
+      class="btn btn--primario"
+      (click)="guardar()"
+      [disabled]="store.guardando() || form.invalid"
+    >
+      @if (store.guardando()) {
+        <span class="spinner" aria-hidden="true"></span>
+        <span>Guardando...</span>
+      } @else {
+        <span>Confirmar devolución</span>
+      }
+    </button>
+  </div>
+</app-dialogo-formulario>

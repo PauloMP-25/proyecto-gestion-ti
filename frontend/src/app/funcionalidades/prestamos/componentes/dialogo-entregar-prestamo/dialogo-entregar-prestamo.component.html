@@ -1,0 +1,137 @@
+<app-dialogo-formulario
+  titulo="Registrar entrega de equipo de contingencia"
+  subtitulo="Complete los datos del equipo asignado, servicio hospitalario y personal solicitante."
+  (cancelar)="cerrar()"
+>
+  <form [formGroup]="form" (ngSubmit)="guardar()" cuerpo>
+    @if (errorGeneral(); as err) {
+      <div class="alerta-error" role="alert">
+        <span class="icono-alerta" aria-hidden="true">warning</span>
+        <span>{{ err }}</span>
+      </div>
+    }
+
+    <app-campo-formulario
+      etiqueta="Equipo a entregar"
+      paraId="idCi"
+      [requerido]="true"
+      ayuda="Seleccione el equipo o periférico disponible en inventario."
+      [error]="obtenerError('idCi')"
+    >
+      <select id="idCi" formControlName="idCi">
+        <option [ngValue]="null" disabled selected>Seleccione un equipo...</option>
+        @for (eq of equiposDisponibles(); track eq.idCi) {
+          <option [ngValue]="eq.idCi">
+            [{{ eq.codigoInventario }}] {{ eq.nombre }} — {{ eq.tipoCi }} {{ eq.marcaModelo ? '(' + eq.marcaModelo + ')' : '' }}
+          </option>
+        }
+      </select>
+    </app-campo-formulario>
+
+    <div class="grid-dos-columnas">
+      <app-campo-formulario
+        etiqueta="Área o Servicio hospitalario de destino"
+        paraId="idAreaDestino"
+        [requerido]="true"
+        ayuda="Lugar físico donde operará el equipo."
+        [error]="obtenerError('idAreaDestino')"
+      >
+        <select id="idAreaDestino" formControlName="idAreaDestino">
+          <option [ngValue]="null" disabled selected>Seleccione el área destino...</option>
+          @for (ar of areasHospitalarias(); track ar.id) {
+            <option [ngValue]="ar.id">
+              {{ ar.nombre }} {{ ar.piso ? '(Piso ' + ar.piso + ')' : '' }}
+            </option>
+          }
+        </select>
+      </app-campo-formulario>
+
+      <app-campo-formulario
+        etiqueta="Personal solicitante / Responsable"
+        paraId="solicitante"
+        [requerido]="true"
+        ayuda="Nombre y cargo de quien recibe el equipo."
+        [error]="obtenerError('solicitante')"
+      >
+        <input
+          id="solicitante"
+          type="text"
+          formControlName="solicitante"
+          placeholder="Ej: Lic. Carmen Vargas (Jefa de Enfermería)"
+          maxlength="100"
+          autocomplete="off"
+        />
+      </app-campo-formulario>
+    </div>
+
+    <div class="grid-dos-columnas">
+      <app-campo-formulario
+        etiqueta="Fecha y hora prevista de devolución"
+        paraId="fechaDevolucionPactada"
+        [requerido]="true"
+        ayuda="Compromiso estimado para retorno al stock de contingencia."
+        [error]="obtenerError('fechaDevolucionPactada')"
+      >
+        <input
+          id="fechaDevolucionPactada"
+          type="datetime-local"
+          formControlName="fechaDevolucionPactada"
+        />
+      </app-campo-formulario>
+
+      <app-campo-formulario
+        etiqueta="N° Ticket de incidencia (Opcional)"
+        paraId="idTicket"
+        ayuda="Código o número de solicitud asociada para trazabilidad."
+        [error]="obtenerError('idTicket')"
+      >
+        <input
+          id="idTicket"
+          type="number"
+          formControlName="idTicket"
+          placeholder="Ej: 142"
+          min="1"
+        />
+      </app-campo-formulario>
+    </div>
+
+    <app-campo-formulario
+      etiqueta="Observaciones y accesorios incluidos"
+      paraId="observaciones"
+      ayuda="Detalle cargador, mouse, cables o condición del equipo."
+      [error]="obtenerError('observaciones')"
+    >
+      <textarea
+        id="observaciones"
+        formControlName="observaciones"
+        rows="2"
+        maxlength="250"
+        placeholder="Ej: Se entrega con cargador original y cable de red de 3 metros..."
+      ></textarea>
+    </app-campo-formulario>
+  </form>
+
+  <div class="dialogo-acciones" acciones>
+    <button
+      type="button"
+      class="btn btn--secundario"
+      (click)="cerrar()"
+      [disabled]="store.guardando()"
+    >
+      Cancelar
+    </button>
+    <button
+      type="button"
+      class="btn btn--primario"
+      (click)="guardar()"
+      [disabled]="store.guardando() || form.invalid"
+    >
+      @if (store.guardando()) {
+        <span class="spinner" aria-hidden="true"></span>
+        <span>Guardando...</span>
+      } @else {
+        <span>Registrar entrega</span>
+      }
+    </button>
+  </div>
+</app-dialogo-formulario>

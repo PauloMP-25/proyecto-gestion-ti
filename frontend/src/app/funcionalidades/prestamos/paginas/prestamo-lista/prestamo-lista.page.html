@@ -1,0 +1,284 @@
+<div class="pagina-prestamos">
+  <!-- Cabecera Principal -->
+  <header class="cabecera">
+    <div class="cabecera__info">
+      <h1 class="cabecera__titulo">Control de Préstamos de Equipos</h1>
+      <p class="cabecera__subtitulo">
+        Registro y seguimiento de equipos de contingencia asignados a servicios hospitalarios para continuidad asistencial.
+      </p>
+    </div>
+    <div class="cabecera__acciones">
+      <button
+        type="button"
+        class="btn btn--primario"
+        (click)="abrirModalEntrega()"
+      >
+        <span class="material-symbols-outlined" aria-hidden="true">add_circle</span>
+        <span>Registrar entrega</span>
+      </button>
+    </div>
+  </header>
+
+  <!-- Tarjetas KPI Resumen -->
+  <section class="kpi-grid" aria-label="Resumen operativo de préstamos">
+    <div class="kpi-tarjeta">
+      <div class="kpi-tarjeta__icono kpi-tarjeta__icono--total" aria-hidden="true">
+        <span class="material-symbols-outlined">inventory_2</span>
+      </div>
+      <div class="kpi-tarjeta__cuerpo">
+        <span class="kpi-tarjeta__valor">{{ store.metricas().total }}</span>
+        <span class="kpi-tarjeta__etiqueta">Total registrados</span>
+      </div>
+    </div>
+
+    <div class="kpi-tarjeta">
+      <div class="kpi-tarjeta__icono kpi-tarjeta__icono--activo" aria-hidden="true">
+        <span class="material-symbols-outlined">swap_horiz</span>
+      </div>
+      <div class="kpi-tarjeta__cuerpo">
+        <span class="kpi-tarjeta__valor">{{ store.metricas().vigentes }}</span>
+        <span class="kpi-tarjeta__etiqueta">En préstamo activo</span>
+      </div>
+    </div>
+
+    <div class="kpi-tarjeta" [class.kpi-tarjeta--alerta]="store.metricas().vencidos > 0">
+      <div class="kpi-tarjeta__icono kpi-tarjeta__icono--vencido" aria-hidden="true">
+        <span class="material-symbols-outlined">warning</span>
+      </div>
+      <div class="kpi-tarjeta__cuerpo">
+        <span class="kpi-tarjeta__valor">{{ store.metricas().vencidos }}</span>
+        <span class="kpi-tarjeta__etiqueta">Plazos vencidos</span>
+      </div>
+    </div>
+
+    <div class="kpi-tarjeta">
+      <div class="kpi-tarjeta__icono kpi-tarjeta__icono--devuelto" aria-hidden="true">
+        <span class="material-symbols-outlined">check_circle</span>
+      </div>
+      <div class="kpi-tarjeta__cuerpo">
+        <span class="kpi-tarjeta__valor">{{ store.metricas().devueltos }}</span>
+        <span class="kpi-tarjeta__etiqueta">Devueltos a stock</span>
+      </div>
+    </div>
+  </section>
+
+  <!-- Barra de Filtros y Búsqueda -->
+  <section class="filtros-seccion">
+    <div class="chips-estados" role="tablist" aria-label="Filtrar por estado del préstamo">
+      @for (opc of opcionesFiltroEstado; track opc.valor) {
+        <button
+          type="button"
+          class="chip-filtro"
+          [class.chip-filtro--activo]="store.filtro().estado === opc.valor"
+          (click)="cambiarFiltroEstado(opc.valor)"
+        >
+          {{ opc.etiqueta }}
+        </button>
+      }
+    </div>
+
+    <div class="busqueda-contenedor">
+      <span class="material-symbols-outlined icono-busqueda" aria-hidden="true">search</span>
+      <input
+        type="search"
+        class="busqueda-input"
+        placeholder="Buscar por código, equipo, área o solicitante..."
+        [ngModel]="textoBusqueda()"
+        (ngModelChange)="alCambiarBusqueda($event)"
+      />
+    </div>
+  </section>
+
+  <!-- Contenido: Lista / Tabla -->
+  @if (store.cargando()) {
+    <div class="estado-mensaje" aria-live="polite">
+      <div class="spinner-grande" aria-hidden="true"></div>
+      <p>Cargando registros de préstamos de equipos...</p>
+    </div>
+  } @else if (store.vacio()) {
+    <div class="estado-mensaje estado-mensaje--vacio">
+      <span class="material-symbols-outlined icono-vacio" aria-hidden="true">inventory</span>
+      <h3>No hay préstamos para mostrar</h3>
+      <p>No se encontraron registros de préstamos que coincidan con los criterios de búsqueda.</p>
+    </div>
+  } @else {
+    <!-- Vista Desktop: Tabla (>= 1024px) -->
+    <div class="tabla-contenedor">
+      <table class="tabla-prestamos">
+        <thead>
+          <tr>
+            <th scope="col">Equipo / Código</th>
+            <th scope="col">Área Asignada</th>
+            <th scope="col">Solicitante</th>
+            <th scope="col">Fecha Préstamo</th>
+            <th scope="col">Devolución Pactada</th>
+            <th scope="col">Estado</th>
+            <th scope="col" class="th-acciones">Acción</th>
+          </tr>
+        </thead>
+        <tbody>
+          @for (p of store.prestamosFiltrados(); track p.id) {
+            <tr>
+              <td>
+                <div class="celda-equipo">
+                  <span class="codigo-chip">{{ p.codigoInventario }}</span>
+                  <span class="nombre-equipo">{{ p.nombreEquipo }}</span>
+                  @if (p.marcaModelo) {
+                    <span class="modelo-equipo">{{ p.marcaModelo }}</span>
+                  }
+                </div>
+              </td>
+              <td>
+                <span class="area-texto">{{ p.nombreAreaDestino }}</span>
+                @if (p.codigoTicket) {
+                  <span class="ticket-enlace">Ref: {{ p.codigoTicket }}</span>
+                }
+              </td>
+              <td>
+                <span class="solicitante-nombre">{{ p.solicitante }}</span>
+                @if (p.tecnicoEntrego) {
+                  <span class="tecnico-texto">Entrega: {{ p.tecnicoEntrego }}</span>
+                }
+              </td>
+              <td>
+                <span class="fecha-texto">{{ p.fechaPrestamo | date:'dd/MM/yyyy HH:mm' }}</span>
+              </td>
+              <td>
+                <span class="fecha-texto" [class.fecha-texto--alerta]="p.estado === 'VENCIDO'">
+                  {{ p.fechaDevolucionPactada | date:'dd/MM/yyyy HH:mm' }}
+                </span>
+                @if (p.fechaDevolucionReal) {
+                  <span class="fecha-real">Devuelto: {{ p.fechaDevolucionReal | date:'dd/MM/yyyy' }}</span>
+                }
+              </td>
+              <td>
+                @switch (p.estado) {
+                  @case ('VIGENTE') {
+                    <span class="badge-estado badge-estado--vigente">En préstamo</span>
+                  }
+                  @case ('VENCIDO') {
+                    <span class="badge-estado badge-estado--vencido">Plazo vencido</span>
+                  }
+                  @case ('DEVUELTO') {
+                    <span class="badge-estado badge-estado--devuelto">Devuelto</span>
+                  }
+                }
+                @if (p.estadoDevolucion) {
+                  <span class="sub-estado">{{ p.estadoDevolucion }}</span>
+                }
+              </td>
+              <td class="td-acciones">
+                @if (p.estado !== 'DEVUELTO') {
+                  <button
+                    type="button"
+                    class="btn-tabla btn-tabla--devolver"
+                    (click)="abrirModalDevolucion(p)"
+                    title="Registrar devolución de equipo"
+                  >
+                    <span class="material-symbols-outlined" aria-hidden="true">assignment_returned</span>
+                    <span>Devolver</span>
+                  </button>
+                } @else {
+                  <span class="texto-completado">Completado</span>
+                }
+              </td>
+            </tr>
+          }
+        </tbody>
+      </table>
+    </div>
+
+    <!-- Vista Móvil y Tablet: Tarjetas (< 1024px) -->
+    <div class="tarjetas-grid">
+      @for (p of store.prestamosFiltrados(); track p.id) {
+        <article class="prestamo-card" [class.prestamo-card--vencido]="p.estado === 'VENCIDO'">
+          <div class="prestamo-card__header">
+            <div class="prestamo-card__equipo">
+              <span class="codigo-chip">{{ p.codigoInventario }}</span>
+              <h3 class="prestamo-card__titulo">{{ p.nombreEquipo }}</h3>
+            </div>
+            @switch (p.estado) {
+              @case ('VIGENTE') {
+                <span class="badge-estado badge-estado--vigente">En préstamo</span>
+              }
+              @case ('VENCIDO') {
+                <span class="badge-estado badge-estado--vencido">Vencido</span>
+              }
+              @case ('DEVUELTO') {
+                <span class="badge-estado badge-estado--devuelto">Devuelto</span>
+              }
+            }
+          </div>
+
+          <div class="prestamo-card__body">
+            <div class="item-fila">
+              <span class="material-symbols-outlined icono-detalle" aria-hidden="true">apartment</span>
+              <div>
+                <span class="item-etiqueta">Área Destino:</span>
+                <span class="item-valor">{{ p.nombreAreaDestino }}</span>
+              </div>
+            </div>
+
+            <div class="item-fila">
+              <span class="material-symbols-outlined icono-detalle" aria-hidden="true">person</span>
+              <div>
+                <span class="item-etiqueta">Solicitante:</span>
+                <span class="item-valor">{{ p.solicitante }}</span>
+              </div>
+            </div>
+
+            <div class="item-fila">
+              <span class="material-symbols-outlined icono-detalle" aria-hidden="true">schedule</span>
+              <div>
+                <span class="item-etiqueta">Devolución Pactada:</span>
+                <span class="item-valor" [class.texto-peligro]="p.estado === 'VENCIDO'">
+                  {{ p.fechaDevolucionPactada | date:'dd/MM/yyyy HH:mm' }}
+                </span>
+              </div>
+            </div>
+
+            @if (p.observaciones) {
+              <div class="item-fila item-fila--obs">
+                <span class="material-symbols-outlined icono-detalle" aria-hidden="true">notes</span>
+                <p class="obs-texto">{{ p.observaciones }}</p>
+              </div>
+            }
+          </div>
+
+          <div class="prestamo-card__footer">
+            @if (p.estado !== 'DEVUELTO') {
+              <button
+                type="button"
+                class="btn btn--accion-movil"
+                (click)="abrirModalDevolucion(p)"
+              >
+                <span class="material-symbols-outlined" aria-hidden="true">assignment_returned</span>
+                <span>Registrar Devolución</span>
+              </button>
+            } @else {
+              <div class="info-retorno">
+                <span class="material-symbols-outlined icono-ok" aria-hidden="true">check</span>
+                <span>Devuelto el {{ p.fechaDevolucionReal | date:'dd/MM/yyyy' }} ({{ p.estadoDevolucion }})</span>
+              </div>
+            }
+          </div>
+        </article>
+      }
+    </div>
+  }
+</div>
+
+<!-- Diálogo de Entrega -->
+@if (mostrarModalEntrega()) {
+  <app-dialogo-entregar-prestamo
+    (cerrado)="cerrarModalEntrega($event)"
+  />
+}
+
+<!-- Diálogo de Devolución -->
+@if (prestamoParaDevolver(); as prestamoSel) {
+  <app-dialogo-devolver-prestamo
+    [prestamo]="prestamoSel"
+    (cerrado)="cerrarModalDevolucion($event)"
+  />
+}

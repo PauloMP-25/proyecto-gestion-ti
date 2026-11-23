@@ -81,6 +81,15 @@ export const routes: Routes = [
         pathMatch: 'full',
       },
       {
+        path: 'prestamos',
+        canActivate: [rolGuard],
+        data: { roles: [RolUsuario.PRACTICANTE, RolUsuario.ADMINISTRADOR], miga: 'Préstamos de Equipos' },
+        loadChildren: () =>
+          import('./funcionalidades/prestamos/prestamos.routes').then(
+            (m) => m.PRESTAMOS_ROUTES
+          ),
+      },
+      {
         path: 'solicitudes',
         data: { miga: 'Solicitudes' },
         loadChildren: () => import('./funcionalidades/solicitudes/solicitudes.routes').then(m => m.SOLICITUDES_ROUTES),

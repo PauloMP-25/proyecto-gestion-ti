@@ -28,6 +28,7 @@ export const MENU_POR_ROL: Record<RolUsuario, readonly SeccionMenu[]> = {
           icono: 'warning',
         },
         { titulo: 'Monitor de compromisos', ruta: '/sla/metricas', icono: 'timer' },
+        { titulo: 'Préstamos de equipos', ruta: '/prestamos', icono: 'swap_horiz' },
         { titulo: 'Panel de control', ruta: '/panel-control', icono: 'dashboard', exacto: true },
       ],
     },
@@ -60,6 +61,7 @@ export const MENU_POR_ROL: Record<RolUsuario, readonly SeccionMenu[]> = {
         { titulo: 'Áreas del hospital', ruta: '/administracion/areas', icono: 'apartment' },
         { titulo: 'Personal y cuentas', ruta: '/administracion/personal', icono: 'group' },
         { titulo: 'Inventario de equipos y red', ruta: '/administracion/equipos', icono: 'devices' },
+        { titulo: 'Préstamos de equipos', ruta: '/prestamos', icono: 'swap_horiz' },
       ],
     },
     {

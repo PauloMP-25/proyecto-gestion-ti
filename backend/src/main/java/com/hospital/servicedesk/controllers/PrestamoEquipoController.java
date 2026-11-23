@@ -1,52 +1,68 @@
-
 package com.hospital.servicedesk.controllers;
 
-import com.hospital.servicedesk.entities.PrestamoEquipo;
+import com.hospital.servicedesk.dtos.PrestamoDTOs.CrearPrestamoRequest;
+import com.hospital.servicedesk.dtos.PrestamoDTOs.DevolverPrestamoRequest;
+import com.hospital.servicedesk.dtos.PrestamoDTOs.PrestamoResumenDTO;
 import com.hospital.servicedesk.services.PrestamoEquipoService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
-import java.util.Map;
 
 @RestController
 @RequestMapping("/api/prestamos")
 @RequiredArgsConstructor
+@PreAuthorize("hasAnyRole('PRACTICANTE', 'ADMINISTRADOR')")
 public class PrestamoEquipoController {
 
     private final PrestamoEquipoService prestamoService;
 
     @GetMapping
-    public ResponseEntity<List<PrestamoEquipo>> getAllPrestamos() {
-        return ResponseEntity.ok(prestamoService.getAllPrestamos());
+    public ResponseEntity<List<PrestamoResumenDTO>> listarPrestamos(
+            @RequestParam(required = false) String estado,
+            @RequestParam(required = false) Integer areaId,
+            @RequestParam(required = false) String buscar
+    ) {
+        return ResponseEntity.ok(prestamoService.listarPrestamos(estado, areaId, buscar));
     }
 
     @GetMapping("/vencidos")
-    public ResponseEntity<List<PrestamoEquipo>> getPrestamosVencidos() {
-        return ResponseEntity.ok(List.of());
+    public ResponseEntity<List<PrestamoResumenDTO>> getPrestamosVencidos() {
+        return ResponseEntity.ok(prestamoService.getPrestamosVencidos());
     }
 
     @GetMapping("/{id}")
-    public ResponseEntity<PrestamoEquipo> getPrestamoById(@PathVariable Integer id) {
+    public ResponseEntity<PrestamoResumenDTO> getPrestamoById(@PathVariable Integer id) {
         return ResponseEntity.ok(prestamoService.getPrestamoById(id));
     }
 
     @PostMapping
-    public ResponseEntity<PrestamoEquipo> crearPrestamo(@RequestBody Map<String, Object> request) {
-        Integer idCi = (Integer) request.get("idCi");
-        Integer idTicket = request.get("idTicket") != null ? (Integer) request.get("idTicket") : null;
-        String solicitante = (String) request.get("solicitante");
-        String fechaDevolucion = (String) request.get("fechaDevolucionEsperada");
+    public ResponseEntity<PrestamoResumenDTO> crearPrestamo(
+            @RequestBody CrearPrestamoRequest request,
+            Authentication auth
+    ) {
+        String username = auth != null ? auth.getName() : "admin";
+        PrestamoResumenDTO creado = prestamoService.crearPrestamo(request, username);
+        return new ResponseEntity<>(creado, HttpStatus.CREATED);
+    }
 
-        PrestamoEquipo prestamo = prestamoService.crearPrestamo(idCi, idTicket, solicitante, fechaDevolucion);
-        return new ResponseEntity<>(prestamo, HttpStatus.CREATED);
+    @PostMapping("/{id}/devolver")
+    public ResponseEntity<PrestamoResumenDTO> devolverPrestamoPost(
+            @PathVariable Integer id,
+            @RequestBody(required = false) DevolverPrestamoRequest request
+    ) {
+        return ResponseEntity.ok(prestamoService.devolverPrestamo(id, request));
     }
 
     @PutMapping("/{id}/devolver")
-    public ResponseEntity<PrestamoEquipo> devolverPrestamo(@PathVariable Integer id) {
-        return ResponseEntity.ok(prestamoService.devolverPrestamo(id));
+    public ResponseEntity<PrestamoResumenDTO> devolverPrestamoPut(
+            @PathVariable Integer id,
+            @RequestBody(required = false) DevolverPrestamoRequest request
+    ) {
+        return ResponseEntity.ok(prestamoService.devolverPrestamo(id, request));
     }
 }
-
