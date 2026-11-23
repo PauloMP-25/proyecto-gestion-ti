@@ -52,7 +52,6 @@ export const MENU_POR_ROL: Record<RolUsuario, readonly SeccionMenu[]> = {
           badge: 'P1',
           badgeTipo: 'peligro',
         },
-        { titulo: 'Nivel de Prioridad de Soporte', ruta: '/administracion/matriz-prioridad', icono: 'grid_on' },
       ],
     },
     {
@@ -69,7 +68,7 @@ export const MENU_POR_ROL: Record<RolUsuario, readonly SeccionMenu[]> = {
       items: [
         { titulo: 'Solicitudes de cambio', ruta: '/administracion/cambios', icono: 'change_circle' },
         { titulo: 'Centro de soluciones y guías', ruta: '/administracion/conocimiento', icono: 'menu_book' },
-        { titulo: 'Compromisos de atención (SLA)', ruta: '/administracion/sla-config', icono: 'tune' },
+        { titulo: 'Compromisos de atención y prioridades', ruta: '/sla/configuracion', icono: 'tune' },
       ],
     },
   ],
