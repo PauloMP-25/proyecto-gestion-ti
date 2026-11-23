@@ -30,6 +30,7 @@ export interface Escalamiento {
   usuarioOrigen: string;
   usuarioDestino: string | null;
   motivo: string;
+  detallesTecnicos?: string | null;
 }
 
 export interface Solucion {

@@ -29,6 +29,33 @@
 
     <div class="detalle-grid">
       <div class="detalle-principal">
+        @if (t.estado === EstadoTicket.ESCALADO && t.escalamientos.length > 0) {
+          @let ultEsc = t.escalamientos[t.escalamientos.length - 1];
+          <section class="tarjeta-detalle tarjeta-detalle--escalado" aria-labelledby="detalle-escalamiento-n1">
+            <h2 class="tarjeta-detalle__titulo tarjeta-detalle__titulo--alerta" id="detalle-escalamiento-n1">
+              <app-icono nombre="trending_up" tamano="sm" aria-hidden="true"></app-icono>
+              <span>Diagnóstico y Verificaciones Previas (Soporte Nivel 1)</span>
+            </h2>
+            <div class="bloque-escalamiento-n1">
+              <p class="bloque-escalamiento-n1__motivo">
+                <strong>Motivo de derivación:</strong> {{ ultEsc.motivo }}
+              </p>
+              @if (ultEsc.detallesTecnicos) {
+                <div class="bloque-escalamiento-n1__pruebas">
+                  <strong>Pruebas técnicas efectuadas:</strong>
+                  <p>{{ ultEsc.detallesTecnicos }}</p>
+                </div>
+              }
+              <div class="bloque-escalamiento-n1__meta">
+                <span>Derivado por: <strong>{{ ultEsc.usuarioOrigen }}</strong></span>
+                <time [attr.datetime]="ultEsc.fecha">
+                  {{ ultEsc.fecha | date:'dd/MM/yyyy HH:mm' }}
+                </time>
+              </div>
+            </div>
+          </section>
+        }
+
         <section class="tarjeta-detalle" aria-labelledby="detalle-descripcion">
           <h2 class="tarjeta-detalle__titulo" id="detalle-descripcion">Descripción</h2>
           <p class="tarjeta-detalle__texto">{{ t.descripcion }}</p>

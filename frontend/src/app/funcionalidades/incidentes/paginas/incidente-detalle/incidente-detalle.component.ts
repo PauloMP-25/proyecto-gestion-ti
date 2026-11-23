@@ -22,6 +22,7 @@ import { DialogoAsignarComponent, ResultadoAsignar } from '../../componentes/dia
 import { DialogoCambiarEstadoComponent } from '../../componentes/dialogo-cambiar-estado/dialogo-cambiar-estado.component';
 import { DialogoEscalarTicketComponent } from '../../../../compartido/ui/organismos/dialogo-escalar-ticket/dialogo-escalar-ticket.component';
 import { DialogoResolverTicketComponent } from '../../../../compartido/ui/organismos/dialogo-resolver-ticket/dialogo-resolver-ticket.component';
+import { IconoComponent } from '../../../../compartido/ui/atomos/icono/icono.component';
 
 type TipoDialogo = 'asignar' | 'iniciar' | 'cerrar' | 'reabrir' | 'escalar' | 'resolver';
 
@@ -40,6 +41,7 @@ const ETIQUETAS_URGENCIA = { ALTA: 'Alta', MEDIA: 'Media', BAJA: 'Baja' } as con
   imports: [
     CommonModule,
     RouterLink,
+    IconoComponent,
     PrioridadInsigniaComponent,
     EstadoEtiquetaComponent,
     SlaInsigniaComponent,
@@ -58,6 +60,7 @@ const ETIQUETAS_URGENCIA = { ALTA: 'Alta', MEDIA: 'Media', BAJA: 'Baja' } as con
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class IncidenteDetalleComponent implements OnInit {
+  protected readonly EstadoTicket = EstadoTicket;
   private route = inject(ActivatedRoute);
   private ticketsService = inject(TicketsService);
   private authService = inject(AuthService);

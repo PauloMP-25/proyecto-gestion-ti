@@ -113,6 +113,7 @@ export class TicketMapper {
         usuarioOrigen: e.usuarioOrigen,
         usuarioDestino: e.usuarioDestino ?? null,
         motivo: e.motivo,
+        detallesTecnicos: e.detallesTecnicos ?? e.detalleTecnico ?? null,
       })),
       soluciones: raw.soluciones ?? [],
     };
