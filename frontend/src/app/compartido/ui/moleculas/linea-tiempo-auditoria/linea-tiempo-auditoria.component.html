@@ -1,0 +1,80 @@
+@if (eventosVista().length === 0) {
+  <div class="linea-tiempo-vacia" role="status">
+    <app-icono nombre="history" tamano="md" aria-hidden="true"></app-icono>
+    <p>Aún no hay registros en la trazabilidad de esta solicitud.</p>
+  </div>
+} @else {
+  <ol class="linea-tiempo-auditoria" [attr.aria-label]="ariaLabel()">
+    @for (evento of eventosVista(); track evento.id || $index) {
+      <li
+        class="linea-tiempo-auditoria__item"
+        [ngClass]="'linea-tiempo-auditoria__item--' + evento.configVisual.variante"
+      >
+        <!-- Conector y punto con icono institucional -->
+        <div class="linea-tiempo-auditoria__eje" aria-hidden="true">
+          <div class="linea-tiempo-auditoria__icono">
+            <app-icono [nombre]="evento.configVisual.icono" tamano="xs"></app-icono>
+          </div>
+          <div class="linea-tiempo-auditoria__linea"></div>
+        </div>
+
+        <!-- Cuerpo del evento -->
+        <div class="linea-tiempo-auditoria__cuerpo">
+          <header class="linea-tiempo-auditoria__cabecera">
+            <div class="linea-tiempo-auditoria__titulo-fila">
+              <span class="linea-tiempo-auditoria__titulo">
+                {{ evento.configVisual.titulo }}
+              </span>
+
+              @if (modoTecnico() && evento.visibilidad === 'INTERNA') {
+                <span
+                  class="linea-tiempo-auditoria__badge-interna"
+                  title="Visible solo para personal técnico y jefatura"
+                >
+                  Uso interno
+                </span>
+              }
+            </div>
+
+            <time
+              class="linea-tiempo-auditoria__fecha"
+              [attr.datetime]="evento.fechaIso"
+            >
+              {{ evento.fechaIso | date:'dd/MM/yyyy, HH:mm' }}
+            </time>
+          </header>
+
+          <div class="linea-tiempo-auditoria__meta">
+            <span class="linea-tiempo-auditoria__usuario">
+              <app-icono nombre="person" tamano="xs" aria-hidden="true"></app-icono>
+              <span>{{ evento.usuarioNombre }}</span>
+            </span>
+
+            @if (modoTecnico() && evento.ipOrigen) {
+              <span class="linea-tiempo-auditoria__ip">
+                <app-icono nombre="lan" tamano="xs" aria-hidden="true"></app-icono>
+                <span>IP: {{ evento.ipOrigen }}</span>
+              </span>
+            }
+
+            @if (evento.estadoNuevo) {
+              <span class="linea-tiempo-auditoria__transicion">
+                @if (evento.estadoAnterior) {
+                  <span>{{ evento.estadoAnterior }}</span>
+                  <app-icono nombre="arrow_forward" tamano="xs" aria-hidden="true"></app-icono>
+                }
+                <strong>{{ evento.estadoNuevo }}</strong>
+              </span>
+            }
+          </div>
+
+          @if (evento.comentario) {
+            <div class="linea-tiempo-auditoria__detalle">
+              <p>{{ evento.comentario }}</p>
+            </div>
+          }
+        </div>
+      </li>
+    }
+  </ol>
+}

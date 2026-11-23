@@ -20,6 +20,8 @@ import { calcularSla } from '../../../../compartido/utilidades/calculo-sla';
 import { SlaCalculado } from '../../../../compartido/modelos/sla-vista.model';
 import { IconoComponent } from '../../../../compartido/ui/atomos/icono/icono.component';
 import { CronometroAtencionComponent } from '../../../../compartido/ui/moleculas/cronometro-atencion/cronometro-atencion.component';
+import { LineaTiempoAuditoriaComponent } from '../../../../compartido/ui/moleculas/linea-tiempo-auditoria/linea-tiempo-auditoria.component';
+import { ItemAuditoria } from '../../../../compartido/modelos/auditoria.model';
 import { BarraAccionesTicketComponent } from '../../componentes/barra-acciones-ticket/barra-acciones-ticket.component';
 import { DialogoResolverTicketComponent } from '../../../../compartido/ui/organismos/dialogo-resolver-ticket/dialogo-resolver-ticket.component';
 import { DialogoEscalarTicketComponent } from '../../../../compartido/ui/organismos/dialogo-escalar-ticket/dialogo-escalar-ticket.component';
@@ -43,6 +45,7 @@ export interface HitoInternoTurno {
     RouterModule,
     IconoComponent,
     CronometroAtencionComponent,
+    LineaTiempoAuditoriaComponent,
     BarraAccionesTicketComponent,
     DialogoResolverTicketComponent,
     DialogoEscalarTicketComponent,
@@ -87,7 +90,68 @@ export class FichaAtencionPage implements OnInit {
     return calcularSla(t.sla, this.reloj.ahora());
   });
 
-  // Hitos simulados para trazabilidad interna del ticket
+  /** Eventos de auditoría y trazabilidad hospitalaria del ticket */
+  readonly eventosAuditoria = computed<ItemAuditoria[]>(() => {
+    const t = this.ticket();
+    if (!t) return [];
+
+    const eventos: ItemAuditoria[] = [
+      {
+        id: `aud-reg-${t.id}`,
+        tipoEvento: 'CREACION',
+        fechaIso: t.fechaCreacionIso,
+        usuarioNombre: t.solicitanteNombre || 'Personal Hospitalario',
+        visibilidad: 'PUBLICA',
+        comentario: `Solicitud registrada para el área ${t.areaNombre}`,
+      },
+    ];
+
+    if (t.asignadoA) {
+      eventos.push({
+        id: `aud-asig-${t.id}`,
+        tipoEvento: 'ASIGNACION',
+        fechaIso: t.sla.inicioIso || t.fechaCreacionIso,
+        usuarioNombre: t.asignadoA.nombre,
+        visibilidad: 'PUBLICA',
+        comentario: `Asignado al personal de soporte técnico: ${t.asignadoA.nombre}`,
+      });
+    }
+
+    if (t.estado === EstadoTicket.EN_PROCESO) {
+      eventos.push({
+        id: `aud-atenc-${t.id}`,
+        tipoEvento: 'CAMBIO_ESTADO',
+        estadoAnterior: 'ASIGNADO',
+        estadoNuevo: 'EN_PROCESO',
+        fechaIso: t.sla.respuestaRealIso || new Date().toISOString(),
+        usuarioNombre: t.asignadoA?.nombre || 'Técnico de Soporte',
+        visibilidad: 'PUBLICA',
+        comentario: 'Técnico inició labores de diagnóstico y resolución',
+      });
+    } else if (t.estado === EstadoTicket.ESCALADO) {
+      eventos.push({
+        id: `aud-esc-${t.id}`,
+        tipoEvento: 'ESCALAMIENTO',
+        fechaIso: new Date().toISOString(),
+        usuarioNombre: t.asignadoA?.nombre || 'Técnico Nivel 1',
+        visibilidad: 'INTERNA',
+        comentario: 'Derivado a Soporte Especializado Nivel 2',
+      });
+    } else if (t.estado === EstadoTicket.RESUELTO || t.estado === EstadoTicket.CERRADO) {
+      eventos.push({
+        id: `aud-res-${t.id}`,
+        tipoEvento: 'SOLUCION',
+        fechaIso: new Date().toISOString(),
+        usuarioNombre: t.asignadoA?.nombre || 'Técnico de Soporte',
+        visibilidad: 'PUBLICA',
+        comentario: 'Problema solucionado y validado operativamente',
+      });
+    }
+
+    return eventos;
+  });
+
+  // Hitos simulados para trazabilidad interna del ticket (mantenidos para retrocompatibilidad)
   readonly hitosInternos = computed<HitoInternoTurno[]>(() => {
     const t = this.ticket();
     if (!t) return [];

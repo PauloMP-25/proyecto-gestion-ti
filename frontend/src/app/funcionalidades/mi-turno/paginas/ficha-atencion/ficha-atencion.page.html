@@ -159,24 +159,11 @@
             <span>Historial y Trazabilidad de Atención</span>
           </h2>
 
-          <ol class="linea-tiempo-interna" role="list">
-            @for (hito of hitosInternos(); track hito.id) {
-              <li class="hito-interno" [ngClass]="'hito-interno--' + hito.tipo">
-                <div class="hito-interno__icono" aria-hidden="true">
-                  <app-icono [nombre]="hito.icono" tamano="xs"></app-icono>
-                </div>
-                <div class="hito-interno__cuerpo">
-                  <div class="hito-interno__cabecera">
-                    <span class="hito-interno__etiqueta">{{ hito.etiqueta }}</span>
-                    <time class="hito-interno__fecha" [attr.datetime]="hito.fechaIso">
-                      {{ hito.fechaIso | date:'shortTime' }} hrs
-                    </time>
-                  </div>
-                  <p class="hito-interno__detalle">{{ hito.detalle }}</p>
-                </div>
-              </li>
-            }
-          </ol>
+          <app-linea-tiempo-auditoria
+            [eventos]="eventosAuditoria()"
+            [modoTecnico]="true"
+            ariaLabel="Trazabilidad e historial de atención del ticket">
+          </app-linea-tiempo-auditoria>
         </section>
       </main>
 

@@ -11,7 +11,7 @@ const ICONOS_VALIDOS = new Set([
   'devices', 'dns', 'domain', 'drag_indicator', 'ecg_heart', 'edit',
   'edit_note', 'emergency', 'engineering', 'error', 'error_outline',
   'escalator_warning', 'expand_less', 'expand_more', 'fact_check', 'favorite',
-  'fiber_manual_record', 'filter_alt_off', 'fingerprint', 'format_list_numbered',
+  'fiber_manual_record', 'filter_alt_off', 'filter_list', 'fingerprint', 'format_list_numbered',
   'gavel', 'grid_on', 'groups', 'headset_mic', 'help', 'help_outline',
   'history', 'home', 'hourglass_empty', 'hub', 'inbox', 'info',
   'inventory_2', 'keyboard_arrow_down', 'keyboard_arrow_up', 'label', 'lan',
@@ -19,11 +19,11 @@ const ICONOS_VALIDOS = new Set([
   'lock_person', 'login', 'logout', 'manage_accounts', 'menu', 'menu_book',
   'monitor', 'monitor_heart', 'notification_important', 'pan_tool', 'pause',
   'person', 'person_add', 'person_off', 'phone', 'play_arrow', 'policy',
-  'preview', 'print', 'psychology', 'publish', 'receipt_long', 'refresh',
+  'preview', 'print', 'psychology', 'public', 'publish', 'receipt_long', 'refresh',
   'report_problem', 'restart_alt', 'router', 'save', 'schedule', 'search',
   'search_off', 'security', 'send', 'settings', 'shield', 'star',
   'star_border', 'storage', 'support_agent', 'swap_horiz', 'sync', 'sync_alt',
-  'task', 'task_alt', 'timer', 'timer_off', 'touch_app', 'track_changes',
+  'task', 'task_alt', 'thumb_up', 'timer', 'timer_off', 'touch_app', 'track_changes',
   'trending_up', 'unpublished', 'verified', 'visibility', 'visibility_off',
   'warning', 'wifi', 'wifi_off'
 ]);
