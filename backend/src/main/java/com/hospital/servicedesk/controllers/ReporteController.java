@@ -23,6 +23,7 @@ public class ReporteController {
 
     private final ReporteEjecutivoPdfService reporteService;
     private final UsuarioRepository usuarioRepository;
+    private final com.hospital.servicedesk.services.CorreoService correoService;
 
     @GetMapping("/ejecutivo/pdf")
     @PreAuthorize("hasAnyRole('PRACTICANTE', 'ADMINISTRADOR')")
@@ -97,7 +98,8 @@ public class ReporteController {
         String destinatario = usuario != null && usuario.getCorreo() != null ? usuario.getCorreo() : username;
 
         byte[] pdfBytes = reporteService.generarReporteEjecutivoPdf(fInicio, fFin, username);
-        log.info("Informe ejecutivo oficial en PDF generado ({} bytes) y enviado al correo del administrador: {}", pdfBytes.length, destinatario);
+        String nombreCompleto = usuario != null ? (usuario.getNombres() + " " + usuario.getApellidos()).trim() : "Administrador";
+        correoService.enviarReporteEjecutivo(destinatario, nombreCompleto, pdfBytes, "informe-ejecutivo-hsmsi.pdf");
 
         return ResponseEntity.ok(Map.of(
                 "mensaje", "El informe ejecutivo oficial en formato PDF fue enviado satisfactoriamente al correo institucional: " + destinatario,
