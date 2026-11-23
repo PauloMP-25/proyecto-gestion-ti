@@ -36,6 +36,28 @@
           <span>Actualizar</span>
         </button>
 
+        <button 
+          type="button" 
+          class="btn-accion-reporte btn-accion-reporte--pdf" 
+          (click)="descargarReportePdf()" 
+          [disabled]="descargandoPdf()"
+          title="Descargar informe ejecutivo oficial en formato PDF">
+          <span class="material-symbols-outlined" aria-hidden="true">picture_as_pdf</span>
+          <span>{{ descargandoPdf() ? 'Generando...' : 'Exportar PDF' }}</span>
+        </button>
+
+        @if (esAdministrador()) {
+          <button 
+            type="button" 
+            class="btn-accion-reporte btn-accion-reporte--correo" 
+            (click)="enviarReporteCorreo()" 
+            [disabled]="enviandoCorreo()"
+            title="Enviar informe ejecutivo en PDF al correo institucional del Administrador">
+            <span class="material-symbols-outlined" aria-hidden="true">mail</span>
+            <span>{{ enviandoCorreo() ? 'Enviando...' : 'Enviar al correo' }}</span>
+          </button>
+        }
+
         <app-boton 
           variante="primario" 
           icono="add"

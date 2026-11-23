@@ -1,4 +1,4 @@
-import { Component, ChangeDetectionStrategy, inject, signal } from '@angular/core';
+import { Component, ChangeDetectionStrategy, inject, signal, computed } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { Router, RouterModule } from '@angular/router';
 import { AuthService } from '../../../../nucleo/auth/auth.service';
@@ -14,6 +14,8 @@ import { BotonComponent } from '../../../../compartido/ui/atomos/boton/boton.com
 import { IconoComponent } from '../../../../compartido/ui/atomos/icono/icono.component';
 import { TicketResumen } from '../../../../compartido/modelos/ticket-resumen.model';
 
+import { HttpClient } from '@angular/common/http';
+import { API_ENDPOINTS } from '../../../../nucleo/config/api-endpoints';
 import { DialogoEscalarTicketComponent } from '../../../../compartido/ui/organismos/dialogo-escalar-ticket/dialogo-escalar-ticket.component';
 import { DialogoResolverTicketComponent } from '../../../../compartido/ui/organismos/dialogo-resolver-ticket/dialogo-resolver-ticket.component';
 import { TicketsService } from '../../../../compartido/servicios/tickets/tickets.service';
@@ -43,11 +45,40 @@ export type TipoPestanaPanel = 'metricas' | 'graficos';
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class PanelControlComponent {
+  private http = inject(HttpClient);
   private authService = inject(AuthService);
   private panelService = inject(PanelControlService);
   private ticketsService = inject(TicketsService);
   private notificacion = inject(NotificacionService);
   private router = inject(Router);
+
+  readonly descargandoPdf = signal<boolean>(false);
+
+  descargarReportePdf(): void {
+    if (this.descargandoPdf()) return;
+
+    this.descargandoPdf.set(true);
+    this.http
+      .get(API_ENDPOINTS.reportes.ejecutivoPdf, { responseType: 'blob' })
+      .subscribe({
+        next: (blob) => {
+          this.descargandoPdf.set(false);
+          const blobUrl = window.URL.createObjectURL(blob);
+          const a = document.createElement('a');
+          a.href = blobUrl;
+          a.download = `informe-ejecutivo-hsmsi-${new Date().toISOString().slice(0, 10)}.pdf`;
+          document.body.appendChild(a);
+          a.click();
+          document.body.removeChild(a);
+          window.URL.revokeObjectURL(blobUrl);
+          this.notificacion.exito('Informe ejecutivo en formato PDF descargado exitosamente.');
+        },
+        error: () => {
+          this.descargandoPdf.set(false);
+          this.notificacion.error('No se pudo generar el informe ejecutivo en PDF.');
+        },
+      });
+  }
 
   onNuevoIncidente(): void {
     this.router.navigate(['/solicitudes/nuevo']);
@@ -56,6 +87,25 @@ export class PanelControlComponent {
   readonly usuarioActual = this.authService.usuarioActual;
   readonly rolActual = this.authService.rolActual;
   readonly RolUsuario = RolUsuario;
+  readonly esAdministrador = computed(() => this.rolActual() === RolUsuario.ADMINISTRADOR);
+
+  readonly enviandoCorreo = signal<boolean>(false);
+
+  enviarReporteCorreo(): void {
+    if (this.enviandoCorreo()) return;
+
+    this.enviandoCorreo.set(true);
+    this.http.post<any>(API_ENDPOINTS.reportes.enviarCorreo, {}).subscribe({
+      next: (res) => {
+        this.enviandoCorreo.set(false);
+        this.notificacion.exito(res?.mensaje || 'Informe ejecutivo oficial enviado al correo institucional.');
+      },
+      error: () => {
+        this.enviandoCorreo.set(false);
+        this.notificacion.error('No se pudo enviar el informe ejecutivo por correo.');
+      },
+    });
+  }
 
   readonly kpis = this.panelService.kpis;
   readonly ticketsFiltrados = this.panelService.ticketsFiltrados;
