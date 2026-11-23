@@ -32,6 +32,7 @@ export abstract class AreasApi {
   abstract crear(formulario: AreaFormulario): Observable<AreaDetalle>;
   abstract actualizar(id: number, formulario: AreaFormulario): Observable<AreaDetalle>;
   abstract cambiarEstado(id: number, activo: boolean): Observable<AreaDetalle>;
+  abstract eliminar(id: number): Observable<void>;
   abstract listarPersonal(idArea: number, incluirInactivos?: boolean): Observable<PersonalAreaItem[]>;
   abstract listarEquipos(idArea: number, tipo?: string): Observable<EquipoAreaItem[]>;
   abstract reasignarPersonal(idArea: number, idUsuario: number): Observable<void>;

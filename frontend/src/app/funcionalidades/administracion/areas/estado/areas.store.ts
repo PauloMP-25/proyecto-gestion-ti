@@ -123,6 +123,21 @@ export class AreasStore {
     );
   }
 
+  eliminar(id: number): Observable<void> {
+    return this.api.eliminar(id).pipe(
+      tap({
+        next: () => {
+          this.notificacion.exito('Área eliminada correctamente.');
+          this.cargar();
+        },
+        error: (err) => {
+          const mensaje = err?.error?.mensaje || 'Error al eliminar el área hospitalaria.';
+          this.notificacion.error(mensaje);
+        },
+      })
+    );
+  }
+
   reasignarPersonal(idArea: number, idUsuario: number): Observable<void> {
     return this.api.reasignarPersonal(idArea, idUsuario).pipe(
       tap({

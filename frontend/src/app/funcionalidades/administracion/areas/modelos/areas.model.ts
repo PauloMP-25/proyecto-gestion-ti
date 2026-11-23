@@ -14,6 +14,7 @@ export interface AreaResumen {
   readonly totalPersonal: number;
   readonly totalComputadoras: number;
   readonly totalImpresoras: number;
+  readonly prioridadDefecto?: string | null;
 }
 
 export interface AreaDetalle extends AreaResumen {
@@ -26,6 +27,7 @@ export interface AreaFormulario {
   readonly referenciaUbicacion: string | null;
   readonly anexo: string | null;
   readonly idEncargado: number | null;
+  readonly prioridadDefecto?: string | null;
 }
 
 export interface FiltroAreas {
@@ -51,4 +53,17 @@ export const PISOS_HOSPITALARIOS: readonly PisoOpcion[] = [
   { valor: 8, etiqueta: 'Octavo Piso' },
   { valor: 9, etiqueta: 'Noveno Piso' },
   { valor: 10, etiqueta: 'Décimo Piso' },
+];
+
+export interface PrioridadOpcion {
+  readonly valor: string;
+  readonly etiqueta: string;
+  readonly descripcion: string;
+}
+
+export const PRIORIDADES_AREA: readonly PrioridadOpcion[] = [
+  { valor: 'P1', etiqueta: 'P1 · Crítica', descripcion: 'Soporte vital inmediato (Shock Trauma, UCI)' },
+  { valor: 'P2', etiqueta: 'P2 · Alta', descripcion: 'Servicio clínico prioritario (Emergencia, Farmacia, Triaje)' },
+  { valor: 'P3', etiqueta: 'P3 · Media', descripcion: 'Atención general (Consultorios, Enfermería)' },
+  { valor: 'P4', etiqueta: 'P4 · Baja', descripcion: 'Áreas administrativas y no asistenciales' },
 ];

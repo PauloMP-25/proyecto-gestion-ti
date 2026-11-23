@@ -29,9 +29,6 @@ public record EquipoSolicitud(
         @Size(max = 100, message = "El hostname no puede superar 100 caracteres")
         String hostname,
 
-        @Pattern(regexp = PatronesValidacion.MAC, message = "Formato de dirección MAC inválido (ej: AA:BB:CC:DD:EE:FF)")
-        String mac,
-
         @Size(max = 150, message = "La referencia de ubicación no puede superar 150 caracteres")
         String referenciaUbicacion,
 
@@ -47,7 +44,6 @@ public record EquipoSolicitud(
 ) {
     public EquipoSolicitud {
         codigoInventario = codigoInventario == null ? null : codigoInventario.trim().toUpperCase(Locale.ROOT);
-        mac = mac == null ? null : mac.trim().toUpperCase(Locale.ROOT).replace('-', ':');
         ipEstatica = Texto.vacioANulo(ipEstatica);
         hostname = Texto.vacioANulo(hostname);
         marcaModelo = Texto.vacioANulo(marcaModelo);

@@ -76,6 +76,12 @@ public class AreaAdminController {
         return ResponseEntity.ok(gestionService.cambiarEstado(id, solicitud.activo()));
     }
 
+    @DeleteMapping("/{id}")
+    public ResponseEntity<Void> eliminar(@PathVariable Integer id) {
+        gestionService.eliminar(id);
+        return ResponseEntity.noContent().build();
+    }
+
     @GetMapping("/{id}/personal")
     public ResponseEntity<List<UsuarioResumen>> listarPersonal(
             @PathVariable Integer id,

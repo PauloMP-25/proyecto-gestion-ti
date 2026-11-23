@@ -23,7 +23,7 @@ export class SeccionRedComponent {
 
     if (c.errors['maxlength'])
       return `Supera el límite de ${c.errors['maxlength'].requiredLength} caracteres.`;
-    if (c.errors['pattern']) return 'Formato inválido (ej: AA:BB:CC:DD:EE:FF).';
+    if (c.errors['pattern']) return 'Formato no válido.';
     if (c.errors['servidor']) return c.errors['servidor'];
 
     return 'Dato inválido.';

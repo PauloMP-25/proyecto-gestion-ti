@@ -27,6 +27,7 @@
     (alVerDetalle)="verDetalle($event)"
     (alEditar)="abrirModalEditar($event)"
     (alCambiarEstado)="confirmarCambioEstado($event)"
+    (alEliminar)="confirmarEliminar($event)"
     (alRegistrar)="abrirModalNuevaArea()"
   >
     <app-areas-filtros
@@ -57,5 +58,18 @@
     textoCancelar="Cancelar"
     (confirmar)="ejecutarCambioEstado()"
     (cancelar)="cancelarCambioEstado()"
+  ></app-dialogo-confirmacion>
+}
+
+<!-- CONFIRMACIÓN DE ELIMINACIÓN -->
+@if (areaParaEliminar(); as area) {
+  <app-dialogo-confirmacion
+    titulo="¿Eliminar área hospitalaria?"
+    [mensaje]="'¿Está seguro de eliminar el área «' + area.nombre + '»? Esta acción solo es posible si no tiene colaboradores ni equipos activos asignados.'"
+    textoConfirmar="Eliminar área"
+    textoCancelar="Cancelar"
+    variante="peligro"
+    (confirmar)="ejecutarEliminar()"
+    (cancelar)="cancelarEliminar()"
   ></app-dialogo-confirmacion>
 }

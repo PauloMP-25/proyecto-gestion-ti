@@ -60,7 +60,6 @@ export function contratoEquiposApi(obtenerInstancia: () => EquiposApi): void {
         referenciaUbicacion: 'Módulo de Pruebas',
         ipEstatica: '192.168.10.88',
         hostname: 'pc-test-99',
-        mac: '00:1A:2B:3C:99:99',
       };
 
       const creado = await firstValueFrom(api.crear(form));

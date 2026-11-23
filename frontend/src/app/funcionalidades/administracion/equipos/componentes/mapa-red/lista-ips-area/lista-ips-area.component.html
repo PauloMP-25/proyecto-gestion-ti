@@ -67,16 +67,13 @@
                 </div>
               </td>
 
-              <!-- HOSTNAME / MAC -->
+              <!-- HOSTNAME -->
               <td>
                 <div class="red-detalles">
                   @if (eq.hostname) {
                     <code class="codigo-hostname">{{ eq.hostname }}</code>
                   } @else {
                     <span class="sin-dato">—</span>
-                  }
-                  @if (eq.mac) {
-                    <span class="codigo-mac">{{ eq.mac }}</span>
                   }
                 </div>
               </td>

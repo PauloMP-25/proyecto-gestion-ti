@@ -13,7 +13,6 @@ export interface EquipoResumenDto {
 
 export interface EquipoDetalleDto extends EquipoResumenDto {
   readonly hostname: string | null;
-  readonly mac: string | null;
 }
 
 export interface EquipoSolicitudDto {
@@ -24,7 +23,6 @@ export interface EquipoSolicitudDto {
   readonly referenciaUbicacion?: string | null;
   readonly ipEstatica?: string | null;
   readonly hostname?: string | null;
-  readonly mac?: string | null;
 }
 
 export interface CodigoSugeridoRespuestaDto {

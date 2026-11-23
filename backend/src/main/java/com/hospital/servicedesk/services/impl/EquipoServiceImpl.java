@@ -49,8 +49,7 @@ public class EquipoServiceImpl implements EquipoService {
                         String t = texto.toLowerCase().trim();
                         boolean matchNom = ci.getNombre() != null && ci.getNombre().toLowerCase().contains(t);
                         boolean matchHost = ci.getHostname() != null && ci.getHostname().toLowerCase().contains(t);
-                        boolean matchMac = ci.getMac() != null && ci.getMac().toLowerCase().contains(t);
-                        return matchNom || matchHost || matchMac;
+                        return matchNom || matchHost;
                     }
                     return true;
                 })
@@ -80,7 +79,6 @@ public class EquipoServiceImpl implements EquipoService {
         ElementoConfiguracion ci = ElementoConfiguracion.builder()
                 .nombre((String) req.get("nombre"))
                 .tipoCi(TipoCI.valueOf((String) req.get("tipoCi")))
-                .mac((String) req.get("mac"))
                 .hostname((String) req.get("hostname"))
                 .area(area)
                 .estado(EstadoCI.ACTIVO)
@@ -95,7 +93,6 @@ public class EquipoServiceImpl implements EquipoService {
         ElementoConfiguracion ci = getEquipoById(id);
         if (req.get("nombre") != null) ci.setNombre((String) req.get("nombre"));
         if (req.get("tipoCi") != null) ci.setTipoCi(TipoCI.valueOf((String) req.get("tipoCi")));
-        if (req.get("mac") != null) ci.setMac((String) req.get("mac"));
         if (req.get("hostname") != null) ci.setHostname((String) req.get("hostname"));
         if (req.get("idArea") != null) {
             Integer idArea = (Integer) req.get("idArea");

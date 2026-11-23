@@ -10,7 +10,6 @@ export interface EquipoItem {
   readonly estado: string;
   readonly activo: boolean;
   readonly hostname: string | null;
-  readonly mac: string | null;
 }
 
 export interface EquipoFormulario {
@@ -21,7 +20,6 @@ export interface EquipoFormulario {
   readonly referenciaUbicacion?: string | null;
   readonly ipEstatica?: string | null;
   readonly hostname?: string | null;
-  readonly mac?: string | null;
 }
 
 export interface FiltroEquipos {

@@ -14,6 +14,7 @@ export interface AreaResumenDto {
   readonly totalPersonal: number;
   readonly totalComputadoras: number;
   readonly totalImpresoras: number;
+  readonly prioridadDefecto?: string | null;
 }
 
 export interface AreaDetalleDto extends AreaResumenDto {
@@ -26,6 +27,7 @@ export interface AreaSolicitudDto {
   readonly referenciaUbicacion: string | null;
   readonly anexo: string | null;
   readonly idEncargado: number | null;
+  readonly prioridadDefecto?: string | null;
 }
 
 export interface CambioEstadoAreaDto {

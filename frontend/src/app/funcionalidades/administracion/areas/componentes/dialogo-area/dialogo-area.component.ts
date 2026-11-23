@@ -13,7 +13,7 @@ import {
   ReactiveFormsModule,
   Validators,
 } from '@angular/forms';
-import { AreaDetalle, AreaFormulario, PISOS_HOSPITALARIOS } from '../../modelos/areas.model';
+import { AreaDetalle, AreaFormulario, PISOS_HOSPITALARIOS, PRIORIDADES_AREA } from '../../modelos/areas.model';
 import { AreasStore } from '../../estado/areas.store';
 import { DialogoFormularioComponent } from '../../../../../compartido/ui/organismos/dialogo-formulario/dialogo-formulario.component';
 import { CampoFormularioComponent } from '../../../../../compartido/ui/moleculas/campo-formulario/campo-formulario.component';
@@ -43,6 +43,7 @@ export class DialogoAreaComponent implements OnInit {
   readonly cerrado = output<boolean>();
 
   readonly pisos = PISOS_HOSPITALARIOS;
+  readonly prioridades = PRIORIDADES_AREA;
   readonly guardando = signal<boolean>(false);
   readonly errorGeneral = signal<string | null>(null);
   readonly personalDisponible = signal<PersonalItem[]>([]);
@@ -70,6 +71,7 @@ export class DialogoAreaComponent implements OnInit {
         [Validators.maxLength(20), Validators.pattern(/^[0-9]*$/)],
       ],
       idEncargado: [area?.encargado ? area.encargado.id : null],
+      prioridadDefecto: [area?.prioridadDefecto || 'P3'],
     });
   }
 
@@ -108,6 +110,7 @@ export class DialogoAreaComponent implements OnInit {
       referenciaUbicacion: this.form.value.referenciaUbicacion,
       anexo: this.form.value.anexo,
       idEncargado: this.form.value.idEncargado,
+      prioridadDefecto: this.form.value.prioridadDefecto || 'P3',
     };
 
     const areaActual = this.areaParaEditar();

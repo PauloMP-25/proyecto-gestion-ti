@@ -23,6 +23,7 @@ export function aAreaResumen(dto: AreaResumenDto): AreaResumen {
     totalPersonal: dto.totalPersonal ?? 0,
     totalComputadoras: dto.totalComputadoras ?? 0,
     totalImpresoras: dto.totalImpresoras ?? 0,
+    prioridadDefecto: dto.prioridadDefecto ?? 'P3',
   };
 }
 
@@ -40,5 +41,6 @@ export function aAreaSolicitudDto(form: AreaFormulario): AreaSolicitudDto {
     referenciaUbicacion: form.referenciaUbicacion?.trim() || null,
     anexo: form.anexo?.trim() || null,
     idEncargado: form.idEncargado,
+    prioridadDefecto: form.prioridadDefecto || 'P3',
   };
 }

@@ -23,11 +23,15 @@ public record AreaSolicitud(
         String anexo,
 
         @Positive(message = "El identificador del encargado debe ser positivo")
-        Integer idEncargado
+        Integer idEncargado,
+
+        @Size(max = 20, message = "La prioridad por defecto no puede superar 20 caracteres")
+        String prioridadDefecto
 ) {
     public AreaSolicitud {
         nombre = Texto.normalizar(nombre);
         referenciaUbicacion = Texto.vacioANulo(Texto.normalizar(referenciaUbicacion));
         anexo = Texto.vacioANulo(anexo);
+        prioridadDefecto = prioridadDefecto != null && !prioridadDefecto.isBlank() ? prioridadDefecto.trim().toUpperCase() : "P3";
     }
 }

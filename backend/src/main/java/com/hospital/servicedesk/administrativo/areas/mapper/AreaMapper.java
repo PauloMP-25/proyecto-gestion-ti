@@ -35,7 +35,8 @@ public class AreaMapper {
                 Boolean.TRUE.equals(a.getActivo()),
                 totalPersonal,
                 totalComputadoras,
-                totalImpresoras
+                totalImpresoras,
+                a.getPrioridadDefecto() != null ? a.getPrioridadDefecto() : "P3"
         );
     }
 
@@ -53,7 +54,8 @@ public class AreaMapper {
                 Boolean.TRUE.equals(a.getActivo()),
                 totalPersonal,
                 totalComputadoras,
-                totalImpresoras
+                totalImpresoras,
+                a.getPrioridadDefecto() != null ? a.getPrioridadDefecto() : "P3"
         );
     }
 
@@ -74,6 +76,7 @@ public class AreaMapper {
                 .referenciaUbicacion(s.referenciaUbicacion())
                 .anexo(s.anexo())
                 .encargado(encargado)
+                .prioridadDefecto(s.prioridadDefecto() != null ? s.prioridadDefecto() : "P3")
                 .activo(true)
                 .build();
     }
@@ -84,5 +87,8 @@ public class AreaMapper {
         a.setReferenciaUbicacion(s.referenciaUbicacion());
         a.setAnexo(s.anexo());
         a.setEncargado(encargado);
+        if (s.prioridadDefecto() != null) {
+            a.setPrioridadDefecto(s.prioridadDefecto());
+        }
     }
 }

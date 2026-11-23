@@ -46,7 +46,6 @@ public class EquipoMapper {
                 eq.getNombre(),
                 eq.getTipoCi(),
                 eq.getHostname(),
-                eq.getMac(),
                 eq.getReferenciaUbicacion(),
                 eq.getMarcaModelo(),
                 eq.getArea() != null ? eq.getArea().getIdArea() : null,
@@ -76,7 +75,6 @@ public class EquipoMapper {
                 .codigoInventario(s.codigoInventario())
                 .nombre(s.nombre())
                 .hostname(s.hostname())
-                .mac(s.mac())
                 .referenciaUbicacion(s.referenciaUbicacion())
                 .marcaModelo(s.marcaModelo())
                 .area(area)
@@ -89,7 +87,6 @@ public class EquipoMapper {
         eq.setCodigoInventario(s.codigoInventario());
         eq.setNombre(s.nombre());
         eq.setHostname(s.hostname());
-        eq.setMac(s.mac());
         eq.setReferenciaUbicacion(s.referenciaUbicacion());
         eq.setMarcaModelo(s.marcaModelo());
         eq.setArea(area);

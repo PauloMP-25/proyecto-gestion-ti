@@ -15,7 +15,6 @@ export interface DireccionIp {
     tipo: TipoActivo;
     areaNombre: string;
     hostname: string;
-    mac?: string;
   };
   descripcionUso?: string;     // ej: 'Gateway', 'Switch Core HSMSI', etc.
 }

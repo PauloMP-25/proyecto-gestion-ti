@@ -42,6 +42,15 @@
         </td>
         <td>{{ area.ubicacionLegible }}</td>
         <td>
+          <span
+            class="badge-prioridad"
+            [class]="'badge-prioridad--' + (area.prioridadDefecto || 'P3').toLowerCase()"
+            [title]="'Prioridad de atención por defecto: ' + (area.prioridadDefecto || 'P3')"
+          >
+            {{ area.prioridadDefecto || 'P3' }}
+          </span>
+        </td>
+        <td>
           @if (area.anexo) {
             <span class="celda-anexo">
               <span class="material-symbols-outlined icono-anexo" aria-hidden="true">call</span>
@@ -90,6 +99,15 @@
               <span class="material-symbols-outlined icono-accion" aria-hidden="true">
                 {{ area.activo ? 'block' : 'check_circle' }}
               </span>
+            </button>
+            <button
+              type="button"
+              class="btn-accion btn-accion--eliminar"
+              [attr.aria-label]="'Eliminar área ' + area.nombre"
+              (click)="alEliminar.emit(area)"
+              title="Eliminar área"
+            >
+              <span class="material-symbols-outlined icono-accion" aria-hidden="true">delete</span>
             </button>
           </div>
         </td>

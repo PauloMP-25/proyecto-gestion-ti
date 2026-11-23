@@ -97,10 +97,6 @@ export class DialogoEquipoComponent implements OnInit {
         },
       ],
       hostname: [editando?.hostname ?? '', [Validators.maxLength(60)]],
-      mac: [
-        editando?.mac ?? '',
-        [Validators.pattern(/^([0-9A-Fa-f]{2}[:-]){5}([0-9A-Fa-f]{2})$/)],
-      ],
       marcaModelo: [editando?.marcaModelo ?? '', [Validators.maxLength(100)]],
     });
 
@@ -177,7 +173,6 @@ export class DialogoEquipoComponent implements OnInit {
       referenciaUbicacion: v.referenciaUbicacion || null,
       ipEstatica: v.ipEstatica || null,
       hostname: v.hostname || null,
-      mac: v.mac || null,
     };
 
     const editando = this.equipoParaEditar();

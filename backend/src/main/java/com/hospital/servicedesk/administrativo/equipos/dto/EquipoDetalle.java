@@ -11,7 +11,6 @@ public record EquipoDetalle(
         String nombre,
         TipoCI tipo,
         String hostname,
-        String mac,
         String referenciaUbicacion,
         String marcaModelo,
         Integer idArea,

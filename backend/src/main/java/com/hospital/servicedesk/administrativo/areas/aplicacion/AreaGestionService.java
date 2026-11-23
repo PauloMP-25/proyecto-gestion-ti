@@ -25,4 +25,5 @@ public interface AreaGestionService {
     List<UsuarioResumen> listarPersonal(Integer idArea, boolean incluirInactivos);
 
     List<EquipoResumen> listarEquipos(Integer idArea, TipoCI tipo);
+    void eliminar(Integer id);
 }

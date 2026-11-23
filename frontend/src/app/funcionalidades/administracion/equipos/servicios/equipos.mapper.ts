@@ -26,7 +26,6 @@ export function aEquipoItem(
     estado: dto.estado,
     activo: dto.activo,
     hostname: detalle.hostname ?? null,
-    mac: detalle.mac ?? null,
   };
 }
 
@@ -41,7 +40,6 @@ export function aEquipoSolicitudDto(
     referenciaUbicacion: form.referenciaUbicacion?.trim() || null,
     ipEstatica: form.ipEstatica?.trim() || null,
     hostname: form.hostname?.trim() || null,
-    mac: form.mac?.trim().toUpperCase() || null,
   };
 }
 

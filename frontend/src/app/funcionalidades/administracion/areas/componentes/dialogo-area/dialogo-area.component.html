@@ -79,6 +79,19 @@
     </app-campo-formulario>
 
     <app-campo-formulario
+      etiqueta="Nivel de Prioridad de Soporte"
+      paraId="prioridadArea"
+      ayuda="Prioridad base para solicitudes e incidencias originadas en este servicio."
+      [error]="obtenerError('prioridadDefecto')"
+    >
+      <select id="prioridadArea" formControlName="prioridadDefecto">
+        @for (pri of prioridades; track pri.valor) {
+          <option [value]="pri.valor">{{ pri.etiqueta }} — {{ pri.descripcion }}</option>
+        }
+      </select>
+    </app-campo-formulario>
+
+    <app-campo-formulario
       etiqueta="Encargado(a) del área"
       paraId="encargadoArea"
       ayuda="Personal responsable de coordinar solicitudes y turnos."

@@ -36,6 +36,10 @@ public class Area {
     private Usuario encargado;
 
     @Builder.Default
+    @Column(name = "prioridad_defecto", length = 20)
+    private String prioridadDefecto = "P3";
+
+    @Builder.Default
     @Column(name = "activo", nullable = false)
     private Boolean activo = true;
 }

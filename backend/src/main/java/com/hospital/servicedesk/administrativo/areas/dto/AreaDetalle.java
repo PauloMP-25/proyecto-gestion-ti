@@ -11,5 +11,6 @@ public record AreaDetalle(
         boolean activo,
         long totalPersonal,
         long totalComputadoras,
-        long totalImpresoras
+        long totalImpresoras,
+        String prioridadDefecto
 ) {}

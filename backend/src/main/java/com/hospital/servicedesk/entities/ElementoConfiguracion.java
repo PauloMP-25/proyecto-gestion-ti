@@ -34,9 +34,6 @@ public class ElementoConfiguracion {
     @Column(name = "marca_modelo", length = 100)
     private String marcaModelo;
 
-    @Column(name = "mac", length = 17)
-    private String mac;
-
     @Column(name = "hostname", length = 100)
     private String hostname;
 

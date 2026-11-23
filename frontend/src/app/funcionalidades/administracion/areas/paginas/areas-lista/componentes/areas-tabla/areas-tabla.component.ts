@@ -20,11 +20,13 @@ export class AreasTablaComponent {
   readonly alVerDetalle = output<number>();
   readonly alEditar = output<AreaResumen>();
   readonly alCambiarEstado = output<AreaResumen>();
+  readonly alEliminar = output<AreaResumen>();
   readonly alRegistrar = output<void>();
 
   readonly columnas: readonly ColumnaTabla[] = [
     { campo: 'nombre', titulo: 'Área' },
     { campo: 'piso', titulo: 'Piso' },
+    { campo: 'prioridad', titulo: 'Prioridad' },
     { campo: 'anexo', titulo: 'Anexo' },
     { campo: 'encargado', titulo: 'Encargado(a)' },
     { campo: 'equipos', titulo: 'Equipos (PC · Imp)' },

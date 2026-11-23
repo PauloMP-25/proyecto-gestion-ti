@@ -40,6 +40,7 @@ export class AreasListaPage implements OnInit {
   readonly modalAbierto = signal<boolean>(false);
   readonly areaParaEditar = signal<AreaDetalle | null>(null);
   readonly areaParaCambiarEstado = signal<AreaResumen | null>(null);
+  readonly areaParaEliminar = signal<AreaResumen | null>(null);
 
   ngOnInit(): void {
     this.store.cargar();
@@ -94,5 +95,23 @@ export class AreasListaPage implements OnInit {
 
   cancelarCambioEstado(): void {
     this.areaParaCambiarEstado.set(null);
+  }
+
+  confirmarEliminar(area: AreaResumen): void {
+    this.areaParaEliminar.set(area);
+  }
+
+  ejecutarEliminar(): void {
+    const area = this.areaParaEliminar();
+    if (!area) return;
+
+    this.store.eliminar(area.id).subscribe({
+      next: () => this.areaParaEliminar.set(null),
+      error: () => this.areaParaEliminar.set(null),
+    });
+  }
+
+  cancelarEliminar(): void {
+    this.areaParaEliminar.set(null);
   }
 }

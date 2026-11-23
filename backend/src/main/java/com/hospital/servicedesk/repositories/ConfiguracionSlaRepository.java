@@ -10,5 +10,6 @@ import java.util.Optional;
 
 @Repository
 public interface ConfiguracionSlaRepository extends JpaRepository<ConfiguracionSLA, Integer> {
-    Optional<ConfiguracionSLA> findByImpactoAndUrgencia(Impacto impacto, Urgencia urgencia);
+    Optional<ConfiguracionSLA> findByImpactoAndUrgencia(String impacto, String urgencia);
+    java.util.List<ConfiguracionSLA> findByPrioridadResultante(String prioridadResultante);
 }

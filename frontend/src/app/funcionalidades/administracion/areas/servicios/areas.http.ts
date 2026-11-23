@@ -58,6 +58,10 @@ export class AreasHttp extends AreasApi {
       .pipe(map(aAreaDetalle));
   }
 
+  eliminar(id: number): Observable<void> {
+    return this.http.delete<void>(`${API_ENDPOINTS.admin.areas}/${id}`);
+  }
+
   listarPersonal(idArea: number, incluirInactivos: boolean = false): Observable<PersonalAreaItem[]> {
     let params = new HttpParams().set('incluirInactivos', String(incluirInactivos));
     return this.http.get<any[]>(`${API_ENDPOINTS.admin.areas}/${idArea}/personal`, { params }).pipe(

@@ -193,4 +193,28 @@ public class AreaGestionServiceImpl implements AreaGestionService {
         }
         return usuario;
     }
+
+    @Override
+    public void eliminar(Integer id) {
+        Area area = areaRepository.findById(id)
+                .orElseThrow(() -> new RecursoNoEncontradoException("Área no encontrada con id: " + id));
+
+        long totalPersonal = usuarioRepository.countByArea_IdAreaAndActivoTrue(id);
+        long totalEquipos = elementoRepository.countByArea_IdAreaAndEstado(id, EstadoCI.ACTIVO);
+
+        if (totalPersonal > 0 || totalEquipos > 0) {
+            throw new ConflictoNegocioException("id",
+                    String.format("No se puede eliminar el área «%s» porque cuenta con %d colaborador(es) activo(s) y %d equipo(s) en servicio. Reasígnelos antes de eliminar.",
+                            area.getNombre(), totalPersonal, totalEquipos));
+        }
+
+        try {
+            areaRepository.delete(area);
+            areaRepository.flush();
+        } catch (Exception ex) {
+            // Si existen registros históricos vinculados (ej. tickets archivados), dar baja lógica segura
+            area.setActivo(false);
+            areaRepository.save(area);
+        }
+    }
 }

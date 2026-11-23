@@ -101,6 +101,36 @@
   &--reactivar:hover {
     color: var(--color-secondary-base, var(--hsmsi-verde, #1b5e20));
   }
+
+  &--eliminar:hover {
+    color: #dc2626;
+  }
+}
+
+.badge-prioridad {
+  display: inline-flex;
+  align-items: center;
+  padding: 0.125rem 0.5rem;
+  border-radius: var(--radius-xs, 4px);
+  font-size: var(--font-size-xs, 0.75rem);
+  font-weight: var(--font-weight-bold, 700);
+
+  &--p1 {
+    background-color: #fee2e2;
+    color: #991b1b;
+  }
+  &--p2 {
+    background-color: #ffedd5;
+    color: #9a3412;
+  }
+  &--p3 {
+    background-color: #fef9c3;
+    color: #854d0e;
+  }
+  &--p4 {
+    background-color: #f1f5f9;
+    color: #475569;
+  }
 }
 
 .icono-accion {
