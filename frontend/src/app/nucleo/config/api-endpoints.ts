@@ -16,6 +16,7 @@ export const API_ENDPOINTS = {
     enviarCorreo: `${environment.apiUrl}/reportes/ejecutivo/enviar-correo`,
   },
   admin: {
+    cambios: `${environment.apiUrl}/rfc`,
     areas: `${environment.apiUrl}/admin/areas`,
     personal: `${environment.apiUrl}/admin/personal`,
     equipos: `${environment.apiUrl}/admin/equipos`,

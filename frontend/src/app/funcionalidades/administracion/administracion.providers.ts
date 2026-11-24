@@ -1,4 +1,8 @@
 import { Provider } from '@angular/core';
+import { environment } from '../../../environments/environment';
+import { CambiosApi } from './cambios/servicios/cambios.api';
+import { CambiosHttp } from './cambios/servicios/cambios.http';
+import { CambiosMock } from './cambios/servicios/cambios.mock';
 import { AreasApi } from './areas/servicios/areas.api';
 import { AreasHttp } from './areas/servicios/areas.http';
 import { AreasStore } from './areas/estado/areas.store';
@@ -25,4 +29,8 @@ export const ADMINISTRACION_PROVIDERS: Provider[] = [
     useClass: EquiposHttp,
   },
   EquiposStore,
+  {
+    provide: CambiosApi,
+    useClass: environment.usarMocks ? CambiosMock : CambiosHttp,
+  },
 ];
