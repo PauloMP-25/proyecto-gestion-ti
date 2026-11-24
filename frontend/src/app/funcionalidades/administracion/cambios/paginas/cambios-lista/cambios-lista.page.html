@@ -1,0 +1,94 @@
+<app-plantilla-pagina anchoMaximo="completo">
+  <app-cabecera-pagina
+    titulo="Solicitudes de cambio técnico"
+    subtitulo="Evalúe, programe y controle las intervenciones sobre sistemas, red y equipos sin afectar la atención de pacientes."
+    icono="change_circle"
+  />
+
+  <app-barra-filtros
+    placeholder="Buscar por código, título, área o responsable…"
+    [busqueda]="store.filtro().texto"
+    (busquedaChange)="store.actualizarFiltro({ texto: $event })"
+    [filtrosActivos]="store.filtrosActivos()"
+    (alLimpiar)="store.limpiarFiltros()"
+  >
+    <div filtros class="filtros">
+      <app-campo-filtro
+        etiqueta="Estado"
+        [opciones]="opcionesEstado"
+        [valor]="store.filtro().estado"
+        (valorChange)="cambiarEstado($event)"
+      />
+      <app-campo-filtro
+        etiqueta="Impacto asistencial"
+        [opciones]="opcionesImpacto"
+        [valor]="store.filtro().impacto"
+        (valorChange)="cambiarImpacto($event)"
+      />
+      <app-campo-filtro
+        etiqueta="Tipo de cambio"
+        [opciones]="opcionesTipo"
+        [valor]="store.filtro().tipo"
+        (valorChange)="cambiarTipo($event)"
+      />
+    </div>
+  </app-barra-filtros>
+
+  @if (store.cargando()) {
+    <div class="grid-cambios" aria-live="polite" aria-label="Cargando solicitudes de cambio">
+      @for (item of [1, 2, 3, 4]; track item) {
+        <app-esqueleto preset="tarjeta-solicitud" />
+      }
+    </div>
+  } @else if (store.error(); as mensaje) {
+    <app-alerta-en-linea tono="peligro">
+      {{ mensaje }}
+      <app-boton variante="outline" tamano="sm" icono="refresh" (alHacerClick)="store.cargar()">
+        Reintentar
+      </app-boton>
+    </app-alerta-en-linea>
+  } @else if (store.vacio()) {
+    <app-estado-vacio
+      icono="inbox"
+      mensaje="No hay solicitudes de cambio con los filtros seleccionados."
+    />
+  } @else {
+    <div class="grid-cambios">
+      @for (cambio of store.cambios(); track cambio.id) {
+        <app-tarjeta [interactiva]="true">
+          <div class="cambio-resumen" (click)="store.abrirDetalle(cambio.id)">
+            <div class="cambio-resumen__fila">
+              <span class="cambio-resumen__codigo">{{ cambio.codigo }}</span>
+              <app-insignia
+                [texto]="PRESENTACION_ESTADO[cambio.estado].texto"
+                [tono]="PRESENTACION_ESTADO[cambio.estado].tono"
+                [icono]="PRESENTACION_ESTADO[cambio.estado].icono"
+              />
+            </div>
+            <h3 class="cambio-resumen__titulo">{{ cambio.titulo }}</h3>
+            <div class="cambio-resumen__insignias">
+              <app-insignia
+                [texto]="PRESENTACION_TIPO[cambio.tipo].texto"
+                [tono]="PRESENTACION_TIPO[cambio.tipo].tono"
+              />
+              <app-insignia
+                [texto]="PRESENTACION_IMPACTO[cambio.impacto].texto"
+                [tono]="PRESENTACION_IMPACTO[cambio.impacto].tono"
+                [icono]="PRESENTACION_IMPACTO[cambio.impacto].icono"
+              />
+            </div>
+            @if (cambio.areasAfectadas.length > 0) {
+              <p class="cambio-resumen__areas">{{ cambio.areasAfectadas.join(', ') }}</p>
+            }
+            @if (cambio.horario; as horario) {
+              <p class="cambio-resumen__meta">
+                {{ horario.inicioIso | date: 'dd/MM/yyyy HH:mm' }} –
+                {{ horario.finIso | date: 'dd/MM/yyyy HH:mm' }}
+              </p>
+            }
+          </div>
+        </app-tarjeta>
+      }
+    </div>
+  }
+</app-plantilla-pagina>

@@ -39,6 +39,14 @@ export const ADMINISTRACION_ROUTES: Routes = [
         title: 'Inventario de equipos y red - Mesa de Ayuda HSMSI',
       },
       {
+        path: 'cambios',
+        loadComponent: () =>
+          import('./cambios/paginas/cambios-lista/cambios-lista.page').then(
+            (m) => m.CambiosListaPage
+          ),
+        title: 'Solicitudes de cambio técnico - Mesa de Ayuda HSMSI',
+      },
+      {
         path: 'conocimiento',
         loadComponent: () =>
           import(
