@@ -31,7 +31,6 @@
     justify-content: space-between;
     align-items: center;
     width: 100%;
-    margin-bottom: 2px;
   }
 
   &__codigo {
@@ -85,7 +84,7 @@
     text-transform: uppercase;
     letter-spacing: 0.02em;
     color: var(--color-text-secondary);
-    margin: 2px 0;
+    margin: 2px 0 4px 0;
     line-height: 1.25;
     min-height: 28px;
     display: -webkit-box;
@@ -95,59 +94,62 @@
     word-break: normal;
   }
 
-  /* Línea 3: En el medio el valor numérico */
-  &__cuerpo {
-    display: flex;
-    flex-direction: column;
-    margin: 2px 0;
-  }
-
-  &__valor-fila {
+  /* Línea 3: En la misma línea: VALOR  <= O >= VALOR DE META */
+  &__valores-fila {
     display: flex;
     align-items: baseline;
+    justify-content: space-between;
+    width: 100%;
+    margin-top: 4px;
+    padding-top: 5px;
+    border-top: 1px dashed var(--color-border-subtle);
   }
 
-  .valor-agrupado {
+  .valor-actual {
     display: flex;
     align-items: baseline;
     gap: 3px;
   }
 
-  &__valor {
+  .valor-numero {
     font-family: inherit;
     font-feature-settings: 'tnum' 1;
     font-variant-numeric: tabular-nums;
-    font-size: 1.4rem;
+    font-size: 1.35rem;
     font-weight: 800;
     line-height: 1;
     letter-spacing: -0.015em;
     color: var(--color-text-main);
   }
 
-  &__unidad {
+  .valor-unidad {
     font-family: inherit;
     font-size: 0.8rem;
     font-weight: 600;
     color: var(--color-text-muted);
   }
 
-  /* Línea 4: Debajo de la línea el valor de la meta oficial */
-  &__meta-fila {
-    display: flex;
-    align-items: center;
-    margin-top: 6px;
-    padding-top: 5px;
-    border-top: 1px dashed var(--color-border-subtle);
+  .meta-inline {
+    display: inline-flex;
+    align-items: baseline;
+    gap: 3px;
     font-size: 11px;
-    line-height: 1.2;
-  }
+    font-weight: 700;
+    color: var(--color-text-secondary);
+    background-color: var(--color-surface-sunken);
+    padding: 2px 6px;
+    border-radius: var(--radius-sm, 4px);
+    border: 1px solid var(--color-border-subtle);
 
-  &__meta-label {
-    color: var(--color-text-muted);
+    .meta-comparador {
+      color: var(--color-primary-base);
+      font-weight: 800;
+      font-size: 12px;
+    }
 
-    strong {
+    .meta-objetivo {
+      font-variant-numeric: tabular-nums;
       color: var(--color-text-main);
-      font-weight: 700;
     }
   }
 }

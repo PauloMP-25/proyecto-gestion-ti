@@ -27,24 +27,20 @@
   </div>
 
   <!-- Línea 2: Título debajo de la cabecera (texto completo sin cortarse) -->
-  <h3 class="kpi-tarjeta__titulo">{{ kpi().titulo }}</h3>
+  <h3 class="kpi-tarjeta__titulo" [title]="kpi().titulo">{{ kpi().titulo }}</h3>
 
-  <!-- Línea 3: En el medio el valor numérico y unidad -->
-  <div class="kpi-tarjeta__cuerpo">
-    <div class="kpi-tarjeta__valor-fila">
-      <div class="valor-agrupado">
-        <span class="kpi-tarjeta__valor">{{ kpi().valor }}</span>
-        @if (kpi().unidad) {
-          <span class="kpi-tarjeta__unidad">{{ kpi().unidad }}</span>
-        }
-      </div>
+  <!-- Línea 3: En la misma línea el VALOR y la META (VALOR  <= O >= VALOR) -->
+  <div class="kpi-tarjeta__valores-fila">
+    <div class="valor-actual">
+      <span class="valor-numero">{{ kpi().valor }}</span>
+      @if (kpi().unidad) {
+        <span class="valor-unidad">{{ kpi().unidad }}</span>
+      }
     </div>
-  </div>
 
-  <!-- Línea 4: Debajo de la línea divisoria el valor de la meta oficial -->
-  <div class="kpi-tarjeta__meta-fila">
-    <span class="kpi-tarjeta__meta-label">
-      Meta: <strong>{{ kpi().comparador }} {{ kpi().meta }}</strong>
-    </span>
+    <div class="meta-inline" [title]="'Meta objetivo oficial: ' + kpi().comparador + ' ' + kpi().meta">
+      <span class="meta-comparador">{{ kpi().comparador }}</span>
+      <span class="meta-objetivo">{{ kpi().meta }}</span>
+    </div>
   </div>
 </div>
