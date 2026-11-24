@@ -46,6 +46,13 @@ export class SlaConfiguracionComponent implements OnInit {
   readonly mensajeFeedback = signal<string>('');
   readonly guardandoPrioridadId = signal<number | null>(null);
   readonly guardandoKpiCodigo = signal<string | null>(null);
+  readonly guardandoVisibilidadCodigo = signal<string | null>(null);
+
+  // Control de cambios pendientes (Dirty State) para alertar antes de salir
+  readonly cambiosPendientesMetas = signal<boolean>(false);
+  readonly modalCambiosPendientesAbierto = signal<boolean>(false);
+  readonly pestanaDestinoPendiente = signal<TipoPestanaConfig | null>(null);
+  readonly accionSalidaPendiente = signal<'panel' | 'pestana' | null>(null);
 
   // Filtros de Áreas
   readonly busquedaArea = signal<string>('');
@@ -157,16 +164,88 @@ export class SlaConfiguracionComponent implements OnInit {
     return this.metasKPI.filter((k) => k.activo !== false).length;
   }
 
+  alCambiarVisibilidad(kpi: ConfiguracionKpiItem): void {
+    this.guardandoVisibilidadCodigo.set(kpi.codigo);
+    this.http.put<ConfiguracionKpiItem[]>(API_ENDPOINTS.kpis.configuracion, this.metasKPI).subscribe({
+      next: (guardados) => {
+        if (Array.isArray(guardados) && guardados.length > 0) {
+          this.metasKPI = guardados;
+          this.slaService.metasKpis.set(guardados);
+        }
+        this.guardandoVisibilidadCodigo.set(null);
+        const estado = kpi.activo !== false ? 'activado (se mostrará en el Panel)' : 'desactivado (oculto en el Panel)';
+        this.mostrarExito(`${kpi.codigo} · ${kpi.titulo}: ${estado}. Sincronizado en la Base de Datos.`);
+      },
+      error: () => {
+        this.guardandoVisibilidadCodigo.set(null);
+        this.slaService.actualizarMetasKpi(this.metasKPI);
+        this.mostrarExito(`Visibilidad de ${kpi.codigo} actualizada localmente.`);
+      },
+    });
+  }
+
   toggleTodosKpis(activar: boolean): void {
     this.metasKPI.forEach((k) => (k.activo = activar));
+    this.guardarConfiguracionMetas(
+      activar
+        ? 'Todos los 8 indicadores activados y guardados en la BD (visibles en Panel de Control).'
+        : 'Todos los indicadores desmarcados y guardados en la BD (ocultados del Panel de Control).'
+    );
+  }
+
+  onCambioMetaNumerica(): void {
+    this.cambiosPendientesMetas.set(true);
   }
 
   seleccionarPestana(pestana: TipoPestanaConfig): void {
+    if (this.cambiosPendientesMetas()) {
+      this.pestanaDestinoPendiente.set(pestana);
+      this.accionSalidaPendiente.set('pestana');
+      this.modalCambiosPendientesAbierto.set(true);
+      return;
+    }
     this.pestanaActiva.set(pestana);
   }
 
   volverAlPanel(): void {
+    if (this.cambiosPendientesMetas()) {
+      this.accionSalidaPendiente.set('panel');
+      this.modalCambiosPendientesAbierto.set(true);
+      return;
+    }
     this.router.navigate(['/panel-control']);
+  }
+
+  confirmarGuardarYSalir(): void {
+    this.modalCambiosPendientesAbierto.set(false);
+    this.guardarConfiguracionMetas();
+    this.ejecutarSalidaPendiente();
+  }
+
+  descartarYSalir(): void {
+    this.modalCambiosPendientesAbierto.set(false);
+    this.cambiosPendientesMetas.set(false);
+    this.cargarMetasDesdeBD();
+    this.ejecutarSalidaPendiente();
+  }
+
+  cancelarSalida(): void {
+    this.modalCambiosPendientesAbierto.set(false);
+    this.pestanaDestinoPendiente.set(null);
+    this.accionSalidaPendiente.set(null);
+  }
+
+  private ejecutarSalidaPendiente(): void {
+    const accion = this.accionSalidaPendiente();
+    const pestana = this.pestanaDestinoPendiente();
+    this.accionSalidaPendiente.set(null);
+    this.pestanaDestinoPendiente.set(null);
+
+    if (accion === 'panel') {
+      this.router.navigate(['/panel-control']);
+    } else if (accion === 'pestana' && pestana) {
+      this.pestanaActiva.set(pestana);
+    }
   }
 
   guardarConfiguracionCompromisos(): void {
@@ -174,18 +253,20 @@ export class SlaConfiguracionComponent implements OnInit {
     this.mostrarExito('Parámetros de compromisos de atención y tiempos máximos actualizados correctamente.');
   }
 
-  guardarConfiguracionMetas(): void {
+  guardarConfiguracionMetas(mensajeCustom?: string): void {
     this.http.put<ConfiguracionKpiItem[]>(API_ENDPOINTS.kpis.configuracion, this.metasKPI).subscribe({
       next: (guardados) => {
         if (Array.isArray(guardados) && guardados.length > 0) {
           this.metasKPI = guardados;
           this.slaService.metasKpis.set(guardados);
         }
-        this.mostrarExito('Metas de KPIs actualizadas y sincronizadas con la base de datos y el Panel de Control.');
+        this.cambiosPendientesMetas.set(false);
+        this.mostrarExito(mensajeCustom || 'Metas de KPIs actualizadas y sincronizadas con la base de datos y el Panel de Control.');
       },
       error: () => {
+        this.cambiosPendientesMetas.set(false);
         this.slaService.actualizarMetasKpi(this.metasKPI);
-        this.mostrarExito('Metas dinámicas actualizadas correctamente.');
+        this.mostrarExito(mensajeCustom || 'Metas dinámicas actualizadas correctamente.');
       },
     });
   }
@@ -199,10 +280,12 @@ export class SlaConfiguracionComponent implements OnInit {
           this.slaService.metasKpis.set(guardados);
         }
         this.guardandoKpiCodigo.set(null);
+        this.cambiosPendientesMetas.set(false);
         this.mostrarExito(`Meta de ${kpi.codigo} (${kpi.titulo}) actualizada a ${kpi.metaValor} ${kpi.unidad} con éxito en la base de datos.`);
       },
       error: () => {
         this.guardandoKpiCodigo.set(null);
+        this.cambiosPendientesMetas.set(false);
         this.slaService.actualizarMetasKpi(this.metasKPI);
         this.mostrarExito(`Meta de ${kpi.codigo} actualizada localmente.`);
       },

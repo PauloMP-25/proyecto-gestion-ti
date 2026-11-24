@@ -85,6 +85,27 @@
     </div>
   }
 
+  <!-- Banner persistente de cambios numéricos pendientes -->
+  @if (cambiosPendientesMetas()) {
+    <div class="aviso-cambios-pendientes" role="status" aria-live="polite">
+      <div class="aviso-cambios-pendientes__texto">
+        <app-icono nombre="warning" tamano="sm"></app-icono>
+        <span>
+          <strong>Cambios pendientes:</strong> Has modificado valores de metas de rendimiento. Recuerda hacer clic en <strong>«Actualizar»</strong> en cada tarjeta o en <strong>«Guardar Todo en BD»</strong> antes de cambiar de módulo.
+        </span>
+      </div>
+      <div class="aviso-cambios-pendientes__acciones">
+        <button type="button" class="btn-aviso-descartar" (click)="descartarYSalir()">
+          Descartar
+        </button>
+        <button type="button" class="btn-aviso-guardar" (click)="guardarConfiguracionMetas()">
+          <app-icono nombre="save" tamano="xs"></app-icono>
+          Guardar Todo en BD
+        </button>
+      </div>
+    </div>
+  }
+
   <!-- ============================================================== -->
   <!-- PESTAÑA 1: PRIORIDADES Y COMPROMISOS DE ATENCIÓN              -->
   <!-- ============================================================== -->
@@ -220,16 +241,22 @@
           <div class="info-kpis-activos">
             <app-icono nombre="info" tamano="xs"></app-icono>
             <span>
-              Solo se consultarán y renderizarán en el Panel de Control los indicadores que tengan la casilla <strong>«Mostrar en Panel de Control»</strong> activada, optimizando recursos del sistema.
+              Solo se consultarán y renderizarán en el Panel de Control los indicadores que tengan la casilla <strong>«Visible»</strong> activada. Al marcar o desmarcar, el cambio se guarda automáticamente en la Base de Datos.
             </span>
           </div>
 
           <div class="botones-seleccion-kpi">
-            <button type="button" class="btn-seleccion-kpi" (click)="toggleTodosKpis(true)">
+            <button type="button" class="btn-seleccion-kpi" (click)="toggleTodosKpis(true)" title="Activar todos los 8 KPIs en el Panel de Control">
+              <app-icono nombre="check" tamano="xs"></app-icono>
               Marcar todos
             </button>
-            <button type="button" class="btn-seleccion-kpi" (click)="toggleTodosKpis(false)">
+            <button type="button" class="btn-seleccion-kpi" (click)="toggleTodosKpis(false)" title="Desmarcar todos los KPIs">
+              <app-icono nombre="close" tamano="xs"></app-icono>
               Desmarcar todos
+            </button>
+            <button type="button" class="btn-guardar-todo-kpis" (click)="guardarConfiguracionMetas()" title="Guardar toda la configuración de metas y visibilidad en la base de datos">
+              <app-icono nombre="save" tamano="xs"></app-icono>
+              <span>Guardar Todo en BD</span>
             </button>
           </div>
         </div>
@@ -242,14 +269,19 @@
               <div class="tarjeta-meta-kpi__linea-superior">
                 <span class="badge-kpi-codigo">{{ kpi.codigo }}</span>
 
-                <label class="control-casilla-visibilidad" [title]="kpi.activo ? 'KPI activo: Se mostrará en el Panel' : 'KPI inactivo: Oculto en el Panel'">
+                <label class="control-casilla-visibilidad" [title]="kpi.activo ? 'KPI activo: Visible en el Panel de Control' : 'KPI inactivo: Oculto en el Panel de Control'">
                   <input
                     type="checkbox"
                     [(ngModel)]="kpi.activo"
+                    (change)="alCambiarVisibilidad(kpi)"
+                    [disabled]="guardandoVisibilidadCodigo() === kpi.codigo"
                     aria-label="Mostrar este KPI en el Panel de Control"
                   />
                   <span class="casilla-estilo"></span>
                   <span class="texto-casilla">{{ kpi.activo ? 'Visible' : 'Oculto' }}</span>
+                  @if (guardandoVisibilidadCodigo() === kpi.codigo) {
+                    <span class="mini-spinner" title="Guardando en BD..."></span>
+                  }
                 </label>
               </div>
 
@@ -289,6 +321,7 @@
                       id="meta-{{ kpi.codigo }}"
                       type="number"
                       [(ngModel)]="kpi.metaValor"
+                      (input)="onCambioMetaNumerica()"
                       min="0"
                       step="0.5"
                       aria-label="Valor de la meta"
@@ -535,6 +568,40 @@
           </div>
         }
       </section>
+    </div>
+  }
+
+  <!-- Modal accesible de confirmación ante cambios no guardados -->
+  @if (modalCambiosPendientesAbierto()) {
+    <div class="modal-backdrop" role="dialog" aria-modal="true" aria-labelledby="modal-aviso-titulo">
+      <div class="modal-dialog-alerta">
+        <div class="modal-dialog-alerta__header">
+          <div class="icono-aviso-circulo">
+            <app-icono nombre="warning" tamano="md"></app-icono>
+          </div>
+          <div>
+            <h3 id="modal-aviso-titulo" class="modal-dialog-alerta__titulo">¿Guardar cambios antes de salir?</h3>
+            <p class="modal-dialog-alerta__subtitulo">Mesa de Ayuda · Hospital Santa María del Socorro</p>
+          </div>
+        </div>
+
+        <p class="modal-dialog-alerta__cuerpo">
+          Tienes modificaciones pendientes en los valores de las metas de rendimiento que aún no se han sincronizado con la base de datos. Si sales ahora sin guardar, se perderán los valores ingresados.
+        </p>
+
+        <div class="modal-dialog-alerta__acciones">
+          <button type="button" class="btn-modal-cancelar" (click)="cancelarSalida()">
+            Permanecer aquí
+          </button>
+          <button type="button" class="btn-modal-descartar" (click)="descartarYSalir()">
+            Salir sin guardar
+          </button>
+          <button type="button" class="btn-modal-guardar" (click)="confirmarGuardarYSalir()">
+            <app-icono nombre="save" tamano="xs"></app-icono>
+            Guardar y continuar
+          </button>
+        </div>
+      </div>
     </div>
   }
 </div>

@@ -5,18 +5,28 @@
 
 .kpi-panel-grid {
   display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
-  gap: var(--espacio-md, 16px);
+  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+  gap: 10px;
   width: 100%;
   align-items: stretch;
 
-  @media (width <= 900px) {
-    grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
-    gap: var(--espacio-sm, 12px);
+  /* En pantallas de escritorio, si hay 10 KPIs o similar, estructurar en 5 columnas (5 arriba y 5 abajo) */
+  @media (min-width: 1280px) {
+    grid-template-columns: repeat(5, 1fr);
   }
 
-  @media (width <= 540px) {
+  @media (max-width: 1279px) and (min-width: 860px) {
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+    gap: 10px;
+  }
+
+  @media (max-width: 859px) and (min-width: 501px) {
+    grid-template-columns: repeat(2, 1fr);
+    gap: 8px;
+  }
+
+  @media (max-width: 500px) {
     grid-template-columns: 1fr;
-    gap: var(--espacio-xs, 8px);
+    gap: 8px;
   }
 }

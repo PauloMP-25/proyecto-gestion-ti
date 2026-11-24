@@ -131,7 +131,9 @@ export class PanelControlService implements OnDestroy {
           k.codigo === 'KPI-05' ? 4 :
           k.codigo === 'KPI-06' ? 99.8 :
           k.codigo === 'KPI-07' ? 94.2 :
-          k.codigo === 'KPI-08' ? abiertos : 0
+          k.codigo === 'KPI-08' ? abiertos :
+          k.codigo === 'KPI-09' ? 12.5 :
+          k.codigo === 'KPI-10' ? 720.0 : 0
         );
 
         const cumple = k.cumple !== undefined ? k.cumple : (

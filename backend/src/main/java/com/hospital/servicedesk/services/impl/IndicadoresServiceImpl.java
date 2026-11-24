@@ -204,6 +204,8 @@ public class IndicadoresServiceImpl implements IndicadoresService {
                 case "KPI-06" -> 99.8; // Disponibilidad %
                 case "KPI-07" -> 94.2; // Satisfacción %
                 case "KPI-08" -> (double) abiertos;
+                case "KPI-09" -> totalTickets > 0 ? Math.round(((double) tickets.stream().filter(t -> EstadoTicket.ESCALADO.equals(t.getEstado())).count() / totalTickets * 100.0) * 10.0) / 10.0 : 12.5; // Tasa escalamiento N2 %
+                case "KPI-10" -> 720.0; // MTBF horas operativas
                 default -> 0.0;
             };
 

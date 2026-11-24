@@ -30,6 +30,10 @@ public class KpiConfiguracionController {
         if (existentes.isEmpty()) {
             return ResponseEntity.ok(inicializarKpisPorDefecto());
         }
+        if (existentes.size() < 10) {
+            asegurarKpisFaltantes(existentes);
+            return ResponseEntity.ok(kpiRepository.findAllByOrderByOrdenAsc());
+        }
         return ResponseEntity.ok(existentes);
     }
 
@@ -190,9 +194,80 @@ public class KpiConfiguracionController {
                         .descripcion("Volumen de solicitudes e incidentes activos pendientes de atención técnica.")
                         .orden(8)
                         .activo(true)
+                        .build(),
+                ConfiguracionKPI.builder()
+                        .codigo("KPI-09")
+                        .titulo("Tasa de Escalamiento a Soporte N2")
+                        .metaValor(15.0)
+                        .unidad("%")
+                        .comparador("≤")
+                        .numeradorFormula("Tickets derivados a Especialistas Nivel 2")
+                        .denominadorFormula("Total tickets atendidos en Mesa de Ayuda")
+                        .multiplicadorFormula("× 100")
+                        .esFraccion(true)
+                        .formula("(Total tickets derivados a N2 / Total atendidos) × 100")
+                        .descripcion("Porcentaje de solicitudes e incidentes que demandaron intervención técnica especializada de segundo nivel.")
+                        .orden(9)
+                        .activo(true)
+                        .build(),
+                ConfiguracionKPI.builder()
+                        .codigo("KPI-10")
+                        .titulo("Tiempo Medio Entre Fallas (MTBF)")
+                        .metaValor(720.0)
+                        .unidad("hrs")
+                        .comparador("≥")
+                        .numeradorFormula("Horas de operatividad asistencial normal")
+                        .denominadorFormula("Total incidentes de infraestructura crítica")
+                        .multiplicadorFormula(null)
+                        .esFraccion(true)
+                        .formula("Horas de operación asistencial / Total fallas de infraestructura")
+                        .descripcion("Tiempo promedio de operación continua sin caídas en estaciones clínicas, impresoras y enlaces de red.")
+                        .orden(10)
+                        .activo(true)
                         .build()
         );
 
         return kpiRepository.saveAll(porDefecto);
+    }
+
+    private void asegurarKpisFaltantes(List<ConfiguracionKPI> existentes) {
+        boolean tieneKpi09 = existentes.stream().anyMatch(k -> "KPI-09".equalsIgnoreCase(k.getCodigo()));
+        boolean tieneKpi10 = existentes.stream().anyMatch(k -> "KPI-10".equalsIgnoreCase(k.getCodigo()));
+
+        if (!tieneKpi09) {
+            kpiRepository.save(ConfiguracionKPI.builder()
+                    .codigo("KPI-09")
+                    .titulo("Tasa de Escalamiento a Soporte N2")
+                    .metaValor(15.0)
+                    .unidad("%")
+                    .comparador("≤")
+                    .numeradorFormula("Tickets derivados a Especialistas Nivel 2")
+                    .denominadorFormula("Total tickets atendidos en Mesa de Ayuda")
+                    .multiplicadorFormula("× 100")
+                    .esFraccion(true)
+                    .formula("(Total tickets derivados a N2 / Total atendidos) × 100")
+                    .descripcion("Porcentaje de solicitudes e incidentes que demandaron intervención técnica especializada de segundo nivel.")
+                    .orden(9)
+                    .activo(true)
+                    .build());
+        }
+
+        if (!tieneKpi10) {
+            kpiRepository.save(ConfiguracionKPI.builder()
+                    .codigo("KPI-10")
+                    .titulo("Tiempo Medio Entre Fallas (MTBF)")
+                    .metaValor(720.0)
+                    .unidad("hrs")
+                    .comparador("≥")
+                    .numeradorFormula("Horas de operatividad asistencial normal")
+                    .denominadorFormula("Total incidentes de infraestructura crítica")
+                    .multiplicadorFormula(null)
+                    .esFraccion(true)
+                    .formula("Horas de operación asistencial / Total fallas de infraestructura")
+                    .descripcion("Tiempo promedio de operación continua sin caídas en estaciones clínicas, impresoras y enlaces de red.")
+                    .orden(10)
+                    .activo(true)
+                    .build());
+        }
     }
 }

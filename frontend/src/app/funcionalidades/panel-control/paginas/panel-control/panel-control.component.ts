@@ -1,4 +1,4 @@
-import { Component, ChangeDetectionStrategy, inject, signal, computed } from '@angular/core';
+import { Component, ChangeDetectionStrategy, inject, signal, computed, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { Router, RouterModule } from '@angular/router';
 import { AuthService } from '../../../../nucleo/auth/auth.service';
@@ -44,7 +44,7 @@ export type TipoPestanaPanel = 'metricas' | 'graficos';
   styleUrl: './panel-control.component.scss',
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
-export class PanelControlComponent {
+export class PanelControlComponent implements OnInit {
   private http = inject(HttpClient);
   private authService = inject(AuthService);
   private panelService = inject(PanelControlService);
@@ -121,6 +121,10 @@ export class PanelControlComponent {
   readonly modalResolverAbierto = signal<boolean>(false);
   readonly procesandoAccion = signal<boolean>(false);
   readonly ticketParaAccion = signal<TicketResumen | null>(null);
+
+  ngOnInit(): void {
+    this.panelService.refrescarDatos();
+  }
 
   constructor() {
     // Inicializar el ticket en atención con el primer ticket crítico si existe
