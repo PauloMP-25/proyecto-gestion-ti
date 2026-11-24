@@ -12,6 +12,8 @@ import { PersonalStore } from './personal/estado/personal.store';
 import { EquiposApi } from './equipos/servicios/equipos.api';
 import { EquiposHttp } from './equipos/servicios/equipos.http';
 import { EquiposStore } from './equipos/estado/equipos.store';
+import { CambiosStore } from './cambios/estado/cambios.store';
+import { GuiasStore } from './conocimiento/estado/guias.store';
 
 export const ADMINISTRACION_PROVIDERS: Provider[] = [
   {
@@ -33,4 +35,6 @@ export const ADMINISTRACION_PROVIDERS: Provider[] = [
     provide: CambiosApi,
     useClass: environment.usarMocks ? CambiosMock : CambiosHttp,
   },
+  CambiosStore,
+  GuiasStore,
 ];

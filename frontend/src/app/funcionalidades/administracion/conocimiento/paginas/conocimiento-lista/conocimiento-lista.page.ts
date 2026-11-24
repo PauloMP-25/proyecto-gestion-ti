@@ -1,37 +1,54 @@
 import {
-  Component,
   ChangeDetectionStrategy,
-  inject,
+  Component,
   OnInit,
+  inject,
   signal,
-  computed,
 } from '@angular/core';
-import { CommonModule } from '@angular/common';
-import { FormsModule } from '@angular/forms';
-import { RouterModule } from '@angular/router';
-import { ConocimientoApi } from '../../../../../compartido/servicios/conocimiento/conocimiento.api';
 import { ArticuloConocimiento } from '../../../../../compartido/modelos/articulo-conocimiento.model';
 import { PlantillaPaginaComponent } from '../../../../../compartido/ui/plantillas/plantilla-pagina/plantilla-pagina.component';
 import { CabeceraPaginaComponent } from '../../../../../compartido/ui/moleculas/cabecera-pagina/cabecera-pagina.component';
-import { IconoComponent } from '../../../../../compartido/ui/atomos/icono/icono.component';
+import { BotonComponent } from '../../../../../compartido/ui/atomos/boton/boton.component';
+import { BotonIconoComponent } from '../../../../../compartido/ui/atomos/boton-icono/boton-icono.component';
+import { BarraFiltrosComponent } from '../../../../../compartido/ui/organismos/barra-filtros/barra-filtros.component';
+import {
+  CampoFiltroComponent,
+  OpcionFiltro,
+} from '../../../../../compartido/ui/moleculas/campo-filtro/campo-filtro.component';
+import { EsqueletoComponent } from '../../../../../compartido/ui/atomos/esqueleto/esqueleto.component';
+import { AlertaEnLineaComponent } from '../../../../../compartido/ui/moleculas/alerta-en-linea/alerta-en-linea.component';
+import { EstadoVacioComponent } from '../../../../../compartido/ui/moleculas/estado-vacio/estado-vacio.component';
+import { InsigniaComponent } from '../../../../../compartido/ui/atomos/insignia/insignia.component';
+import { TarjetaComponent } from '../../../../../compartido/ui/atomos/tarjeta/tarjeta.component';
 import { DialogoConfirmacionComponent } from '../../../../../compartido/ui/organismos/dialogo-confirmacion/dialogo-confirmacion.component';
 import {
   DialogoArticuloEditorComponent,
   GuardarArticuloPayload,
 } from '../../componentes/dialogo-articulo-editor/dialogo-articulo-editor.component';
+import { GuiasStore } from '../../estado/guias.store';
+import { AmbitoGuia } from '../../modelos/guias.model';
 
-export type FiltroAmbito = 'TODOS' | 'PUBLICO' | 'INTERNO';
+const OPCIONES_AMBITO: readonly OpcionFiltro[] = [
+  { valor: 'TODOS', etiqueta: 'Todas' },
+  { valor: 'PUBLICO', etiqueta: 'Para el personal asistencial' },
+  { valor: 'INTERNO', etiqueta: 'Uso interno del equipo técnico' },
+];
 
 @Component({
   selector: 'app-conocimiento-lista-page',
   standalone: true,
   imports: [
-    CommonModule,
-    FormsModule,
-    RouterModule,
     PlantillaPaginaComponent,
     CabeceraPaginaComponent,
-    IconoComponent,
+    BotonComponent,
+    BotonIconoComponent,
+    BarraFiltrosComponent,
+    CampoFiltroComponent,
+    EsqueletoComponent,
+    AlertaEnLineaComponent,
+    EstadoVacioComponent,
+    InsigniaComponent,
+    TarjetaComponent,
     DialogoConfirmacionComponent,
     DialogoArticuloEditorComponent,
   ],
@@ -40,58 +57,20 @@ export type FiltroAmbito = 'TODOS' | 'PUBLICO' | 'INTERNO';
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class ConocimientoListaPage implements OnInit {
-  private readonly conocimientoApi = inject(ConocimientoApi);
+  readonly store = inject(GuiasStore);
 
-  readonly articulos = signal<ArticuloConocimiento[]>([]);
-  readonly cargando = signal<boolean>(true);
-  readonly guardando = signal<boolean>(false);
-  readonly error = signal<string | null>(null);
+  readonly opcionesAmbito = OPCIONES_AMBITO;
 
-  readonly textoBusqueda = signal<string>('');
-  readonly filtroAmbito = signal<FiltroAmbito>('TODOS');
-
-  readonly editorAbierto = signal<boolean>(false);
+  readonly editorAbierto = signal(false);
   readonly articuloParaEditar = signal<ArticuloConocimiento | null>(null);
   readonly articuloParaEliminar = signal<ArticuloConocimiento | null>(null);
 
-  readonly articulosFiltrados = computed(() => {
-    const query = this.textoBusqueda().toLowerCase().trim();
-    const ambito = this.filtroAmbito();
-
-    return this.articulos().filter((art) => {
-      // Filtro ámbito
-      if (ambito === 'PUBLICO' && !art.esPublico) return false;
-      if (ambito === 'INTERNO' && art.esPublico) return false;
-
-      // Filtro búsqueda
-      if (!query) return true;
-      const coincideTitulo = art.titulo.toLowerCase().includes(query);
-      const coincideResumen = art.resumen.toLowerCase().includes(query);
-      const coincideCategoria = art.categoriaNombre.toLowerCase().includes(query);
-      const coincideTags = art.palabrasClave?.some((p) => p.toLowerCase().includes(query));
-
-      return coincideTitulo || coincideResumen || coincideCategoria || coincideTags;
-    });
-  });
-
   ngOnInit(): void {
-    this.cargarArticulos();
+    this.store.cargar();
   }
 
-  cargarArticulos(): void {
-    this.cargando.set(true);
-    this.error.set(null);
-
-    this.conocimientoApi.listar().subscribe({
-      next: (lista) => {
-        this.articulos.set(lista);
-        this.cargando.set(false);
-      },
-      error: () => {
-        this.error.set('No se pudo cargar la base de conocimientos. Intente de nuevo.');
-        this.cargando.set(false);
-      },
-    });
+  cambiarAmbito(valor: unknown): void {
+    this.store.seleccionarAmbito(valor as AmbitoGuia);
   }
 
   abrirNuevo(): void {
@@ -110,36 +89,15 @@ export class ConocimientoListaPage implements OnInit {
   }
 
   guardarArticulo(payload: GuardarArticuloPayload): void {
-    this.guardando.set(true);
     const actual = this.articuloParaEditar();
+    const peticion = actual
+      ? this.store.actualizar(actual.id, payload)
+      : this.store.crear(payload);
 
-    if (actual) {
-      this.conocimientoApi.actualizar(actual.id, payload).subscribe({
-        next: (artActualizado) => {
-          this.articulos.update((items) =>
-            items.map((it) => (it.id === artActualizado.id ? artActualizado : it))
-          );
-          this.guardando.set(false);
-          this.cerrarEditor();
-        },
-        error: () => {
-          this.error.set('Error al actualizar la guía.');
-          this.guardando.set(false);
-        },
-      });
-    } else {
-      this.conocimientoApi.crear(payload).subscribe({
-        next: (artNuevo) => {
-          this.articulos.update((items) => [artNuevo, ...items]);
-          this.guardando.set(false);
-          this.cerrarEditor();
-        },
-        error: () => {
-          this.error.set('Error al crear la nueva guía.');
-          this.guardando.set(false);
-        },
-      });
-    }
+    peticion.subscribe({
+      next: () => this.cerrarEditor(),
+      error: () => undefined,
+    });
   }
 
   solicitarEliminar(articulo: ArticuloConocimiento): void {
@@ -147,18 +105,13 @@ export class ConocimientoListaPage implements OnInit {
   }
 
   confirmarEliminacion(): void {
-    const art = this.articuloParaEliminar();
-    if (!art) return;
-
-    this.conocimientoApi.eliminar(art.id).subscribe({
-      next: () => {
-        this.articulos.update((items) => items.filter((it) => it.id !== art.id));
-        this.articuloParaEliminar.set(null);
-      },
-      error: () => {
-        this.error.set('No se pudo eliminar el artículo.');
-        this.articuloParaEliminar.set(null);
-      },
+    const articulo = this.articuloParaEliminar();
+    if (!articulo) {
+      return;
+    }
+    this.store.eliminar(articulo.id).subscribe({
+      next: () => this.articuloParaEliminar.set(null),
+      error: () => this.articuloParaEliminar.set(null),
     });
   }
 
