@@ -21,8 +21,10 @@ public class IndicadoresController {
     }
 
     @GetMapping("/dashboard")
-    public ResponseEntity<com.hospital.servicedesk.dtos.DashboardDTOs.DashboardRespuestaDTO> getDashboard() {
-        return ResponseEntity.ok(indicadoresService.getDashboard());
+    public ResponseEntity<com.hospital.servicedesk.dtos.DashboardDTOs.DashboardRespuestaDTO> getDashboard(
+            @RequestParam(required = false, defaultValue = "hoy") String periodo
+    ) {
+        return ResponseEntity.ok(indicadoresService.getDashboard(periodo));
     }
 
     @GetMapping("/tickets-por-area")

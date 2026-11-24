@@ -132,23 +132,23 @@
   .meta-inline {
     display: inline-flex;
     align-items: baseline;
-    gap: 3px;
-    font-size: 11px;
+    gap: 4px;
+    font-size: 1.15rem;
     font-weight: 700;
     color: var(--color-text-secondary);
-    background-color: var(--color-surface-sunken);
-    padding: 2px 6px;
-    border-radius: var(--radius-sm, 4px);
-    border: 1px solid var(--color-border-subtle);
 
     .meta-comparador {
       color: var(--color-primary-base);
       font-weight: 800;
-      font-size: 12px;
+      font-size: 1.25rem;
+      line-height: 1;
     }
 
     .meta-objetivo {
       font-variant-numeric: tabular-nums;
+      font-size: 1.15rem;
+      font-weight: 700;
+      line-height: 1;
       color: var(--color-text-main);
     }
   }

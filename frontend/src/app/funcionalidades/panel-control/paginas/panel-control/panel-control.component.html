@@ -25,6 +25,35 @@
       </nav>
     </div>
 
+    <div class="consola-header__centro">
+      <div class="periodo-selector-pills" role="group" aria-label="Filtro de período de análisis y métricas">
+        <button 
+          type="button" 
+          class="pill-btn" 
+          [class.pill-btn--activo]="periodoSeleccionado() === 'hoy'" 
+          (click)="cambiarPeriodo('hoy')"
+          title="Ver métricas y tickets del día de hoy">
+          Hoy
+        </button>
+        <button 
+          type="button" 
+          class="pill-btn" 
+          [class.pill-btn--activo]="periodoSeleccionado() === '7d'" 
+          (click)="cambiarPeriodo('7d')"
+          title="Ver consolidado semanal de los últimos 7 días">
+          Semanal (7d)
+        </button>
+        <button 
+          type="button" 
+          class="pill-btn" 
+          [class.pill-btn--activo]="periodoSeleccionado() === '30d'" 
+          (click)="cambiarPeriodo('30d')"
+          title="Ver rendimiento mensual acumulado de los últimos 30 días">
+          Mensual (30d)
+        </button>
+      </div>
+    </div>
+
     <div class="consola-header__der">
       <div class="acciones-header">
         <button 

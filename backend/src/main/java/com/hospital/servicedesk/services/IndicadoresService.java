@@ -7,4 +7,5 @@ import java.util.Map;
 public interface IndicadoresService {
     Map<String, Object> getKpis();
     DashboardRespuestaDTO getDashboard();
+    DashboardRespuestaDTO getDashboard(String periodo);
 }

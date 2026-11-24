@@ -1,4 +1,4 @@
-import { Injectable, signal, computed, inject, OnDestroy } from '@angular/core';
+import { Injectable, signal, computed, inject, OnDestroy, effect } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { PrioridadTicket } from '../../../compartido/modelos/prioridad.enum';
 import { EstadoTicket } from '../../../compartido/modelos/estado-ticket.enum';
@@ -52,6 +52,12 @@ export class PanelControlService implements OnDestroy {
 
   constructor() {
     this.refrescarDatos();
+
+    // Reaccionar cuando cambie el periodo temporal (hoy / 7d / 30d)
+    effect(() => {
+      const _ = this.periodoSeleccionado();
+      this.refrescarDatos();
+    });
 
     // Sondeo automático cada 20 segundos para mantener la sala y NOC sincronizados al momento
     this.sondeoTimer = setInterval(() => {
@@ -361,8 +367,10 @@ export class PanelControlService implements OnDestroy {
   });
 
   refrescarDatos(): void {
-    // 1. Consultar métricas y analítica calculada en el backend
-    this.http.get<any>(API_ENDPOINTS.indicadores.dashboard).subscribe({
+    // 1. Consultar métricas y analítica calculada en el backend según el periodo
+    const periodo = this.periodoSeleccionado();
+    const url = `${API_ENDPOINTS.indicadores.dashboard}?periodo=${periodo}`;
+    this.http.get<any>(url).subscribe({
       next: (dashboard) => {
         this._metricasBackend.set(dashboard);
         if (dashboard?.inventarioEquipos) {

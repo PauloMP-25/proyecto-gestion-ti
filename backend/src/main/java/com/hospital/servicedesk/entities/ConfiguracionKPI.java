@@ -35,7 +35,7 @@ public class ConfiguracionKPI {
     @Column(name = "unidad", nullable = false, length = 15)
     private String unidad;
 
-    @Column(name = "comparador", nullable = false, length = 5)
+    @Column(name = "comparador", nullable = false, length = 10, columnDefinition = "nvarchar(10)")
     private String comparador;
 
     @Column(name = "formula", length = 300)
