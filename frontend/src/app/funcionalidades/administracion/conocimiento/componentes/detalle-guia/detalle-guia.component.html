@@ -1,0 +1,82 @@
+<div class="detalle-guia">
+  <section class="seccion">
+    <h3 class="seccion__titulo">Datos de la guía</h3>
+
+    <div class="detalle-guia__datos">
+      <app-dato-etiquetado etiqueta="Categoría">
+        <span class="detalle-guia__categoria" [style.color]="colorCategoria()">
+          <app-icono [nombre]="guia().categoria.icono" tamano="sm" aria-hidden="true" />
+          {{ guia().categoria.etiqueta }}
+        </span>
+      </app-dato-etiquetado>
+
+      <app-dato-etiquetado etiqueta="Ámbito" [valor]="ambitoTexto()" />
+      <app-dato-etiquetado etiqueta="Dificultad" [valor]="dificultadTexto()" />
+      <app-dato-etiquetado etiqueta="Tiempo estimado" [valor]="tiempoTexto()" />
+      <app-dato-etiquetado
+        etiqueta="Última actualización"
+        [valor]="guia().fechaActualizacion | date: 'dd/MM/yyyy'"
+      />
+    </div>
+
+    @if (equipos().length > 0) {
+      <div class="detalle-guia__campo">
+        <span class="detalle-guia__etiqueta">Equipos compatibles</span>
+        <ul class="chips-equipos">
+          @for (equipo of equipos(); track equipo) {
+            <li class="chip-equipo">{{ equipo }}</li>
+          }
+        </ul>
+      </div>
+    }
+  </section>
+
+  <app-seccion-sintoma-causa [sintoma]="sintoma()" [causa]="guia().causaRaiz ?? null" />
+
+  @if (guia().requiereTecnico || precauciones().length > 0) {
+    <app-seccion-precauciones
+      [precauciones]="precauciones()"
+      [requiereTecnico]="guia().requiereTecnico ?? false"
+    />
+  }
+
+  @if (pasos().length > 0) {
+    <app-seccion-pasos-solucion [pasos]="pasos()" />
+  } @else if (guia().contenidoHtml) {
+    <section class="seccion">
+      <h3 class="seccion__titulo">Procedimiento</h3>
+      <div class="detalle-guia__html" [innerHTML]="guia().contenidoHtml"></div>
+    </section>
+  }
+
+  @if (guia().solucionTemporal) {
+    <section class="seccion">
+      <h3 class="seccion__titulo">Solución temporal</h3>
+      <app-alerta-en-linea tono="info" icono="info">
+        <p class="seccion__alerta-texto">
+          Si no puede completar los pasos, mientras tanto: {{ guia().solucionTemporal }}
+        </p>
+      </app-alerta-en-linea>
+    </section>
+  }
+
+  <section class="utilidad">
+    <h3 class="seccion__titulo">¿Le sirvió esta guía?</h3>
+    <div class="utilidad__acciones">
+      <app-boton
+        variante="secundario"
+        icono="thumb_up"
+        [deshabilitado]="yaVoto()"
+        (alHacerClick)="votar(true)"
+      >
+        Sí
+      </app-boton>
+      <app-boton variante="fantasma" [deshabilitado]="yaVoto()" (alHacerClick)="votar(false)">
+        No
+      </app-boton>
+    </div>
+    @if (yaVoto()) {
+      <p class="utilidad__gracias" role="status">Gracias por su respuesta.</p>
+    }
+  </section>
+</div>

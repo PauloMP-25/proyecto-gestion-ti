@@ -111,6 +111,24 @@ export class GuiasStore {
     this._seleccionadaId.set(null);
   }
 
+  votarUtil(id: number, esUtil: boolean): void {
+    this.api.votarUtil(id, esUtil).subscribe({
+      next: () => {
+        if (!esUtil) {
+          return;
+        }
+        this._guias.update((lista) =>
+          lista.map((guia) =>
+            guia.id === id ? { ...guia, conteoUtil: guia.conteoUtil + 1 } : guia,
+          ),
+        );
+      },
+      error: (err) => this.notificacion.error(
+        err?.error?.mensaje || 'No se pudo registrar su respuesta.',
+      ),
+    });
+  }
+
   crear(payload: Partial<ArticuloConocimiento>): Observable<ArticuloConocimiento> {
     this._guardando.set(true);
     return this.api.crear(payload).pipe(

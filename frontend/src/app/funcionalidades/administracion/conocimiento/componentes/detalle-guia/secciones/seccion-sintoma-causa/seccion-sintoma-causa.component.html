@@ -1,0 +1,8 @@
+<section class="seccion">
+  <h3 class="seccion__titulo">¿Qué está pasando?</h3>
+  <app-dato-etiquetado etiqueta="Síntoma" [valor]="sintoma()" />
+
+  @if (causa(); as causaIdentificada) {
+    <app-dato-etiquetado etiqueta="Causa identificada" [valor]="causaIdentificada" />
+  }
+</section>

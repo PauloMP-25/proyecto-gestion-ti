@@ -1,0 +1,112 @@
+@use './secciones/estilos-seccion';
+
+:host {
+  display: block;
+}
+
+.detalle-guia {
+  display: flex;
+  flex-direction: column;
+  gap: var(--espacio-5);
+}
+
+.detalle-guia__datos {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: var(--espacio-3);
+  padding: var(--espacio-3);
+  border: 1px solid var(--color-border-subtle);
+  border-radius: var(--radio-md);
+  background-color: var(--color-surface-sunken);
+
+  @media (min-width: 600px) {
+    grid-template-columns: repeat(auto-fit, minmax(9rem, 1fr));
+  }
+}
+
+.detalle-guia__categoria {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--espacio-1);
+  font-weight: var(--font-weight-semibold);
+}
+
+.detalle-guia__campo {
+  display: flex;
+  flex-direction: column;
+  gap: var(--espacio-2);
+}
+
+.detalle-guia__etiqueta {
+  font-size: var(--font-size-xs);
+  font-weight: var(--font-weight-medium);
+  color: var(--color-text-muted);
+}
+
+.chips-equipos {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--espacio-2);
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.chip-equipo {
+  display: inline-flex;
+  align-items: center;
+  padding: var(--espacio-1) var(--espacio-2);
+  border: 1px solid var(--color-border-subtle);
+  border-radius: var(--radio-full);
+  background-color: var(--color-surface-card);
+  font-size: var(--font-size-xs);
+  color: var(--color-text-secondary);
+}
+
+.detalle-guia__html {
+  font-size: var(--font-size-sm);
+  line-height: var(--line-height-normal);
+  color: var(--color-text-main);
+
+  ::ng-deep {
+    p {
+      margin: 0 0 var(--espacio-3);
+    }
+
+    ol,
+    ul {
+      margin: 0 0 var(--espacio-3);
+      padding-inline-start: var(--espacio-5);
+    }
+
+    li {
+      margin-block-end: var(--espacio-1);
+    }
+
+    li:last-child,
+    p:last-child {
+      margin-block-end: 0;
+    }
+  }
+}
+
+.utilidad {
+  display: flex;
+  flex-direction: column;
+  gap: var(--espacio-3);
+  padding-block-start: var(--espacio-4);
+  border-top: 1px solid var(--color-border-subtle);
+}
+
+.utilidad__acciones {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--espacio-2);
+}
+
+.utilidad__gracias {
+  margin: 0;
+  font-size: var(--font-size-sm);
+  font-weight: var(--font-weight-medium);
+  color: var(--color-secondary-base);
+}

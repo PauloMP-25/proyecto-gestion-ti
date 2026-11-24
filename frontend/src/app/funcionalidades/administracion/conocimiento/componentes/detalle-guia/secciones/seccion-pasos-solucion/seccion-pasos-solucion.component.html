@@ -1,0 +1,32 @@
+<section class="seccion">
+  <h3 class="seccion__titulo">Pasos de solución</h3>
+
+  <ol class="lista-pasos" aria-label="Pasos de solución">
+    @for (paso of pasos(); track $index) {
+      <li class="paso" [class.paso--hecho]="estaHecho($index)">
+        <span class="paso__numero" aria-hidden="true">{{ $index + 1 }}</span>
+        <div class="paso__contenido">
+          <p class="paso__texto">{{ paso }}</p>
+          <label class="paso__hecho">
+            <input
+              type="checkbox"
+              [checked]="estaHecho($index)"
+              [attr.aria-label]="'Marcar paso ' + ($index + 1) + ' como hecho'"
+              (change)="alternar($index, $event)"
+            />
+            <span>Hecho</span>
+          </label>
+        </div>
+      </li>
+    }
+  </ol>
+
+  <div class="progreso">
+    <app-barra-progreso
+      [segmentos]="segmentos()"
+      [total]="total()"
+      [etiquetaAccesible]="etiquetaProgreso()"
+    />
+    <p class="progreso__texto" aria-live="polite">{{ etiquetaProgreso() }}</p>
+  </div>
+</section>

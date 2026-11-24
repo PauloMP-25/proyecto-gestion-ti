@@ -1,0 +1,23 @@
+<section class="seccion">
+  <h3 class="seccion__titulo">Precauciones</h3>
+
+  @if (precauciones().length > 0) {
+    <app-alerta-en-linea tono="aviso" icono="warning">
+      <p class="seccion__alerta-titulo">Antes de empezar</p>
+      <ul class="lista-simple">
+        @for (precaucion of precauciones(); track $index) {
+          <li>{{ precaucion }}</li>
+        }
+      </ul>
+    </app-alerta-en-linea>
+  }
+
+  @if (requiereTecnico()) {
+    <app-alerta-en-linea tono="peligro" icono="engineering">
+      <p class="seccion__alerta-texto">
+        Esta solución debe aplicarla personal técnico. Si usted es personal asistencial,
+        reporte el problema a Mesa de Ayuda.
+      </p>
+    </app-alerta-en-linea>
+  }
+</section>
