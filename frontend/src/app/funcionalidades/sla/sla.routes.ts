@@ -26,6 +26,6 @@ export const SLA_ROUTES: Routes = [
       ),
     canActivate: [rolGuard],
     data: { roles: [RolUsuario.ADMINISTRADOR] },
-    title: 'Configuración de Compromisos de Atención (SLA) - Mesa de Ayuda HSMSI',
+    title: 'Configuraciones - Mesa de Ayuda HSMSI',
   },
 ];

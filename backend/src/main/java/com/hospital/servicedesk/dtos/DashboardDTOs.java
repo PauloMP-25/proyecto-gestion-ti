@@ -25,6 +25,16 @@ public class DashboardDTOs {
             long disponiblesReserva
     ) {}
 
+    public record KpiMetaDTO(
+            String codigo,
+            String titulo,
+            Double metaValor,
+            String unidad,
+            String comparador,
+            String formula,
+            String descripcion
+    ) {}
+
     public record DashboardRespuestaDTO(
             long totalTickets,
             long ticketsAbiertos,
@@ -34,6 +44,7 @@ public class DashboardDTOs {
             List<SerieDatoDTO> incidentesPorArea,
             List<SerieDatoDTO> fallasPorActivo,
             CargaTurnosDTO cargaTurnos,
-            InventarioEstadoDTO inventarioEquipos
+            InventarioEstadoDTO inventarioEquipos,
+            List<KpiMetaDTO> kpisConfigurados
     ) {}
 }

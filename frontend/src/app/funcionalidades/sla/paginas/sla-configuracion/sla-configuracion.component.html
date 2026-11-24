@@ -1,137 +1,467 @@
-<div class="config-matriz-contenedor">
-  <!-- Cabecera Superior -->
+<div class="config-contenedor">
+  <!-- Cabecera Superior con Volver y Pestañas -->
   <header class="config-header">
-    <div class="config-header__izq">
+    <div class="config-header__superior">
       <button type="button" class="btn-volver" (click)="volverAlPanel()" title="Volver al Panel de Control">
         <app-icono nombre="arrow_back" tamano="sm"></app-icono>
-        <span>Volver al Panel de Control</span>
+        <span>Volver al Panel</span>
       </button>
+
       <div class="titulos-seccion">
-        <h1 class="titulo-principal">Configuración de Prioridades y Compromisos de Atención</h1>
+        <h1 class="titulo-principal">Configuraciones de la Mesa de Ayuda</h1>
         <p class="subtitulo-principal">
-          Hospital Santa María del Socorro · Reglas de Impacto Asistencial, Urgencia y Parámetros de Escalamiento y Atención
+          Hospital Santa María del Socorro · Administración de reglas operativas, metas y prioridades asistenciales
         </p>
+      </div>
+
+      <!-- Acciones de Guardado según la pestaña -->
+      <div class="acciones-header">
+        @if (pestanaActiva() === 'compromisos') {
+          <app-boton variante="primario" icono="save" (click)="guardarConfiguracionCompromisos()">
+            Guardar Compromisos
+          </app-boton>
+        } @else if (pestanaActiva() === 'metas') {
+          <app-boton variante="primario" icono="save" (click)="guardarConfiguracionMetas()">
+            Guardar Metas de KPIs
+          </app-boton>
+        }
       </div>
     </div>
 
-    <div class="config-header__der">
-      <app-boton variante="primario" icono="save" (click)="guardarConfiguracion()">
-        Guardar Matriz
-      </app-boton>
-    </div>
+    <!-- Barra de Pestañas Tipo Panel de Control -->
+    <nav class="nav-pestanas" role="tablist" aria-label="Módulos de Configuración">
+      <button
+        type="button"
+        role="tab"
+        class="tab-btn"
+        [class.tab-btn--activo]="pestanaActiva() === 'compromisos'"
+        (click)="seleccionarPestana('compromisos')"
+        [attr.aria-selected]="pestanaActiva() === 'compromisos'"
+        id="tab-compromisos"
+        aria-controls="panel-compromisos"
+      >
+        <app-icono nombre="timer" tamano="xs"></app-icono>
+        <span class="tab-btn__texto">Prioridades y Compromisos de Atención</span>
+      </button>
+
+      <button
+        type="button"
+        role="tab"
+        class="tab-btn"
+        [class.tab-btn--activo]="pestanaActiva() === 'metas'"
+        (click)="seleccionarPestana('metas')"
+        [attr.aria-selected]="pestanaActiva() === 'metas'"
+        id="tab-metas"
+        aria-controls="panel-metas"
+      >
+        <app-icono nombre="analytics" tamano="xs"></app-icono>
+        <span class="tab-btn__texto">Metas de Rendimiento</span>
+      </button>
+
+      <button
+        type="button"
+        role="tab"
+        class="tab-btn"
+        [class.tab-btn--activo]="pestanaActiva() === 'areas'"
+        (click)="seleccionarPestana('areas')"
+        [attr.aria-selected]="pestanaActiva() === 'areas'"
+        id="tab-areas"
+        aria-controls="panel-areas"
+      >
+        <app-icono nombre="apartment" tamano="xs"></app-icono>
+        <span class="tab-btn__texto">Prioridad por Área Hospitalaria</span>
+        @if (conteoPorPrioridad().total > 0) {
+          <span class="tab-contador">{{ conteoPorPrioridad().total }}</span>
+        }
+      </button>
+    </nav>
   </header>
 
-  <!-- Banner de éxito al guardar -->
+  <!-- Banner de éxito al guardar o actualizar -->
   @if (guardadoExitoso()) {
-    <div class="alerta-exito" role="alert">
+    <div class="alerta-exito" role="alert" aria-live="polite">
       <app-icono nombre="check_circle" tamano="sm"></app-icono>
-      <span>Parámetros de la matriz de prioridad y tiempos de atención actualizados y sincronizados con éxito.</span>
+      <span>{{ mensajeFeedback() || 'Cambios sincronizados y actualizados con éxito en el sistema.' }}</span>
     </div>
   }
 
-  <!-- Grid de Configuración -->
-  <div class="grid-configuracion">
-    <!-- Cuadrante 1: Matriz Visual 3x3 Impacto vs Urgencia -->
-    <section class="tarjeta-config" aria-label="Matriz de Clasificación">
-      <div class="tarjeta-config__header">
-        <h2 class="tarjeta-config__titulo">Matriz de Decisión (Impacto × Urgencia)</h2>
-        <span class="badge-itil">Mesa de Ayuda</span>
-      </div>
-      <p class="tarjeta-config__desc">
-        La prioridad se deriva automáticamente al cruzar el impacto asistencial hospitalario con la urgencia técnica reportada.
-      </p>
+  <!-- ============================================================== -->
+  <!-- PESTAÑA 1: PRIORIDADES Y COMPROMISOS DE ATENCIÓN              -->
+  <!-- ============================================================== -->
+  @if (pestanaActiva() === 'compromisos') {
+    <div class="grid-configuracion" id="panel-compromisos" role="tabpanel" aria-labelledby="tab-compromisos">
+      <!-- Matriz Visual 3x3 Impacto vs Urgencia -->
+      <section class="tarjeta-config" aria-label="Matriz de Clasificación">
+        <div class="tarjeta-config__header">
+          <h2 class="tarjeta-config__titulo">Matriz de Decisión (Impacto × Urgencia)</h2>
+          <span class="badge-modulo">Mesa de Ayuda</span>
+        </div>
+        <p class="tarjeta-config__desc">
+          La prioridad de atención se deriva automáticamente del cruce entre el impacto en el servicio asistencial y la urgencia técnica reportada.
+        </p>
 
-      <div class="tabla-matriz-wrapper">
-        <table class="tabla-matriz">
-          <thead>
-            <tr>
-              <th class="th-vacio"></th>
-              <th colspan="3" class="th-urgencia">URGENCIA TÉCNICA</th>
-            </tr>
-            <tr>
-              <th class="th-impacto">IMPACTO ASISTENCIAL</th>
-              <th>Alta (Afecta Servicio)</th>
-              <th>Media (Degradación)</th>
-              <th>Baja (Sin Afectación)</th>
-            </tr>
-          </thead>
-          <tbody>
-            <tr>
-              <td class="td-impacto-label"><strong>Alto</strong> (Vital / Múltiples Áreas)</td>
-              <td><span class="tag-prioridad tag--p1-critica">P1 · Crítica</span></td>
-              <td><span class="tag-prioridad tag--p2-alta">P2 · Alta</span></td>
-              <td><span class="tag-prioridad tag--p3-media">P3 · Media</span></td>
-            </tr>
-            <tr>
-              <td class="td-impacto-label"><strong>Medio</strong> (Área Asistencial)</td>
-              <td><span class="tag-prioridad tag--p2-alta">P2 · Alta</span></td>
-              <td><span class="tag-prioridad tag--p3-media">P3 · Media</span></td>
-              <td><span class="tag-prioridad tag--p4-baja">P4 · Baja</span></td>
-            </tr>
-            <tr>
-              <td class="td-impacto-label"><strong>Bajo</strong> (Estación Individual)</td>
-              <td><span class="tag-prioridad tag--p3-media">P3 · Media</span></td>
-              <td><span class="tag-prioridad tag--p4-baja">P4 · Baja</span></td>
-              <td><span class="tag-prioridad tag--p4-baja">P4 · Baja</span></td>
-            </tr>
-          </tbody>
-        </table>
-      </div>
-    </section>
+        <div class="tabla-matriz-wrapper">
+          <table class="tabla-matriz">
+            <thead>
+              <tr>
+                <th class="th-vacio"></th>
+                <th colspan="3" class="th-urgencia">URGENCIA TÉCNICA</th>
+              </tr>
+              <tr>
+                <th class="th-impacto">IMPACTO ASISTENCIAL</th>
+                <th>Alta (Afecta Servicio)</th>
+                <th>Media (Degradación)</th>
+                <th>Baja (Sin Afectación)</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td class="td-impacto-label"><strong>Alto</strong> (Vital / Múltiples Áreas)</td>
+                <td><span class="tag-prioridad tag--p1-critica">P1 · Crítica</span></td>
+                <td><span class="tag-prioridad tag--p2-alta">P2 · Alta</span></td>
+                <td><span class="tag-prioridad tag--p3-media">P3 · Media</span></td>
+              </tr>
+              <tr>
+                <td class="td-impacto-label"><strong>Medio</strong> (Área Asistencial)</td>
+                <td><span class="tag-prioridad tag--p2-alta">P2 · Alta</span></td>
+                <td><span class="tag-prioridad tag--p3-media">P3 · Media</span></td>
+                <td><span class="tag-prioridad tag--p4-baja">P4 · Baja</span></td>
+              </tr>
+              <tr>
+                <td class="td-impacto-label"><strong>Bajo</strong> (Estación Individual)</td>
+                <td><span class="tag-prioridad tag--p3-media">P3 · Media</span></td>
+                <td><span class="tag-prioridad tag--p4-baja">P4 · Baja</span></td>
+                <td><span class="tag-prioridad tag--p4-baja">P4 · Baja</span></td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </section>
 
-    <!-- Cuadrante 2: Tiempos Máximos Pactados de SLA -->
-    <section class="tarjeta-config" aria-label="Tiempos de Nivel de Servicio">
-      <div class="tarjeta-config__header">
-        <h2 class="tarjeta-config__titulo">Umbrales de Compromiso por Prioridad</h2>
-        <span class="badge-itil">Compromiso Hospitalario</span>
-      </div>
-      <p class="tarjeta-config__desc">
-        Tiempos máximos de primera respuesta y resolución técnica definitiva pactados con las jefaturas médicas.
-      </p>
+      <!-- Tiempos Máximos Pactados de Compromiso -->
+      <section class="tarjeta-config" aria-label="Tiempos de Compromiso de Atención">
+        <div class="tarjeta-config__header">
+          <h2 class="tarjeta-config__titulo">Umbrales de Compromiso por Nivel de Prioridad</h2>
+          <span class="badge-modulo">Compromiso Hospitalario</span>
+        </div>
+        <p class="tarjeta-config__desc">
+          Tiempos máximos de primera respuesta y resolución técnica definitiva acordados con las jefaturas médicas del hospital.
+        </p>
 
-      <div class="lista-reglas-sla">
-        @for (regla of reglasSLA; track regla.prioridad) {
-          <div class="tarjeta-regla" [class]="'tarjeta-regla--' + regla.colorClase">
-            <div class="tarjeta-regla__header">
-              <span class="tag-prioridad" [class]="'tag--' + regla.colorClase">
-                {{ regla.prioridad }}
-              </span>
-              <div class="tarjeta-regla__titulos">
-                <span class="regla-nombre">{{ regla.nombre }}</span>
-                <span class="regla-horario">
-                  {{ regla.aplicaHorarioLaboral ? 'Horario Laboral (07:00 - 19:00)' : 'Disponibilidad Continua 24/7' }}
+        <div class="lista-reglas-sla">
+          @for (regla of reglasSLA; track regla.prioridad) {
+            <div class="tarjeta-regla" [class]="'tarjeta-regla--' + regla.colorClase">
+              <div class="tarjeta-regla__header">
+                <span class="tag-prioridad" [class]="'tag--' + regla.colorClase">
+                  {{ regla.prioridad }}
                 </span>
+                <div class="tarjeta-regla__titulos">
+                  <span class="regla-nombre">{{ regla.nombre }}</span>
+                  <span class="regla-horario">
+                    {{ regla.aplicaHorarioLaboral ? 'Horario Asistencial (07:00 - 19:00)' : 'Disponibilidad Continua 24/7' }}
+                  </span>
+                </div>
+              </div>
+
+              <div class="tarjeta-regla__inputs">
+                <div class="campo-tiempo">
+                  <label for="resp-{{ regla.prioridad }}">Tiempo de Respuesta:</label>
+                  <div class="input-con-unidad">
+                    <input id="resp-{{ regla.prioridad }}" type="number" [(ngModel)]="regla.tiempoRespuestaMin" min="5" step="5" />
+                    <span>min</span>
+                  </div>
+                </div>
+
+                <div class="campo-tiempo">
+                  <label for="resol-{{ regla.prioridad }}">Tiempo de Resolución:</label>
+                  <div class="input-con-unidad">
+                    <input id="resol-{{ regla.prioridad }}" type="number" [(ngModel)]="regla.tiempoResolucionMin" min="15" step="15" />
+                    <span>min</span>
+                  </div>
+                </div>
+
+                <div class="campo-tiempo">
+                  <label for="jef-{{ regla.prioridad }}">Alerta a Jefatura:</label>
+                  <div class="input-con-unidad">
+                    <input id="jef-{{ regla.prioridad }}" type="number" [(ngModel)]="regla.notificarJefaturaMin" min="10" step="5" />
+                    <span>min</span>
+                  </div>
+                </div>
               </div>
             </div>
+          }
+        </div>
+      </section>
+    </div>
+  }
 
-            <div class="tarjeta-regla__inputs">
-              <div class="campo-tiempo">
-                <label>Tiempo de Respuesta:</label>
-                <div class="input-con-unidad">
-                  <input type="number" [(ngModel)]="regla.tiempoRespuestaMin" min="5" step="5" />
-                  <span>min</span>
+  <!-- ============================================================== -->
+  <!-- PESTAÑA 2: METAS DE RENDIMIENTO (KPIS)                         -->
+  <!-- ============================================================== -->
+  @if (pestanaActiva() === 'metas') {
+    <div class="seccion-metas-wrapper" id="panel-metas" role="tabpanel" aria-labelledby="tab-metas">
+      <section class="tarjeta-config tarjeta-config--full" aria-label="Metas de Rendimiento y Calidad">
+        <div class="tarjeta-config__header">
+          <div>
+            <h2 class="tarjeta-config__titulo">Metas de Rendimiento y Calidad de Atención</h2>
+            <p class="tarjeta-config__desc">
+              Defina los objetivos esperados para los indicadores del Panel de Control en vivo. El sistema evaluará el cumplimiento en tiempo real.
+            </p>
+          </div>
+          <span class="badge-modulo">Metas Dinámicas</span>
+        </div>
+
+        <div class="grid-metas-kpi">
+          @for (kpi of metasKPI; track kpi.codigo) {
+            <div class="tarjeta-meta-kpi">
+              <div class="tarjeta-meta-kpi__header">
+                <span class="badge-kpi-codigo">{{ kpi.codigo }}</span>
+                <span class="kpi-titulo">{{ kpi.titulo }}</span>
+              </div>
+              <p class="kpi-formula">{{ kpi.formula }}</p>
+
+              <div class="campo-meta">
+                <label for="meta-{{ kpi.codigo }}">Meta Objetivo:</label>
+                <div class="input-con-unidad input-con-unidad--destacado">
+                  <span class="comparador-simbolo" aria-hidden="true">{{ kpi.comparador }}</span>
+                  <input
+                    id="meta-{{ kpi.codigo }}"
+                    type="number"
+                    [(ngModel)]="kpi.metaValor"
+                    min="0"
+                    step="1"
+                    aria-label="Valor de la meta"
+                  />
+                  <span class="unidad-texto">{{ kpi.unidad }}</span>
                 </div>
               </div>
 
-              <div class="campo-tiempo">
-                <label>Tiempo de Resolución:</label>
-                <div class="input-con-unidad">
-                  <input type="number" [(ngModel)]="regla.tiempoResolucionMin" min="15" step="15" />
-                  <span>min</span>
-                </div>
-              </div>
-
-              <div class="campo-tiempo">
-                <label>Alerta Jefatura:</label>
-                <div class="input-con-unidad">
-                  <input type="number" [(ngModel)]="regla.notificarJefaturaMin" min="10" step="5" />
-                  <span>min</span>
-                </div>
-              </div>
+              <p class="kpi-desc">{{ kpi.descripcion }}</p>
             </div>
+          }
+        </div>
+      </section>
+    </div>
+  }
+
+  <!-- ============================================================== -->
+  <!-- PESTAÑA 3: ASIGNACIÓN Y ORDEN DE PRIORIDAD POR ÁREA HOSPITALARIA -->
+  <!-- ============================================================== -->
+  @if (pestanaActiva() === 'areas') {
+    <div class="seccion-areas-wrapper" id="panel-areas" role="tabpanel" aria-labelledby="tab-areas">
+      <!-- Tarjetas de Resumen Rápido de Áreas -->
+      <div class="resumen-areas-grid">
+        <div class="resumen-card">
+          <span class="resumen-card__etiqueta">Total Áreas Registradas</span>
+          <span class="resumen-card__valor">{{ conteoPorPrioridad().total }}</span>
+        </div>
+
+        <div class="resumen-card resumen-card--p1">
+          <div class="resumen-card__icono">
+            <span class="tag-prioridad tag--p1-critica">P1</span>
+          </div>
+          <div class="resumen-card__info">
+            <span class="resumen-card__etiqueta">Críticas (STAT)</span>
+            <span class="resumen-card__valor">{{ conteoPorPrioridad().p1 }}</span>
+          </div>
+        </div>
+
+        <div class="resumen-card resumen-card--p2">
+          <div class="resumen-card__icono">
+            <span class="tag-prioridad tag--p2-alta">P2</span>
+          </div>
+          <div class="resumen-card__info">
+            <span class="resumen-card__etiqueta">Alta Prioridad</span>
+            <span class="resumen-card__valor">{{ conteoPorPrioridad().p2 }}</span>
+          </div>
+        </div>
+
+        <div class="resumen-card resumen-card--p3">
+          <div class="resumen-card__icono">
+            <span class="tag-prioridad tag--p3-media">P3</span>
+          </div>
+          <div class="resumen-card__info">
+            <span class="resumen-card__etiqueta">Prioridad Media</span>
+            <span class="resumen-card__valor">{{ conteoPorPrioridad().p3 }}</span>
+          </div>
+        </div>
+
+        <div class="resumen-card resumen-card--p4">
+          <div class="resumen-card__icono">
+            <span class="tag-prioridad tag--p4-baja">P4</span>
+          </div>
+          <div class="resumen-card__info">
+            <span class="resumen-card__etiqueta">Baja / Administrativa</span>
+            <span class="resumen-card__valor">{{ conteoPorPrioridad().p4 }}</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- Barra de Filtros y Búsqueda -->
+      <div class="barra-filtros-areas">
+        <div class="campo-busqueda">
+          <app-icono nombre="search" tamano="xs"></app-icono>
+          <input
+            type="search"
+            placeholder="Buscar por área hospitalaria o anexo..."
+            [ngModel]="busquedaArea()"
+            (ngModelChange)="busquedaArea.set($event)"
+            aria-label="Buscar área por nombre o anexo"
+          />
+          @if (busquedaArea()) {
+            <button type="button" class="btn-limpiar" (click)="busquedaArea.set('')" title="Borrar búsqueda">
+              <app-icono nombre="close" tamano="xs"></app-icono>
+            </button>
+          }
+        </div>
+
+        <div class="filtros-prioridad-chips" role="radiogroup" aria-label="Filtrar por nivel de prioridad">
+          <button
+            type="button"
+            class="chip-filtro"
+            [class.chip-filtro--activo]="filtroPrioridad() === 'TODAS'"
+            (click)="filtroPrioridad.set('TODAS')"
+          >
+            Todas ({{ conteoPorPrioridad().total }})
+          </button>
+          <button
+            type="button"
+            class="chip-filtro chip-filtro--p1"
+            [class.chip-filtro--activo]="filtroPrioridad() === 'P1'"
+            (click)="filtroPrioridad.set('P1')"
+          >
+            P1 ({{ conteoPorPrioridad().p1 }})
+          </button>
+          <button
+            type="button"
+            class="chip-filtro chip-filtro--p2"
+            [class.chip-filtro--activo]="filtroPrioridad() === 'P2'"
+            (click)="filtroPrioridad.set('P2')"
+          >
+            P2 ({{ conteoPorPrioridad().p2 }})
+          </button>
+          <button
+            type="button"
+            class="chip-filtro chip-filtro--p3"
+            [class.chip-filtro--activo]="filtroPrioridad() === 'P3'"
+            (click)="filtroPrioridad.set('P3')"
+          >
+            P3 ({{ conteoPorPrioridad().p3 }})
+          </button>
+          <button
+            type="button"
+            class="chip-filtro chip-filtro--p4"
+            [class.chip-filtro--activo]="filtroPrioridad() === 'P4'"
+            (click)="filtroPrioridad.set('P4')"
+          >
+            P4 ({{ conteoPorPrioridad().p4 }})
+          </button>
+        </div>
+      </div>
+
+      <!-- Tarjeta Principal con la Lista de Áreas -->
+      <section class="tarjeta-config tarjeta-config--full" aria-label="Asignación de Prioridades">
+        <div class="tarjeta-config__header">
+          <div>
+            <h2 class="tarjeta-config__titulo">Asignación de Nivel de Prioridad por Área</h2>
+            <p class="tarjeta-config__desc">
+              Seleccione la prioridad predeterminada para cada área hospitalaria. Cada incidente reportado desde esa área adoptará esta prioridad automáticamente como punto de partida.
+            </p>
+          </div>
+        </div>
+
+        @if (slaService.cargandoAreas()) {
+          <div class="estado-cargando">
+            <app-icono nombre="sync" tamano="md" class="icono-giratorio"></app-icono>
+            <span>Cargando áreas hospitalarias...</span>
+          </div>
+        } @else if (areasFiltradas().length === 0) {
+          <div class="estado-vacio">
+            <app-icono nombre="apartment" tamano="lg"></app-icono>
+            <p class="estado-vacio__titulo">No se encontraron áreas</p>
+            <p class="estado-vacio__desc">No hay áreas que coincidan con el criterio de búsqueda o filtro seleccionado.</p>
+            <button type="button" class="btn-reintentar" (click)="limpiarBusqueda()">Mostrar todas las áreas</button>
+          </div>
+        } @else {
+          <div class="tabla-areas-wrapper">
+            <table class="tabla-areas">
+              <thead>
+                <tr>
+                  <th scope="col" class="th-area">Área Hospitalaria</th>
+                  <th scope="col" class="th-ubicacion">Ubicación / Piso</th>
+                  <th scope="col" class="th-anexo">Anexo</th>
+                  <th scope="col" class="th-prioridad-actual">Nivel Asignado</th>
+                  <th scope="col" class="th-acciones">Cambiar Nivel de Prioridad</th>
+                </tr>
+              </thead>
+              <tbody>
+                @for (area of areasFiltradas(); track area.id) {
+                  <tr [class.fila-guardando]="guardandoPrioridadId() === area.id">
+                    <td class="td-nombre">
+                      <div class="area-item">
+                        <app-icono nombre="apartment" tamano="xs"></app-icono>
+                        <span class="area-nombre">{{ area.nombre }}</span>
+                      </div>
+                    </td>
+
+                    <td class="td-ubicacion">
+                      @if (area.piso !== null && area.piso !== undefined) {
+                        <span>{{ area.piso === 0 ? 'Sótano' : 'Piso ' + area.piso }}</span>
+                      } @else {
+                        <span class="texto-atenuado">No especificado</span>
+                      }
+                    </td>
+
+                    <td class="td-anexo">
+                      @if (area.anexo) {
+                        <span class="badge-anexo">Ext. {{ area.anexo }}</span>
+                      } @else {
+                        <span class="texto-atenuado">-</span>
+                      }
+                    </td>
+
+                    <td class="td-prioridad-actual">
+                      @switch (area.prioridadDefecto || 'P3') {
+                        @case ('P1') {
+                          <span class="tag-prioridad tag--p1-critica">P1 · Crítica</span>
+                        }
+                        @case ('P2') {
+                          <span class="tag-prioridad tag--p2-alta">P2 · Alta</span>
+                        }
+                        @case ('P3') {
+                          <span class="tag-prioridad tag--p3-media">P3 · Media</span>
+                        }
+                        @case ('P4') {
+                          <span class="tag-prioridad tag--p4-baja">P4 · Baja</span>
+                        }
+                      }
+                    </td>
+
+                    <td class="td-acciones">
+                      <div class="selector-prioridades-btn" role="group" [attr.aria-label]="'Cambiar prioridad para ' + area.nombre">
+                        @for (prio of opcionesPrioridad; track prio.codigo) {
+                          <button
+                            type="button"
+                            class="btn-prio-opcion"
+                            [class.btn-prio-opcion--activo]="(area.prioridadDefecto || 'P3') === prio.codigo"
+                            [class]="'btn-prio-opcion--' + prio.codigo.toLowerCase()"
+                            (click)="actualizarPrioridadArea(area, prio.codigo)"
+                            [disabled]="guardandoPrioridadId() === area.id"
+                            [title]="prio.descripcion"
+                          >
+                            <span class="btn-prio-opcion__codigo">{{ prio.codigo }}</span>
+                            <span class="btn-prio-opcion__texto">{{ prio.codigo === 'P1' ? 'Crítica' : prio.codigo === 'P2' ? 'Alta' : prio.codigo === 'P3' ? 'Media' : 'Baja' }}</span>
+                          </button>
+                        }
+                      </div>
+                    </td>
+                  </tr>
+                }
+              </tbody>
+            </table>
           </div>
         }
-      </div>
-    </section>
-  </div>
+      </section>
+    </div>
+  }
 </div>

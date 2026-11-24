@@ -117,6 +117,18 @@ public class AreaGestionServiceImpl implements AreaGestionService {
     }
 
     @Override
+    public AreaDetalle cambiarPrioridad(Integer id, String prioridad) {
+        Area area = areaRepository.findById(id)
+                .orElseThrow(() -> new RecursoNoEncontradoException("Área no encontrada con id: " + id));
+
+        if (prioridad != null && !prioridad.isBlank()) {
+            area.setPrioridadDefecto(prioridad.trim().toUpperCase());
+        }
+        areaRepository.save(area);
+        return areaConsultaService.obtener(id);
+    }
+
+    @Override
     public UsuarioResumen reasignarPersonal(Integer idArea, Integer idUsuario) {
         Area area = areaRepository.findById(idArea)
                 .orElseThrow(() -> new RecursoNoEncontradoException("Área no encontrada con id: " + idArea));

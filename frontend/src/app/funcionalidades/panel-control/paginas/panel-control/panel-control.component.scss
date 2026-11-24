@@ -203,6 +203,18 @@
     }
   }
 
+  &--config {
+    background-color: var(--color-surface-card);
+    border: 1px solid var(--color-border-subtle);
+    color: #475569;
+
+    &:hover:not(:disabled) {
+      background-color: rgb(71 85 105 / 8%);
+      border-color: #475569;
+      color: #0f172a;
+    }
+  }
+
   &:disabled {
     opacity: 0.6;
     cursor: not-allowed;

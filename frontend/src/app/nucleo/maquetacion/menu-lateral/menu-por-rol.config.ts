@@ -68,7 +68,7 @@ export const MENU_POR_ROL: Record<RolUsuario, readonly SeccionMenu[]> = {
       items: [
         { titulo: 'Solicitudes de cambio', ruta: '/administracion/cambios', icono: 'change_circle' },
         { titulo: 'Centro de soluciones y guías', ruta: '/administracion/conocimiento', icono: 'menu_book' },
-        { titulo: 'Compromisos de atención y prioridades', ruta: '/sla/configuracion', icono: 'tune' },
+        { titulo: 'Configuraciones', ruta: '/sla/configuracion', icono: 'settings' },
       ],
     },
   ],

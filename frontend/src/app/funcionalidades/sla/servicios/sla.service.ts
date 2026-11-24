@@ -1,4 +1,6 @@
-import { Injectable, signal, computed } from '@angular/core';
+import { Injectable, signal, computed, inject } from '@angular/core';
+import { HttpClient } from '@angular/common/http';
+import { Observable, tap } from 'rxjs';
 import { PrioridadTicket } from '../../../compartido/modelos/prioridad.enum';
 import { EstadoSla } from '../../../compartido/modelos/estado-sla.enum';
 import {
@@ -6,12 +8,56 @@ import {
   MetricasSlaGlobal,
   CumplimientoSlaPorArea,
   TicketMonitoreoSla,
+  ConfiguracionKpiItem,
+  AreaPrioridadItem,
 } from '../modelos/sla.model';
+import { API_ENDPOINTS } from '../../../nucleo/config/api-endpoints';
 
 @Injectable({
   providedIn: 'root',
 })
 export class SlaService {
+  private readonly http = inject(HttpClient);
+
+  // Metas dinámicas de KPIs institucionales configurables por el Administrador
+  readonly metasKpis = signal<ConfiguracionKpiItem[]>([
+    {
+      codigo: 'KPI-01',
+      titulo: 'Cumplimiento SLA Global',
+      metaValor: 95.0,
+      unidad: '%',
+      comparador: '≥',
+      formula: '(tickets resueltos a tiempo / tickets cerrados) × 100',
+      descripcion: 'Porcentaje de tickets atendidos dentro del tiempo comprometido.',
+    },
+    {
+      codigo: 'KPI-02',
+      titulo: 'Tickets Abiertos en Cola',
+      metaValor: 30,
+      unidad: 'casos',
+      comparador: '≤',
+      formula: 'Total de tickets en estado NUEVO, ASIGNADO y EN_PROCESO',
+      descripcion: 'Total de solicitudes e incidentes activos pendientes de atención técnica.',
+    },
+    {
+      codigo: 'KPI-03',
+      titulo: 'Tiempo Prom. Respuesta (TPR)',
+      metaValor: 20,
+      unidad: 'min',
+      comparador: '≤',
+      formula: 'Σ(hora asignación − hora registro) / tickets atendidos',
+      descripcion: 'Tiempo promedio que demora el equipo de TI en tomar el ticket tras ser reportado.',
+    },
+    {
+      codigo: 'KPI-04',
+      titulo: 'Resueltos en el Turno',
+      metaValor: 150,
+      unidad: 'casos',
+      comparador: '≥',
+      formula: 'Total tickets en estado RESUELTO o CERRADO',
+      descripcion: 'Cantidad de casos solucionados satisfactoriamente.',
+    },
+  ]);
   // Reglas vigentes de tiempos de respuesta y resolución pactadas con el hospital
   readonly reglasSla = signal<ReglaSlaConfiguracion[]>([
     {
@@ -176,6 +222,8 @@ export class SlaService {
   ]);
 
   constructor() {
+    this.cargarConfiguracionApi();
+    this.cargarMetasKpiApi();
     this.cargarReglasPersistidas();
   }
 
@@ -194,13 +242,92 @@ export class SlaService {
     return EstadoSla.A_TIEMPO;
   }
 
+  cargarConfiguracionApi(): void {
+    this.http.get<ReglaSlaConfiguracion[]>(API_ENDPOINTS.sla.configuracion).subscribe({
+      next: (remotas) => {
+        if (Array.isArray(remotas) && remotas.length > 0) {
+          this.reglasSla.set(remotas);
+        }
+      },
+      error: () => {
+        this.cargarReglasPersistidas();
+      },
+    });
+  }
+
+  cargarMetasKpiApi(): void {
+    this.http.get<ConfiguracionKpiItem[]>(API_ENDPOINTS.kpis.configuracion).subscribe({
+      next: (metas) => {
+        if (Array.isArray(metas) && metas.length > 0) {
+          this.metasKpis.set(metas);
+        }
+      },
+      error: () => {
+        // Fallback a valores por defecto
+      },
+    });
+  }
+
   actualizarReglasSla(nuevasReglas: ReglaSlaConfiguracion[]): void {
     this.reglasSla.set(nuevasReglas);
     try {
       localStorage.setItem('hsmsi_reglas_sla', JSON.stringify(nuevasReglas));
     } catch {
-      // Ignorar fallo de storage en SSR o modo estricto
+      // Ignorar fallo de storage
     }
+
+    this.http.put<ReglaSlaConfiguracion[]>(API_ENDPOINTS.sla.configuracion, nuevasReglas).subscribe({
+      next: () => { },
+      error: () => { },
+    });
+  }
+
+  actualizarMetasKpi(nuevasMetas: ConfiguracionKpiItem[]): void {
+    this.metasKpis.set(nuevasMetas);
+    try {
+      localStorage.setItem('hsmsi_metas_kpi', JSON.stringify(nuevasMetas));
+    } catch {
+      // Ignorar fallo de storage
+    }
+
+    this.http.put<ConfiguracionKpiItem[]>(API_ENDPOINTS.kpis.configuracion, nuevasMetas).subscribe({
+      next: () => { },
+      error: () => { },
+    });
+  }
+
+  readonly areasPrioridad = signal<AreaPrioridadItem[]>([]);
+  readonly cargandoAreas = signal<boolean>(false);
+
+  cargarAreas(): void {
+    this.cargandoAreas.set(true);
+    this.http.get<any[]>(API_ENDPOINTS.admin.areas).subscribe({
+      next: (areas) => {
+        const mapeadas: AreaPrioridadItem[] = (areas || []).map((a) => ({
+          id: a.id,
+          nombre: a.nombre,
+          piso: a.piso,
+          anexo: a.anexo,
+          activo: a.activo !== false,
+          prioridadDefecto: a.prioridadDefecto || 'P3',
+        }));
+        this.areasPrioridad.set(mapeadas);
+        this.cargandoAreas.set(false);
+      },
+      error: () => {
+        this.cargandoAreas.set(false);
+      },
+    });
+  }
+
+  actualizarPrioridadArea(idArea: number, prioridad: string): Observable<any> {
+    return this.http.patch(`${API_ENDPOINTS.admin.areas}/${idArea}/prioridad`, { prioridad }).pipe(
+      tap(() => {
+        this.areasPrioridad.update((areas) =>
+          areas.map((a) => (a.id === idArea ? { ...a, prioridadDefecto: prioridad } : a))
+        );
+      })
+    );
   }
 
   private cargarReglasPersistidas(): void {

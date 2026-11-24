@@ -26,6 +26,7 @@ public class IndicadoresServiceImpl implements IndicadoresService {
     private final AreaRepository areaRepo;
     private final ElementoConfiguracionRepository ciRepo;
     private final PrestamoEquipoRepository prestamoRepo;
+    private final com.hospital.servicedesk.repositories.ConfiguracionKpiRepository kpiRepo;
 
     @Override
     @Transactional(readOnly = true)
@@ -189,6 +190,18 @@ public class IndicadoresServiceImpl implements IndicadoresService {
 
         InventarioEstadoDTO inventario = new InventarioEstadoDTO(totalEquipos, enServicio, enPrestamo, enMantenimiento, enReserva);
 
+        List<KpiMetaDTO> kpiMetas = kpiRepo.findByActivoTrue().stream()
+                .map(k -> new KpiMetaDTO(
+                        k.getCodigo(),
+                        k.getTitulo(),
+                        k.getMetaValor(),
+                        k.getUnidad(),
+                        k.getComparador(),
+                        k.getFormula(),
+                        k.getDescripcion()
+                ))
+                .collect(Collectors.toList());
+
         return new DashboardRespuestaDTO(
                 totalTickets,
                 abiertos,
@@ -198,7 +211,8 @@ public class IndicadoresServiceImpl implements IndicadoresService {
                 incidentesPorArea,
                 fallasPorActivo,
                 cargaTurnos,
-                inventario
+                inventario,
+                kpiMetas
         );
     }
 }
