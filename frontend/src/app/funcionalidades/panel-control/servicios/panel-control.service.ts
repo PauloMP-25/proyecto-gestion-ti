@@ -271,31 +271,13 @@ export class PanelControlService implements OnDestroy {
     const todos = this._tickets();
     const mapaActivos = new Map<string, number>();
     for (const t of todos) {
-      const activo = t.elementoConfiguracion?.nombre || (t.categoria ? `Equipo: ${t.categoria}` : 'Estación de Triaje de Emergencia');
+      const activo = t.activoAfectado?.nombre || 'Equipo Hospitalario';
       mapaActivos.set(activo, (mapaActivos.get(activo) || 0) + 1);
-    }
-    const equiposCatalogo = [
-      'Estación de Triaje de Emergencia',
-      'Impresora Térmica de Admisión',
-      'Monitor Multiparámetro UCI',
-      'PC Asistencial Consultorio 04',
-      'Lector de Código de Barras Laboratorio',
-      'Switch de Borde Pabellón Quirúrgico',
-      'Servidor de Historia Clínica Electrónica',
-      'Ecógrafo Portátil Gineco-Obstetricia',
-      'Punto de Red Trauma Shock',
-      'Terminal de Turnos Farmacia',
-    ];
-    for (const eq of equiposCatalogo) {
-      if (!mapaActivos.has(eq)) {
-        mapaActivos.set(eq, 0);
-      }
     }
 
     const totalCasos = Math.max(1, todos.length);
     return Array.from(mapaActivos.entries())
       .sort((a, b) => b[1] - a[1])
-      .slice(0, 10)
       .map(([categoria, casos]) => ({
         categoria,
         casos,
