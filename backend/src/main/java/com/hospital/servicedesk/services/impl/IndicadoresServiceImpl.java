@@ -132,21 +132,32 @@ public class IndicadoresServiceImpl implements IndicadoresService {
                 })
                 .collect(Collectors.toList());
 
-        // 3. Cuadrante 2: Fallas por Activo / Infraestructura (100% dinámico desde tickets y CIs)
+        // 3. Cuadrante 2: Fallas por Activo / Infraestructura (100% dinámico desde tickets y catálogo de CIs)
         Map<String, Long> conteoPorActivo = new LinkedHashMap<>();
         for (Ticket t : tickets) {
-            String activo = "Sistemas & Software Clínico";
+            String activo = null;
             if (t.getElementoConfiguracion() != null && t.getElementoConfiguracion().getNombre() != null) {
                 activo = t.getElementoConfiguracion().getNombre();
             } else if (t.getTipo() != null && t.getTipo() == TipoTicket.INCIDENTE) {
-                activo = "Estaciones PC & Triaje";
+                activo = "Estación de Triaje de Emergencia";
             }
-            conteoPorActivo.put(activo, conteoPorActivo.getOrDefault(activo, 0L) + 1);
+            if (activo != null && !activo.isBlank()) {
+                conteoPorActivo.put(activo, conteoPorActivo.getOrDefault(activo, 0L) + 1);
+            }
+        }
+
+        // Si hay equipos registrados en el catálogo de activos que no tienen tickets, incorporarlos para permitir Top 8 y Top 10
+        if (equipos != null) {
+            for (ElementoConfiguracion eq : equipos) {
+                if (eq.getNombre() != null && !eq.getNombre().isBlank()) {
+                    conteoPorActivo.putIfAbsent(eq.getNombre(), 0L);
+                }
+            }
         }
 
         List<SerieDatoDTO> fallasPorActivo = conteoPorActivo.entrySet().stream()
                 .sorted((a, b) -> Long.compare(b.getValue(), a.getValue()))
-                .limit(6)
+                .limit(10)
                 .map(e -> {
                     double pct = totalTickets > 0 ? (double) e.getValue() / totalTickets * 100.0 : 0.0;
                     return new SerieDatoDTO(e.getKey(), e.getValue(), Math.round(pct * 10.0) / 10.0);

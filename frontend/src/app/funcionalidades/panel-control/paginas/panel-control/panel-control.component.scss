@@ -310,6 +310,10 @@
     /* Curva de turnos a la izquierda y Fallas horizontales a la derecha con mayor ancho */
     grid-template-columns: 1fr 1.25fr;
 
+    .cuadrante-grafico {
+      min-height: 400px;
+    }
+
     @include r.hasta(lg) {
       grid-template-columns: 1fr;
     }

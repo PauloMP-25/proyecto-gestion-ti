@@ -92,8 +92,8 @@ export class DistribucionTipoComponent implements AfterViewInit, OnDestroy {
     this.chartInstance.data.datasets[0].data = datos.casos;
     this.chartInstance.data.datasets[0].backgroundColor = datos.colores;
     this.chartInstance.data.datasets[0].borderColor = datos.colores;
-    (this.chartInstance.data.datasets[0] as any).barThickness =
-      this.topSeleccionado() === 5 ? 24 : (this.topSeleccionado() === 8 ? 18 : 14);
+    const grosor = this.topSeleccionado() === 5 ? 20 : (this.topSeleccionado() === 8 ? 14 : 11);
+    (this.chartInstance.data.datasets[0] as any).barThickness = grosor;
     this.chartInstance.update();
   }
 
@@ -109,6 +109,7 @@ export class DistribucionTipoComponent implements AfterViewInit, OnDestroy {
     }
 
     const datos = this.datosTop();
+    const grosor = this.topSeleccionado() === 5 ? 20 : (this.topSeleccionado() === 8 ? 14 : 11);
 
     this.chartInstance = new Chart(ctx, {
       type: 'bar',
@@ -121,10 +122,10 @@ export class DistribucionTipoComponent implements AfterViewInit, OnDestroy {
             backgroundColor: datos.colores,
             borderColor: datos.colores,
             borderWidth: 1,
-            borderRadius: 6,
+            borderRadius: 4,
             borderSkipped: false,
-            barThickness: this.topSeleccionado() === 5 ? 24 : (this.topSeleccionado() === 8 ? 18 : 14),
-            maxBarThickness: 28,
+            barThickness: grosor,
+            maxBarThickness: 24,
           }
         ]
       },

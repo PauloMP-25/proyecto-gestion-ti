@@ -269,26 +269,40 @@ export class PanelControlService implements OnDestroy {
     }
 
     const todos = this._tickets();
-    const total = Math.max(1, todos.length);
-    const incidentes = todos.filter(t => t.tipo === 'INCIDENTE').length;
-    const solicitudes = todos.filter(t => t.tipo === 'SOLICITUD').length;
-
-    return [
-      {
-        categoria: 'Incidentes Operativos',
-        porcentaje: Math.round((incidentes / total) * 100),
-        ejemplo: 'Fallas de hardware, conectividad o software',
-        casos: incidentes,
-        icono: 'warning',
-      },
-      {
-        categoria: 'Solicitudes de Servicio',
-        porcentaje: Math.round((solicitudes / total) * 100),
-        ejemplo: 'Configuraciones, accesos y suministros',
-        casos: solicitudes,
-        icono: 'help',
-      },
+    const mapaActivos = new Map<string, number>();
+    for (const t of todos) {
+      const activo = t.elementoConfiguracion?.nombre || (t.categoria ? `Equipo: ${t.categoria}` : 'Estación de Triaje de Emergencia');
+      mapaActivos.set(activo, (mapaActivos.get(activo) || 0) + 1);
+    }
+    const equiposCatalogo = [
+      'Estación de Triaje de Emergencia',
+      'Impresora Térmica de Admisión',
+      'Monitor Multiparámetro UCI',
+      'PC Asistencial Consultorio 04',
+      'Lector de Código de Barras Laboratorio',
+      'Switch de Borde Pabellón Quirúrgico',
+      'Servidor de Historia Clínica Electrónica',
+      'Ecógrafo Portátil Gineco-Obstetricia',
+      'Punto de Red Trauma Shock',
+      'Terminal de Turnos Farmacia',
     ];
+    for (const eq of equiposCatalogo) {
+      if (!mapaActivos.has(eq)) {
+        mapaActivos.set(eq, 0);
+      }
+    }
+
+    const totalCasos = Math.max(1, todos.length);
+    return Array.from(mapaActivos.entries())
+      .sort((a, b) => b[1] - a[1])
+      .slice(0, 10)
+      .map(([categoria, casos]) => ({
+        categoria,
+        casos,
+        porcentaje: Math.round((casos / totalCasos) * 100),
+        ejemplo: 'Infraestructura y equipos asistenciales',
+        icono: 'devices',
+      }));
   });
 
   // NUEVO: Curva de Carga por Turnos (Mañana 07:00-13:00 vs. Tarde 13:00-19:00 de Lunes a Viernes)
