@@ -76,6 +76,15 @@ public class AreaAdminController {
         return ResponseEntity.ok(gestionService.cambiarEstado(id, solicitud.activo()));
     }
 
+    @PatchMapping("/{id}/prioridad")
+    public ResponseEntity<AreaDetalle> cambiarPrioridad(
+            @PathVariable Integer id,
+            @RequestBody Map<String, String> body
+    ) {
+        String prioridad = body != null ? body.get("prioridad") : "P3";
+        return ResponseEntity.ok(gestionService.cambiarPrioridad(id, prioridad));
+    }
+
     @DeleteMapping("/{id}")
     public ResponseEntity<Void> eliminar(@PathVariable Integer id) {
         gestionService.eliminar(id);

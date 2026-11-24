@@ -1,1 +1,28 @@
-<p>no-encontrado works!</p>
+<div class="contenedor-error" role="status">
+  <div class="tarjeta-error">
+    <div class="icono-envoltorio">
+      <app-icono nombre="construction" tamano="xl" />
+    </div>
+
+    <div class="contenido-texto">
+      <span class="etiqueta-alerta">Sección en Preparación</span>
+      <h1 class="titulo-error">Módulo en Desarrollo</h1>
+      <p class="descripcion-error">
+        Esta funcionalidad de la Mesa de Ayuda está siendo preparada para su implementación.
+        No se ha cerrado tu sesión ni se ha perdido tu información.
+      </p>
+    </div>
+
+    <div class="acciones-error">
+      <app-boton variante="primario" (alHacerClick)="volver()">
+        <app-icono nombre="arrow_back" tamano="sm" />
+        Volver a la vista anterior
+      </app-boton>
+
+      <app-boton variante="secundario" (alHacerClick)="irAlInicio()">
+        <app-icono nombre="home" tamano="sm" />
+        Ir a mi panel principal
+      </app-boton>
+    </div>
+  </div>
+</div>

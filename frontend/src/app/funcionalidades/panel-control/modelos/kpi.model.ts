@@ -20,6 +20,10 @@ export interface KpiIndicador {
   tendenciaTexto?: string;
   tendenciaPositiva?: boolean;
   formula: string;
+  numeradorFormula?: string | null;
+  denominadorFormula?: string | null;
+  multiplicadorFormula?: string | null;
+  esFraccion?: boolean;
   alcance?: string;
   descripcion?: string;
   desglose?: DesgloseKpi[];
@@ -38,4 +42,20 @@ export interface DistribucionTipo {
   ejemplo: string;
   casos: number;
   icono: string;
+}
+
+export interface CargaTurnosDia {
+  dia: string;
+  diaCorto: string;
+  turnoManana: number; // 07:00 a 13:00
+  turnoTarde: number; // 13:00 a 19:00
+  total: number;
+}
+
+export interface EstadoInventarioEquipos {
+  enServicio: number;
+  enPrestamo: number;
+  enMantenimiento: number;
+  disponiblesReserva: number;
+  total: number;
 }

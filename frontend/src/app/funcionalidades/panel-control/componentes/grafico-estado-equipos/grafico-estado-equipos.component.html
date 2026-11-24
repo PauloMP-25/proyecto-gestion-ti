@@ -1,0 +1,31 @@
+<div class="tarjeta-grafico" role="region" aria-label="Disponibilidad del Inventario y Préstamos">
+  <div class="tarjeta-grafico__header">
+    <div class="tarjeta-grafico__titulos">
+      <h3 class="tarjeta-grafico__titulo">Inventario y Equipos en Préstamo</h3>
+      <p class="tarjeta-grafico__subtitulo">Estado operativo de equipos de contingencia y cómputo clínico</p>
+    </div>
+    <div class="badge-equipos-total">
+      <app-icono nombre="devices" tamano="xs"></app-icono>
+      <span>{{ estadoInventario().total }} equipos</span>
+    </div>
+  </div>
+
+  <!-- Contenedor del Gráfico Circular y Leyenda en 2 Columnas -->
+  <div class="tarjeta-grafico__cuerpo">
+    <div class="tarjeta-grafico__canvas-col">
+      <canvas #canvasEquipos></canvas>
+    </div>
+
+    <div class="tarjeta-grafico__leyenda-col" role="list" aria-label="Estado operativo de equipos">
+      @for (item of itemsLeyenda(); track item.estado) {
+        <div class="leyenda-item" role="listitem">
+          <span class="leyenda-color" [style.background-color]="item.color" aria-hidden="true"></span>
+          <div class="leyenda-info">
+            <span class="leyenda-nombre" [title]="item.estado">{{ item.estado }}</span>
+            <span class="leyenda-conteo">{{ item.total }} {{ item.total === 1 ? 'equipo' : 'equipos' }}</span>
+          </div>
+        </div>
+      }
+    </div>
+  </div>
+</div>

@@ -1,26 +1,43 @@
-<div class="tarjeta-distribucion" role="region" aria-label="Fallas por Activo de Infraestructura CMDB">
+<div class="tarjeta-distribucion" role="region" aria-label="Fallas por Activo de Infraestructura Hospitalaria">
   <div class="tarjeta-distribucion__header">
     <div class="tarjeta-distribucion__titulos">
       <h3 class="tarjeta-distribucion__titulo">Fallas por equipo del catálogo</h3>
-      <p class="tarjeta-distribucion__subtitulo">Top {{ topSeleccionado }} elementos de configuración con mayor volumen de incidentes</p>
+      <p class="tarjeta-distribucion__subtitulo">Top {{ topSeleccionado() }} elementos con mayor volumen de incidentes</p>
     </div>
     <div class="selector-dropdown-wrapper">
-      <label for="select-top-activos" class="sr-only">Seleccionar límite de activos</label>
+      <label for="select-top-activos" class="sr-only">Seleccionar límite de equipos</label>
       <select 
         id="select-top-activos"
         class="select-top"
-        [ngModel]="topSeleccionado"
+        [ngModel]="topSeleccionado()"
         (ngModelChange)="cambiarTop($event)"
-        aria-label="Seleccionar Top de Activos CMDB">
-        <option [ngValue]="5">Top 5 activos</option>
-        <option [ngValue]="8">Top 8 activos</option>
-        <option [ngValue]="10">Top 10 activos</option>
+        aria-label="Seleccionar Top de Equipos del Catálogo">
+        <option [ngValue]="5">Top 5 equipos</option>
+        <option [ngValue]="8">Top 8 equipos</option>
+        <option [ngValue]="10">Top 10 equipos</option>
       </select>
     </div>
   </div>
 
-  <!-- Contenedor del Gráfico de Barras Chart.js estilo Excel/Power BI -->
-  <div class="tarjeta-distribucion__chart-container">
-    <canvas #canvasBarras></canvas>
+  <!-- Contenedor del Gráfico y Leyenda en 2 Columnas -->
+  <div class="tarjeta-distribucion__cuerpo">
+    <!-- Columna Izquierda: Canvas con Barras Horizontales -->
+    <div class="tarjeta-distribucion__canvas-col">
+      <canvas #canvasBarras></canvas>
+    </div>
+
+    <!-- Columna Derecha: Leyenda Completa y Legible de Equipos -->
+    <div class="tarjeta-distribucion__leyenda-col" role="list" aria-label="Leyenda de equipos por volumen de fallas">
+      @for (item of datosTop().items; track item.categoria + $index) {
+        <div class="leyenda-item" role="listitem">
+          <span class="leyenda-color" [style.background-color]="item.color" aria-hidden="true"></span>
+          <div class="leyenda-info">
+            <span class="leyenda-nombre" [title]="item.categoria">{{ item.categoria }}</span>
+            <span class="leyenda-casos">{{ item.casos }} {{ item.casos === 1 ? 'caso' : 'casos' }}</span>
+          </div>
+        </div>
+      }
+    </div>
   </div>
 </div>
+

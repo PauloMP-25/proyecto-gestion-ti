@@ -76,9 +76,14 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
                 }
             }
 
+        } catch (io.jsonwebtoken.ExpiredJwtException e) {
+            response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
+            response.setContentType("application/json");
+            response.setCharacterEncoding("UTF-8");
+            response.getWriter().write("{\"mensaje\":\"La sesión ha expirado. Por favor, vuelva a iniciar sesión.\",\"codigo\":\"SESION_EXPIRADA\"}");
+            return;
         } catch (JwtException | IllegalArgumentException e) {
-            // Si el token es inválido, simplemente dejamos continuar la petición
-            // sin establecer autenticación en el contexto.
+            // Si el token es inválido o malformado, continuar sin contexto
         }
 
         filterChain.doFilter(request, response);

@@ -4,21 +4,26 @@ import {
   ElementRef, 
   ViewChild, 
   AfterViewInit, 
-  OnDestroy 
+  OnDestroy,
+  inject,
+  effect,
+  signal,
+  computed
 } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { Chart, registerables } from 'chart.js';
 import ChartDataLabels from 'chartjs-plugin-datalabels';
-
+import { PanelControlService } from '../../servicios/panel-control.service';
 import { leerToken, leerTokensNumerados } from '../../../../compartido/utilidades/tokens-css';
 
 // Registrar componentes de barras y datalabels en Chart.js
 Chart.register(...registerables, ChartDataLabels);
 
-export interface ActivoCMDB {
-  elemento: string;
+export interface ItemTopEquipo {
+  categoria: string;
   casos: number;
+  color: string;
 }
 
 @Component({
@@ -32,23 +37,40 @@ export interface ActivoCMDB {
 export class DistribucionTipoComponent implements AfterViewInit, OnDestroy {
   @ViewChild('canvasBarras') canvasBarras!: ElementRef<HTMLCanvasElement>;
 
+  private panelService = inject(PanelControlService);
   private chartInstance: Chart | null = null;
-  topSeleccionado: number = 5;
+  readonly topSeleccionado = signal<number>(5);
 
-  // Catálogo de Elementos de Configuración (ordenados de mayor a menor).
-  // El color de cada barra sale del token --comp-grafico-barras-N según su posición.
-  readonly activosCMDB: ActivoCMDB[] = [
-    { elemento: 'Software EHR/HIS', casos: 18 },
-    { elemento: 'Redes & VLANs', casos: 12 },
-    { elemento: 'Estaciones PC', casos: 8 },
-    { elemento: 'Impresoras SIS', casos: 5 },
-    { elemento: 'Servidores BD', casos: 4 },
-    { elemento: 'Telefonía IP', casos: 3 },
-    { elemento: 'Switches Core', casos: 3 },
-    { elemento: 'Lectoras Código', casos: 2 },
-    { elemento: 'UPS / SAIs UCI', casos: 2 },
-    { elemento: 'Servidor PACS', casos: 1 },
-  ];
+  readonly datosTop = computed(() => {
+    const distribucion = this.panelService.distribucionPorTipo();
+    const top = this.topSeleccionado();
+    const seleccionados = distribucion.slice(0, top);
+    const paleta = leerTokensNumerados('--comp-grafico-barras', Math.max(seleccionados.length, 5));
+
+    const items: ItemTopEquipo[] = seleccionados.map((d, i) => ({
+      categoria: d.categoria,
+      casos: d.casos,
+      color: paleta[i % paleta.length],
+    }));
+
+    return {
+      labels: items.map(it => it.categoria),
+      rankingLabels: items.map((_, i) => `#${i + 1}`),
+      casos: items.map(it => it.casos),
+      colores: items.map(it => it.color),
+      items,
+    };
+  });
+
+  constructor() {
+    effect(() => {
+      // Re-renderizar si cambian los tickets o el TOP seleccionado
+      const datos = this.datosTop();
+      if (this.chartInstance) {
+        this.actualizarGraficoBarras(datos);
+      }
+    });
+  }
 
   ngAfterViewInit(): void {
     requestAnimationFrame(() => {
@@ -57,31 +79,21 @@ export class DistribucionTipoComponent implements AfterViewInit, OnDestroy {
   }
 
   cambiarTop(nuevoTop: number): void {
-    this.topSeleccionado = Number(nuevoTop);
-    this.actualizarGraficoBarras();
+    this.topSeleccionado.set(Number(nuevoTop));
   }
 
-  private obtenerDatosTop() {
-    const seleccionados = this.activosCMDB.slice(0, this.topSeleccionado);
-    const paleta = leerTokensNumerados('--comp-grafico-barras', this.activosCMDB.length);
-    return {
-      labels: seleccionados.map(a => a.elemento),
-      casos: seleccionados.map(a => a.casos),
-      colores: seleccionados.map((_, i) => paleta[i]),
-    };
-  }
-
-  private actualizarGraficoBarras(): void {
+  private actualizarGraficoBarras(datos = this.datosTop()): void {
     if (!this.chartInstance) {
       this.construirGraficoBarras();
       return;
     }
 
-    const { labels, casos, colores } = this.obtenerDatosTop();
-    this.chartInstance.data.labels = labels;
-    this.chartInstance.data.datasets[0].data = casos;
-    this.chartInstance.data.datasets[0].backgroundColor = colores;
-    this.chartInstance.data.datasets[0].borderColor = colores;
+    this.chartInstance.data.labels = datos.rankingLabels;
+    this.chartInstance.data.datasets[0].data = datos.casos;
+    this.chartInstance.data.datasets[0].backgroundColor = datos.colores;
+    this.chartInstance.data.datasets[0].borderColor = datos.colores;
+    const grosor = this.topSeleccionado() === 5 ? 20 : (this.topSeleccionado() === 8 ? 14 : 11);
+    (this.chartInstance.data.datasets[0] as any).barThickness = grosor;
     this.chartInstance.update();
   }
 
@@ -96,38 +108,42 @@ export class DistribucionTipoComponent implements AfterViewInit, OnDestroy {
       this.chartInstance = null;
     }
 
-    const { labels, casos, colores } = this.obtenerDatosTop();
+    const datos = this.datosTop();
+    const grosor = this.topSeleccionado() === 5 ? 20 : (this.topSeleccionado() === 8 ? 14 : 11);
 
     this.chartInstance = new Chart(ctx, {
       type: 'bar',
       data: {
-        labels: labels,
+        labels: datos.rankingLabels,
         datasets: [
           {
             label: 'Incidentes Activos',
-            data: casos,
-            backgroundColor: colores,
-            borderColor: colores,
+            data: datos.casos,
+            backgroundColor: datos.colores,
+            borderColor: datos.colores,
             borderWidth: 1,
-            borderRadius: 6,
+            borderRadius: 4,
             borderSkipped: false,
-            barThickness: this.topSeleccionado === 5 ? 28 : (this.topSeleccionado === 8 ? 22 : 18),
-            maxBarThickness: 32,
+            barThickness: grosor,
+            maxBarThickness: 24,
           }
         ]
       },
       options: {
+        indexAxis: 'y',
         responsive: true,
         maintainAspectRatio: false,
         layout: {
-          padding: { top: 22, bottom: 4, left: 4, right: 8 }
+          padding: { top: 6, bottom: 6, left: 4, right: 28 }
         },
         scales: {
           x: {
+            beginAtZero: true,
             grid: {
-              display: false,
+              color: leerToken('--comp-grafico-grilla'),
             },
             ticks: {
+              precision: 0,
               color: leerToken('--comp-grafico-eje-x-texto'),
               font: {
                 family: "'Inter', system-ui, sans-serif",
@@ -137,46 +153,48 @@ export class DistribucionTipoComponent implements AfterViewInit, OnDestroy {
             }
           },
           y: {
-            beginAtZero: true,
-            suggestedMax: 22,
             grid: {
-              color: leerToken('--comp-grafico-grilla'),
+              display: false,
             },
             ticks: {
-              stepSize: 5,
               color: leerToken('--comp-grafico-eje-y-texto'),
               font: {
                 family: "'Inter', system-ui, sans-serif",
-                size: 10,
+                size: 12,
+                weight: 700,
               }
             }
           }
         },
         plugins: {
           legend: {
-            display: false, // En gráfico de barras con eje etiquetado no se necesita leyenda
+            display: false, // La leyenda completa está al lado derecho en HTML accesible
           },
           tooltip: {
             backgroundColor: leerToken('--comp-grafico-tooltip-bg'),
             titleColor: leerToken('--comp-grafico-tooltip-texto'),
             bodyColor: leerToken('--comp-grafico-tooltip-texto'),
-            titleFont: { family: "'Inter', sans-serif", size: 12, weight: 'bold' },
-            bodyFont: { family: "'Inter', sans-serif", size: 11 },
+            titleFont: { family: "'Inter', sans-serif", size: 13, weight: 'bold' },
+            bodyFont: { family: "'Inter', sans-serif", size: 12 },
             padding: 10,
             cornerRadius: 8,
             callbacks: {
-              label: (item) => ` ${item.raw} incidentes registrados en CMDB`
+              title: (items) => {
+                const idx = items[0]?.dataIndex ?? 0;
+                return this.datosTop().items[idx]?.categoria || '';
+              },
+              label: (item) => ` ${item.raw} ${item.raw === 1 ? 'incidente' : 'incidentes'} registrados`
             }
           },
           datalabels: {
             anchor: 'end',
-            align: 'top',
-            offset: 2,
+            align: 'right',
+            offset: 4,
             color: leerToken('--comp-grafico-etiqueta-texto'),
             font: {
               family: "'Inter', system-ui, sans-serif",
               weight: 'bold',
-              size: 11,
+              size: 12,
             },
             formatter: (value: number) => `${value}`
           }
@@ -192,3 +210,4 @@ export class DistribucionTipoComponent implements AfterViewInit, OnDestroy {
     }
   }
 }
+

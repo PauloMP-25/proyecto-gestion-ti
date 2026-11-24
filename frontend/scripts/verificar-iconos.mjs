@@ -3,14 +3,14 @@ import { readFileSync, globSync } from 'node:fs';
 // Material Symbols permitidos
 const ICONOS_VALIDOS = new Set([
   'account_tree', 'add', 'add_circle', 'add_task', 'admin_panel_settings', 'alarm',
-  'archive', 'arrow_back', 'arrow_downward', 'arrow_forward', 'arrow_upward',
+  'analytics', 'apartment', 'archive', 'arrow_back', 'arrow_downward', 'arrow_forward', 'arrow_upward',
   'assignment', 'assignment_turned_in', 'badge', 'build', 'calendar_today',
   'call', 'cancel', 'change_circle', 'check', 'check_circle', 'chevron_left',
-  'chevron_right', 'clinical_notes', 'close', 'cloud_off', 'computer',
+  'chevron_right', 'clinical_notes', 'close', 'cloud_off', 'computer', 'construction',
   'content_copy', 'dashboard', 'delete', 'description', 'desktop_windows',
   'devices', 'dns', 'domain', 'drag_indicator', 'ecg_heart', 'edit',
   'edit_note', 'emergency', 'engineering', 'error', 'error_outline',
-  'escalator_warning', 'expand_less', 'expand_more', 'fact_check', 'favorite',
+  'escalator_warning', 'event_upcoming', 'expand_less', 'expand_more', 'fact_check', 'favorite',
   'fiber_manual_record', 'filter_alt_off', 'filter_list', 'fingerprint', 'format_list_numbered',
   'gavel', 'grid_on', 'groups', 'headset_mic', 'help', 'help_outline',
   'history', 'home', 'hourglass_empty', 'hub', 'inbox', 'info',

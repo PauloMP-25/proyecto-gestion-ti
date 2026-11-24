@@ -20,6 +20,8 @@ public interface AreaGestionService {
 
     AreaDetalle cambiarEstado(Integer id, boolean activo);
 
+    AreaDetalle cambiarPrioridad(Integer id, String prioridad);
+
     UsuarioResumen reasignarPersonal(Integer idArea, Integer idUsuario);
 
     List<UsuarioResumen> listarPersonal(Integer idArea, boolean incluirInactivos);

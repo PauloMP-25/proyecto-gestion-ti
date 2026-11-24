@@ -1,0 +1,18 @@
+<div class="card-grafico" role="region" aria-label="Curva de Carga por Turnos Hospitalarios">
+  <div class="card-grafico__header">
+    <div class="card-grafico__titulos">
+      <h3 class="card-grafico__titulo">Curva de Carga por Turnos</h3>
+      <p class="card-grafico__subtitulo">Demanda de soporte en Guardia Mañana (07:00-13:00) vs. Tarde (13:00-19:00)</p>
+    </div>
+    <div class="badge-asistencial">
+      <app-icono nombre="schedule" tamano="xs"></app-icono>
+      <span>Lunes a Viernes</span>
+    </div>
+  </div>
+
+  <div class="card-grafico__cuerpo">
+    <div class="canvas-wrap">
+      <canvas #canvasCargaTurnos></canvas>
+    </div>
+  </div>
+</div>
