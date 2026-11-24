@@ -14,6 +14,16 @@
   --color-text-inverse:   var(--prim-noche-950);
   --color-primary-base:   var(--prim-guinda-500);
   --color-primary-hover:  var(--prim-guinda-400);
+
+  /* Compatibilidad con estilos heredados (--hsmsi-*) que aún no migran a tokens semánticos. */
+  --hsmsi-texto:              var(--color-text-main);
+  --hsmsi-texto-secundario:   var(--color-text-secondary);
+  --hsmsi-color-texto:        var(--color-text-main);
+  --hsmsi-color-texto-secundario: var(--color-text-secondary);
+  --hsmsi-superficie-hover:   var(--color-surface-hover);
+  --hsmsi-superficie-activa:  var(--color-surface-hover);
+  --hsmsi-superficie-suave:   var(--color-surface-sunken);
+
   --sla-ok-bg:     var(--prim-esmeralda-900);
   --sla-ok-text:   var(--prim-esmeralda-200);
   --sla-ok-border: var(--prim-esmeralda-600);
