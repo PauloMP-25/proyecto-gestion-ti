@@ -1,3 +1,5 @@
+export type NivelDificultad = 'BASICO' | 'INTERMEDIO' | 'AVANZADO';
+
 export interface ArticuloConocimiento {
   id: number;
   titulo: string;
@@ -14,6 +16,11 @@ export interface ArticuloConocimiento {
   causaRaiz?: string | null;
   solucionTemporal?: string;
   pasos?: string[];
+  precauciones?: string[];
+  nivelDificultad?: NivelDificultad;
+  minutosEstimados?: number;
+  requiereTecnico?: boolean;
+  autorNombre?: string;
 }
 
 export interface ArticuloResumen {

@@ -4,156 +4,447 @@ import { delay } from 'rxjs/operators';
 import { ArticuloConocimiento } from '../../modelos/articulo-conocimiento.model';
 import { ConocimientoApi, FiltrosConocimiento } from './conocimiento.api';
 
+const NOMBRE_CATEGORIA: Record<number, string> = {
+  1: 'Sistema clínico (HIS)',
+  2: 'Impresoras de etiquetas y térmicas',
+  3: 'Redes y conectividad',
+  4: 'Hardware y periféricos',
+  5: 'Software asistencial',
+};
+
 const ARTICULOS_INICIALES: ArticuloConocimiento[] = [
   {
     id: 1,
-    titulo: 'Calibración y desatasco de impresora térmica de triaje (Zebra / Xprinter)',
-    resumen: 'Procedimiento rápido para destrabar el rollo de pulseras o tickets de atención y recalibrar el sensor térmico.',
-    contenidoHtml: `<p>Si la impresora térmica parpadea en color rojo o emite un pitido continuo al imprimir pulseras de pacientes en Triaje o Admisión:</p>
-<ol>
-  <li><strong>Apagar el equipo</strong> desde el interruptor posterior antes de manipular los rodillos.</li>
-  <li>Abrir la cubierta presionando los pestillos laterales verdes y retirar con cuidado cualquier residuo de papel atascado.</li>
-  <li>Verificar que el rollo térmico esté colocado en el sentido correcto (con la cara reactiva hacia el cabezal térmico).</li>
-  <li>Limpiar el sensor óptico frontal con un hisopo ligeramente humedecido en alcohol isopropílico.</li>
-  <li>Cerrar la tapa hasta escuchar el doble clic, encender manteniendo presionado el botón <em>FEED</em> durante 3 segundos para autocalibrar el corte.</li>
-</ol>`,
+    titulo: 'El sistema clínico muestra «sesión expirada» al registrar una admisión',
+    resumen:
+      'Cómo renovar la sesión del sistema clínico sin perder los datos que ya se estaban registrando.',
+    contenidoHtml: '',
     categoriaId: 1,
-    categoriaNombre: 'Equipos y Periféricos',
-    palabrasClave: ['impresora', 'termica', 'triaje', 'zebra', 'pulseras', 'atasco', 'papel'],
-    equiposCompatibles: ['Zebra ZD220', 'Zebra GK420t', 'Xprinter XP-420B', 'Impresora Térmica Triaje'],
+    categoriaNombre: NOMBRE_CATEGORIA[1],
+    palabrasClave: ['sesion', 'expirada', 'admision', 'his', 'sistema', 'clinico', 'logout'],
+    equiposCompatibles: ['Estación de Admisión', 'Estación de Enfermería'],
     esPublico: true,
-    conteoUtil: 42,
-    fechaActualizacion: '2026-11-15T14:30:00Z',
-    sintoma: 'Luz roja parpadeante o papel atascado en ventanilla de triaje',
-    causaRaiz: 'Desalineación del rollo o suciedad en el sensor óptico de separación',
-    solucionTemporal: 'Retirar papel y calibrar con botón FEED',
+    conteoUtil: 48,
+    fechaActualizacion: '2026-11-21T08:30:00Z',
+    sintoma:
+      'El sistema clínico cierra la sesión o muestra «sesión expirada» justo cuando se está registrando un paciente.',
+    causaRaiz:
+      'La sesión se mantuvo abierta sin actividad por más del tiempo permitido o la estación cambió de red.',
+    solucionTemporal:
+      'Registre los datos del paciente en la ficha de papel y vuelva a ingresarlos cuando restablezca la sesión.',
     pasos: [
-      'Apagar el equipo desde el interruptor posterior',
-      'Abrir la cubierta y retirar el papel atascado sin usar tijeras de metal',
-      'Comprobar la orientación correcta del rollo de pulseras',
-      'Cerrar la tapa firmemente hasta escuchar ambos pestillos',
-      'Encender manteniendo presionado FEED por 3 segundos para calibración automática',
+      'Anote los datos del paciente que ya había ingresado antes de que apareciera el mensaje.',
+      'Cierre el mensaje con el botón Aceptar; no cierre el navegador ni apague la computadora.',
+      'Vuelva a iniciar sesión con su usuario y clave institucional.',
+      'Reabra el registro de la admisión y complete los datos que faltaban.',
     ],
+    precauciones: [
+      'Nunca comparta su clave con un compañero para «seguir trabajando»: cada registro queda a nombre de quien inició sesión.',
+      'Si el mensaje reaparece en menos de cinco minutos, repórtelo a Mesa de Ayuda: puede ser una falla del enlace con el servidor.',
+    ],
+    nivelDificultad: 'BASICO',
+    minutosEstimados: 3,
+    requiereTecnico: false,
+    autorNombre: 'Mesa de Ayuda',
   },
   {
     id: 2,
-    titulo: 'Restablecimiento de conexión de red LAN en consultorios médicos',
-    resumen: 'Verificación del punto de red cableado RJ45, roseta de pared y renovación de concesión DHCP.',
-    contenidoHtml: `<p>En caso de que aparezca el ícono de globo terráqueo o advertencia amarilla de "Sin acceso a la red hospitalaria" en el consultorio:</p>
-<ol>
-  <li>Inspeccionar visualmente el cable de red gris/azul conectado entre la computadora y la roseta de pared del consultorio.</li>
-  <li>Comprobar que los LEDs verde (enlace) y ámbar (actividad) en la tarjeta de red estén encendidos o parpadeando.</li>
-  <li>Si los LEDs están apagados, desconectar y volver a conectar firmemente el conector RJ45 hasta oír el chasquido del seguro.</li>
-  <li>Si el problema persiste, abrir la consola de comandos de Windows y ejecutar: <code>ipconfig /release</code> seguido de <code>ipconfig /renew</code>.</li>
-  <li>Si aún no obtiene dirección IP del segmento asistencial (10.10.x.x), comuníquese con Mesa de Ayuda indicando el número de roseta (ej. ROS-CONS-04).</li>
-</ol>`,
-    categoriaId: 2,
-    categoriaNombre: 'Redes y Comunicaciones',
-    palabrasClave: ['red', 'cable', 'internet', 'lan', 'consultorio', 'ip', 'desconectado'],
-    equiposCompatibles: ['PC Consultorio', 'Estación de Enfermería', 'Switch Piso 1', 'Roseta RJ45'],
-    esPublico: true,
-    conteoUtil: 38,
-    fechaActualizacion: '2026-11-18T10:15:00Z',
-    sintoma: 'Sin conexión a internet ni a la red interna del hospital en el consultorio',
-    causaRaiz: 'Cable RJ45 flojo o concesión DHCP vencida',
-    solucionTemporal: 'Reconectar cable de red y renovar IP',
+    titulo: 'Liberar una historia clínica bloqueada por otro usuario',
+    resumen:
+      'Procedimiento técnico para liberar un expediente tomado por una sesión anterior en otra estación.',
+    contenidoHtml: '',
+    categoriaId: 1,
+    categoriaNombre: NOMBRE_CATEGORIA[1],
+    palabrasClave: ['historia', 'bloqueada', 'expediente', 'usuario', 'clinica', 'sesion', 'liberar'],
+    equiposCompatibles: ['Servidor de Aplicaciones HIS'],
+    esPublico: false,
+    conteoUtil: 12,
+    fechaActualizacion: '2026-11-18T16:10:00Z',
+    sintoma:
+      'El sistema indica que la historia clínica está siendo editada por otro usuario o por una sesión anterior.',
+    causaRaiz:
+      'Una sesión anterior no se cerró correctamente y dejó el expediente tomado en el servidor.',
+    solucionTemporal: 'Trabaje en modo consulta mientras se libera el expediente.',
     pasos: [
-      'Revisar la conexión física del cable a la pared y al CPU',
-      'Verificar luces verde y ámbar del puerto de red',
-      'Desconectar y reinsertar con fuerza hasta asegurar la pestaña plástica',
-      'Reiniciar el adaptador de red o reiniciar la estación de trabajo',
+      'Identifique el número de historia y el usuario que aparece en el mensaje de bloqueo.',
+      'Verifique en la consola de administración del sistema clínico si la sesión del usuario sigue activa.',
+      'Confirme con el área que el usuario no está editando el expediente en ese momento.',
+      'Libere el bloqueo del expediente desde la consola de administración.',
+      'Pida al usuario que vuelva a abrir la historia y confirme que puede editarla.',
     ],
+    precauciones: [
+      'No libere un expediente sin confirmar antes con el área: podría descartar cambios que otro usuario está registrando.',
+      'Registre en el ticket el número de historia y el usuario liberado para dejar trazabilidad.',
+    ],
+    nivelDificultad: 'AVANZADO',
+    minutosEstimados: 10,
+    requiereTecnico: true,
+    autorNombre: 'Soporte de Aplicaciones',
   },
   {
     id: 3,
-    titulo: 'Solución a error de conexión en software hospitalario (GalenHos / HIS)',
-    resumen: 'Recuperación ante bloqueo de terminal asistencial o falla de enlace al servidor de historias clínicas.',
-    contenidoHtml: `<p>Si el sistema GalenHos muestra el mensaje "Error al conectar con el servidor central de historias clínicas" o la pantalla se congela al emitir una orden médica:</p>
-<ol>
-  <li>No fuerce el apagado del CPU con el botón de encendido para evitar corromper la sesión clínica activa.</li>
-  <li>Presione <code>Ctrl + Shift + Esc</code> para abrir el Administrador de tareas, localice el proceso <em>GalenHos.exe</em> y seleccione <strong>Finalizar tarea</strong>.</li>
-  <li>Espere 10 segundos y vuelva a abrir el acceso directo desde el escritorio ejecutándolo como usuario habitual.</li>
-  <li>Si el sistema indica "Usuario ya conectado en otra estación": reporte el caso para que el soporte N1 libere el bloqueo de sesión en el servidor.</li>
-</ol>`,
-    categoriaId: 3,
-    categoriaNombre: 'Sistemas y Software Asistencial',
-    palabrasClave: ['galenhos', 'his', 'historias', 'clinica', 'software', 'error', 'servidor'],
-    equiposCompatibles: ['Todas las estaciones asistenciales', 'Servidor de Aplicaciones HIS'],
+    titulo: 'Calibración y desatasco de impresora de pulseras de triaje (Zebra / Xprinter)',
+    resumen:
+      'Procedimiento rápido para destrabar el rollo de pulseras o tickets de atención y recalibrar el sensor térmico.',
+    contenidoHtml: '',
+    categoriaId: 2,
+    categoriaNombre: NOMBRE_CATEGORIA[2],
+    palabrasClave: ['impresora', 'termica', 'triaje', 'zebra', 'pulseras', 'atasco', 'papel'],
+    equiposCompatibles: ['Zebra ZD220', 'Zebra GK420t', 'Xprinter XP-420B'],
     esPublico: true,
-    conteoUtil: 55,
-    fechaActualizacion: '2026-11-20T16:00:00Z',
-    sintoma: 'El sistema GalenHos no inicia o se queda colgado cargando datos del paciente',
-    causaRaiz: 'Sesión colgada en memoria o caída momentánea del socket del servidor',
-    solucionTemporal: 'Cerrar el proceso y reiniciar el aplicativo',
+    conteoUtil: 42,
+    fechaActualizacion: '2026-11-15T14:30:00Z',
+    sintoma: 'Luz roja parpadeante o papel atascado en la ventanilla de triaje.',
+    causaRaiz: 'Desalineación del rollo o suciedad en el sensor óptico de separación.',
+    solucionTemporal: 'Retire el papel atascado y recalibre con el botón FEED.',
     pasos: [
-      'Abrir Administrador de tareas (Ctrl+Shift+Esc)',
-      'Finalizar el proceso GalenHos.exe colgado',
-      'Esperar 10 segundos antes de relanzar el sistema',
-      'Ingresar nuevamente usuario y clave asistencial',
+      'Apague la impresora desde el interruptor posterior antes de manipular los rodillos.',
+      'Abra la cubierta presionando los pestillos laterales y retire con cuidado el papel atascado.',
+      'Verifique que el rollo esté colocado con la cara reactiva hacia el cabezal térmico.',
+      'Limpie el sensor óptico frontal con un hisopo ligeramente humedecido en alcohol isopropílico.',
+      'Cierre la tapa hasta escuchar el doble clic y encienda manteniendo presionado FEED durante 3 segundos.',
     ],
+    precauciones: [
+      'Apague siempre la impresora antes de tocar los rodillos: el cabezal térmico se calienta y puede quemar.',
+      'No use objetos metálicos para retirar el papel atascado.',
+    ],
+    nivelDificultad: 'BASICO',
+    minutosEstimados: 5,
+    requiereTecnico: false,
+    autorNombre: 'Mesa de Ayuda',
   },
   {
     id: 4,
-    titulo: 'Desbloqueo de cuenta institucional de médico o personal asistencial',
-    resumen: 'Procedimiento de seguridad para restaurar acceso tras múltiples intentos fallidos de contraseña.',
-    contenidoHtml: `<p>Las cuentas institucionales se bloquean automáticamente tras 5 intentos fallidos consecutivos por directiva de seguridad del hospital:</p>
-<ol>
-  <li>El bloqueo temporal dura 15 minutos. Si requiere atención urgente durante la guardia médica, contacte al anexo 2100 de Mesa de Ayuda.</li>
-  <li>Proporcione su número de DNI y servicio asignado (ej. Emergencia, Medicina Interna) para validar su identidad.</li>
-  <li>El técnico generará una clave temporal que deberá cambiar obligatoriamente en su primer inicio de sesión.</li>
-</ol>`,
-    categoriaId: 4,
-    categoriaNombre: 'Seguridad y Cuentas',
-    palabrasClave: ['cuenta', 'bloqueo', 'contrasena', 'clave', 'medico', 'acceso', 'dni'],
-    equiposCompatibles: ['Directorio Activo', 'Portal Institucional'],
+    titulo: 'Etiquetas de tubos de laboratorio impresas cortadas o desplazadas',
+    resumen: 'Ajuste del sensor y del tamaño de etiqueta en la impresora térmica de toma de muestras.',
+    contenidoHtml: '',
+    categoriaId: 2,
+    categoriaNombre: NOMBRE_CATEGORIA[2],
+    palabrasClave: ['etiqueta', 'tubo', 'laboratorio', 'muestra', 'cortada', 'zebra'],
+    equiposCompatibles: ['Zebra ZD220', 'Zebra GK420t'],
     esPublico: true,
-    conteoUtil: 29,
-    fechaActualizacion: '2026-11-19T09:20:00Z',
-    sintoma: 'Cuenta bloqueada o contraseña expirada al iniciar turno',
-    causaRaiz: 'Superación de intentos fallidos de clave',
-    solucionTemporal: 'Esperar 15 minutos o solicitar restablecimiento al anexo 2100',
+    conteoUtil: 27,
+    fechaActualizacion: '2026-11-20T09:00:00Z',
+    sintoma: 'El código de barras sale cortado o fuera de la etiqueta del tubo.',
+    causaRaiz:
+      'El sensor de separación no detecta el espacio entre etiquetas tras cambiar de rollo.',
+    solucionTemporal: 'Rotule a mano con el número de orden y avise a Laboratorio.',
     pasos: [
-      'Esperar el lapso de desbloqueo automático de 15 minutos',
-      'Si es urgente, comunicarse al anexo telefónico de Mesa de Ayuda (2100)',
-      'Validar identidad con DNI y área médica de adscripción',
-      'Iniciar sesión con la clave provisoria y actualizarla de inmediato',
+      'Verifique que el rollo instalado sea el de etiquetas de tubo (25 × 50 mm) y no el de pulseras.',
+      'Abra la tapa y asegúrese de que las guías laterales toquen el borde del rollo sin apretarlo.',
+      'Cierre la tapa y mantenga presionado el botón FEED hasta que la luz parpadee dos veces; suelte.',
+      'La impresora avanzará algunas etiquetas en blanco: es la calibración automática.',
+      'Imprima una etiqueta de prueba desde el sistema clínico y verifique que el lector la reconozca.',
     ],
+    precauciones: [
+      'Nunca pegue en un tubo una etiqueta que no pueda leerse: puede causar un error de identificación del paciente.',
+      'No use objetos metálicos para retirar etiquetas pegadas en el cabezal.',
+    ],
+    nivelDificultad: 'BASICO',
+    minutosEstimados: 5,
+    requiereTecnico: false,
+    autorNombre: 'Mesa de Ayuda',
   },
   {
     id: 5,
-    titulo: 'Procedimiento técnico N1/N2: Reemplazo de Switch perimetral de piso asistencial',
-    resumen: 'Guía técnica interna para técnicos y administradores ante falla total de switch de distribución de área crítica.',
-    contenidoHtml: `<p><strong>DOCUMENTO INTERNO EXCLUSIVO PARA SOPORTE TI (N1 / N2)</strong></p>
-<p>Ante una pérdida total de enlace de todos los consultorios de un ala médica:</p>
-<ol>
-  <li>Verificar alimentación eléctrica en la PDU del rack secundario de piso.</li>
-  <li>Comprobar si el switch de respaldo en frío (Cisco Catalyst 2960-X de reserva) tiene cargada la VLAN hospitalaria correspondiente (VLAN 10 Médica, VLAN 20 Administrativa).</li>
-  <li>Desconectar el cable troncal de fibra óptica SFP (1 Gbps) y conectarlo al puerto Gigabit 1/0/49 del switch de reemplazo.</li>
-  <li>Migrar los cables de parcheo respetando el mapa de puertos etiquetado en el rack.</li>
-  <li>Verificar conectividad cruzada haciendo ping continuo al gateway hospitalario <code>10.10.1.1</code>.</li>
-</ol>`,
+    titulo: 'Reinstalar el controlador de impresora térmica en estación de Admisión',
+    resumen:
+      'Reinstalación del controlador y del puerto de la impresora de pulseras cuando la estación no la reconoce.',
+    contenidoHtml: '',
     categoriaId: 2,
-    categoriaNombre: 'Redes y Comunicaciones',
-    palabrasClave: ['switch', 'vlan', 'fibra', 'rack', 'cisco', 'tecnico', 'n2'],
-    equiposCompatibles: ['Cisco Catalyst 2960-X', 'Rack Piso 2 Pabellón A'],
-    esPublico: false, // Solo visible para soporte técnico / administradores
-    conteoUtil: 14,
-    fechaActualizacion: '2026-11-17T11:45:00Z',
-    sintoma: 'Falla masiva de red en todo el pabellón de consultorios externos',
-    causaRaiz: 'Avería de fuente de poder del switch perimetral',
-    solucionTemporal: 'Migración a switch de reserva en rack',
+    categoriaNombre: NOMBRE_CATEGORIA[2],
+    palabrasClave: ['controlador', 'driver', 'impresora', 'admision', 'reinstalar', 'puerto'],
+    equiposCompatibles: ['PC Admisión', 'Zebra ZD220'],
+    esPublico: false,
+    conteoUtil: 9,
+    fechaActualizacion: '2026-11-17T12:20:00Z',
+    sintoma:
+      'La estación no reconoce la impresora de pulseras o envía los trabajos a una cola equivocada.',
+    causaRaiz:
+      'Controlador desactualizado o puerto de la impresora cambiado tras una actualización del sistema.',
+    solucionTemporal: 'Imprima las pulseras desde otra estación de Admisión mientras se reinstala.',
     pasos: [
-      'Inspeccionar PDU y estado de energía del rack',
-      'Montar switch de contingencia precargado con VLAN asistencial',
-      'Conectar uplink de fibra óptica y reubicar patch cords',
-      'Confirmar retorno de señal con ping al gateway institucional',
+      'Desinstale la impresora y su controlador desde Administración de dispositivos.',
+      'Descargue el controlador autorizado desde el repositorio institucional de software.',
+      'Instale el controlador y agregue la impresora seleccionando el puerto correcto.',
+      'Imprima la página de prueba y una pulsera de prueba desde el sistema clínico.',
+      'Verifique que la pulsera impresa sea legible para el lector de triaje.',
     ],
+    precauciones: [
+      'Use solo el controlador del repositorio institucional: versiones descargadas de internet pueden dañar el cabezal.',
+      'No retire el rollo de pulseras durante la instalación para evitar atascos.',
+    ],
+    nivelDificultad: 'INTERMEDIO',
+    minutosEstimados: 15,
+    requiereTecnico: true,
+    autorNombre: 'Soporte de Campo',
+  },
+  {
+    id: 6,
+    titulo: 'Restablecer la conexión de red cableada en consultorios',
+    resumen: 'Verificación del punto de red, la roseta de pared y la renovación de la dirección de red.',
+    contenidoHtml: '',
+    categoriaId: 3,
+    categoriaNombre: NOMBRE_CATEGORIA[3],
+    palabrasClave: ['red', 'cable', 'lan', 'consultorio', 'ip', 'desconectado', 'roseta'],
+    equiposCompatibles: ['PC Consultorio', 'Roseta RJ45', 'Switch de piso'],
+    esPublico: true,
+    conteoUtil: 38,
+    fechaActualizacion: '2026-11-18T10:15:00Z',
+    sintoma: 'El consultorio aparece sin acceso a la red del hospital.',
+    causaRaiz: 'Cable de red flojo o dirección de red vencida.',
+    solucionTemporal: 'Reconecte el cable de red y renueve la dirección.',
+    pasos: [
+      'Revise que el cable de red esté conectado a la roseta de pared y a la computadora.',
+      'Compruebe que las luces del puerto de red estén encendidas o parpadeando.',
+      'Desconecte y vuelva a conectar el cable hasta escuchar el chasquido del seguro.',
+      'Reinicie el adaptador de red o reinicie la computadora.',
+      'Si el problema continúa, comuníquese con Mesa de Ayuda indicando el número de roseta.',
+    ],
+    precauciones: [
+      'No desconecte cables de otros consultorios para probar: puede dejar sin red a un área en atención.',
+      'No tire del cable para desconectarlo; presione el seguro del conector.',
+    ],
+    nivelDificultad: 'BASICO',
+    minutosEstimados: 5,
+    requiereTecnico: false,
+    autorNombre: 'Mesa de Ayuda',
+  },
+  {
+    id: 7,
+    titulo: 'La tablet de enfermería no se conecta al wifi asistencial',
+    resumen:
+      'Reconexión de la tablet de enfermería a la red wifi del hospital cuando pierde el acceso.',
+    contenidoHtml: '',
+    categoriaId: 3,
+    categoriaNombre: NOMBRE_CATEGORIA[3],
+    palabrasClave: ['tablet', 'wifi', 'enfermeria', 'inalambrica', 'conexion', 'red'],
+    equiposCompatibles: ['Tablet de Enfermería', 'Punto de acceso wifi'],
+    esPublico: true,
+    conteoUtil: 21,
+    fechaActualizacion: '2026-11-19T11:05:00Z',
+    sintoma:
+      'La tablet muestra «sin conexión» o no carga las historias durante el recorrido de sala.',
+    causaRaiz:
+      'La tablet olvidó la red wifi del hospital o se alejó de la cobertura del punto de acceso.',
+    solucionTemporal: 'Registre la información en papel y actualícela cuando recupere la conexión.',
+    pasos: [
+      'Verifique que el wifi de la tablet esté encendido.',
+      'Seleccione la red wifi del hospital y vuelva a conectarse.',
+      'Si solicita clave, use la clave vigente entregada por Mesa de Ayuda.',
+      'Acérquese a la zona de cobertura del punto de acceso del área.',
+      'Pruebe abrir una historia para confirmar la conexión.',
+    ],
+    precauciones: [
+      'No intente conectarse a redes wifi que no pertenezcan al hospital.',
+      'No anote la clave del wifi en lugares visibles del área.',
+    ],
+    nivelDificultad: 'BASICO',
+    minutosEstimados: 5,
+    requiereTecnico: false,
+    autorNombre: 'Mesa de Ayuda',
+  },
+  {
+    id: 8,
+    titulo: 'Diagnóstico de puerto de switch sin enlace (piso y gabinete)',
+    resumen:
+      'Guía técnica para identificar un puerto de switch sin enlace antes de escalar a Soporte de Redes.',
+    contenidoHtml: '',
+    categoriaId: 3,
+    categoriaNombre: NOMBRE_CATEGORIA[3],
+    palabrasClave: ['switch', 'puerto', 'enlace', 'gabinete', 'piso', 'red', 'vlan'],
+    equiposCompatibles: ['Switch de piso', 'Gabinete de comunicaciones'],
+    esPublico: false,
+    conteoUtil: 7,
+    fechaActualizacion: '2026-11-16T15:40:00Z',
+    sintoma:
+      'Una o varias estaciones de un mismo sector quedan sin red y el puerto del switch no muestra enlace.',
+    causaRaiz:
+      'Puerto del switch deshabilitado, cable de parcheo dañado o módulo del gabinete sin alimentación.',
+    solucionTemporal: 'Reubique las estaciones en puertos contiguos mientras se repara el puerto.',
+    pasos: [
+      'Identifique en la etiqueta del rack el gabinete, el switch y el número de puerto afectado.',
+      'Compruebe que el switch tenga alimentación y que la luz de estado general esté normal.',
+      'Revise si el puerto afectado muestra alguna luz o si está completamente apagado.',
+      'Pruebe el cable de parcheo en un puerto contiguo para descartar el cable.',
+      'Si el puerto sigue sin enlace, registre el caso y escale a Soporte de Redes.',
+    ],
+    precauciones: [
+      'No desconecte cables troncales ni de fibra del gabinete sin autorización de Soporte de Redes.',
+      'Registre cada cambio de puerto para que el mapa de conexiones siga siendo confiable.',
+    ],
+    nivelDificultad: 'AVANZADO',
+    minutosEstimados: 20,
+    requiereTecnico: true,
+    autorNombre: 'Soporte de Redes',
+  },
+  {
+    id: 9,
+    titulo: 'El lector de código de barras de Farmacia no lee las recetas',
+    resumen:
+      'Limpieza y verificación del lector de código de barras de Farmacia cuando deja de reconocer las recetas.',
+    contenidoHtml: '',
+    categoriaId: 4,
+    categoriaNombre: NOMBRE_CATEGORIA[4],
+    palabrasClave: ['lector', 'codigo', 'barras', 'farmacia', 'receta', 'scanner'],
+    equiposCompatibles: ['Lector de código de barras USB', 'PC Farmacia'],
+    esPublico: true,
+    conteoUtil: 18,
+    fechaActualizacion: '2026-11-20T14:45:00Z',
+    sintoma: 'El lector emite el haz de luz pero la receta no aparece en el sistema.',
+    causaRaiz: 'Ventana del lector sucia o cables del lector flojos.',
+    solucionTemporal: 'Digite el código de la receta manualmente mientras se restablece el lector.',
+    pasos: [
+      'Limpie la ventana del lector con un paño de microfibra seco.',
+      'Revise que el cable del lector esté bien conectado a la computadora.',
+      'Desconecte y vuelva a conectar el lector al puerto USB.',
+      'Pruebe leer una receta de prueba y confirme que el código aparece en pantalla.',
+    ],
+    precauciones: [
+      'No use alcohol ni líquidos directamente sobre la ventana del lector.',
+      'Si el lector no responde tras reconectarlo, no lo abra: repórtelo a Mesa de Ayuda.',
+    ],
+    nivelDificultad: 'INTERMEDIO',
+    minutosEstimados: 10,
+    requiereTecnico: false,
+    autorNombre: 'Mesa de Ayuda',
+  },
+  {
+    id: 10,
+    titulo: 'Monitor sin señal en estación de enfermería',
+    resumen: 'Verificación de cables y encendido del monitor cuando aparece el mensaje «sin señal».',
+    contenidoHtml: '',
+    categoriaId: 4,
+    categoriaNombre: NOMBRE_CATEGORIA[4],
+    palabrasClave: ['monitor', 'pantalla', 'senal', 'enfermeria', 'cable', 'video'],
+    equiposCompatibles: ['Monitor de estación', 'PC de Enfermería'],
+    esPublico: true,
+    conteoUtil: 33,
+    fechaActualizacion: '2026-11-21T07:20:00Z',
+    sintoma: 'El monitor muestra «sin señal» aunque la computadora parece encendida.',
+    causaRaiz: 'Cable de video flojo o la computadora entró en suspensión.',
+    solucionTemporal: 'Use el monitor de la estación contigua mientras se restablece la señal.',
+    pasos: [
+      'Verifique que el monitor y la computadora estén encendidos.',
+      'Presione una tecla o mueva el mouse para sacar la computadora de suspensión.',
+      'Revise que el cable de video esté conectado firmemente en ambos extremos.',
+      'Compruebe que el monitor esté en la entrada de video correcta.',
+      'Si el monitor sigue sin señal, reporte el caso a Mesa de Ayuda.',
+    ],
+    precauciones: [
+      'No mueva la computadora ni el monitor de su lugar: están fijados para evitar caídas.',
+      'No desconecte el cable de alimentación de la estación durante la atención de pacientes.',
+    ],
+    nivelDificultad: 'BASICO',
+    minutosEstimados: 5,
+    requiereTecnico: false,
+    autorNombre: 'Mesa de Ayuda',
+  },
+  {
+    id: 11,
+    titulo: 'El visor de imágenes de Rayos X no abre los estudios',
+    resumen: 'Verificación del visor de imágenes y del acceso al repositorio de estudios de Rayos X.',
+    contenidoHtml: '',
+    categoriaId: 5,
+    categoriaNombre: NOMBRE_CATEGORIA[5],
+    palabrasClave: ['visor', 'imagenes', 'rayos', 'estudios', 'radiologia', 'dicom'],
+    equiposCompatibles: ['PC de Radiología', 'Servidor de imágenes'],
+    esPublico: false,
+    conteoUtil: 11,
+    fechaActualizacion: '2026-11-19T17:30:00Z',
+    sintoma: 'El visor abre vacío o muestra un error al cargar los estudios del paciente.',
+    causaRaiz:
+      'Configuración del visor desactualizada o acceso al repositorio de estudios interrumpido.',
+    solucionTemporal:
+      'Solicite el estudio impreso al área de Radiología mientras se restablece el visor.',
+    pasos: [
+      'Cierre el visor y vuelva a abrirlo.',
+      'Verifique que la estación tenga acceso a la red del hospital.',
+      'Compruebe en la configuración del visor que la dirección del repositorio de estudios sea la vigente.',
+      'Actualice la configuración del visor con los valores entregados por Soporte de Aplicaciones.',
+      'Abra un estudio de prueba para confirmar que carga correctamente.',
+    ],
+    precauciones: [
+      'No cambie direcciones ni credenciales del visor sin la configuración autorizada.',
+      'No descargue los estudios a la computadora personal ni a dispositivos externos.',
+    ],
+    nivelDificultad: 'INTERMEDIO',
+    minutosEstimados: 10,
+    requiereTecnico: true,
+    autorNombre: 'Soporte de Aplicaciones',
+  },
+  {
+    id: 12,
+    titulo: 'Restablecer la contraseña de correo institucional',
+    resumen: 'Cómo restablecer la contraseña del correo institucional cuando se olvidó o expiró.',
+    contenidoHtml: '',
+    categoriaId: 5,
+    categoriaNombre: NOMBRE_CATEGORIA[5],
+    palabrasClave: ['correo', 'contrasena', 'clave', 'institucional', 'cuenta', 'restablecer'],
+    equiposCompatibles: ['Portal Institucional', 'Directorio Activo'],
+    esPublico: true,
+    conteoUtil: 25,
+    fechaActualizacion: '2026-11-22T09:10:00Z',
+    sintoma: 'El correo institucional rechaza la contraseña o indica que expiró.',
+    causaRaiz: 'La contraseña expiró por política de seguridad o se olvidó.',
+    solucionTemporal: 'Use el teléfono del área para comunicarse mientras recupera el acceso.',
+    pasos: [
+      'Ingrese al portal institucional y seleccione la opción de restablecer contraseña.',
+      'Valide su identidad con su número de documento y su correo de recuperación.',
+      'Defina una contraseña nueva que cumpla la política de seguridad del hospital.',
+      'Inicie sesión en el correo con la contraseña nueva.',
+    ],
+    precauciones: [
+      'No comparta la contraseña nueva ni la anote en lugares visibles.',
+      'Si no recibe el mensaje de recuperación, comuníquese con Mesa de Ayuda: no cree cuentas alternativas.',
+    ],
+    nivelDificultad: 'BASICO',
+    minutosEstimados: 5,
+    requiereTecnico: false,
+    autorNombre: 'Mesa de Ayuda',
   },
 ];
 
+function normalizar(valor: string): string {
+  return valor
+    .normalize('NFD')
+    .replace(/\p{Diacritic}/gu, '')
+    .toLowerCase()
+    .trim();
+}
+
+function articuloCompleto(
+  base: Partial<ArticuloConocimiento>,
+  id: number,
+): ArticuloConocimiento {
+  const categoriaId = base.categoriaId ?? 1;
+  return {
+    id,
+    titulo: (base.titulo ?? '').trim(),
+    resumen: (base.resumen ?? '').trim(),
+    contenidoHtml: base.contenidoHtml ?? '',
+    categoriaId,
+    categoriaNombre: NOMBRE_CATEGORIA[categoriaId] ?? NOMBRE_CATEGORIA[1],
+    palabrasClave: base.palabrasClave ?? [],
+    equiposCompatibles: base.equiposCompatibles ?? [],
+    esPublico: base.esPublico ?? true,
+    conteoUtil: base.conteoUtil ?? 0,
+    fechaActualizacion: base.fechaActualizacion ?? new Date().toISOString(),
+    sintoma: base.sintoma,
+    causaRaiz: base.causaRaiz ?? null,
+    solucionTemporal: base.solucionTemporal,
+    pasos: base.pasos ?? [],
+    precauciones: base.precauciones ?? [],
+    nivelDificultad: base.nivelDificultad ?? 'BASICO',
+    minutosEstimados: base.minutosEstimados ?? 5,
+    requiereTecnico: base.requiereTecnico ?? false,
+    autorNombre: base.autorNombre ?? 'Mesa de Ayuda',
+  };
+}
+
 @Injectable()
 export class ConocimientoMock extends ConocimientoApi {
-  private articulos: ArticuloConocimiento[] = [...ARTICULOS_INICIALES];
+  private articulos: ArticuloConocimiento[] = ARTICULOS_INICIALES.map((a) => ({ ...a }));
 
   listar(filtros?: FiltrosConocimiento): Observable<ArticuloConocimiento[]> {
     let resultado = [...this.articulos];
@@ -166,22 +457,24 @@ export class ConocimientoMock extends ConocimientoApi {
       resultado = resultado.filter((a) => a.categoriaId === filtros.categoriaId);
     }
 
-    if (filtros?.texto && filtros.texto.trim()) {
-      const q = filtros.texto.toLowerCase().trim();
-      resultado = resultado.filter(
-        (a) =>
-          a.titulo.toLowerCase().includes(q) ||
-          a.resumen.toLowerCase().includes(q) ||
-          a.categoriaNombre.toLowerCase().includes(q) ||
-          a.palabrasClave.some((p) => p.toLowerCase().includes(q)) ||
-          a.equiposCompatibles.some((e) => e.toLowerCase().includes(q)),
+    const texto = filtros?.texto ? normalizar(filtros.texto) : '';
+    if (texto) {
+      resultado = resultado.filter((a) =>
+        [
+          a.titulo,
+          a.resumen,
+          a.categoriaNombre,
+          a.sintoma ?? '',
+          a.causaRaiz ?? '',
+          ...a.palabrasClave,
+          ...a.equiposCompatibles,
+        ].some((campo) => normalizar(campo).includes(texto)),
       );
     }
 
-    // Ordenar: primero los más consultados / útiles
     resultado.sort((a, b) => b.conteoUtil - a.conteoUtil);
 
-    return of(resultado).pipe(delay(100));
+    return of(structuredClone(resultado)).pipe(delay(400));
   }
 
   obtenerPorId(id: number): Observable<ArticuloConocimiento> {
@@ -189,7 +482,7 @@ export class ConocimientoMock extends ConocimientoApi {
     if (!art) {
       return throwError(() => new Error(`Artículo de conocimiento ${id} no encontrado`));
     }
-    return of({ ...art }).pipe(delay(80));
+    return of(structuredClone(art)).pipe(delay(400));
   }
 
   destacados(): Observable<ArticuloConocimiento[]> {
@@ -197,7 +490,7 @@ export class ConocimientoMock extends ConocimientoApi {
       .filter((a) => a.esPublico)
       .sort((a, b) => b.conteoUtil - a.conteoUtil)
       .slice(0, 4);
-    return of(publicos).pipe(delay(80));
+    return of(structuredClone(publicos)).pipe(delay(400));
   }
 
   votarUtil(id: number, esUtil: boolean): Observable<void> {
@@ -205,49 +498,41 @@ export class ConocimientoMock extends ConocimientoApi {
     if (art && esUtil) {
       art.conteoUtil += 1;
     }
-    return of(undefined).pipe(delay(50));
+    return of(undefined).pipe(delay(400));
   }
 
   crear(payload: Partial<ArticuloConocimiento>): Observable<ArticuloConocimiento> {
     const maxId = this.articulos.reduce((max, a) => Math.max(max, a.id), 0);
-    const nuevo: ArticuloConocimiento = {
-      id: maxId + 1,
-      titulo: payload.titulo || 'Nueva guía técnica',
-      resumen: payload.resumen || '',
-      contenidoHtml: payload.contenidoHtml || '',
-      categoriaId: payload.categoriaId || 1,
-      categoriaNombre: payload.categoriaNombre || 'General',
-      palabrasClave: payload.palabrasClave || [],
-      equiposCompatibles: payload.equiposCompatibles || [],
-      esPublico: payload.esPublico ?? true,
-      conteoUtil: 0,
-      fechaActualizacion: new Date().toISOString(),
-      sintoma: payload.resumen,
-      solucionTemporal: payload.contenidoHtml,
-      pasos: payload.pasos || [payload.contenidoHtml || ''],
-    };
+    const nuevo = articuloCompleto(
+      { ...payload, fechaActualizacion: new Date().toISOString() },
+      maxId + 1,
+    );
     this.articulos.unshift(nuevo);
-    return of({ ...nuevo }).pipe(delay(120));
+    return of(structuredClone(nuevo)).pipe(delay(400));
   }
 
-  actualizar(id: number, payload: Partial<ArticuloConocimiento>): Observable<ArticuloConocimiento> {
+  actualizar(
+    id: number,
+    payload: Partial<ArticuloConocimiento>,
+  ): Observable<ArticuloConocimiento> {
     const idx = this.articulos.findIndex((a) => a.id === id);
     if (idx === -1) {
       return throwError(() => new Error(`Artículo ${id} no existe`));
     }
-    const existente = this.articulos[idx];
-    const actualizado: ArticuloConocimiento = {
-      ...existente,
-      ...payload,
+    const actualizado = articuloCompleto(
+      {
+        ...this.articulos[idx],
+        ...payload,
+        fechaActualizacion: new Date().toISOString(),
+      },
       id,
-      fechaActualizacion: new Date().toISOString(),
-    };
+    );
     this.articulos[idx] = actualizado;
-    return of({ ...actualizado }).pipe(delay(120));
+    return of(structuredClone(actualizado)).pipe(delay(400));
   }
 
   eliminar(id: number): Observable<void> {
     this.articulos = this.articulos.filter((a) => a.id !== id);
-    return of(undefined).pipe(delay(100));
+    return of(undefined).pipe(delay(400));
   }
 }
