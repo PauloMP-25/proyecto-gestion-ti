@@ -4,13 +4,32 @@
   [class.kpi--riesgo]="kpi().estado === 'EN_RIESGO'"
   [class.kpi--incumple]="kpi().estado === 'INCUMPLE'">
 
-  <!-- Cabecera de la Tarjeta Compacta: Código y Título -->
-  <div class="kpi-tarjeta__header">
+  <!-- Línea 1: KPI-N° a la izquierda y ESTADO a la derecha -->
+  <div class="kpi-tarjeta__linea-superior">
     <span class="kpi-tarjeta__codigo">{{ kpi().codigo }}</span>
-    <h3 class="kpi-tarjeta__titulo" [title]="kpi().titulo">{{ kpi().titulo }}</h3>
+
+    <span 
+      class="kpi-tarjeta__badge-estado"
+      [class.badge--cumple]="kpi().estado === 'CUMPLE'"
+      [class.badge--riesgo]="kpi().estado === 'EN_RIESGO'"
+      [class.badge--incumple]="kpi().estado === 'INCUMPLE'">
+      @if (kpi().estado === 'CUMPLE') {
+        <app-icono nombre="check_circle" tamano="xs"></app-icono>
+        <span>Cumple</span>
+      } @else if (kpi().estado === 'EN_RIESGO') {
+        <app-icono nombre="warning" tamano="xs"></app-icono>
+        <span>En riesgo</span>
+      } @else {
+        <app-icono nombre="cancel" tamano="xs"></app-icono>
+        <span>Incumple</span>
+      }
+    </span>
   </div>
 
-  <!-- Valor Central y Badge de Estado -->
+  <!-- Línea 2: Título debajo de la cabecera (texto completo sin cortarse) -->
+  <h3 class="kpi-tarjeta__titulo">{{ kpi().titulo }}</h3>
+
+  <!-- Línea 3: En el medio el valor numérico y unidad -->
   <div class="kpi-tarjeta__cuerpo">
     <div class="kpi-tarjeta__valor-fila">
       <div class="valor-agrupado">
@@ -19,31 +38,13 @@
           <span class="kpi-tarjeta__unidad">{{ kpi().unidad }}</span>
         }
       </div>
-
-      <!-- Badge de Estado al lado del valor -->
-      <span 
-        class="kpi-tarjeta__badge-estado"
-        [class.badge--cumple]="kpi().estado === 'CUMPLE'"
-        [class.badge--riesgo]="kpi().estado === 'EN_RIESGO'"
-        [class.badge--incumple]="kpi().estado === 'INCUMPLE'">
-        @if (kpi().estado === 'CUMPLE') {
-          <app-icono nombre="check_circle" tamano="xs"></app-icono>
-          <span>Cumple</span>
-        } @else if (kpi().estado === 'EN_RIESGO') {
-          <app-icono nombre="warning" tamano="xs"></app-icono>
-          <span>En riesgo</span>
-        } @else {
-          <app-icono nombre="cancel" tamano="xs"></app-icono>
-          <span>Incumple</span>
-        }
-      </span>
     </div>
+  </div>
 
-    <!-- Meta Oficial con separación visual superior respecto al porcentaje -->
-    <div class="kpi-tarjeta__meta-fila">
-      <span class="kpi-tarjeta__meta-label">
-        Meta oficial: <strong>{{ kpi().comparador }} {{ kpi().meta }}</strong>
-      </span>
-    </div>
+  <!-- Línea 4: Debajo de la línea divisoria el valor de la meta oficial -->
+  <div class="kpi-tarjeta__meta-fila">
+    <span class="kpi-tarjeta__meta-label">
+      Meta: <strong>{{ kpi().comparador }} {{ kpi().meta }}</strong>
+    </span>
   </div>
 </div>
