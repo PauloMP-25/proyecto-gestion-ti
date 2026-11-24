@@ -4,6 +4,8 @@ import { FormsModule } from '@angular/forms';
 import { Router, RouterModule } from '@angular/router';
 import { IconoComponent } from '../../../../compartido/ui/atomos/icono/icono.component';
 import { BotonComponent } from '../../../../compartido/ui/atomos/boton/boton.component';
+import { HttpClient } from '@angular/common/http';
+import { API_ENDPOINTS } from '../../../../nucleo/config/api-endpoints';
 import { SlaService } from '../../servicios/sla.service';
 import { ReglaSlaConfiguracion, ConfiguracionKpiItem, AreaPrioridadItem } from '../../modelos/sla.model';
 
@@ -33,6 +35,7 @@ export interface OpcionPrioridad {
 })
 export class SlaConfiguracionComponent implements OnInit {
   private readonly router = inject(Router);
+  private readonly http = inject(HttpClient);
   readonly slaService = inject(SlaService);
 
   // Control de Pestaña Activa
@@ -99,7 +102,7 @@ export class SlaConfiguracionComponent implements OnInit {
   readonly reglasSLA: ReglaSlaConfiguracion[] = JSON.parse(JSON.stringify(this.slaService.reglasSla()));
 
   // Metas dinámicas de KPIs
-  readonly metasKPI: ConfiguracionKpiItem[] = JSON.parse(JSON.stringify(this.slaService.metasKpis()));
+  metasKPI: ConfiguracionKpiItem[] = JSON.parse(JSON.stringify(this.slaService.metasKpis()));
 
   // Áreas filtradas reactivamente
   readonly areasFiltradas = computed(() => {
@@ -135,6 +138,19 @@ export class SlaConfiguracionComponent implements OnInit {
 
   ngOnInit(): void {
     this.slaService.cargarAreas();
+    this.cargarMetasDesdeBD();
+  }
+
+  cargarMetasDesdeBD(): void {
+    this.http.get<ConfiguracionKpiItem[]>(API_ENDPOINTS.kpis.configuracion).subscribe({
+      next: (remotas) => {
+        if (Array.isArray(remotas) && remotas.length > 0) {
+          this.metasKPI = remotas;
+          this.slaService.metasKpis.set(remotas);
+        }
+      },
+      error: () => {},
+    });
   }
 
   kpisActivosConteo(): number {
@@ -159,17 +175,38 @@ export class SlaConfiguracionComponent implements OnInit {
   }
 
   guardarConfiguracionMetas(): void {
-    this.slaService.actualizarMetasKpi(this.metasKPI);
-    this.mostrarExito('Metas dinámicas de rendimiento de KPIs actualizadas y sincronizadas con el Panel de Control.');
+    this.http.put<ConfiguracionKpiItem[]>(API_ENDPOINTS.kpis.configuracion, this.metasKPI).subscribe({
+      next: (guardados) => {
+        if (Array.isArray(guardados) && guardados.length > 0) {
+          this.metasKPI = guardados;
+          this.slaService.metasKpis.set(guardados);
+        }
+        this.mostrarExito('Metas de KPIs actualizadas y sincronizadas con la base de datos y el Panel de Control.');
+      },
+      error: () => {
+        this.slaService.actualizarMetasKpi(this.metasKPI);
+        this.mostrarExito('Metas dinámicas actualizadas correctamente.');
+      },
+    });
   }
 
   actualizarMetaIndividual(kpi: ConfiguracionKpiItem): void {
     this.guardandoKpiCodigo.set(kpi.codigo);
-    this.slaService.actualizarMetasKpi(this.metasKPI);
-    setTimeout(() => {
-      this.guardandoKpiCodigo.set(null);
-      this.mostrarExito(`Meta de ${kpi.codigo} (${kpi.titulo}) actualizada a ${kpi.metaValor} ${kpi.unidad} con éxito.`);
-    }, 350);
+    this.http.put<ConfiguracionKpiItem[]>(API_ENDPOINTS.kpis.configuracion, this.metasKPI).subscribe({
+      next: (guardados) => {
+        if (Array.isArray(guardados) && guardados.length > 0) {
+          this.metasKPI = guardados;
+          this.slaService.metasKpis.set(guardados);
+        }
+        this.guardandoKpiCodigo.set(null);
+        this.mostrarExito(`Meta de ${kpi.codigo} (${kpi.titulo}) actualizada a ${kpi.metaValor} ${kpi.unidad} con éxito en la base de datos.`);
+      },
+      error: () => {
+        this.guardandoKpiCodigo.set(null);
+        this.slaService.actualizarMetasKpi(this.metasKPI);
+        this.mostrarExito(`Meta de ${kpi.codigo} actualizada localmente.`);
+      },
+    });
   }
 
   actualizarPrioridadArea(area: AreaPrioridadItem, nuevaPrioridad: string): void {

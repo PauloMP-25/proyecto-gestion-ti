@@ -491,35 +491,31 @@
     border-style: dashed;
   }
 
-  &__header {
+  &__linea-superior {
     display: flex;
     justify-content: space-between;
-    align-items: flex-start;
-    gap: var(--espacio-xs);
-  }
-
-  .kpi-identificador {
-    display: flex;
     align-items: center;
-    gap: var(--espacio-xs);
-    flex: 1;
-    min-width: 0;
+    width: 100%;
+    margin-bottom: 2px;
   }
 
   .badge-kpi-codigo {
     font-size: var(--font-size-xs);
     font-weight: 800;
-    padding: 2px 8px;
+    padding: 3px 10px;
     border-radius: var(--radius-sm);
     background-color: var(--color-primary-base);
     color: #ffffff;
-    flex-shrink: 0;
+    font-family: var(--font-family-mono, monospace);
+    letter-spacing: 0.5px;
   }
 
   .kpi-titulo {
     font-size: var(--font-size-sm);
-    font-weight: 700;
+    font-weight: 800;
     color: var(--color-text-main);
+    margin: 2px 0 4px 0;
+    line-height: 1.3;
   }
 
   /* CASILLA DE MARCACIÓN / VISIBILIDAD */

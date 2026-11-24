@@ -238,12 +238,9 @@
         <div class="grid-metas-kpi">
           @for (kpi of metasKPI; track kpi.codigo) {
             <div class="tarjeta-meta-kpi" [class.tarjeta-meta-kpi--inactivo]="!kpi.activo">
-              <!-- Header de la tarjeta con Switch de Visibilidad -->
-              <div class="tarjeta-meta-kpi__header">
-                <div class="kpi-identificador">
-                  <span class="badge-kpi-codigo">{{ kpi.codigo }}</span>
-                  <span class="kpi-titulo">{{ kpi.titulo }}</span>
-                </div>
+              <!-- Línea 1: KPI-N° a la izquierda y Casilla de Marcación a la derecha -->
+              <div class="tarjeta-meta-kpi__linea-superior">
+                <span class="badge-kpi-codigo">{{ kpi.codigo }}</span>
 
                 <label class="control-casilla-visibilidad" [title]="kpi.activo ? 'KPI activo: Se mostrará en el Panel' : 'KPI inactivo: Oculto en el Panel'">
                   <input
@@ -256,7 +253,10 @@
                 </label>
               </div>
 
-              <!-- Bloque de Ecuación Matemática Estructurada -->
+              <!-- Línea 2: Título del KPI -->
+              <h3 class="kpi-titulo">{{ kpi.titulo }}</h3>
+
+              <!-- Línea 3: Bloque de Ecuación Matemática Estructurada -->
               <div class="bloque-ecuacion" aria-label="Ecuación de cálculo del indicador">
                 <span class="ecuacion-etiqueta">FÓRMULA MATEMÁTICA:</span>
                 @if (kpi.esFraccion && kpi.numeradorFormula && kpi.denominadorFormula) {
