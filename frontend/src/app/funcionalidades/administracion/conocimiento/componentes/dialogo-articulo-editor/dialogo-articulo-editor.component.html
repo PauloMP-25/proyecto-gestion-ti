@@ -15,8 +15,8 @@
         <app-detalle-guia [guia]="vistaPrevia()" />
       </div>
     } @else {
-      <section class="grupo">
-        <h3 class="grupo__titulo">Datos generales</h3>
+      <fieldset class="grupo">
+        <legend class="grupo__titulo">Datos generales</legend>
 
         <div class="campo">
           <label class="campo__label" for="editor-titulo">Título de la guía *</label>
@@ -103,10 +103,10 @@
             />
           </div>
         </div>
-      </section>
+      </fieldset>
 
-      <section class="grupo">
-        <h3 class="grupo__titulo">Descripción del problema</h3>
+      <fieldset class="grupo">
+        <legend class="grupo__titulo">Descripción del problema</legend>
 
         <div class="campo">
           <label class="campo__label" for="editor-sintoma">Síntoma que percibe el usuario *</label>
@@ -146,10 +146,10 @@
             placeholder="Opcional: qué puede hacer el usuario mientras tanto."
           ></textarea>
         </div>
-      </section>
+      </fieldset>
 
-      <section class="grupo">
-        <h3 class="grupo__titulo">Pasos de solución *</h3>
+      <fieldset class="grupo">
+        <legend class="grupo__titulo">Pasos de solución *</legend>
         <p class="ayuda">Agregue al menos un paso. Cada paso debe tener 5 caracteres o más.</p>
 
         @for (control of pasos.controls; track control; let i = $index) {
@@ -197,10 +197,10 @@
         <app-boton variante="secundario" tamano="sm" icono="add" (alHacerClick)="agregarPaso()">
           Agregar paso
         </app-boton>
-      </section>
+      </fieldset>
 
-      <section class="grupo">
-        <h3 class="grupo__titulo">Precauciones</h3>
+      <fieldset class="grupo">
+        <legend class="grupo__titulo">Precauciones</legend>
         <p class="ayuda">
           Indique qué no debe hacer el personal. Obligatoria al menos una si la guía es visible
           para el personal asistencial y no requiere técnico.
@@ -245,7 +245,7 @@
             técnico.
           </p>
         }
-      </section>
+      </fieldset>
     }
   </form>
 
