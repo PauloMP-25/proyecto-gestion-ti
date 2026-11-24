@@ -1,14 +1,16 @@
-import { Component, ChangeDetectionStrategy, inject, signal, computed } from '@angular/core';
+import { Component, ChangeDetectionStrategy, inject, signal, computed, OnInit, OnDestroy, effect } from '@angular/core';
+import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { CommonModule } from '@angular/common';
 import { Router, RouterModule } from '@angular/router';
 import { AuthService } from '../../../../nucleo/auth/auth.service';
 import { RolUsuario } from '../../../../nucleo/modelos/rol.enum';
 import { PanelControlService } from '../../servicios/panel-control.service';
+import { MigasPanService } from '../../../../nucleo/servicios/migas-pan.service';
 import { KpiPanelComponent } from '../../../../compartido/ui/organismos/kpi-panel/kpi-panel.component';
 import { GraficoPorServicioComponent } from '../../componentes/grafico-por-servicio/grafico-por-servicio.component';
 import { DistribucionTipoComponent } from '../../componentes/distribucion-tipo/distribucion-tipo.component';
-import { GraficoPrioridadesComponent } from '../../componentes/grafico-prioridades/grafico-prioridades.component';
-import { GraficoSlaCumplimientoComponent } from '../../componentes/grafico-sla-cumplimiento/grafico-sla-cumplimiento.component';
+import { GraficoCargaTurnosComponent } from '../../componentes/grafico-carga-turnos/grafico-carga-turnos.component';
+import { GraficoEstadoEquiposComponent } from '../../componentes/grafico-estado-equipos/grafico-estado-equipos.component';
 import { RelojTicketActivoComponent } from '../../componentes/reloj-ticket-activo/reloj-ticket-activo.component';
 import { BotonComponent } from '../../../../compartido/ui/atomos/boton/boton.component';
 import { IconoComponent } from '../../../../compartido/ui/atomos/icono/icono.component';
@@ -32,8 +34,8 @@ export type TipoPestanaPanel = 'metricas' | 'graficos';
     KpiPanelComponent,
     GraficoPorServicioComponent,
     DistribucionTipoComponent,
-    GraficoPrioridadesComponent,
-    GraficoSlaCumplimientoComponent,
+    GraficoCargaTurnosComponent,
+    GraficoEstadoEquiposComponent,
     RelojTicketActivoComponent,
     BotonComponent,
     IconoComponent,
@@ -44,34 +46,59 @@ export type TipoPestanaPanel = 'metricas' | 'graficos';
   styleUrl: './panel-control.component.scss',
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
-export class PanelControlComponent {
+export class PanelControlComponent implements OnInit, OnDestroy {
   private http = inject(HttpClient);
   private authService = inject(AuthService);
   private panelService = inject(PanelControlService);
   private ticketsService = inject(TicketsService);
   private notificacion = inject(NotificacionService);
   private router = inject(Router);
+  private migasService = inject(MigasPanService);
 
   readonly descargandoPdf = signal<boolean>(false);
+
+
+  readonly periodoSeleccionado = this.panelService.periodoSeleccionado;
+
+  cambiarPeriodo(periodo: 'hoy' | '7d' | '30d'): void {
+    this.panelService.periodoSeleccionado.set(periodo);
+  }
 
   descargarReportePdf(): void {
     if (this.descargandoPdf()) return;
 
     this.descargandoPdf.set(true);
+    const ahora = new Date();
+    let fechaInicio: Date | null = null;
+    const p = this.periodoSeleccionado();
+    if (p === 'hoy') {
+      fechaInicio = new Date(ahora.getFullYear(), ahora.getMonth(), ahora.getDate());
+    } else if (p === '7d') {
+      fechaInicio = new Date(ahora.getTime() - 7 * 24 * 60 * 60 * 1000);
+    } else if (p === '30d') {
+      fechaInicio = new Date(ahora.getTime() - 30 * 24 * 60 * 60 * 1000);
+    }
+
+    let url = API_ENDPOINTS.reportes.ejecutivoPdf;
+    if (fechaInicio) {
+      url += `?fechaInicio=${fechaInicio.toISOString()}&fechaFin=${ahora.toISOString()}`;
+    }
+
     this.http
-      .get(API_ENDPOINTS.reportes.ejecutivoPdf, { responseType: 'blob' })
+      .get(url, { responseType: 'blob' })
       .subscribe({
         next: (blob) => {
           this.descargandoPdf.set(false);
           const blobUrl = window.URL.createObjectURL(blob);
           const a = document.createElement('a');
           a.href = blobUrl;
-          a.download = `informe-ejecutivo-hsmsi-${new Date().toISOString().slice(0, 10)}.pdf`;
+          const etiqueta = p === 'hoy' ? 'hoy' : p === '7d' ? 'semanal' : 'mensual';
+          a.download = `informe-ejecutivo-hsmsi-${etiqueta}-${new Date().toISOString().slice(0, 10)}.pdf`;
           document.body.appendChild(a);
           a.click();
           document.body.removeChild(a);
           window.URL.revokeObjectURL(blobUrl);
-          this.notificacion.exito('Informe ejecutivo en formato PDF descargado exitosamente.');
+          this.notificacion.exito(`Informe ejecutivo (${etiqueta.toUpperCase()}) descargado exitosamente.`);
         },
         error: () => {
           this.descargandoPdf.set(false);
@@ -122,12 +149,36 @@ export class PanelControlComponent {
   readonly procesandoAccion = signal<boolean>(false);
   readonly ticketParaAccion = signal<TicketResumen | null>(null);
 
+  ngOnInit(): void {
+    this.panelService.refrescarDatos();
+  }
+
   constructor() {
     // Inicializar el ticket en atención con el primer ticket crítico si existe
     const tickets = this.panelService.ticketsFiltrados();
     if (tickets.length > 0) {
       this.ticketEnAtencion.set(tickets[0]);
     }
+
+    // Sincronizar automáticamente la submiga activa con la pestaña seleccionada
+    effect(() => {
+      const pestana = this.pestanaActiva();
+      const etiqueta = pestana === 'metricas' ? 'Control en vivo' : 'Gráficos y Estadísticas';
+      this.migasService.establecerSubmiga(etiqueta);
+    });
+
+    // Si el usuario hace clic en el enlace padre "PANEL DE CONTROL" en las migas de pan, volver a "Control en vivo"
+    this.migasService.eventoNavegacionMiga$
+      .pipe(takeUntilDestroyed())
+      .subscribe((miga) => {
+        if (miga.ruta === '/panel-control') {
+          this.seleccionarPestana('metricas');
+        }
+      });
+  }
+
+  ngOnDestroy(): void {
+    this.migasService.establecerSubmiga(null);
   }
 
   seleccionarPestana(pestana: TipoPestanaPanel): void {

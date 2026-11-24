@@ -5,20 +5,26 @@
 
 .kpi-panel-grid {
   display: grid;
-  grid-template-columns: repeat(4, 1fr);
-  gap: var(--espacio-4, 16px);
+  grid-template-columns: repeat(5, 1fr);
+  gap: 10px;
   width: 100%;
-}
+  align-items: stretch;
 
-@media (width <= 1200px) {
-  .kpi-panel-grid {
-    grid-template-columns: repeat(2, 1fr);
+  /* En pantallas medianas y tablets */
+  @media (max-width: 1200px) and (min-width: 820px) {
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+    gap: 10px;
   }
-}
 
-@media (width <= 640px) {
-  .kpi-panel-grid {
+  /* En tablets pequeñas y móviles apaisados */
+  @media (max-width: 819px) and (min-width: 500px) {
+    grid-template-columns: repeat(2, 1fr);
+    gap: 8px;
+  }
+
+  /* En móviles */
+  @media (max-width: 499px) {
     grid-template-columns: 1fr;
-    gap: var(--espacio-3, 12px);
+    gap: 8px;
   }
 }

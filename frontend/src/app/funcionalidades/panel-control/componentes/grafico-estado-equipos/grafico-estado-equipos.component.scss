@@ -1,0 +1,148 @@
+@use 'estilos/mixins/a11y' as a11y;
+@use 'estilos/mixins/responsive' as r;
+
+:host {
+  display: block;
+  width: 100%;
+  height: 100%;
+}
+
+.tarjeta-grafico {
+  background: var(--color-surface-card);
+  border: var(--tarjeta-borde);
+  border-radius: var(--tarjeta-radio);
+  padding: var(--espacio-md);
+  box-shadow: var(--shadow-sm);
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+  box-sizing: border-box;
+
+  &__header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    min-height: 46px;
+    margin-bottom: var(--espacio-2xs);
+    gap: var(--espacio-2xs);
+    flex-wrap: wrap;
+  }
+
+  &__titulo {
+    font-size: 1.0625rem;
+    font-weight: 700;
+    color: var(--color-text-main);
+    margin: 0;
+  }
+
+  &__subtitulo {
+    font-size: 0.875rem;
+    color: var(--color-text-secondary);
+    margin: 3px 0 0;
+  }
+
+  &__cuerpo {
+    display: flex;
+    flex-direction: column;
+    gap: var(--espacio-sm, 0.75rem);
+    align-items: center;
+    flex: 1;
+    margin-top: var(--espacio-2xs, 0.25rem);
+
+    @include r.desde(md) {
+      flex-direction: row;
+      align-items: center;
+      gap: var(--espacio-md, 1rem);
+    }
+  }
+
+  &__canvas-col {
+    position: relative;
+    width: 100%;
+    height: 250px;
+    min-height: 220px;
+    flex: 1.1;
+
+    canvas {
+      display: block;
+      width: 100% !important;
+      height: 100% !important;
+    }
+  }
+
+  &__leyenda-col {
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+    width: 100%;
+    flex: 1;
+    max-height: 250px;
+    overflow-y: auto;
+    padding-right: 4px;
+    scrollbar-width: thin;
+    scrollbar-color: var(--color-border-subtle) transparent;
+  }
+}
+
+.badge-equipos-total {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  background-color: var(--color-surface-sunken);
+  border: 1px solid var(--color-border-subtle);
+  padding: 6px 14px;
+  height: 38px;
+  border-radius: var(--radius-md, 8px);
+  font-size: 0.9375rem;
+  font-weight: 600;
+  color: var(--color-text-main);
+  box-sizing: border-box;
+}
+
+.leyenda-item {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 5px 4px;
+  border-radius: var(--radius-sm, 4px);
+  background: transparent;
+  border: none;
+  transition: background-color var(--transition-fast, 0.15s ease);
+
+  &:hover {
+    background-color: var(--color-surface-hover);
+  }
+}
+
+.leyenda-color {
+  width: 12px;
+  height: 12px;
+  border-radius: 3px;
+  flex-shrink: 0;
+}
+
+.leyenda-info {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 8px;
+  width: 100%;
+  min-width: 0;
+}
+
+.leyenda-nombre {
+  font-size: 0.8125rem;
+  font-weight: 600;
+  color: var(--color-text-main);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.leyenda-conteo {
+  font-size: 0.75rem;
+  font-weight: 700;
+  color: var(--color-text-secondary);
+  white-space: nowrap;
+  flex-shrink: 0;
+}

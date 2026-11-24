@@ -15,6 +15,16 @@ export const API_ENDPOINTS = {
     ejecutivoPdf: `${environment.apiUrl}/reportes/ejecutivo/pdf`,
     enviarCorreo: `${environment.apiUrl}/reportes/ejecutivo/enviar-correo`,
   },
+  indicadores: {
+    kpis: `${environment.apiUrl}/indicadores/kpis`,
+    dashboard: `${environment.apiUrl}/indicadores/dashboard`,
+  },
+  kpis: {
+    configuracion: `${environment.apiUrl}/kpis/configuracion`,
+  },
+  sla: {
+    configuracion: `${environment.apiUrl}/sla/configuracion`,
+  },
   admin: {
     areas: `${environment.apiUrl}/admin/areas`,
     personal: `${environment.apiUrl}/admin/personal`,

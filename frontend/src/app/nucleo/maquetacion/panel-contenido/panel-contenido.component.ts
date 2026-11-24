@@ -12,7 +12,6 @@ import { MigasPanComponent } from '../../../compartido/ui/moleculas/migas-pan/mi
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class PanelContenidoComponent {
-  private readonly migasService = inject(MigasPanService);
-
-  readonly migas = this.migasService.migas;
+  protected readonly migasService = inject(MigasPanService);
 }
+

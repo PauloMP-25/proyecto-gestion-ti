@@ -8,7 +8,7 @@
   gap: 0.5rem;
 
   &__etiqueta {
-    font-size: 0.8125rem;
+    font-size: 0.9375rem;
     font-weight: 600;
     color: var(--color-text-secondary, #64748b);
     white-space: nowrap;
@@ -26,8 +26,10 @@
     background-color: var(--color-surface-card, #ffffff);
     border: 1px solid var(--color-border-subtle, #cbd5e1);
     border-radius: var(--hsmsi-radio-md, 8px);
-    padding: 0.4375rem 2rem 0.4375rem 0.75rem;
-    font-size: 0.8125rem;
+    padding: 0.5rem 2.25rem 0.5rem 0.875rem;
+    font-size: 0.9375rem;
+    font-weight: 500;
+    min-height: 2.65rem;
     color: var(--hsmsi-texto, #0f172a);
     cursor: pointer;
     transition: border-color 0.15s ease, box-shadow 0.15s ease;
@@ -45,8 +47,8 @@
 
   &__flecha {
     position: absolute;
-    right: 0.5rem;
-    font-size: 1.125rem;
+    right: 0.65rem;
+    font-size: 1.25rem;
     color: var(--color-text-muted, #94a3b8);
     pointer-events: none;
   }
@@ -56,7 +58,8 @@
     display: inline-flex;
     align-items: center;
     gap: 0.5rem;
-    font-size: 0.8125rem;
+    font-size: 0.9375rem;
+    font-weight: 500;
     color: var(--hsmsi-texto, #0f172a);
     cursor: pointer;
     user-select: none;

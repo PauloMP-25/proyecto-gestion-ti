@@ -8,6 +8,7 @@ export const MI_TURNO_ROUTES: Routes = [
     children: [
       {
         path: '',
+        data: { miga: 'Bandeja de Turno' },
         title: 'Mesa de Ayuda · Mi Turno',
         loadComponent: () =>
           import('./paginas/bandeja-turno/bandeja-turno.page').then(
@@ -16,6 +17,7 @@ export const MI_TURNO_ROUTES: Routes = [
       },
       {
         path: 'ticket/:id',
+        data: { miga: 'Ficha de Atención' },
         title: 'Mesa de Ayuda · Ficha de Atención',
         loadComponent: () =>
           import('./paginas/ficha-atencion/ficha-atencion.page').then(
@@ -24,6 +26,7 @@ export const MI_TURNO_ROUTES: Routes = [
       },
       {
         path: 'consulta',
+        data: { miga: 'Consultar Equipos y Soluciones' },
         title: 'Mesa de Ayuda · Consulta Rápida',
         loadComponent: () =>
           import('./paginas/consulta-rapida/consulta-rapida.page').then(
@@ -32,6 +35,7 @@ export const MI_TURNO_ROUTES: Routes = [
       },
       {
         path: 'consulta/articulo/:id',
+        data: { miga: 'Guía Técnica de Solución' },
         title: 'Mesa de Ayuda · Guía Técnica de Solución',
         loadComponent: () =>
           import('./paginas/consulta-articulo/consulta-articulo.page').then(

@@ -36,7 +36,7 @@ export const MENU_POR_ROL: Record<RolUsuario, readonly SeccionMenu[]> = {
 
   [RolUsuario.ADMINISTRADOR]: [
     {
-      encabezado: 'Jefatura y Operaciones N2',
+      encabezado: 'Operaciones',
       items: [
         { titulo: 'Panel de Control', ruta: '/panel-control', icono: 'dashboard', exacto: true },
         { titulo: 'Bandeja de Tickets', ruta: '/incidentes/bandeja', icono: 'inbox' },
@@ -52,7 +52,6 @@ export const MENU_POR_ROL: Record<RolUsuario, readonly SeccionMenu[]> = {
           badge: 'P1',
           badgeTipo: 'peligro',
         },
-        { titulo: 'Nivel de Prioridad de Soporte', ruta: '/administracion/matriz-prioridad', icono: 'grid_on' },
       ],
     },
     {
@@ -69,7 +68,7 @@ export const MENU_POR_ROL: Record<RolUsuario, readonly SeccionMenu[]> = {
       items: [
         { titulo: 'Solicitudes de cambio', ruta: '/administracion/cambios', icono: 'change_circle' },
         { titulo: 'Centro de soluciones y guías', ruta: '/administracion/conocimiento', icono: 'menu_book' },
-        { titulo: 'Compromisos de atención (SLA)', ruta: '/administracion/sla-config', icono: 'tune' },
+        { titulo: 'Configuraciones', ruta: '/sla/configuracion', icono: 'settings' },
       ],
     },
   ],

@@ -10,7 +10,7 @@
           [class.tab-btn--activo]="pestanaActiva() === 'metricas'"
           (click)="seleccionarPestana('metricas')"
           [attr.aria-selected]="pestanaActiva() === 'metricas'">
-          <span class="tab-btn__texto">Métricas y compromisos de atención</span>
+          <span class="tab-btn__texto">Control en vivo</span>
         </button>
 
         <button 
@@ -20,9 +20,38 @@
           [class.tab-btn--activo]="pestanaActiva() === 'graficos'"
           (click)="seleccionarPestana('graficos')"
           [attr.aria-selected]="pestanaActiva() === 'graficos'">
-          <span class="tab-btn__texto">Gráficos de atención</span>
+          <span class="tab-btn__texto">Gráficos y Estadísticas</span>
         </button>
       </nav>
+    </div>
+
+    <div class="consola-header__centro">
+      <div class="periodo-selector-pills" role="group" aria-label="Filtro de período de análisis y métricas">
+        <button 
+          type="button" 
+          class="pill-btn" 
+          [class.pill-btn--activo]="periodoSeleccionado() === 'hoy'" 
+          (click)="cambiarPeriodo('hoy')"
+          title="Ver métricas y tickets del día de hoy">
+          Hoy
+        </button>
+        <button 
+          type="button" 
+          class="pill-btn" 
+          [class.pill-btn--activo]="periodoSeleccionado() === '7d'" 
+          (click)="cambiarPeriodo('7d')"
+          title="Ver consolidado semanal de los últimos 7 días">
+          Semanal (7d)
+        </button>
+        <button 
+          type="button" 
+          class="pill-btn" 
+          [class.pill-btn--activo]="periodoSeleccionado() === '30d'" 
+          (click)="cambiarPeriodo('30d')"
+          title="Ver rendimiento mensual acumulado de los últimos 30 días">
+          Mensual (30d)
+        </button>
+      </div>
     </div>
 
     <div class="consola-header__der">
@@ -71,7 +100,7 @@
 
   <!-- CONTENIDO DE LAS PESTAÑAS -->
 
-  <!-- PESTAÑA 1: Métricas y Cronómetro de Atención en Vivo -->
+  <!-- PESTAÑA 1: Control en vivo (Métricas y Cronómetro) -->
   @if (pestanaActiva() === 'metricas') {
     <div class="pestana-contenido" role="tabpanel" aria-label="Métricas y Cronómetro SLA">
       <!-- 4 Métricas Esenciales -->
@@ -92,28 +121,31 @@
     </div>
   }
 
-  <!-- PESTAÑA 2: Gráficos de Atención (4 Cuadrantes) -->
+  <!-- PESTAÑA 2: Gráficos y Estadísticas (4 Cuadrantes Dinámicos) -->
   @if (pestanaActiva() === 'graficos') {
     <div class="pestana-contenido" role="tabpanel" aria-label="Gráficos y Estadísticas de Atención">
-      <div class="grid-cuatro-graficos">
-        <!-- 1. Tendencia de Incidentes por Servicio Clínico (Gráfico Circular Donut) -->
+      <!-- FILA SUPERIOR: Gráficos Circulares / Donas (Mismo Alto, Mismo Nivel, Mismo Diámetro 50% / 50%) -->
+      <div class="fila-graficos fila-graficos--circulares">
+        <!-- 1. Incidentes por Servicio Clínico (Dona) -->
         <div class="cuadrante-grafico">
           <app-grafico-por-servicio></app-grafico-por-servicio>
         </div>
 
-        <!-- 2. Fallas por Activo CMDB (Gráfico de Barras) -->
+        <!-- 2. Disponibilidad del Inventario y Equipos en Préstamo (Dona) -->
         <div class="cuadrante-grafico">
+          <app-grafico-estado-equipos></app-grafico-estado-equipos>
+        </div>
+      </div>
+
+      <!-- FILA INFERIOR: Gráficos de Barras -->
+      <!-- Curva de Carga por Turnos a la IZQUIERDA (1fr) y Fallas Horizontales con más ancho a la DERECHA (1.25fr) -->
+      <div class="fila-graficos fila-graficos--barras">
+        <div class="cuadrante-grafico cuadrante-grafico--carga">
+          <app-grafico-carga-turnos></app-grafico-carga-turnos>
+        </div>
+
+        <div class="cuadrante-grafico cuadrante-grafico--distribucion">
           <app-distribucion-tipo></app-distribucion-tipo>
-        </div>
-
-        <!-- 3. Matriz de Prioridad Hospitalaria (Impacto × Urgencia) -->
-        <div class="cuadrante-grafico">
-          <app-grafico-prioridades></app-grafico-prioridades>
-        </div>
-
-        <!-- 4. Monitoreo de Niveles de Servicio SLA (EstadoSLA) -->
-        <div class="cuadrante-grafico">
-          <app-grafico-sla-cumplimiento></app-grafico-sla-cumplimiento>
         </div>
       </div>
     </div>

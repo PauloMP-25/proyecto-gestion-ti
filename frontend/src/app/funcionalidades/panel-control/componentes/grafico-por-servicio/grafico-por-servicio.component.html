@@ -19,8 +19,22 @@
     </div>
   </div>
 
-  <!-- Contenedor del Gráfico Circular Chart.js con etiquetas internas y leyenda derecha -->
-  <div class="tarjeta-grafico__chart-container">
-    <canvas #canvasCircular></canvas>
+  <!-- Contenedor del Gráfico Circular y Leyenda en 2 Columnas -->
+  <div class="tarjeta-grafico__cuerpo">
+    <div class="tarjeta-grafico__canvas-col">
+      <canvas #canvasCircular></canvas>
+    </div>
+
+    <div class="tarjeta-grafico__leyenda-col" role="list" aria-label="Servicios asistenciales y casos reportados">
+      @for (item of itemsLeyenda(); track item.servicio) {
+        <div class="leyenda-item" role="listitem">
+          <span class="leyenda-color" [style.background-color]="item.color" aria-hidden="true"></span>
+          <div class="leyenda-info">
+            <span class="leyenda-nombre" [title]="item.servicio">{{ item.servicio }}</span>
+            <span class="leyenda-conteo">{{ item.totalIncidentes }} {{ item.totalIncidentes === 1 ? 'caso' : 'casos' }}</span>
+          </div>
+        </div>
+      }
+    </div>
   </div>
 </div>

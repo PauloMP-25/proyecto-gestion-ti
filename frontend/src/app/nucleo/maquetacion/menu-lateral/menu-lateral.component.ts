@@ -2,7 +2,6 @@ import { ChangeDetectionStrategy, Component, computed, inject } from '@angular/c
 import { AuthService } from '../../auth/auth.service';
 import { LayoutService } from '../layout.service';
 import { MENU_POR_ROL } from './menu-por-rol.config';
-import { CabeceraMenuMovilComponent } from './componentes/cabecera-menu-movil/cabecera-menu-movil.component';
 import { MenuGrupoComponent } from './componentes/menu-grupo/menu-grupo.component';
 import { InfoSoportePieComponent } from '../../../compartido/ui/moleculas/info-soporte-pie/info-soporte-pie.component';
 
@@ -10,7 +9,6 @@ import { InfoSoportePieComponent } from '../../../compartido/ui/moleculas/info-s
   selector: 'app-menu-lateral',
   standalone: true,
   imports: [
-    CabeceraMenuMovilComponent,
     MenuGrupoComponent,
     InfoSoportePieComponent,
   ],

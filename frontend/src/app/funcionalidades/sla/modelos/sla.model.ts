@@ -46,3 +46,29 @@ export interface TicketMonitoreoSla {
   fechaLimiteResolucion: string;
   tecnicoAsignado?: string;
 }
+
+export interface ConfiguracionKpiItem {
+  idKpi?: number;
+  codigo: string;
+  titulo: string;
+  metaValor: number;
+  unidad: string;
+  comparador: string;
+  formula?: string;
+  numeradorFormula?: string | null;
+  denominadorFormula?: string | null;
+  multiplicadorFormula?: string | null;
+  esFraccion?: boolean;
+  descripcion?: string;
+  orden?: number;
+  activo?: boolean;
+}
+
+export interface AreaPrioridadItem {
+  id: number;
+  nombre: string;
+  piso: number | null;
+  anexo: string | null;
+  activo: boolean;
+  prioridadDefecto: string; // 'P1' | 'P2' | 'P3' | 'P4'
+}

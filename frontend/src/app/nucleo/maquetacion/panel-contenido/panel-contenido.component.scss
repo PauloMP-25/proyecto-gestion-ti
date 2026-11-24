@@ -5,9 +5,10 @@
   min-height: 100%;
 }
 
-.barra-migas {
-  padding: 0 var(--espacio-md, 1rem);
-  background-color: transparent;
+.migas-barra-global {
+  width: 100%;
+  padding: 0 0 0.35rem 0;
+  margin-bottom: 0.15rem;
 }
 
 .lienzo-contenido {
@@ -15,3 +16,4 @@
   display: flex;
   flex-direction: column;
 }
+

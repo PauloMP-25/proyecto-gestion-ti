@@ -1,0 +1,92 @@
+<app-plantilla-pagina anchoMaximo="completo">
+  <div class="contenedor-cambios">
+    <!-- Cabecera de Página -->
+    <header class="cabecera-seccion">
+      <div class="cabecera-info">
+        <div class="badge-modulo">
+          <app-icono nombre="change_circle" tamano="sm" />
+          <span>Gestión Institucional</span>
+          <span class="badge-estado">Módulo en Desarrollo</span>
+        </div>
+        <h1 class="titulo-principal">Solicitudes de Cambio Técnico</h1>
+        <p class="subtitulo">
+          Control, evaluación y seguimiento de modificaciones en la infraestructura tecnológica del Hospital Santa María del Socorro.
+        </p>
+      </div>
+
+      <div class="cabecera-acciones">
+        <app-boton
+          variante="secundario"
+          (alHacerClick)="volverAlPanel()"
+        >
+          <app-icono nombre="arrow_back" tamano="sm" />
+          Volver al Panel
+        </app-boton>
+      </div>
+    </header>
+
+    <!-- Banner Informativo -->
+    <div class="banner-aviso" role="status">
+      <div class="banner-icono">
+        <app-icono nombre="construction" tamano="lg" />
+      </div>
+      <div class="banner-texto">
+        <strong>Sección en fase de implementación activa:</strong>
+        <span>
+          Este módulo permitirá programar ventanas de mantenimiento, evaluar impactos asistenciales y registrar autorizaciones técnicas. Próximamente se habilitará el flujo de registro y aprobación en línea.
+        </span>
+      </div>
+    </div>
+
+    <!-- Muestra de Datos / Tabla de Solicitudes Programadas -->
+    <section class="tarjeta-tabla" aria-labelledby="tabla-solicitudes-titulo">
+      <div class="tarjeta-cabecera">
+        <h2 id="tabla-solicitudes-titulo" class="tarjeta-titulo">
+          <app-icono nombre="event_upcoming" tamano="md" />
+          Próximos Cambios y Mantenimientos Programados
+        </h2>
+      </div>
+
+      <div class="tabla-contenedor">
+        <table class="tabla-hsmsi">
+          <thead>
+            <tr>
+              <th scope="col">Código</th>
+              <th scope="col">Descripción del Cambio</th>
+              <th scope="col">Área Afectada</th>
+              <th scope="col">Tipo</th>
+              <th scope="col">Estado</th>
+              <th scope="col">Fecha Programada</th>
+              <th scope="col">Responsable</th>
+            </tr>
+          </thead>
+          <tbody>
+            @for (item of solicitudes(); track item.id) {
+              <tr>
+                <td class="col-codigo">
+                  <code>{{ item.codigo }}</code>
+                </td>
+                <td class="col-titulo">
+                  <strong>{{ item.titulo }}</strong>
+                </td>
+                <td class="col-area">{{ item.areaAfectada }}</td>
+                <td class="col-tipo">
+                  <span class="chip-tipo" [attr.data-tipo]="item.tipoCambio">
+                    {{ item.tipoCambio }}
+                  </span>
+                </td>
+                <td class="col-estado">
+                  <span class="chip-estado" [attr.data-estado]="item.estado">
+                    {{ item.estado }}
+                  </span>
+                </td>
+                <td class="col-fecha">{{ item.fechaProgramada }}</td>
+                <td class="col-solicitante">{{ item.solicitante }}</td>
+              </tr>
+            }
+          </tbody>
+        </table>
+      </div>
+    </section>
+  </div>
+</app-plantilla-pagina>
