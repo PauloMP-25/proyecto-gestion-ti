@@ -26,8 +26,10 @@
     </span>
   </div>
 
-  <!-- Línea 2: Título debajo de la cabecera (texto completo sin cortarse) -->
-  <h3 class="kpi-tarjeta__titulo" [title]="kpi().titulo">{{ kpi().titulo }}</h3>
+  <!-- Línea 2: Título centrado entre la cabecera (KPI y badge) y los valores -->
+  <h3 class="kpi-tarjeta__titulo" [title]="kpi().titulo">
+    <span class="kpi-tarjeta__titulo-texto">{{ kpi().titulo }}</span>
+  </h3>
 
   <!-- Línea 3: En la misma línea el VALOR y la META (VALOR  <= O >= VALOR) -->
   <div class="kpi-tarjeta__valores-fila">
