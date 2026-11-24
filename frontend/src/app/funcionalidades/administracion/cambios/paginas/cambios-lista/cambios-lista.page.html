@@ -3,6 +3,14 @@
     titulo="Solicitudes de cambio técnico"
     subtitulo="Evalúe, programe y controle las intervenciones sobre sistemas, red y equipos sin afectar la atención de pacientes."
     icono="change_circle"
+  >
+    <app-boton acciones icono="add" (alHacerClick)="abrirNuevo()"> Nueva solicitud </app-boton>
+  </app-cabecera-pagina>
+
+  <app-cambios-resumen
+    [conteo]="store.conteoPorEstado()"
+    [estadoActivo]="store.filtro().estado"
+    (alSeleccionarEstado)="store.actualizarFiltro({ estado: $event })"
   />
 
   <app-barra-filtros
@@ -12,36 +20,21 @@
     [filtrosActivos]="store.filtrosActivos()"
     (alLimpiar)="store.limpiarFiltros()"
   >
-    <div filtros class="filtros">
-      <app-campo-filtro
-        etiqueta="Estado"
-        [opciones]="opcionesEstado"
-        [valor]="store.filtro().estado"
-        (valorChange)="cambiarEstado($event)"
-      />
-      <app-campo-filtro
-        etiqueta="Impacto asistencial"
-        [opciones]="opcionesImpacto"
-        [valor]="store.filtro().impacto"
-        (valorChange)="cambiarImpacto($event)"
-      />
-      <app-campo-filtro
-        etiqueta="Tipo de cambio"
-        [opciones]="opcionesTipo"
-        [valor]="store.filtro().tipo"
-        (valorChange)="cambiarTipo($event)"
-      />
-    </div>
+    <app-cambios-filtros
+      filtros
+      [filtro]="store.filtro()"
+      (alCambiar)="store.actualizarFiltro($event)"
+    />
   </app-barra-filtros>
 
   @if (store.cargando()) {
-    <div class="grid-cambios" aria-live="polite" aria-label="Cargando solicitudes de cambio">
+    <div class="esqueletos" aria-live="polite" aria-label="Cargando solicitudes de cambio">
       @for (item of [1, 2, 3, 4]; track item) {
-        <app-esqueleto preset="tarjeta-solicitud" />
+        <app-esqueleto preset="fila-tabla" />
       }
     </div>
   } @else if (store.error(); as mensaje) {
-    <app-alerta-en-linea tono="peligro">
+    <app-alerta-en-linea tono="peligro" icono="error">
       {{ mensaje }}
       <app-boton variante="outline" tamano="sm" icono="refresh" (alHacerClick)="store.cargar()">
         Reintentar
@@ -53,42 +46,60 @@
       mensaje="No hay solicitudes de cambio con los filtros seleccionados."
     />
   } @else {
-    <div class="grid-cambios">
-      @for (cambio of store.cambios(); track cambio.id) {
-        <app-tarjeta [interactiva]="true">
-          <div class="cambio-resumen" (click)="store.abrirDetalle(cambio.id)">
-            <div class="cambio-resumen__fila">
-              <span class="cambio-resumen__codigo">{{ cambio.codigo }}</span>
-              <app-insignia
-                [texto]="PRESENTACION_ESTADO[cambio.estado].texto"
-                [tono]="PRESENTACION_ESTADO[cambio.estado].tono"
-                [icono]="PRESENTACION_ESTADO[cambio.estado].icono"
-              />
-            </div>
-            <h3 class="cambio-resumen__titulo">{{ cambio.titulo }}</h3>
-            <div class="cambio-resumen__insignias">
-              <app-insignia
-                [texto]="PRESENTACION_TIPO[cambio.tipo].texto"
-                [tono]="PRESENTACION_TIPO[cambio.tipo].tono"
-              />
-              <app-insignia
-                [texto]="PRESENTACION_IMPACTO[cambio.impacto].texto"
-                [tono]="PRESENTACION_IMPACTO[cambio.impacto].tono"
-                [icono]="PRESENTACION_IMPACTO[cambio.impacto].icono"
-              />
-            </div>
-            @if (cambio.areasAfectadas.length > 0) {
-              <p class="cambio-resumen__areas">{{ cambio.areasAfectadas.join(', ') }}</p>
-            }
-            @if (cambio.horario; as horario) {
-              <p class="cambio-resumen__meta">
-                {{ horario.inicioIso | date: 'dd/MM/yyyy HH:mm' }} –
-                {{ horario.finIso | date: 'dd/MM/yyyy HH:mm' }}
-              </p>
-            }
-          </div>
-        </app-tarjeta>
-      }
-    </div>
+    @if (viewport.esDesktop()) {
+      <app-cambios-tabla [cambios]="store.cambios()" (alSeleccionar)="seleccionar($event)" />
+    } @else {
+      <div class="grid-tarjetas">
+        @for (cambio of store.cambios(); track cambio.id) {
+          <app-tarjeta-cambio [cambio]="cambio" (alSeleccionar)="seleccionar($event)" />
+        }
+      </div>
+    }
+  }
+
+  <app-panel-detalle-cambio
+    [abierto]="panelAbierto()"
+    [cambio]="store.seleccionado()"
+    [cargando]="store.cargandoDetalle()"
+    [acciones]="store.accionesDelSeleccionado()"
+    [guardando]="store.guardando()"
+    (alCerrar)="cerrarPanel()"
+    (alAccion)="solicitarAccion($event)"
+    (alEditar)="abrirEditar()"
+    (alEliminar)="solicitarEliminar()"
+  />
+
+  @if (dialogoAbierto()) {
+    <app-dialogo-solicitud-cambio
+      [solicitud]="solicitudEnEdicion()"
+      [areas]="store.areas()"
+      [guardando]="store.guardando()"
+      (alGuardar)="guardarSolicitud($event)"
+      (alCancelar)="cerrarDialogo()"
+    />
+  }
+
+  @if (store.seleccionado(); as cambio) {
+    @if (accionPendiente(); as accion) {
+      <app-dialogo-decision-cambio
+        [accion]="accion"
+        [cambio]="cambio"
+        [guardando]="store.guardando()"
+        (alConfirmar)="confirmarAccion($event)"
+        (alCancelar)="cancelarAccion()"
+      />
+    }
+  }
+
+  @if (cambioParaEliminar(); as cambio) {
+    <app-dialogo-confirmacion
+      [titulo]="'¿Eliminar el borrador ' + cambio.codigo + '?'"
+      mensaje="Se eliminará la solicitud de cambio. Esta acción no se puede deshacer."
+      textoConfirmar="Eliminar borrador"
+      textoCancelar="Conservar solicitud"
+      [esPeligroso]="true"
+      (confirmar)="confirmarEliminar()"
+      (cancelar)="cancelarEliminar()"
+    />
   }
 </app-plantilla-pagina>

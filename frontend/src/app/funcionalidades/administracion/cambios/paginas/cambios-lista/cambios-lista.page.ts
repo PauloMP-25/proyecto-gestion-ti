@@ -1,49 +1,59 @@
-import { ChangeDetectionStrategy, Component, OnInit, inject } from '@angular/core';
-import { DatePipe } from '@angular/common';
+import {
+  ChangeDetectionStrategy,
+  Component,
+  OnInit,
+  inject,
+  signal,
+  viewChild,
+} from '@angular/core';
 import { PlantillaPaginaComponent } from '../../../../../compartido/ui/plantillas/plantilla-pagina/plantilla-pagina.component';
 import { CabeceraPaginaComponent } from '../../../../../compartido/ui/moleculas/cabecera-pagina/cabecera-pagina.component';
 import { BarraFiltrosComponent } from '../../../../../compartido/ui/organismos/barra-filtros/barra-filtros.component';
-import {
-  CampoFiltroComponent,
-  OpcionFiltro,
-} from '../../../../../compartido/ui/moleculas/campo-filtro/campo-filtro.component';
 import { EsqueletoComponent } from '../../../../../compartido/ui/atomos/esqueleto/esqueleto.component';
 import { AlertaEnLineaComponent } from '../../../../../compartido/ui/moleculas/alerta-en-linea/alerta-en-linea.component';
 import { EstadoVacioComponent } from '../../../../../compartido/ui/moleculas/estado-vacio/estado-vacio.component';
-import { InsigniaComponent } from '../../../../../compartido/ui/atomos/insignia/insignia.component';
-import { TarjetaComponent } from '../../../../../compartido/ui/atomos/tarjeta/tarjeta.component';
+import { DialogoConfirmacionComponent } from '../../../../../compartido/ui/organismos/dialogo-confirmacion/dialogo-confirmacion.component';
 import { BotonComponent } from '../../../../../compartido/ui/atomos/boton/boton.component';
+import { ViewportService } from '../../../../../nucleo/servicios/viewport.service';
 import { CambiosStore } from '../../estado/cambios.store';
 import {
-  ESTADOS_CAMBIO,
-  EstadoCambio,
-  ImpactoAsistencial,
-  TipoCambio,
+  AccionCambio,
+  CambioDetalle,
+  CambioResumen,
+  TransicionCambio,
 } from '../../modelos/cambios.model';
+import { CambiosResumenComponent } from '../../componentes/cambios-resumen/cambios-resumen.component';
+import { CambiosFiltrosComponent } from '../../componentes/cambios-filtros/cambios-filtros.component';
+import { CambiosTablaComponent } from '../../componentes/cambios-tabla/cambios-tabla.component';
+import { TarjetaCambioComponent } from '../../componentes/tarjeta-cambio/tarjeta-cambio.component';
 import {
-  PRESENTACION_ESTADO,
-  PRESENTACION_IMPACTO,
-  PRESENTACION_TIPO,
-} from '../../utilidades/etiquetas-cambio';
-
-const IMPACTOS: readonly ImpactoAsistencial[] = ['BAJO', 'MEDIO', 'ALTO', 'CRITICO'];
-const TIPOS: readonly TipoCambio[] = ['RUTINARIO', 'PROGRAMADO', 'URGENTE'];
+  PanelDetalleCambioComponent,
+} from '../../componentes/panel-detalle-cambio/panel-detalle-cambio.component';
+import {
+  DialogoSolicitudCambioComponent,
+  ResultadoSolicitudCambio,
+} from '../../componentes/dialogo-solicitud-cambio/dialogo-solicitud-cambio.component';
+import { DialogoDecisionCambioComponent } from '../../componentes/dialogo-decision-cambio/dialogo-decision-cambio.component';
 
 @Component({
   selector: 'app-cambios-lista-page',
   standalone: true,
   imports: [
-    DatePipe,
     PlantillaPaginaComponent,
     CabeceraPaginaComponent,
     BarraFiltrosComponent,
-    CampoFiltroComponent,
     EsqueletoComponent,
     AlertaEnLineaComponent,
     EstadoVacioComponent,
-    InsigniaComponent,
-    TarjetaComponent,
+    DialogoConfirmacionComponent,
     BotonComponent,
+    CambiosResumenComponent,
+    CambiosFiltrosComponent,
+    CambiosTablaComponent,
+    TarjetaCambioComponent,
+    PanelDetalleCambioComponent,
+    DialogoSolicitudCambioComponent,
+    DialogoDecisionCambioComponent,
   ],
   templateUrl: './cambios-lista.page.html',
   styleUrls: ['./cambios-lista.page.scss'],
@@ -51,40 +61,124 @@ const TIPOS: readonly TipoCambio[] = ['RUTINARIO', 'PROGRAMADO', 'URGENTE'];
 })
 export class CambiosListaPage implements OnInit {
   readonly store = inject(CambiosStore);
+  protected readonly viewport = inject(ViewportService);
 
-  protected readonly PRESENTACION_ESTADO = PRESENTACION_ESTADO;
-  protected readonly PRESENTACION_IMPACTO = PRESENTACION_IMPACTO;
-  protected readonly PRESENTACION_TIPO = PRESENTACION_TIPO;
+  protected readonly panelAbierto = signal(false);
+  protected readonly dialogoAbierto = signal(false);
+  protected readonly solicitudEnEdicion = signal<CambioDetalle | null>(null);
+  protected readonly accionPendiente = signal<AccionCambio | null>(null);
+  protected readonly cambioParaEliminar = signal<CambioResumen | null>(null);
 
-  readonly opcionesEstado: readonly OpcionFiltro[] = ESTADOS_CAMBIO.map((estado) => ({
-    valor: estado,
-    etiqueta: PRESENTACION_ESTADO[estado].texto,
-  }));
-
-  readonly opcionesImpacto: readonly OpcionFiltro[] = IMPACTOS.map((impacto) => ({
-    valor: impacto,
-    etiqueta: PRESENTACION_IMPACTO[impacto].texto,
-  }));
-
-  readonly opcionesTipo: readonly OpcionFiltro[] = TIPOS.map((tipo) => ({
-    valor: tipo,
-    etiqueta: PRESENTACION_TIPO[tipo].texto,
-  }));
+  private readonly dialogoSolicitud = viewChild(DialogoSolicitudCambioComponent);
 
   ngOnInit(): void {
     this.store.cargar();
     this.store.cargarAreas();
   }
 
-  cambiarEstado(valor: unknown): void {
-    this.store.actualizarFiltro({ estado: valor as EstadoCambio | null });
+  protected seleccionar(id: number): void {
+    this.panelAbierto.set(true);
+    this.store.abrirDetalle(id);
   }
 
-  cambiarImpacto(valor: unknown): void {
-    this.store.actualizarFiltro({ impacto: valor as ImpactoAsistencial | null });
+  protected cerrarPanel(): void {
+    this.panelAbierto.set(false);
+    this.store.cerrarDetalle();
   }
 
-  cambiarTipo(valor: unknown): void {
-    this.store.actualizarFiltro({ tipo: valor as TipoCambio | null });
+  protected abrirNuevo(): void {
+    this.solicitudEnEdicion.set(null);
+    this.dialogoAbierto.set(true);
+  }
+
+  protected abrirEditar(): void {
+    const detalle = this.store.seleccionado();
+    if (!detalle) {
+      return;
+    }
+    this.solicitudEnEdicion.set(detalle);
+    this.dialogoAbierto.set(true);
+  }
+
+  protected cerrarDialogo(): void {
+    this.dialogoAbierto.set(false);
+    this.solicitudEnEdicion.set(null);
+  }
+
+  protected guardarSolicitud(resultado: ResultadoSolicitudCambio): void {
+    const enEdicion = this.solicitudEnEdicion();
+    const operacion = enEdicion
+      ? this.store.actualizar(enEdicion.id, resultado.formulario)
+      : this.store.crear(resultado.formulario);
+
+    operacion.subscribe({
+      next: (guardado) => {
+        if (!resultado.enviarAEvaluacion) {
+          this.cerrarDialogo();
+          this.seleccionar(guardado.id);
+          return;
+        }
+        this.store
+          .transicionar(guardado.id, { accion: 'ENVIAR_EVALUACION', observacion: null })
+          .subscribe({
+            next: () => {
+              this.cerrarDialogo();
+              this.seleccionar(guardado.id);
+            },
+            error: () => {
+              // El store ya notifica el error al usuario.
+            },
+          });
+      },
+      error: (err) => this.dialogoSolicitud()?.aplicarErrorServidor(err),
+    });
+  }
+
+  protected solicitarAccion(accion: AccionCambio): void {
+    this.accionPendiente.set(accion);
+  }
+
+  protected cancelarAccion(): void {
+    this.accionPendiente.set(null);
+  }
+
+  protected confirmarAccion(transicion: TransicionCambio): void {
+    const detalle = this.store.seleccionado();
+    if (!detalle) {
+      return;
+    }
+    this.store.transicionar(detalle.id, transicion).subscribe({
+      next: () => this.accionPendiente.set(null),
+      error: () => {
+        // El store ya notifica el error al usuario.
+      },
+    });
+  }
+
+  protected solicitarEliminar(): void {
+    const detalle = this.store.seleccionado();
+    if (detalle) {
+      this.cambioParaEliminar.set(detalle);
+    }
+  }
+
+  protected cancelarEliminar(): void {
+    this.cambioParaEliminar.set(null);
+  }
+
+  protected confirmarEliminar(): void {
+    const cambio = this.cambioParaEliminar();
+    if (!cambio) {
+      return;
+    }
+    this.store.eliminar(cambio.id).subscribe({
+      next: () => {
+        this.cambioParaEliminar.set(null);
+        this.cerrarPanel();
+      },
+      error: () => {
+        // El store ya notifica el error al usuario.
+      },
+    });
   }
 }
