@@ -55,7 +55,12 @@ export interface ConfiguracionKpiItem {
   unidad: string;
   comparador: string;
   formula?: string;
+  numeradorFormula?: string | null;
+  denominadorFormula?: string | null;
+  multiplicadorFormula?: string | null;
+  esFraccion?: boolean;
   descripcion?: string;
+  orden?: number;
   activo?: boolean;
 }
 

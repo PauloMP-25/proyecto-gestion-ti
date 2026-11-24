@@ -20,6 +20,10 @@ export interface KpiIndicador {
   tendenciaTexto?: string;
   tendenciaPositiva?: boolean;
   formula: string;
+  numeradorFormula?: string | null;
+  denominadorFormula?: string | null;
+  multiplicadorFormula?: string | null;
+  esFraccion?: boolean;
   alcance?: string;
   descripcion?: string;
   desglose?: DesgloseKpi[];

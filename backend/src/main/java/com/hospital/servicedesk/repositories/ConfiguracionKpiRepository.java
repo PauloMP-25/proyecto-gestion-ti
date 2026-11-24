@@ -10,5 +10,7 @@ import java.util.Optional;
 @Repository
 public interface ConfiguracionKpiRepository extends JpaRepository<ConfiguracionKPI, Integer> {
     List<ConfiguracionKPI> findByActivoTrue();
+    List<ConfiguracionKPI> findByActivoTrueOrderByOrdenAsc();
+    List<ConfiguracionKPI> findAllByOrderByOrdenAsc();
     Optional<ConfiguracionKPI> findByCodigo(String codigo);
 }

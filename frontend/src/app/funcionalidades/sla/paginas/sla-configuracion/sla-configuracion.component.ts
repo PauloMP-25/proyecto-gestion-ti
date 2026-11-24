@@ -42,6 +42,7 @@ export class SlaConfiguracionComponent implements OnInit {
   readonly guardadoExitoso = signal<boolean>(false);
   readonly mensajeFeedback = signal<string>('');
   readonly guardandoPrioridadId = signal<number | null>(null);
+  readonly guardandoKpiCodigo = signal<string | null>(null);
 
   // Filtros de Áreas
   readonly busquedaArea = signal<string>('');
@@ -136,6 +137,14 @@ export class SlaConfiguracionComponent implements OnInit {
     this.slaService.cargarAreas();
   }
 
+  kpisActivosConteo(): number {
+    return this.metasKPI.filter((k) => k.activo !== false).length;
+  }
+
+  toggleTodosKpis(activar: boolean): void {
+    this.metasKPI.forEach((k) => (k.activo = activar));
+  }
+
   seleccionarPestana(pestana: TipoPestanaConfig): void {
     this.pestanaActiva.set(pestana);
   }
@@ -152,6 +161,15 @@ export class SlaConfiguracionComponent implements OnInit {
   guardarConfiguracionMetas(): void {
     this.slaService.actualizarMetasKpi(this.metasKPI);
     this.mostrarExito('Metas dinámicas de rendimiento de KPIs actualizadas y sincronizadas con el Panel de Control.');
+  }
+
+  actualizarMetaIndividual(kpi: ConfiguracionKpiItem): void {
+    this.guardandoKpiCodigo.set(kpi.codigo);
+    this.slaService.actualizarMetasKpi(this.metasKPI);
+    setTimeout(() => {
+      this.guardandoKpiCodigo.set(null);
+      this.mostrarExito(`Meta de ${kpi.codigo} (${kpi.titulo}) actualizada a ${kpi.metaValor} ${kpi.unidad} con éxito.`);
+    }, 350);
   }
 
   actualizarPrioridadArea(area: AreaPrioridadItem, nuevaPrioridad: string): void {

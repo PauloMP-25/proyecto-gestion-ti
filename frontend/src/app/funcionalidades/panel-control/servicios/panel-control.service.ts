@@ -120,70 +120,97 @@ export class PanelControlService implements OnDestroy {
     const cumplimientoPct = backend ? Number(backend.cumplimientoSlaPorcentaje).toFixed(1) : (todos.length > 0 ? ((todos.filter(t => t.slaResolucion?.estado === EstadoSLA.A_TIEMPO).length / todos.length) * 100).toFixed(1) : '100.0');
     const tpr = backend ? backend.tiempoPromedioRespuestaMinutos : 8.5;
 
-    // Metas dinámicas del backend o umbrales hospitalarios pactados
-    const metasMap = new Map<string, any>();
-    if (backend?.kpisConfigurados && Array.isArray(backend.kpisConfigurados)) {
-      for (const k of backend.kpisConfigurados) {
-        metasMap.set(k.codigo, k);
-      }
+    // Si el backend devuelve los KPIs activos configurados por el Administrador:
+    if (backend?.kpisConfigurados && Array.isArray(backend.kpisConfigurados) && backend.kpisConfigurados.length > 0) {
+      return backend.kpisConfigurados.map((k: any) => {
+        const valor = k.valorActual !== undefined && k.valorActual !== null ? k.valorActual : (
+          k.codigo === 'KPI-01' ? cumplimientoPct :
+          k.codigo === 'KPI-02' ? tpr :
+          k.codigo === 'KPI-03' ? 45.0 :
+          k.codigo === 'KPI-04' ? 72.5 :
+          k.codigo === 'KPI-05' ? 4 :
+          k.codigo === 'KPI-06' ? 99.8 :
+          k.codigo === 'KPI-07' ? 94.2 :
+          k.codigo === 'KPI-08' ? abiertos : 0
+        );
+
+        const cumple = k.cumple !== undefined ? k.cumple : (
+          k.comparador === '≥' ? Number(valor) >= Number(k.metaValor) : Number(valor) <= Number(k.metaValor)
+        );
+
+        return {
+          id: k.codigo.toLowerCase(),
+          codigo: k.codigo,
+          titulo: k.titulo,
+          valor: valor,
+          unidad: k.unidad as any,
+          meta: `${k.metaValor} ${k.unidad}`,
+          comparador: k.comparador as any,
+          estado: cumple ? 'CUMPLE' : 'EN_RIESGO',
+          formula: k.formula || '',
+          numeradorFormula: k.numeradorFormula,
+          denominadorFormula: k.denominadorFormula,
+          multiplicadorFormula: k.multiplicadorFormula,
+          esFraccion: k.esFraccion,
+          alcance: 'Compromiso asistencial del Hospital Santa María del Socorro',
+          descripcion: k.descripcion || '',
+        };
+      });
     }
 
-    const metaKpi02 = metasMap.get('KPI-02')?.metaValor ?? 30;
-    const metaKpi01 = metasMap.get('KPI-01')?.metaValor ?? 95.0;
-    const metaKpi03 = metasMap.get('KPI-03')?.metaValor ?? 20.0;
-    const metaKpi04 = metasMap.get('KPI-04')?.metaValor ?? 150;
-
+    // Fallback inicial con los 4 indicadores base
     return [
-      {
-        id: 'kpi-02',
-        codigo: 'KPI-02',
-        titulo: metasMap.get('KPI-02')?.titulo || 'Tickets Abiertos en Cola',
-        valor: abiertos,
-        unidad: (metasMap.get('KPI-02')?.unidad || 'casos') as any,
-        meta: `${metaKpi02} ${metasMap.get('KPI-02')?.unidad || 'casos'}`,
-        comparador: (metasMap.get('KPI-02')?.comparador || '≤') as any,
-        estado: abiertos <= metaKpi02 ? 'CUMPLE' : 'EN_RIESGO',
-        formula: metasMap.get('KPI-02')?.formula || 'Total de tickets en estado NUEVO, ASIGNADO y EN_PROCESO',
-        alcance: 'Carga viva en guardia 24/7',
-        descripcion: metasMap.get('KPI-02')?.descripcion || 'Total de solicitudes e incidentes activos pendientes de atención técnica.',
-      },
       {
         id: 'kpi-01',
         codigo: 'KPI-01',
-        titulo: metasMap.get('KPI-01')?.titulo || 'Cumplimiento SLA Global',
+        titulo: 'Cumplimiento de SLA',
         valor: cumplimientoPct,
-        unidad: (metasMap.get('KPI-01')?.unidad || '%') as any,
-        meta: `${metaKpi01}%`,
-        comparador: (metasMap.get('KPI-01')?.comparador || '≥') as any,
-        estado: Number(cumplimientoPct) >= metaKpi01 ? 'CUMPLE' : 'INCUMPLE',
-        formula: metasMap.get('KPI-01')?.formula || '(tickets resueltos a tiempo / tickets cerrados) × 100',
+        unidad: '%',
+        meta: '90.0%',
+        comparador: '≥',
+        estado: Number(cumplimientoPct) >= 90.0 ? 'CUMPLE' : 'INCUMPLE',
+        formula: '(Total de tickets resueltos a tiempo / Total cerrados) × 100',
         alcance: 'Compromiso institucional de atención asistencial',
-        descripcion: metasMap.get('KPI-01')?.descripcion || 'Porcentaje de tickets atendidos dentro del tiempo comprometido.',
+        descripcion: 'Porcentaje de tickets atendidos dentro del tiempo comprometido.',
+      },
+      {
+        id: 'kpi-02',
+        codigo: 'KPI-02',
+        titulo: 'Tiempo Promedio de Respuesta (TPR)',
+        valor: tpr,
+        unidad: 'min',
+        meta: '20.0 min',
+        comparador: '≤',
+        estado: Number(tpr) <= 20.0 ? 'CUMPLE' : 'EN_RIESGO',
+        formula: '∑ (Hora Asignación − Hora Registro) / Total tickets atendidos',
+        alcance: 'Tiempo máximo de tolerancia: 15 min en áreas críticas',
+        descripcion: 'Tiempo promedio que demora el equipo de TI en tomar el ticket.',
       },
       {
         id: 'kpi-03',
         codigo: 'KPI-03',
-        titulo: metasMap.get('KPI-03')?.titulo || 'Tiempo Prom. Respuesta (TPR)',
-        valor: tpr,
-        unidad: (metasMap.get('KPI-03')?.unidad || 'min') as any,
-        meta: `${metaKpi03} ${metasMap.get('KPI-03')?.unidad || 'min'}`,
-        comparador: (metasMap.get('KPI-03')?.comparador || '≤') as any,
-        estado: Number(tpr) <= metaKpi03 ? 'CUMPLE' : 'EN_RIESGO',
-        formula: metasMap.get('KPI-03')?.formula || 'Σ(hora asignación − hora registro) / tickets atendidos',
-        alcance: 'Tiempo máximo de tolerancia: 15 min en áreas críticas',
-        descripcion: metasMap.get('KPI-03')?.descripcion || 'Tiempo promedio que demora el equipo de TI en tomar el ticket tras ser reportado.',
+        titulo: 'Tiempo Promedio de Resolución (MTTR)',
+        valor: 45.0,
+        unidad: 'min',
+        meta: '180.0 min',
+        comparador: '≤',
+        estado: 'CUMPLE',
+        formula: '∑ (Hora Resolución − Hora Registro) / Total resueltos',
+        alcance: 'Duración total de resolución',
+        descripcion: 'Duración total que demanda solucionar un incidente.',
       },
       {
-        id: 'kpi-04',
-        codigo: 'KPI-04',
-        titulo: metasMap.get('KPI-04')?.titulo || 'Resueltos en el Turno',
-        valor: resueltos,
-        unidad: (metasMap.get('KPI-04')?.unidad || 'casos') as any,
-        meta: `${metaKpi04} ${metasMap.get('KPI-04')?.unidad || 'casos'}`,
-        comparador: (metasMap.get('KPI-04')?.comparador || '≥') as any,
-        estado: resueltos >= metaKpi04 ? 'CUMPLE' : 'EN_RIESGO',
-        formula: metasMap.get('KPI-04')?.formula || 'Total tickets en estado RESUELTO o CERRADO',
-        descripcion: metasMap.get('KPI-04')?.descripcion || 'Cantidad de casos solucionados satisfactoriamente.',
+        id: 'kpi-08',
+        codigo: 'KPI-08',
+        titulo: 'Solicitudes Activas en Cola',
+        valor: abiertos,
+        unidad: 'casos',
+        meta: '30 casos',
+        comparador: '≤',
+        estado: abiertos <= 30 ? 'CUMPLE' : 'EN_RIESGO',
+        formula: 'Total tickets en estado NUEVO, ASIGNADO y EN PROCESO',
+        alcance: 'Carga viva en guardia 24/7',
+        descripcion: 'Total de solicitudes e incidentes activos pendientes.',
       },
     ];
   });

@@ -32,17 +32,34 @@ public class ConfiguracionKPI {
     @Column(name = "meta_valor", nullable = false)
     private Double metaValor;
 
-    @Column(name = "unidad", nullable = false, length = 10)
+    @Column(name = "unidad", nullable = false, length = 15)
     private String unidad;
 
     @Column(name = "comparador", nullable = false, length = 5)
     private String comparador;
 
-    @Column(name = "formula", length = 200)
+    @Column(name = "formula", length = 300)
     private String formula;
 
-    @Column(name = "descripcion", length = 300)
+    @Column(name = "numerador_formula", length = 200)
+    private String numeradorFormula;
+
+    @Column(name = "denominador_formula", length = 200)
+    private String denominadorFormula;
+
+    @Column(name = "multiplicador_formula", length = 50)
+    private String multiplicadorFormula;
+
+    @Column(name = "es_fraccion")
+    @Builder.Default
+    private Boolean esFraccion = true;
+
+    @Column(name = "descripcion", length = 350)
     private String descripcion;
+
+    @Column(name = "orden")
+    @Builder.Default
+    private Integer orden = 1;
 
     @Column(name = "activo", nullable = false)
     @Builder.Default

@@ -196,7 +196,7 @@
   }
 
   <!-- ============================================================== -->
-  <!-- PESTAÑA 2: METAS DE RENDIMIENTO (KPIS)                         -->
+  <!-- PESTAÑA 2: METAS DE RENDIMIENTO (KPIS INSTITUCIONALES)         -->
   <!-- ============================================================== -->
   @if (pestanaActiva() === 'metas') {
     <div class="seccion-metas-wrapper" id="panel-metas" role="tabpanel" aria-labelledby="tab-metas">
@@ -205,35 +205,108 @@
           <div>
             <h2 class="tarjeta-config__titulo">Metas de Rendimiento y Calidad de Atención</h2>
             <p class="tarjeta-config__desc">
-              Defina los objetivos esperados para los indicadores del Panel de Control en vivo. El sistema evaluará el cumplimiento en tiempo real.
+              Calibre los objetivos de desempeño del Hospital Santa María del Socorro y marque las casillas de los KPIs que desea visualizar en el Panel de Control en vivo.
             </p>
           </div>
-          <span class="badge-modulo">Metas Dinámicas</span>
+          <div class="header-metas-resumen">
+            <span class="badge-modulo">
+              {{ kpisActivosConteo() }} de {{ metasKPI.length }} visibles en Panel
+            </span>
+          </div>
         </div>
 
+        <!-- Banner informativo y acciones de selección rápida -->
+        <div class="barra-acciones-metas">
+          <div class="info-kpis-activos">
+            <app-icono nombre="info" tamano="xs"></app-icono>
+            <span>
+              Solo se consultarán y renderizarán en el Panel de Control los indicadores que tengan la casilla <strong>«Mostrar en Panel de Control»</strong> activada, optimizando recursos del sistema.
+            </span>
+          </div>
+
+          <div class="botones-seleccion-kpi">
+            <button type="button" class="btn-seleccion-kpi" (click)="toggleTodosKpis(true)">
+              Marcar todos
+            </button>
+            <button type="button" class="btn-seleccion-kpi" (click)="toggleTodosKpis(false)">
+              Desmarcar todos
+            </button>
+          </div>
+        </div>
+
+        <!-- Grid de Tarjetas de KPIs con Ecuaciones Matemáticas -->
         <div class="grid-metas-kpi">
           @for (kpi of metasKPI; track kpi.codigo) {
-            <div class="tarjeta-meta-kpi">
+            <div class="tarjeta-meta-kpi" [class.tarjeta-meta-kpi--inactivo]="!kpi.activo">
+              <!-- Header de la tarjeta con Switch de Visibilidad -->
               <div class="tarjeta-meta-kpi__header">
-                <span class="badge-kpi-codigo">{{ kpi.codigo }}</span>
-                <span class="kpi-titulo">{{ kpi.titulo }}</span>
-              </div>
-              <p class="kpi-formula">{{ kpi.formula }}</p>
-
-              <div class="campo-meta">
-                <label for="meta-{{ kpi.codigo }}">Meta Objetivo:</label>
-                <div class="input-con-unidad input-con-unidad--destacado">
-                  <span class="comparador-simbolo" aria-hidden="true">{{ kpi.comparador }}</span>
-                  <input
-                    id="meta-{{ kpi.codigo }}"
-                    type="number"
-                    [(ngModel)]="kpi.metaValor"
-                    min="0"
-                    step="1"
-                    aria-label="Valor de la meta"
-                  />
-                  <span class="unidad-texto">{{ kpi.unidad }}</span>
+                <div class="kpi-identificador">
+                  <span class="badge-kpi-codigo">{{ kpi.codigo }}</span>
+                  <span class="kpi-titulo">{{ kpi.titulo }}</span>
                 </div>
+
+                <label class="control-casilla-visibilidad" [title]="kpi.activo ? 'KPI activo: Se mostrará en el Panel' : 'KPI inactivo: Oculto en el Panel'">
+                  <input
+                    type="checkbox"
+                    [(ngModel)]="kpi.activo"
+                    aria-label="Mostrar este KPI en el Panel de Control"
+                  />
+                  <span class="casilla-estilo"></span>
+                  <span class="texto-casilla">{{ kpi.activo ? 'Visible' : 'Oculto' }}</span>
+                </label>
+              </div>
+
+              <!-- Bloque de Ecuación Matemática Estructurada -->
+              <div class="bloque-ecuacion" aria-label="Ecuación de cálculo del indicador">
+                <span class="ecuacion-etiqueta">FÓRMULA MATEMÁTICA:</span>
+                @if (kpi.esFraccion && kpi.numeradorFormula && kpi.denominadorFormula) {
+                  <div class="ecuacion-fraccion">
+                    <span class="signo-parentesis" aria-hidden="true">(</span>
+                    <div class="fraccion">
+                      <span class="fraccion__numerador">{{ kpi.numeradorFormula }}</span>
+                      <div class="fraccion__barra" aria-hidden="true"></div>
+                      <span class="fraccion__denominador">{{ kpi.denominadorFormula }}</span>
+                    </div>
+                    <span class="signo-parentesis" aria-hidden="true">)</span>
+                    @if (kpi.multiplicadorFormula) {
+                      <span class="fraccion__multiplicador">{{ kpi.multiplicadorFormula }}</span>
+                    }
+                  </div>
+                } @else {
+                  <div class="ecuacion-simple">
+                    <span class="ecuacion-texto">{{ kpi.formula }}</span>
+                  </div>
+                }
+              </div>
+
+              <!-- Calibración de la Meta Objetivo con Botón de Actualizar Individual -->
+              <div class="campo-meta-fila">
+                <div class="campo-meta">
+                  <label for="meta-{{ kpi.codigo }}">Meta Objetivo:</label>
+                  <div class="input-con-unidad input-con-unidad--destacado">
+                    <span class="comparador-simbolo" aria-hidden="true">{{ kpi.comparador }}</span>
+                    <input
+                      id="meta-{{ kpi.codigo }}"
+                      type="number"
+                      [(ngModel)]="kpi.metaValor"
+                      min="0"
+                      step="0.5"
+                      aria-label="Valor de la meta"
+                    />
+                    <span class="unidad-texto">{{ kpi.unidad }}</span>
+                  </div>
+                </div>
+
+                <button
+                  type="button"
+                  class="btn-actualizar-meta"
+                  (click)="actualizarMetaIndividual(kpi)"
+                  [disabled]="guardandoKpiCodigo() === kpi.codigo"
+                  [title]="'Actualizar meta de ' + kpi.codigo"
+                >
+                  <app-icono [nombre]="guardandoKpiCodigo() === kpi.codigo ? 'sync' : 'save'" tamano="xs"></app-icono>
+                  <span>{{ guardandoKpiCodigo() === kpi.codigo ? 'Guardando...' : 'Actualizar' }}</span>
+                </button>
               </div>
 
               <p class="kpi-desc">{{ kpi.descripcion }}</p>

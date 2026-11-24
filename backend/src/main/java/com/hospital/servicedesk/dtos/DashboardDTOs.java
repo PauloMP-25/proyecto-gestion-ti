@@ -28,11 +28,17 @@ public class DashboardDTOs {
     public record KpiMetaDTO(
             String codigo,
             String titulo,
+            Double valorActual,
             Double metaValor,
             String unidad,
             String comparador,
             String formula,
-            String descripcion
+            String numeradorFormula,
+            String denominadorFormula,
+            String multiplicadorFormula,
+            Boolean esFraccion,
+            String descripcion,
+            Boolean cumple
     ) {}
 
     public record DashboardRespuestaDTO(
