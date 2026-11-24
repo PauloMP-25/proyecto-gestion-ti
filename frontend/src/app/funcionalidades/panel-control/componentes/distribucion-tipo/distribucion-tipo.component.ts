@@ -4,13 +4,15 @@ import {
   ElementRef, 
   ViewChild, 
   AfterViewInit, 
-  OnDestroy 
+  OnDestroy,
+  inject,
+  effect
 } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { Chart, registerables } from 'chart.js';
 import ChartDataLabels from 'chartjs-plugin-datalabels';
-
+import { PanelControlService } from '../../servicios/panel-control.service';
 import { leerToken, leerTokensNumerados } from '../../../../compartido/utilidades/tokens-css';
 
 // Registrar componentes de barras y datalabels en Chart.js
@@ -32,23 +34,19 @@ export interface ActivoCMDB {
 export class DistribucionTipoComponent implements AfterViewInit, OnDestroy {
   @ViewChild('canvasBarras') canvasBarras!: ElementRef<HTMLCanvasElement>;
 
+  private panelService = inject(PanelControlService);
   private chartInstance: Chart | null = null;
   topSeleccionado: number = 5;
 
-  // Catálogo de Elementos de Configuración (ordenados de mayor a menor).
-  // El color de cada barra sale del token --comp-grafico-barras-N según su posición.
-  readonly activosCMDB: ActivoCMDB[] = [
-    { elemento: 'Software EHR/HIS', casos: 18 },
-    { elemento: 'Redes & VLANs', casos: 12 },
-    { elemento: 'Estaciones PC', casos: 8 },
-    { elemento: 'Impresoras SIS', casos: 5 },
-    { elemento: 'Servidores BD', casos: 4 },
-    { elemento: 'Telefonía IP', casos: 3 },
-    { elemento: 'Switches Core', casos: 3 },
-    { elemento: 'Lectoras Código', casos: 2 },
-    { elemento: 'UPS / SAIs UCI', casos: 2 },
-    { elemento: 'Servidor PACS', casos: 1 },
-  ];
+  constructor() {
+    effect(() => {
+      // Re-renderizar si cambian los tickets en tiempo real
+      const tickets = this.panelService.tickets();
+      if (this.chartInstance && tickets) {
+        this.actualizarGraficoBarras();
+      }
+    });
+  }
 
   ngAfterViewInit(): void {
     requestAnimationFrame(() => {
@@ -62,12 +60,14 @@ export class DistribucionTipoComponent implements AfterViewInit, OnDestroy {
   }
 
   private obtenerDatosTop() {
-    const seleccionados = this.activosCMDB.slice(0, this.topSeleccionado);
-    const paleta = leerTokensNumerados('--comp-grafico-barras', this.activosCMDB.length);
+    const distribucion = this.panelService.distribucionPorTipo();
+    const seleccionados = distribucion.slice(0, this.topSeleccionado);
+    const paleta = leerTokensNumerados('--comp-grafico-barras', Math.max(seleccionados.length, 5));
+
     return {
-      labels: seleccionados.map(a => a.elemento),
-      casos: seleccionados.map(a => a.casos),
-      colores: seleccionados.map((_, i) => paleta[i]),
+      labels: seleccionados.map(d => d.categoria),
+      casos: seleccionados.map(d => d.casos),
+      colores: seleccionados.map((_, i) => paleta[i % paleta.length]),
     };
   }
 

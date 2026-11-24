@@ -36,7 +36,7 @@ export const MENU_POR_ROL: Record<RolUsuario, readonly SeccionMenu[]> = {
 
   [RolUsuario.ADMINISTRADOR]: [
     {
-      encabezado: 'Jefatura y Operaciones N2',
+      encabezado: 'Operaciones',
       items: [
         { titulo: 'Panel de Control', ruta: '/panel-control', icono: 'dashboard', exacto: true },
         { titulo: 'Bandeja de Tickets', ruta: '/incidentes/bandeja', icono: 'inbox' },

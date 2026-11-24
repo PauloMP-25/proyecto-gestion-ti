@@ -1,0 +1,18 @@
+<div class="card-grafico" role="region" aria-label="Disponibilidad del Inventario y Préstamos">
+  <div class="card-grafico__header">
+    <div class="card-grafico__titulos">
+      <h3 class="card-grafico__titulo">Inventario y Equipos en Préstamo</h3>
+      <p class="card-grafico__subtitulo">Estado operativo de equipos de contingencia y cómputo clínico</p>
+    </div>
+    <div class="badge-equipos-total">
+      <app-icono nombre="devices" tamano="xs"></app-icono>
+      <span>{{ estadoInventario().total }} equipos</span>
+    </div>
+  </div>
+
+  <div class="card-grafico__cuerpo">
+    <div class="canvas-wrap">
+      <canvas #canvasEquipos></canvas>
+    </div>
+  </div>
+</div>

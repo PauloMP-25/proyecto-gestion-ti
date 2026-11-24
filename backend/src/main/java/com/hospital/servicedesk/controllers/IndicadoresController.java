@@ -20,6 +20,11 @@ public class IndicadoresController {
         return ResponseEntity.ok(indicadoresService.getKpis());
     }
 
+    @GetMapping("/dashboard")
+    public ResponseEntity<com.hospital.servicedesk.dtos.DashboardDTOs.DashboardRespuestaDTO> getDashboard() {
+        return ResponseEntity.ok(indicadoresService.getDashboard());
+    }
+
     @GetMapping("/tickets-por-area")
     public ResponseEntity<Map<String, Object>> getTicketsPorArea() {
         return ResponseEntity.ok(Map.of("Emergencia", 10, "UCI", 5, "Pediatría", 8));

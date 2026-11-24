@@ -10,7 +10,7 @@
           [class.tab-btn--activo]="pestanaActiva() === 'metricas'"
           (click)="seleccionarPestana('metricas')"
           [attr.aria-selected]="pestanaActiva() === 'metricas'">
-          <span class="tab-btn__texto">Métricas y compromisos de atención</span>
+          <span class="tab-btn__texto">Control en vivo</span>
         </button>
 
         <button 
@@ -20,7 +20,7 @@
           [class.tab-btn--activo]="pestanaActiva() === 'graficos'"
           (click)="seleccionarPestana('graficos')"
           [attr.aria-selected]="pestanaActiva() === 'graficos'">
-          <span class="tab-btn__texto">Gráficos de atención</span>
+          <span class="tab-btn__texto">Gráficos y Estadísticas</span>
         </button>
       </nav>
     </div>
@@ -71,7 +71,7 @@
 
   <!-- CONTENIDO DE LAS PESTAÑAS -->
 
-  <!-- PESTAÑA 1: Métricas y Cronómetro de Atención en Vivo -->
+  <!-- PESTAÑA 1: Control en vivo (Métricas y Cronómetro) -->
   @if (pestanaActiva() === 'metricas') {
     <div class="pestana-contenido" role="tabpanel" aria-label="Métricas y Cronómetro SLA">
       <!-- 4 Métricas Esenciales -->
@@ -92,28 +92,28 @@
     </div>
   }
 
-  <!-- PESTAÑA 2: Gráficos de Atención (4 Cuadrantes) -->
+  <!-- PESTAÑA 2: Gráficos y Estadísticas (4 Cuadrantes Dinámicos) -->
   @if (pestanaActiva() === 'graficos') {
     <div class="pestana-contenido" role="tabpanel" aria-label="Gráficos y Estadísticas de Atención">
       <div class="grid-cuatro-graficos">
-        <!-- 1. Tendencia de Incidentes por Servicio Clínico (Gráfico Circular Donut) -->
+        <!-- 1. Incidentes por Servicio Clínico (Áreas Reales del Hospital) -->
         <div class="cuadrante-grafico">
           <app-grafico-por-servicio></app-grafico-por-servicio>
         </div>
 
-        <!-- 2. Fallas por Activo CMDB (Gráfico de Barras) -->
+        <!-- 2. Fallas por Activo e Infraestructura Hospitalaria -->
         <div class="cuadrante-grafico">
           <app-distribucion-tipo></app-distribucion-tipo>
         </div>
 
-        <!-- 3. Matriz de Prioridad Hospitalaria (Impacto × Urgencia) -->
+        <!-- 3. Curva de Carga por Turnos: Guardia Mañana vs. Tarde (Lunes a Viernes) -->
         <div class="cuadrante-grafico">
-          <app-grafico-prioridades></app-grafico-prioridades>
+          <app-grafico-carga-turnos></app-grafico-carga-turnos>
         </div>
 
-        <!-- 4. Monitoreo de Niveles de Servicio SLA (EstadoSLA) -->
+        <!-- 4. Disponibilidad del Inventario y Equipos en Préstamo -->
         <div class="cuadrante-grafico">
-          <app-grafico-sla-cumplimiento></app-grafico-sla-cumplimiento>
+          <app-grafico-estado-equipos></app-grafico-estado-equipos>
         </div>
       </div>
     </div>

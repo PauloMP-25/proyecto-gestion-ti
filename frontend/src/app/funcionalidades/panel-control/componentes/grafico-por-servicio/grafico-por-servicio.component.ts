@@ -37,10 +37,11 @@ export class GraficoPorServicioComponent implements AfterViewInit, OnDestroy {
 
   constructor() {
     effect(() => {
-      // Re-renderizar si cambian los datos del servicio o el período
+      // Re-renderizar reactivamente cuando cambien los datos de tickets en la base de datos
+      const tendencias = this.panelService.tendenciasPorServicio();
       const p = this.periodo();
       this.periodoValor = p;
-      if (this.chartInstance) {
+      if (this.chartInstance && tendencias) {
         this.actualizarGrafico();
       }
     });
@@ -55,42 +56,18 @@ export class GraficoPorServicioComponent implements AfterViewInit, OnDestroy {
   }
 
   private obtenerDatosPorPeriodo() {
-    // Datos hospitalarios reales de solicitudes registradas (Áreas Asistenciales)
-    switch (this.periodo()) {
-      case 'hoy':
-        return {
-          labels: [
-            'Emergencia Adultos & Triaje',
-            'UCI & Cuidados Críticos',
-            'Centro Quirúrgico & Recuperación',
-            'Laboratorio Clínico & Sangre',
-            'Farmacia & Dispensación'
-          ],
-          valores: [26, 19, 14, 11, 8]
-        };
-      case '7d':
-        return {
-          labels: [
-            'Emergencia Adultos & Triaje',
-            'UCI & Cuidados Críticos',
-            'Centro Quirúrgico & Recuperación',
-            'Laboratorio Clínico & Sangre',
-            'Farmacia & Dispensación'
-          ],
-          valores: [142, 98, 76, 54, 38]
-        };
-      case '30d':
-        return {
-          labels: [
-            'Emergencia Adultos & Triaje',
-            'UCI & Cuidados Críticos',
-            'Centro Quirúrgico & Recuperación',
-            'Laboratorio Clínico & Sangre',
-            'Farmacia & Dispensación'
-          ],
-          valores: [520, 390, 285, 210, 145]
-        };
+    const tendencias = this.panelService.tendenciasPorServicio();
+    if (tendencias && tendencias.length > 0) {
+      return {
+        labels: tendencias.map(t => t.servicio),
+        valores: tendencias.map(t => t.totalIncidentes),
+      };
     }
+
+    return {
+      labels: [],
+      valores: [],
+    };
   }
 
   private construirGrafico(): void {

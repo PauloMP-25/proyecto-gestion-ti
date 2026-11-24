@@ -7,8 +7,8 @@ import { PanelControlService } from '../../servicios/panel-control.service';
 import { KpiPanelComponent } from '../../../../compartido/ui/organismos/kpi-panel/kpi-panel.component';
 import { GraficoPorServicioComponent } from '../../componentes/grafico-por-servicio/grafico-por-servicio.component';
 import { DistribucionTipoComponent } from '../../componentes/distribucion-tipo/distribucion-tipo.component';
-import { GraficoPrioridadesComponent } from '../../componentes/grafico-prioridades/grafico-prioridades.component';
-import { GraficoSlaCumplimientoComponent } from '../../componentes/grafico-sla-cumplimiento/grafico-sla-cumplimiento.component';
+import { GraficoCargaTurnosComponent } from '../../componentes/grafico-carga-turnos/grafico-carga-turnos.component';
+import { GraficoEstadoEquiposComponent } from '../../componentes/grafico-estado-equipos/grafico-estado-equipos.component';
 import { RelojTicketActivoComponent } from '../../componentes/reloj-ticket-activo/reloj-ticket-activo.component';
 import { BotonComponent } from '../../../../compartido/ui/atomos/boton/boton.component';
 import { IconoComponent } from '../../../../compartido/ui/atomos/icono/icono.component';
@@ -32,8 +32,8 @@ export type TipoPestanaPanel = 'metricas' | 'graficos';
     KpiPanelComponent,
     GraficoPorServicioComponent,
     DistribucionTipoComponent,
-    GraficoPrioridadesComponent,
-    GraficoSlaCumplimientoComponent,
+    GraficoCargaTurnosComponent,
+    GraficoEstadoEquiposComponent,
     RelojTicketActivoComponent,
     BotonComponent,
     IconoComponent,

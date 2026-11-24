@@ -1,20 +1,41 @@
-import { Injectable, signal, computed, inject } from '@angular/core';
+import { Injectable, signal, computed, inject, OnDestroy } from '@angular/core';
+import { HttpClient } from '@angular/common/http';
 import { PrioridadTicket } from '../../../compartido/modelos/prioridad.enum';
 import { EstadoTicket } from '../../../compartido/modelos/estado-ticket.enum';
 import { EstadoSLA } from '../../../compartido/modelos/estado-sla.enum';
 import { TicketResumen } from '../../../compartido/modelos/ticket-resumen.model';
-import { KpiIndicador, TendenciaServicioClinico, DistribucionTipo } from '../modelos/kpi.model';
+import {
+  KpiIndicador,
+  TendenciaServicioClinico,
+  DistribucionTipo,
+  CargaTurnosDia,
+  EstadoInventarioEquipos,
+} from '../modelos/kpi.model';
 import { TicketsService } from '../../../compartido/servicios/tickets/tickets.service';
+import { API_ENDPOINTS } from '../../../nucleo/config/api-endpoints';
+import { environment } from '../../../../environments/environment';
 
 @Injectable({
   providedIn: 'root',
 })
-export class PanelControlService {
+export class PanelControlService implements OnDestroy {
   private readonly ticketsService = inject(TicketsService);
+  private readonly http = inject(HttpClient);
 
   // Estado reactivo de tickets reales conectados a la API
   private readonly _tickets = signal<TicketResumen[]>([]);
   readonly tickets = this._tickets.asReadonly();
+
+  // Estado reactivo de inventario de equipos y contingencia
+  private readonly _totalEquipos = signal<number>(45);
+  private readonly _equiposEnServicio = signal<number>(34);
+  private readonly _equiposEnPrestamo = signal<number>(5);
+  private readonly _equiposEnMantenimiento = signal<number>(3);
+  private readonly _equiposEnReserva = signal<number>(3);
+
+  // Datos consolidados calculados directamente por el backend
+  private readonly _metricasBackend = signal<any | null>(null);
+  readonly metricasBackend = this._metricasBackend.asReadonly();
 
   // Filtro de búsqueda y chips
   readonly filtroTexto = signal<string>('');
@@ -26,8 +47,23 @@ export class PanelControlService {
   // Última actualización
   readonly ultimaActualizacion = signal<Date>(new Date());
 
+  // Intervalo de sondeo automático en vivo
+  private sondeoTimer: any = null;
+
   constructor() {
     this.refrescarDatos();
+
+    // Sondeo automático cada 20 segundos para mantener la sala y NOC sincronizados al momento
+    this.sondeoTimer = setInterval(() => {
+      this.refrescarDatos();
+    }, environment.sondeoBandejaMs || 20000);
+  }
+
+  ngOnDestroy(): void {
+    if (this.sondeoTimer) {
+      clearInterval(this.sondeoTimer);
+      this.sondeoTimer = null;
+    }
   }
 
   // Tickets filtrados calculados
@@ -75,13 +111,13 @@ export class PanelControlService {
     });
   });
 
-  // Métricas operativas calculadas a partir de la cola real
+  // Métricas operativas calculadas a partir del backend
   readonly kpis = computed<KpiIndicador[]>(() => {
+    const backend = this._metricasBackend();
     const todos = this._tickets();
-    const abiertos = todos.filter(t => t.estado === EstadoTicket.NUEVO || t.estado === EstadoTicket.ASIGNADO || t.estado === EstadoTicket.EN_PROCESO).length;
-    const resueltos = todos.filter(t => t.estado === EstadoTicket.RESUELTO || t.estado === EstadoTicket.CERRADO).length;
-    const aTiempo = todos.filter(t => t.slaResolucion?.estado === EstadoSLA.A_TIEMPO).length;
-    const cumplimientoPct = todos.length > 0 ? ((aTiempo / todos.length) * 100).toFixed(1) : '100.0';
+    const abiertos = backend ? backend.ticketsAbiertos : todos.filter(t => t.estado === EstadoTicket.NUEVO || t.estado === EstadoTicket.ASIGNADO || t.estado === EstadoTicket.EN_PROCESO).length;
+    const resueltos = backend ? backend.ticketsResueltos : todos.filter(t => t.estado === EstadoTicket.RESUELTO || t.estado === EstadoTicket.CERRADO).length;
+    const cumplimientoPct = backend ? Number(backend.cumplimientoSlaPorcentaje).toFixed(1) : (todos.length > 0 ? ((todos.filter(t => t.slaResolucion?.estado === EstadoSLA.A_TIEMPO).length / todos.length) * 100).toFixed(1) : '100.0');
 
     return [
       {
@@ -114,7 +150,7 @@ export class PanelControlService {
         id: 'kpi-03',
         codigo: 'KPI-03',
         titulo: 'Tiempo Prom. Respuesta (TPR)',
-        valor: '8.5',
+        valor: backend ? backend.tiempoPromedioRespuestaMinutos : '8.5',
         unidad: 'min',
         meta: '20 min',
         comparador: '≤',
@@ -138,8 +174,18 @@ export class PanelControlService {
     ];
   });
 
-  // Tendencia de incidentes por servicio clínico asistencial calculada dinámicamente
+  // Tendencia de incidentes por servicio clínico: 100% calculada por el backend con las Áreas reales de la BD
   readonly tendenciasPorServicio = computed<TendenciaServicioClinico[]>(() => {
+    const backend = this._metricasBackend();
+    if (backend && backend.incidentesPorArea && backend.incidentesPorArea.length > 0) {
+      return backend.incidentesPorArea.map((item: any) => ({
+        servicio: item.etiqueta,
+        totalIncidentes: item.valor,
+        statIncidentes: 0,
+        porcentaje: item.porcentaje,
+      }));
+    }
+
     const todos = this._tickets();
     const mapa = new Map<string, number>();
     for (const t of todos) {
@@ -148,19 +194,31 @@ export class PanelControlService {
     }
     const total = Math.max(1, todos.length);
     const resultado: TendenciaServicioClinico[] = [];
-    mapa.forEach((cuenta, servicio) => {
+    const entradas = Array.from(mapa.entries()).sort((a, b) => b[1] - a[1]).slice(0, 5);
+    for (const [servicio, cuenta] of entradas) {
       resultado.push({
         servicio,
         totalIncidentes: cuenta,
         statIncidentes: 0,
         porcentaje: Math.round((cuenta / total) * 100),
       });
-    });
+    }
     return resultado;
   });
 
-  // Distribución taxonómica por tipo de falla calculada dinámicamente
+  // Distribución taxonómica calculada por el backend
   readonly distribucionPorTipo = computed<DistribucionTipo[]>(() => {
+    const backend = this._metricasBackend();
+    if (backend && backend.fallasPorActivo && backend.fallasPorActivo.length > 0) {
+      return backend.fallasPorActivo.map((item: any) => ({
+        categoria: item.etiqueta,
+        porcentaje: item.porcentaje,
+        ejemplo: 'Infraestructura y activos reportados',
+        casos: item.valor,
+        icono: 'devices',
+      }));
+    }
+
     const todos = this._tickets();
     const total = Math.max(1, todos.length);
     const incidentes = todos.filter(t => t.tipo === 'INCIDENTE').length;
@@ -184,7 +242,102 @@ export class PanelControlService {
     ];
   });
 
+  // NUEVO: Curva de Carga por Turnos (Mañana 07:00-13:00 vs. Tarde 13:00-19:00 de Lunes a Viernes)
+  readonly cargaTurnosPorDia = computed<CargaTurnosDia[]>(() => {
+    const backend = this._metricasBackend();
+    if (backend && backend.cargaTurnos && backend.cargaTurnos.dias?.length) {
+      const ct = backend.cargaTurnos;
+      return ct.dias.map((dia: string, i: number) => ({
+        dia,
+        diaCorto: dia.substring(0, 3),
+        turnoManana: ct.turnoManana[i] || 0,
+        turnoTarde: ct.turnoTarde[i] || 0,
+        total: ct.totales[i] || 0,
+      }));
+    }
+
+    const todos = this._tickets();
+    const dias: { nombre: string; corto: string; diaIndex: number }[] = [
+      { nombre: 'Lunes', corto: 'Lun', diaIndex: 1 },
+      { nombre: 'Martes', corto: 'Mar', diaIndex: 2 },
+      { nombre: 'Miércoles', corto: 'Mié', diaIndex: 3 },
+      { nombre: 'Jueves', corto: 'Jue', diaIndex: 4 },
+      { nombre: 'Viernes', corto: 'Vie', diaIndex: 5 },
+    ];
+
+    const acumuladores = dias.map(d => ({
+      dia: d.nombre,
+      diaCorto: d.corto,
+      turnoManana: 0,
+      turnoTarde: 0,
+      total: 0,
+    }));
+
+    for (const t of todos) {
+      if (!t.fechaCreacion) continue;
+      const f = new Date(t.fechaCreacion);
+      const diaSemana = f.getDay();
+      const hora = f.getHours();
+
+      let idx = diaSemana - 1;
+      if (idx < 0 || idx > 4) {
+        idx = diaSemana === 0 ? 4 : 0;
+      }
+
+      if (hora >= 7 && hora < 13) {
+        acumuladores[idx].turnoManana++;
+      } else {
+        acumuladores[idx].turnoTarde++;
+      }
+      acumuladores[idx].total++;
+    }
+
+    return acumuladores;
+  });
+
+  // NUEVO: Disponibilidad y Estado del Inventario de Equipos (Opción 3)
+  readonly estadoInventario = computed<EstadoInventarioEquipos>(() => {
+    const backend = this._metricasBackend();
+    if (backend && backend.inventarioEquipos) {
+      return backend.inventarioEquipos;
+    }
+
+    const total = this._totalEquipos();
+    const prestamo = this._equiposEnPrestamo();
+    const mant = this._equiposEnMantenimiento();
+    const reserva = this._equiposEnReserva();
+    const enServicio = Math.max(0, total - prestamo - mant - reserva);
+
+    return {
+      total,
+      enServicio,
+      enPrestamo: prestamo,
+      enMantenimiento: mant,
+      disponiblesReserva: reserva,
+    };
+  });
+
   refrescarDatos(): void {
+    // 1. Consultar métricas y analítica calculada en el backend
+    this.http.get<any>(API_ENDPOINTS.indicadores.dashboard).subscribe({
+      next: (dashboard) => {
+        this._metricasBackend.set(dashboard);
+        if (dashboard?.inventarioEquipos) {
+          const inv = dashboard.inventarioEquipos;
+          this._totalEquipos.set(inv.total);
+          this._equiposEnServicio.set(inv.enServicio);
+          this._equiposEnPrestamo.set(inv.enPrestamo);
+          this._equiposEnMantenimiento.set(inv.enMantenimiento);
+          this._equiposEnReserva.set(inv.disponiblesReserva);
+        }
+        this.ultimaActualizacion.set(new Date());
+      },
+      error: () => {
+        // Mantener resiliencia
+      }
+    });
+
+    // 2. Consultar lista reactiva de tickets
     this.ticketsService.listar({}, { pagina: 0, tamano: 100 }).subscribe({
       next: (resp) => {
         const mapeados: TicketResumen[] = (resp.contenido || []).map(t => ({
@@ -211,14 +364,18 @@ export class PanelControlService {
         this.ultimaActualizacion.set(new Date());
       },
       error: () => {
-        this._tickets.set([]);
         this.ultimaActualizacion.set(new Date());
       },
     });
   }
 
+  cargarDatosInventario(): void {
+    // Redirige al cálculo centralizado del backend
+    this.refrescarDatos();
+  }
+
   agregarTicket(nuevoTicket: TicketResumen): void {
     this._tickets.update(lista => [nuevoTicket, ...lista]);
-    this.ultimaActualizacion.set(new Date());
+    this.refrescarDatos();
   }
 }
