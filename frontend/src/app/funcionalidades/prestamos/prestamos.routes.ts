@@ -12,6 +12,7 @@ export const PRESTAMOS_ROUTES: Routes = [
           import('./paginas/prestamo-lista/prestamo-lista.page').then(
             (m) => m.PrestamoListaPage
           ),
+        data: { miga: 'Control de Préstamos' },
         title: 'Préstamos de Equipos - Mesa de Ayuda HSMSI',
       },
     ],

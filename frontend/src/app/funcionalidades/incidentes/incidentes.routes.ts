@@ -18,8 +18,8 @@ export const INCIDENTES_ROUTES: Routes = [
         (m) => m.IncidenteListaComponent,
       ),
     canActivate: [rolGuard],
-    data: { roles: ROLES_SOPORTE },
-    title: 'Bandeja de Tickets - Service Desk HSMSI',
+    data: { roles: ROLES_SOPORTE, miga: 'Bandeja de Tickets' },
+    title: 'Bandeja de Tickets - Mesa de Ayuda HSMSI',
   },
   {
     path: 'mis-tickets',
@@ -28,8 +28,8 @@ export const INCIDENTES_ROUTES: Routes = [
         (m) => m.IncidenteListaComponent,
       ),
     canActivate: [redireccionMisTicketsGuard],
-    data: { modo: 'propios' },
-    title: 'Mis Tickets - Service Desk HSMSI',
+    data: { modo: 'propios', miga: 'Mis Tickets' },
+    title: 'Mis Tickets - Mesa de Ayuda HSMSI',
   },
   {
     path: 'escalados',
@@ -38,7 +38,7 @@ export const INCIDENTES_ROUTES: Routes = [
         (m) => m.IncidenteListaComponent,
       ),
     canActivate: [rolGuard],
-    data: { roles: [RolUsuario.ADMINISTRADOR], modo: 'escalados' },
+    data: { roles: [RolUsuario.ADMINISTRADOR], modo: 'escalados', miga: 'Tickets Derivados (N2)' },
     title: 'Tickets Derivados a Soporte Nivel 2 - Mesa de Ayuda HSMSI',
   },
   {
@@ -48,7 +48,8 @@ export const INCIDENTES_ROUTES: Routes = [
         (m) => m.IncidentesCriticosComponent,
       ),
     canActivate: [rolGuard],
-    data: { roles: ROLES_SOPORTE },
+    data: { roles: ROLES_SOPORTE, miga: 'Incidentes Críticos' },
+    title: 'Incidentes Críticos - Mesa de Ayuda HSMSI',
   },
   {
     path: 'nuevo',
@@ -61,6 +62,7 @@ export const INCIDENTES_ROUTES: Routes = [
       import('./paginas/incidente-detalle/incidente-detalle.component').then(
         (m) => m.IncidenteDetalleComponent,
       ),
-    title: 'Detalle de Ticket - Service Desk HSMSI',
+    data: { miga: 'Detalle de Ticket' },
+    title: 'Detalle de Ticket - Mesa de Ayuda HSMSI',
   },
 ];

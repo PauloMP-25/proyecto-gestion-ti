@@ -1,5 +1,11 @@
 <div class="panel-dinamico">
+  @if (migasService.migas().length > 0) {
+    <div class="migas-barra-global">
+      <app-migas-pan [migas]="migasService.migas()" />
+    </div>
+  }
   <div class="lienzo-contenido">
     <router-outlet />
   </div>
 </div>
+

@@ -1,9 +1,11 @@
-import { Component, ChangeDetectionStrategy, inject, signal, computed, OnInit } from '@angular/core';
+import { Component, ChangeDetectionStrategy, inject, signal, computed, OnInit, OnDestroy, effect } from '@angular/core';
+import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { CommonModule } from '@angular/common';
 import { Router, RouterModule } from '@angular/router';
 import { AuthService } from '../../../../nucleo/auth/auth.service';
 import { RolUsuario } from '../../../../nucleo/modelos/rol.enum';
 import { PanelControlService } from '../../servicios/panel-control.service';
+import { MigasPanService } from '../../../../nucleo/servicios/migas-pan.service';
 import { KpiPanelComponent } from '../../../../compartido/ui/organismos/kpi-panel/kpi-panel.component';
 import { GraficoPorServicioComponent } from '../../componentes/grafico-por-servicio/grafico-por-servicio.component';
 import { DistribucionTipoComponent } from '../../componentes/distribucion-tipo/distribucion-tipo.component';
@@ -44,15 +46,17 @@ export type TipoPestanaPanel = 'metricas' | 'graficos';
   styleUrl: './panel-control.component.scss',
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
-export class PanelControlComponent implements OnInit {
+export class PanelControlComponent implements OnInit, OnDestroy {
   private http = inject(HttpClient);
   private authService = inject(AuthService);
   private panelService = inject(PanelControlService);
   private ticketsService = inject(TicketsService);
   private notificacion = inject(NotificacionService);
   private router = inject(Router);
+  private migasService = inject(MigasPanService);
 
   readonly descargandoPdf = signal<boolean>(false);
+
 
   readonly periodoSeleccionado = this.panelService.periodoSeleccionado;
 
@@ -155,6 +159,26 @@ export class PanelControlComponent implements OnInit {
     if (tickets.length > 0) {
       this.ticketEnAtencion.set(tickets[0]);
     }
+
+    // Sincronizar automáticamente la submiga activa con la pestaña seleccionada
+    effect(() => {
+      const pestana = this.pestanaActiva();
+      const etiqueta = pestana === 'metricas' ? 'Control en vivo' : 'Gráficos y Estadísticas';
+      this.migasService.establecerSubmiga(etiqueta);
+    });
+
+    // Si el usuario hace clic en el enlace padre "PANEL DE CONTROL" en las migas de pan, volver a "Control en vivo"
+    this.migasService.eventoNavegacionMiga$
+      .pipe(takeUntilDestroyed())
+      .subscribe((miga) => {
+        if (miga.ruta === '/panel-control') {
+          this.seleccionarPestana('metricas');
+        }
+      });
+  }
+
+  ngOnDestroy(): void {
+    this.migasService.establecerSubmiga(null);
   }
 
   seleccionarPestana(pestana: TipoPestanaPanel): void {

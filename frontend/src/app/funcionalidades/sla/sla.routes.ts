@@ -15,7 +15,7 @@ export const SLA_ROUTES: Routes = [
         (m) => m.SlaMonitorComponent
       ),
     canActivate: [rolGuard],
-    data: { roles: [RolUsuario.PRACTICANTE, RolUsuario.ADMINISTRADOR] },
+    data: { roles: [RolUsuario.PRACTICANTE, RolUsuario.ADMINISTRADOR], miga: 'Monitor de Compromisos' },
     title: 'Monitor de Compromisos de Atención - Mesa de Ayuda HSMSI',
   },
   {
@@ -25,7 +25,7 @@ export const SLA_ROUTES: Routes = [
         (m) => m.SlaConfiguracionComponent
       ),
     canActivate: [rolGuard],
-    data: { roles: [RolUsuario.ADMINISTRADOR] },
+    data: { roles: [RolUsuario.ADMINISTRADOR], miga: 'Configuración de Metas' },
     title: 'Configuraciones - Mesa de Ayuda HSMSI',
   },
 ];
