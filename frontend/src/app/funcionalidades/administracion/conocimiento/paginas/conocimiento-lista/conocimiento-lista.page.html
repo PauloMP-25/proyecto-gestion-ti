@@ -4,100 +4,63 @@
     subtitulo="Guías paso a paso para resolver las fallas más frecuentes en sistemas, impresoras, red y equipos del hospital."
     icono="menu_book"
   >
-    <app-boton acciones icono="add" (alHacerClick)="abrirNuevo()">Nueva guía</app-boton>
+    <app-boton acciones icono="add" (alHacerClick)="abrirNueva()">Nueva guía</app-boton>
   </app-cabecera-pagina>
 
-  <app-barra-filtros
-    placeholder="Describa el problema: «impresora de pulseras», «sin red», «sistema no abre»…"
-    [busqueda]="store.filtro().texto"
-    (busquedaChange)="store.buscar($event)"
-    [filtrosActivos]="store.filtrosActivos()"
+  <app-buscador-guias
+    [filtro]="store.filtro()"
+    [conteoPorCategoria]="store.conteoPorCategoria()"
+    [hayFiltros]="store.hayFiltros()"
+    [totalResultados]="store.resultados().length"
+    (alBuscar)="store.buscar($event)"
+    (alSeleccionarCategoria)="store.seleccionarCategoria($event)"
+    (alSeleccionarAmbito)="store.seleccionarAmbito($event)"
     (alLimpiar)="store.limpiarFiltros()"
-  >
-    <app-campo-filtro
-      filtros
-      etiqueta="Ámbito"
-      [opciones]="opcionesAmbito"
-      [valor]="store.filtro().ambito"
-      (valorChange)="cambiarAmbito($event)"
-    />
-  </app-barra-filtros>
+  />
 
-  @if (store.cargando()) {
-    <div class="grid-guias" aria-live="polite" aria-label="Cargando guías">
-      @for (item of [1, 2, 3, 4, 5, 6]; track item) {
-        <app-esqueleto preset="articulo" />
-      }
-    </div>
-  } @else if (store.error(); as mensaje) {
-    <app-alerta-en-linea tono="peligro">
-      {{ mensaje }}
-      <app-boton variante="outline" tamano="sm" icono="refresh" (alHacerClick)="store.cargar()">
-        Reintentar
-      </app-boton>
-    </app-alerta-en-linea>
-  } @else if (store.vacio()) {
-    <app-estado-vacio
-      icono="search_off"
-      [mensaje]="
-        store.filtro().texto
-          ? 'No encontramos guías para «' + store.filtro().texto + '». Pruebe con otras palabras o registre una nueva guía.'
-          : 'No hay guías que coincidan con los filtros seleccionados.'
-      "
-    />
-    @if (store.hayFiltros()) {
-      <div class="acciones-vacio">
-        <app-boton variante="secundario" (alHacerClick)="store.limpiarFiltros()">
-          Limpiar filtros
+  <app-lista-guias
+    [guias]="store.resultados()"
+    [cargando]="store.cargando()"
+    [error]="store.error()"
+    [textoBuscado]="store.filtro().texto"
+    (alAbrir)="store.abrirDetalle($event)"
+    (alEditar)="abrirEditar($event)"
+    (alEliminar)="solicitarEliminar($event)"
+    (alReintentar)="store.cargar()"
+    (alLimpiar)="store.limpiarFiltros()"
+  />
+
+  <app-panel-detalle
+    [abierto]="!!store.seleccionada()"
+    [titulo]="store.seleccionada()?.titulo ?? ''"
+    [subtitulo]="store.seleccionada()?.categoria.etiqueta"
+    icono="menu_book"
+    modo="lateral"
+    ancho="lg"
+    (alCerrar)="store.cerrarDetalle()"
+  >
+    @if (store.seleccionada(); as guia) {
+      <app-detalle-guia [guia]="guia" (alVotar)="store.votarUtil(guia.id, $event)" />
+    }
+
+    @if (store.seleccionada(); as guia) {
+      <div acciones class="detalle-acciones">
+        <app-boton variante="secundario" icono="edit" (alHacerClick)="abrirEditar(guia)">
+          Editar
         </app-boton>
+        @if (guia.esPublico) {
+          <a
+            class="detalle-acciones__enlace"
+            [href]="'/portal/ayuda/' + guia.id"
+            target="_blank"
+            rel="noopener"
+          >
+            Ver en portal
+          </a>
+        }
       </div>
     }
-  } @else {
-    <div class="grid-guias">
-      @for (guia of store.resultados(); track guia.id) {
-        <app-tarjeta>
-          <div class="guia-resumen">
-            <div class="guia-resumen__fila">
-              <app-insignia [texto]="guia.categoria.etiqueta" tono="marca" />
-              @if (!guia.esPublico) {
-                <app-insignia texto="Uso interno" tono="neutro" />
-              }
-            </div>
-            <h3 class="guia-resumen__titulo">{{ guia.titulo }}</h3>
-            <p class="guia-resumen__texto">{{ guia.sintoma || guia.resumen }}</p>
-            <p class="guia-resumen__meta">
-              {{ guia.minutosEstimados }} min · {{ guia.conteoUtil }}
-              {{ guia.conteoUtil === 1 ? 'persona la encontró útil' : 'personas la encontraron útiles' }}
-            </p>
-            <div class="guia-resumen__acciones">
-              @if (guia.esPublico) {
-                <a
-                  class="guia-resumen__enlace"
-                  [href]="'/portal/ayuda/' + guia.id"
-                  target="_blank"
-                  rel="noopener"
-                >
-                  Ver en portal
-                </a>
-              }
-              <app-boton-icono
-                icono="edit"
-                etiqueta="Editar guía"
-                variante="suave"
-                (alHacerClick)="abrirEditar(guia)"
-              />
-              <app-boton-icono
-                icono="delete"
-                etiqueta="Eliminar guía"
-                variante="peligro"
-                (alHacerClick)="solicitarEliminar(guia)"
-              />
-            </div>
-          </div>
-        </app-tarjeta>
-      }
-    </div>
-  }
+  </app-panel-detalle>
 
   @if (editorAbierto()) {
     <app-dialogo-articulo-editor
@@ -108,15 +71,14 @@
     />
   }
 
-  @if (articuloParaEliminar(); as guiaEliminar) {
+  @if (guiaParaEliminar(); as guia) {
     <app-dialogo-confirmacion
       titulo="¿Eliminar esta guía?"
-      [mensaje]="'Se eliminará «' + guiaEliminar.titulo + '». El personal ya no podrá consultarla.'"
+      [mensaje]="'Se eliminará «' + guia.titulo + '». El personal ya no podrá consultarla.'"
       textoConfirmar="Sí, eliminar guía"
-      textoCancelar="Cancelar"
       [esPeligroso]="true"
       (confirmar)="confirmarEliminacion()"
-      (cancelar)="cancelarEliminacion()"
+      (cancelar)="guiaParaEliminar.set(null)"
     />
   }
 </app-plantilla-pagina>

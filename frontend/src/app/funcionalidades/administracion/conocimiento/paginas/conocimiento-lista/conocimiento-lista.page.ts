@@ -1,38 +1,18 @@
-import {
-  ChangeDetectionStrategy,
-  Component,
-  OnInit,
-  inject,
-  signal,
-} from '@angular/core';
-import { ArticuloConocimiento } from '../../../../../compartido/modelos/articulo-conocimiento.model';
+import { ChangeDetectionStrategy, Component, OnInit, inject, signal } from '@angular/core';
 import { PlantillaPaginaComponent } from '../../../../../compartido/ui/plantillas/plantilla-pagina/plantilla-pagina.component';
 import { CabeceraPaginaComponent } from '../../../../../compartido/ui/moleculas/cabecera-pagina/cabecera-pagina.component';
 import { BotonComponent } from '../../../../../compartido/ui/atomos/boton/boton.component';
-import { BotonIconoComponent } from '../../../../../compartido/ui/atomos/boton-icono/boton-icono.component';
-import { BarraFiltrosComponent } from '../../../../../compartido/ui/organismos/barra-filtros/barra-filtros.component';
-import {
-  CampoFiltroComponent,
-  OpcionFiltro,
-} from '../../../../../compartido/ui/moleculas/campo-filtro/campo-filtro.component';
-import { EsqueletoComponent } from '../../../../../compartido/ui/atomos/esqueleto/esqueleto.component';
-import { AlertaEnLineaComponent } from '../../../../../compartido/ui/moleculas/alerta-en-linea/alerta-en-linea.component';
-import { EstadoVacioComponent } from '../../../../../compartido/ui/moleculas/estado-vacio/estado-vacio.component';
-import { InsigniaComponent } from '../../../../../compartido/ui/atomos/insignia/insignia.component';
-import { TarjetaComponent } from '../../../../../compartido/ui/atomos/tarjeta/tarjeta.component';
+import { PanelDetalleComponent } from '../../../../../compartido/ui/organismos/panel-detalle/panel-detalle.component';
 import { DialogoConfirmacionComponent } from '../../../../../compartido/ui/organismos/dialogo-confirmacion/dialogo-confirmacion.component';
+import { BuscadorGuiasComponent } from '../../componentes/buscador-guias/buscador-guias.component';
+import { ListaGuiasComponent } from '../../componentes/lista-guias/lista-guias.component';
+import { DetalleGuiaComponent } from '../../componentes/detalle-guia/detalle-guia.component';
 import {
   DialogoArticuloEditorComponent,
   GuardarArticuloPayload,
 } from '../../componentes/dialogo-articulo-editor/dialogo-articulo-editor.component';
 import { GuiasStore } from '../../estado/guias.store';
-import { AmbitoGuia } from '../../modelos/guias.model';
-
-const OPCIONES_AMBITO: readonly OpcionFiltro[] = [
-  { valor: 'TODOS', etiqueta: 'Todas' },
-  { valor: 'PUBLICO', etiqueta: 'Para el personal asistencial' },
-  { valor: 'INTERNO', etiqueta: 'Uso interno del equipo técnico' },
-];
+import { GuiaVista } from '../../modelos/guias.model';
 
 @Component({
   selector: 'app-conocimiento-lista-page',
@@ -41,54 +21,44 @@ const OPCIONES_AMBITO: readonly OpcionFiltro[] = [
     PlantillaPaginaComponent,
     CabeceraPaginaComponent,
     BotonComponent,
-    BotonIconoComponent,
-    BarraFiltrosComponent,
-    CampoFiltroComponent,
-    EsqueletoComponent,
-    AlertaEnLineaComponent,
-    EstadoVacioComponent,
-    InsigniaComponent,
-    TarjetaComponent,
+    PanelDetalleComponent,
     DialogoConfirmacionComponent,
+    BuscadorGuiasComponent,
+    ListaGuiasComponent,
+    DetalleGuiaComponent,
     DialogoArticuloEditorComponent,
   ],
   templateUrl: './conocimiento-lista.page.html',
-  styleUrls: ['./conocimiento-lista.page.scss'],
+  styleUrl: './conocimiento-lista.page.scss',
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class ConocimientoListaPage implements OnInit {
   readonly store = inject(GuiasStore);
 
-  readonly opcionesAmbito = OPCIONES_AMBITO;
-
-  readonly editorAbierto = signal(false);
-  readonly articuloParaEditar = signal<ArticuloConocimiento | null>(null);
-  readonly articuloParaEliminar = signal<ArticuloConocimiento | null>(null);
+  protected readonly editorAbierto = signal(false);
+  protected readonly articuloParaEditar = signal<GuiaVista | null>(null);
+  protected readonly guiaParaEliminar = signal<GuiaVista | null>(null);
 
   ngOnInit(): void {
     this.store.cargar();
   }
 
-  cambiarAmbito(valor: unknown): void {
-    this.store.seleccionarAmbito(valor as AmbitoGuia);
-  }
-
-  abrirNuevo(): void {
+  protected abrirNueva(): void {
     this.articuloParaEditar.set(null);
     this.editorAbierto.set(true);
   }
 
-  abrirEditar(articulo: ArticuloConocimiento): void {
-    this.articuloParaEditar.set(articulo);
+  protected abrirEditar(guia: GuiaVista): void {
+    this.articuloParaEditar.set(guia);
     this.editorAbierto.set(true);
   }
 
-  cerrarEditor(): void {
+  protected cerrarEditor(): void {
     this.editorAbierto.set(false);
     this.articuloParaEditar.set(null);
   }
 
-  guardarArticulo(payload: GuardarArticuloPayload): void {
+  protected guardarArticulo(payload: GuardarArticuloPayload): void {
     const actual = this.articuloParaEditar();
     const peticion = actual
       ? this.store.actualizar(actual.id, payload)
@@ -100,22 +70,18 @@ export class ConocimientoListaPage implements OnInit {
     });
   }
 
-  solicitarEliminar(articulo: ArticuloConocimiento): void {
-    this.articuloParaEliminar.set(articulo);
+  protected solicitarEliminar(guia: GuiaVista): void {
+    this.guiaParaEliminar.set(guia);
   }
 
-  confirmarEliminacion(): void {
-    const articulo = this.articuloParaEliminar();
-    if (!articulo) {
+  protected confirmarEliminacion(): void {
+    const guia = this.guiaParaEliminar();
+    if (!guia) {
       return;
     }
-    this.store.eliminar(articulo.id).subscribe({
-      next: () => this.articuloParaEliminar.set(null),
-      error: () => this.articuloParaEliminar.set(null),
+    this.store.eliminar(guia.id).subscribe({
+      next: () => this.guiaParaEliminar.set(null),
+      error: () => this.guiaParaEliminar.set(null),
     });
-  }
-
-  cancelarEliminacion(): void {
-    this.articuloParaEliminar.set(null);
   }
 }

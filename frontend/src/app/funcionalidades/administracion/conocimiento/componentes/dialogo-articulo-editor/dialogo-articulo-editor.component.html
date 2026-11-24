@@ -1,158 +1,265 @@
-<div class="modal-backdrop" (click)="alCancelar.emit()">
-  <div
-    class="modal-contenido"
-    role="dialog"
-    aria-modal="true"
-    aria-labelledby="modal-titulo"
-    (click)="$event.stopPropagation()"
-  >
-    <header class="modal-cabecera">
-      <div class="modal-icono" aria-hidden="true">
-        <app-icono nombre="menu_book" tamano="md"></app-icono>
-      </div>
-      <div>
-        <h2 id="modal-titulo" class="modal-titulo">
-          {{ articulo() ? 'Editar Guía de Soporte' : 'Nueva Guía de Conocimiento' }}
-        </h2>
-        <p class="modal-subtitulo">
-          Centro de Soluciones hospitalarias para personal asistencial y técnico
-        </p>
-      </div>
-      <button
-        type="button"
-        class="modal-btn-cerrar"
-        aria-label="Cerrar modal"
-        (click)="alCancelar.emit()"
-      >
-        <app-icono nombre="close" tamano="sm"></app-icono>
-      </button>
-    </header>
+<app-dialogo-formulario
+  [titulo]="titulo()"
+  subtitulo="Información que verá el personal en el Centro de Soluciones."
+  (cancelar)="alCancelar.emit()"
+>
+  <form cuerpo class="formulario" [formGroup]="form" novalidate>
+    <app-barra-pestanas
+      [pestanas]="PESTANAS"
+      [(activa)]="pestanaActiva"
+      etiquetaAccesible="Secciones del editor de guía"
+    />
 
-    <form [formGroup]="form" (ngSubmit)="guardar()" class="modal-cuerpo">
-      <!-- Título de la guía -->
-      <div class="campo">
-        <label for="editor-titulo" class="campo__label">Título de la guía o solución *</label>
-        <input
-          id="editor-titulo"
-          type="text"
-          class="campo__input"
-          formControlName="titulo"
-          placeholder="Ej.: Desbloqueo de lector biométrico de huella en Triaje"
-        />
-        @if (form.controls.titulo.touched && form.controls.titulo.errors?.['required']) {
-          <span class="campo__error">El título es requerido.</span>
-        }
-        @if (form.controls.titulo.touched && form.controls.titulo.errors?.['minlength']) {
-          <span class="campo__error">Mínimo 5 caracteres.</span>
-        }
+    @if (pestanaActiva() === 'vista-previa') {
+      <div class="vista-previa">
+        <app-detalle-guia [guia]="vistaPrevia()" />
       </div>
+    } @else {
+      <section class="grupo">
+        <h3 class="grupo__titulo">Datos generales</h3>
 
-      <!-- Categoría y Visibilidad -->
-      <div class="fila-doble">
         <div class="campo">
-          <label for="editor-categoria" class="campo__label">Categoría hospitalaria *</label>
-          <select id="editor-categoria" class="campo__select" formControlName="categoriaId">
-            @for (cat of categorias; track cat.id) {
-              <option [value]="cat.id">{{ cat.nombre }}</option>
-            }
-          </select>
-        </div>
-
-        <div class="campo campo--switch">
-          <label class="campo__label" for="editor-publico">Ámbito de visibilidad</label>
-          <label class="switch-control">
-            <input id="editor-publico" type="checkbox" formControlName="esPublico" />
-            <span class="switch-slider"></span>
-            <span class="switch-texto">
-              {{ form.controls.esPublico.value ? 'Público (Portal Asistencial)' : 'Interno (Soporte N1/N2)' }}
-            </span>
-          </label>
-        </div>
-      </div>
-
-      <!-- Resumen o Síntoma -->
-      <div class="campo">
-        <label for="editor-resumen" class="campo__label">
-          Síntoma frecuente o resumen del problema *
-        </label>
-        <textarea
-          id="editor-resumen"
-          class="campo__textarea"
-          rows="2"
-          formControlName="resumen"
-          placeholder="Describa el mensaje de error o falla que percibe el usuario..."
-        ></textarea>
-        @if (form.controls.resumen.touched && form.controls.resumen.errors?.['required']) {
-          <span class="campo__error">El resumen del problema es requerido.</span>
-        }
-      </div>
-
-      <!-- Procedimiento / Pasos de solución -->
-      <div class="campo">
-        <label for="editor-contenido" class="campo__label">
-          Procedimiento de solución paso a paso (o contenido HTML) *
-        </label>
-        <textarea
-          id="editor-contenido"
-          class="campo__textarea campo__textarea--grande"
-          rows="6"
-          formControlName="contenidoHtml"
-          placeholder="Paso 1: Verifique el cable...&#10;Paso 2: Reinicie el servicio..."
-        ></textarea>
-        @if (form.controls.contenidoHtml.touched && form.controls.contenidoHtml.errors?.['required']) {
-          <span class="campo__error">Debe especificar los pasos o procedimiento de solución.</span>
-        }
-      </div>
-
-      <!-- Palabras clave y Equipos -->
-      <div class="fila-doble">
-        <div class="campo">
-          <label for="editor-palabras" class="campo__label">Palabras clave (separadas por coma)</label>
+          <label class="campo__label" for="editor-titulo">Título de la guía *</label>
           <input
-            id="editor-palabras"
+            id="editor-titulo"
             type="text"
             class="campo__input"
-            formControlName="palabrasClave"
-            placeholder="huella, biométrico, triaje, error 403"
+            formControlName="titulo"
+            placeholder="Ej.: Calibración de la impresora de pulseras de triaje"
           />
-        </div>
-
-        <div class="campo">
-          <label for="editor-equipos" class="campo__label">Equipos compatibles (separados por coma)</label>
-          <input
-            id="editor-equipos"
-            type="text"
-            class="campo__input"
-            formControlName="equiposCompatibles"
-            placeholder="DigitalPersona U.are.U, Zebra ZD220"
-          />
-        </div>
-      </div>
-
-      <!-- Acciones de pie -->
-      <footer class="modal-pie">
-        <button
-          type="button"
-          class="btn btn--secundario"
-          (click)="alCancelar.emit()"
-          [disabled]="guardando()"
-        >
-          Cancelar
-        </button>
-        <button
-          type="submit"
-          class="btn btn--primario"
-          [disabled]="guardando() || form.invalid"
-        >
-          @if (guardando()) {
-            <span class="spinner-sm" aria-hidden="true"></span>
-            <span>Guardando...</span>
-          } @else {
-            <app-icono nombre="save" tamano="sm"></app-icono>
-            <span>Guardar Guía</span>
+          @if (form.controls.titulo.touched && form.controls.titulo.hasError('required')) {
+            <p class="campo__error">El título es obligatorio.</p>
           }
-        </button>
-      </footer>
-    </form>
+          @if (form.controls.titulo.touched && form.controls.titulo.hasError('minlength')) {
+            <p class="campo__error">El título debe tener al menos 5 caracteres.</p>
+          }
+        </div>
+
+        <div class="fila-doble">
+          <div class="campo">
+            <label class="campo__label" for="editor-categoria">Categoría *</label>
+            <select id="editor-categoria" class="campo__select" formControlName="categoriaId">
+              @for (categoria of CATEGORIAS_GUIA; track categoria.id) {
+                <option [ngValue]="categoria.id">{{ categoria.etiqueta }}</option>
+              }
+            </select>
+          </div>
+
+          <div class="campo">
+            <label class="campo__label" for="editor-dificultad">Dificultad</label>
+            <select id="editor-dificultad" class="campo__select" formControlName="nivelDificultad">
+              <option value="BASICO">Básico</option>
+              <option value="INTERMEDIO">Intermedio</option>
+              <option value="AVANZADO">Avanzado</option>
+            </select>
+          </div>
+        </div>
+
+        <div class="fila-doble">
+          <div class="campo">
+            <label class="campo__label" for="editor-minutos">Tiempo estimado (minutos)</label>
+            <input
+              id="editor-minutos"
+              type="number"
+              min="1"
+              max="240"
+              class="campo__input"
+              formControlName="minutosEstimados"
+            />
+          </div>
+
+          <div class="campo campo--casillas">
+            <label class="casilla">
+              <input type="checkbox" formControlName="esPublico" />
+              <span>¿Visible para el personal asistencial?</span>
+            </label>
+            <label class="casilla">
+              <input type="checkbox" formControlName="requiereTecnico" />
+              <span>¿Requiere técnico?</span>
+            </label>
+          </div>
+        </div>
+
+        <div class="fila-doble">
+          <div class="campo">
+            <label class="campo__label" for="editor-palabras">Palabras clave</label>
+            <input
+              id="editor-palabras"
+              type="text"
+              class="campo__input"
+              formControlName="palabrasClave"
+              placeholder="Separadas por coma: impresora, pulseras, atasco"
+            />
+          </div>
+
+          <div class="campo">
+            <label class="campo__label" for="editor-equipos">Equipos compatibles</label>
+            <input
+              id="editor-equipos"
+              type="text"
+              class="campo__input"
+              formControlName="equiposCompatibles"
+              placeholder="Separados por coma: Zebra ZD220, Xprinter XP-420B"
+            />
+          </div>
+        </div>
+      </section>
+
+      <section class="grupo">
+        <h3 class="grupo__titulo">Descripción del problema</h3>
+
+        <div class="campo">
+          <label class="campo__label" for="editor-sintoma">Síntoma que percibe el usuario *</label>
+          <textarea
+            id="editor-sintoma"
+            rows="3"
+            class="campo__textarea"
+            formControlName="sintoma"
+            placeholder="Ej.: La impresora muestra una luz roja parpadeante y no imprime."
+          ></textarea>
+          @if (form.controls.sintoma.touched && form.controls.sintoma.hasError('required')) {
+            <p class="campo__error">El síntoma es obligatorio.</p>
+          }
+          @if (form.controls.sintoma.touched && form.controls.sintoma.hasError('minlength')) {
+            <p class="campo__error">Describa el síntoma con al menos 10 caracteres.</p>
+          }
+        </div>
+
+        <div class="campo">
+          <label class="campo__label" for="editor-causa">Causa identificada</label>
+          <textarea
+            id="editor-causa"
+            rows="2"
+            class="campo__textarea"
+            formControlName="causaRaiz"
+            placeholder="Opcional: qué origina el problema."
+          ></textarea>
+        </div>
+
+        <div class="campo">
+          <label class="campo__label" for="editor-solucion-temporal">Solución temporal</label>
+          <textarea
+            id="editor-solucion-temporal"
+            rows="2"
+            class="campo__textarea"
+            formControlName="solucionTemporal"
+            placeholder="Opcional: qué puede hacer el usuario mientras tanto."
+          ></textarea>
+        </div>
+      </section>
+
+      <section class="grupo">
+        <h3 class="grupo__titulo">Pasos de solución *</h3>
+        <p class="ayuda">Agregue al menos un paso. Cada paso debe tener 5 caracteres o más.</p>
+
+        @for (control of pasos.controls; track control; let i = $index) {
+          <div class="fila-editor">
+            <span class="fila-editor__numero" aria-hidden="true">{{ i + 1 }}</span>
+            <input
+              type="text"
+              class="campo__input"
+              [formControl]="control"
+              [attr.aria-label]="'Paso ' + (i + 1)"
+              [placeholder]="'Describa el paso ' + (i + 1)"
+            />
+            <div class="fila-editor__acciones">
+              <app-boton-icono
+                icono="arrow_upward"
+                [etiqueta]="'Mover paso ' + (i + 1) + ' hacia arriba'"
+                variante="fantasma"
+                tamano="sm"
+                [deshabilitado]="i === 0"
+                (alHacerClick)="moverPaso(i, -1)"
+              />
+              <app-boton-icono
+                icono="arrow_downward"
+                [etiqueta]="'Mover paso ' + (i + 1) + ' hacia abajo'"
+                variante="fantasma"
+                tamano="sm"
+                [deshabilitado]="i === pasos.length - 1"
+                (alHacerClick)="moverPaso(i, 1)"
+              />
+              <app-boton-icono
+                icono="delete"
+                [etiqueta]="'Quitar paso ' + (i + 1)"
+                variante="peligro"
+                tamano="sm"
+                [deshabilitado]="pasos.length === 1"
+                (alHacerClick)="quitarPaso(i)"
+              />
+            </div>
+          </div>
+          @if (control.touched && control.invalid) {
+            <p class="campo__error">El paso {{ i + 1 }} debe tener al menos 5 caracteres.</p>
+          }
+        }
+
+        <app-boton variante="secundario" tamano="sm" icono="add" (alHacerClick)="agregarPaso()">
+          Agregar paso
+        </app-boton>
+      </section>
+
+      <section class="grupo">
+        <h3 class="grupo__titulo">Precauciones</h3>
+        <p class="ayuda">
+          Indique qué no debe hacer el personal. Obligatoria al menos una si la guía es visible
+          para el personal asistencial y no requiere técnico.
+        </p>
+
+        @for (control of precauciones.controls; track control; let i = $index) {
+          <div class="fila-editor">
+            <input
+              type="text"
+              class="campo__input"
+              [formControl]="control"
+              [attr.aria-label]="'Precaución ' + (i + 1)"
+              [placeholder]="'Describa la precaución ' + (i + 1)"
+            />
+            <div class="fila-editor__acciones">
+              <app-boton-icono
+                icono="delete"
+                [etiqueta]="'Quitar precaución ' + (i + 1)"
+                variante="peligro"
+                tamano="sm"
+                (alHacerClick)="quitarPrecaucion(i)"
+              />
+            </div>
+          </div>
+          @if (control.touched && control.invalid) {
+            <p class="campo__error">La precaución {{ i + 1 }} debe tener al menos 5 caracteres.</p>
+          }
+        }
+
+        <app-boton
+          variante="secundario"
+          tamano="sm"
+          icono="add"
+          (alHacerClick)="agregarPrecaucion()"
+        >
+          Agregar precaución
+        </app-boton>
+
+        @if (requierePrecauciones() && intentado()) {
+          <p class="campo__error">
+            Agregue al menos una precaución: el personal asistencial aplicará esta guía sin apoyo
+            técnico.
+          </p>
+        }
+      </section>
+    }
+  </form>
+
+  <div acciones class="pie">
+    <app-boton variante="fantasma" [deshabilitado]="guardando()" (alHacerClick)="alCancelar.emit()">
+      Cancelar
+    </app-boton>
+    <app-boton
+      variante="primario"
+      icono="save"
+      [cargando]="guardando()"
+      (alHacerClick)="guardar()"
+    >
+      Guardar guía
+    </app-boton>
   </div>
-</div>
+</app-dialogo-formulario>
