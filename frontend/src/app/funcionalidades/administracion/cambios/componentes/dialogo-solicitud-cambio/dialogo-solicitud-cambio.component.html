@@ -1,0 +1,115 @@
+<app-dialogo-formulario
+  [titulo]="titulo()"
+  [subtitulo]="
+    solicitud()
+      ? 'Actualice la información de la solicitud de cambio técnico.'
+      : 'Complete la información para registrar la solicitud de cambio técnico.'
+  "
+  (cancelar)="solicitarCierre()"
+>
+  <form cuerpo class="formulario" [formGroup]="form" novalidate>
+    @if (errorServidor()) {
+      <app-alerta-en-linea
+        tono="peligro"
+        icono="cloud_off"
+        [descartable]="true"
+        (alDescartar)="errorServidor.set(null)"
+      >
+        {{ errorServidor() }}
+      </app-alerta-en-linea>
+    }
+
+    @if (errores().length > 0) {
+      <app-alerta-en-linea tono="aviso" icono="error">
+        <p class="error-lista__titulo">Revise la información antes de continuar:</p>
+        <ul class="error-lista">
+          @for (error of errores(); track error.mensaje) {
+            <li>{{ error.mensaje }}</li>
+          }
+        </ul>
+      </app-alerta-en-linea>
+    }
+
+    @if (!esDesktop()) {
+      <app-barra-pestanas
+        [pestanas]="PASOS"
+        [(activa)]="pasoActivo"
+        etiquetaAccesible="Pasos del formulario de cambio técnico"
+      />
+    }
+
+    @if (esDesktop() || pasoActivo() === 'generales') {
+      <app-seccion-datos-generales [form]="formGenerales" [intentado]="intentado()" />
+    }
+
+    @if (esDesktop() || pasoActivo() === 'impacto') {
+      <app-seccion-impacto
+        [form]="formImpacto"
+        [areas]="areas()"
+        [intentado]="intentado()"
+      />
+    }
+
+    @if (esDesktop() || pasoActivo() === 'reversa') {
+      <app-seccion-reversa
+        [form]="formReversa"
+        [intentado]="intentado()"
+        [requiereContinuidad]="requiereContinuidad()"
+        [duracionHorario]="duracionActual()"
+      />
+    }
+
+    @if (!esDesktop()) {
+      <nav class="navegacion-pasos" aria-label="Navegación entre pasos">
+        <app-boton
+          variante="fantasma"
+          icono="arrow_back"
+          [deshabilitado]="pasoActivo() === 'generales'"
+          (alHacerClick)="anterior()"
+        >
+          Anterior
+        </app-boton>
+        <app-boton
+          variante="secundario"
+          iconoDerecha="arrow_forward"
+          [deshabilitado]="pasoActivo() === 'reversa'"
+          (alHacerClick)="siguiente()"
+        >
+          Siguiente
+        </app-boton>
+      </nav>
+    }
+  </form>
+
+  <div acciones class="pie-acciones">
+    <app-boton variante="fantasma" (alHacerClick)="solicitarCierre()"> Cancelar </app-boton>
+    <app-boton
+      variante="secundario"
+      icono="save"
+      [deshabilitado]="guardando()"
+      (alHacerClick)="guardar(false)"
+    >
+      Guardar borrador
+    </app-boton>
+    <app-boton
+      variante="primario"
+      icono="send"
+      [cargando]="guardando()"
+      (alHacerClick)="guardar(true)"
+    >
+      Guardar y enviar a evaluación
+    </app-boton>
+  </div>
+</app-dialogo-formulario>
+
+@if (mostrarDescarte()) {
+  <app-dialogo-confirmacion
+    titulo="¿Descartar los cambios no guardados?"
+    mensaje="Si cierra el formulario ahora, perderá la información que ingresó y no se guardará."
+    textoConfirmar="Descartar cambios"
+    textoCancelar="Seguir editando"
+    [esPeligroso]="true"
+    (confirmar)="confirmarDescarte()"
+    (cancelar)="mostrarDescarte.set(false)"
+  />
+}

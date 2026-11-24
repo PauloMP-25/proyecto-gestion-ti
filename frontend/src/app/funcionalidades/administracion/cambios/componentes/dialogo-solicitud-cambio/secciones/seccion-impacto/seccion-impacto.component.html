@@ -1,0 +1,132 @@
+<fieldset class="seccion" [formGroup]="form()">
+  <legend class="seccion__titulo">Evaluación de impacto asistencial</legend>
+
+  @if (sugerenciaCritica()) {
+    <app-alerta-en-linea tono="aviso" icono="emergency">
+      Seleccionó un área crítica. Le sugerimos marcar el impacto como crítico.
+    </app-alerta-en-linea>
+  }
+
+  <div class="subcampo" role="group" aria-label="Áreas afectadas">
+    <span class="subcampo__etiqueta">Áreas afectadas *</span>
+    <p class="subcampo__ayuda">Marque todas las áreas del hospital que sentirán la intervención.</p>
+    <div class="areas">
+      @for (area of areasOrdenadas(); track area.idArea) {
+        <label class="area" [class.area--critica]="area.esCritica">
+          <input
+            type="checkbox"
+            class="area__check"
+            [checked]="seleccionada(area.idArea)"
+            (change)="alternarArea(area.idArea)"
+          />
+          @if (area.esCritica) {
+            <app-icono nombre="emergency" tamano="sm" aria-hidden="true" />
+          }
+          <span>{{ area.nombre }}</span>
+        </label>
+      }
+    </div>
+    @if (mensajeAreas(); as errorAreas) {
+      <p class="mensaje-error" role="alert">{{ errorAreas }}</p>
+    }
+  </div>
+
+  <div class="subcampo" role="radiogroup" aria-label="Nivel de impacto">
+    <span class="subcampo__etiqueta">Nivel de impacto</span>
+    <div class="niveles">
+      @for (nivel of NIVELES; track nivel.valor) {
+        <label
+          class="nivel-card"
+          [attr.data-tono]="nivel.tono"
+          [class.nivel-card--activo]="form().controls.nivel.value === nivel.valor"
+        >
+          <input
+            type="radio"
+            class="radio-card__input"
+            [formControl]="form().controls.nivel"
+            [value]="nivel.valor"
+          />
+          <span class="nivel-card__titulo">{{ nivel.texto }}</span>
+          <span class="nivel-card__ayuda">{{ nivel.ayuda }}</span>
+        </label>
+      }
+    </div>
+  </div>
+
+  <div class="subcampo">
+    <label class="interruptor">
+      <input type="checkbox" [formControl]="form().controls.requiereInterrupcion" />
+      <span class="interruptor__texto">¿Requiere interrumpir el servicio?</span>
+    </label>
+  </div>
+
+  @if (requiereInterrupcion()) {
+    <app-campo-formulario
+      etiqueta="Minutos de interrupción"
+      paraId="cambio-minutos-interrupcion"
+      [requerido]="true"
+      [error]="mensajeInterrupcion()"
+    >
+      <input
+        id="cambio-minutos-interrupcion"
+        type="number"
+        min="1"
+        [formControl]="form().controls.minutosInterrupcion"
+      />
+    </app-campo-formulario>
+  }
+
+  <div class="subcampo">
+    <label class="subcampo__etiqueta" for="cambio-servicio-entrada">Servicios afectados</label>
+    <p class="subcampo__ayuda">Escriba el servicio y presione Enter.</p>
+    <input
+      id="cambio-servicio-entrada"
+      type="text"
+      class="campo-texto"
+      [formControl]="servicioEntrada"
+      (keydown.enter)="agregarServicio($event)"
+      placeholder="Ej.: Registro de admisión"
+    />
+    @if (servicios().length > 0) {
+      <ul class="etiquetas" aria-label="Servicios afectados seleccionados">
+        @for (servicio of servicios(); track servicio) {
+          <li class="etiqueta">
+            <span>{{ servicio }}</span>
+            <button
+              type="button"
+              class="etiqueta__quitar"
+              [attr.aria-label]="'Quitar servicio ' + servicio"
+              (click)="quitarServicio(servicio)"
+            >
+              <app-icono nombre="close" tamano="sm" aria-hidden="true" />
+            </button>
+          </li>
+        }
+      </ul>
+    }
+  </div>
+
+  <app-campo-formulario
+    etiqueta="Pacientes potencialmente afectados"
+    paraId="cambio-pacientes-afectados"
+  >
+    <textarea
+      id="cambio-pacientes-afectados"
+      rows="2"
+      [formControl]="form().controls.pacientesPotencialmenteAfectados"
+      placeholder="Ej.: Pacientes de Emergencia durante el turno noche."
+    ></textarea>
+  </app-campo-formulario>
+
+  <app-campo-formulario
+    etiqueta="Descripción del impacto"
+    paraId="cambio-descripcion-impacto"
+  >
+    <textarea
+      id="cambio-descripcion-impacto"
+      rows="3"
+      [formControl]="form().controls.descripcion"
+      placeholder="Explique qué servicios se verán afectados y cómo se mitigará."
+    ></textarea>
+  </app-campo-formulario>
+</fieldset>

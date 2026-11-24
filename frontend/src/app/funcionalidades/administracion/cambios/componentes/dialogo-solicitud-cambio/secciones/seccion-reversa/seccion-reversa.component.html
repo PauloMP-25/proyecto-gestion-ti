@@ -1,0 +1,103 @@
+<fieldset class="seccion" [formGroup]="form()">
+  <legend class="seccion__titulo">Plan de reversa y continuidad asistencial</legend>
+
+  @if (avisoReversaLarga()) {
+    <app-alerta-en-linea tono="aviso" icono="warning">
+      El tiempo de reversa supera el horario programado.
+    </app-alerta-en-linea>
+  }
+
+  <app-campo-formulario etiqueta="¿Cuándo se activa la reversa?" paraId="cambio-reversa-criterio">
+    <textarea
+      id="cambio-reversa-criterio"
+      rows="2"
+      [formControl]="form().controls.reversaCriterio"
+      placeholder="Ej. si a los 15 minutos el sistema clínico no permite registrar admisiones"
+    ></textarea>
+  </app-campo-formulario>
+
+  <div class="pasos" formArrayName="reversaPasos">
+    <span class="subcampo__etiqueta">Pasos de reversa</span>
+    @for (paso of pasos().controls; track paso; let i = $index) {
+      <div class="pasos__fila" [formGroupName]="i">
+        <span class="pasos__numero" aria-hidden="true">{{ i + 1 }}</span>
+        <input
+          type="text"
+          class="pasos__input"
+          [formControl]="paso.controls.descripcion"
+          [attr.aria-label]="'Descripción del paso de reversa ' + (i + 1)"
+          placeholder="Ej.: Restaure la configuración anterior del servicio."
+        />
+        <app-boton-icono
+          icono="arrow_upward"
+          [etiqueta]="'Subir paso de reversa ' + (i + 1)"
+          tamano="sm"
+          [deshabilitado]="i === 0"
+          (alHacerClick)="moverPaso(i, -1)"
+        />
+        <app-boton-icono
+          icono="arrow_downward"
+          [etiqueta]="'Bajar paso de reversa ' + (i + 1)"
+          tamano="sm"
+          [deshabilitado]="i === pasos().length - 1"
+          (alHacerClick)="moverPaso(i, 1)"
+        />
+        <app-boton-icono
+          icono="delete"
+          [etiqueta]="'Quitar paso de reversa ' + (i + 1)"
+          variante="peligro"
+          tamano="sm"
+          [deshabilitado]="pasos().length === 1"
+          (alHacerClick)="quitarPaso(i)"
+        />
+      </div>
+    }
+    <app-boton variante="outline" tamano="sm" icono="add" (alHacerClick)="agregarPaso()">
+      Agregar paso de reversa
+    </app-boton>
+    @if (mensajePlanReversa(); as errorPlan) {
+      <p class="mensaje-error" role="alert">{{ errorPlan }}</p>
+    }
+  </div>
+
+  <div class="rejilla-doble">
+    <app-campo-formulario
+      etiqueta="Tiempo estimado de reversa (min)"
+      paraId="cambio-reversa-minutos"
+    >
+      <input
+        id="cambio-reversa-minutos"
+        type="number"
+        min="1"
+        [formControl]="form().controls.reversaMinutos"
+      />
+    </app-campo-formulario>
+
+    <app-campo-formulario
+      etiqueta="Responsable de la reversa"
+      paraId="cambio-responsable-reversa"
+    >
+      <input
+        id="cambio-responsable-reversa"
+        type="text"
+        [formControl]="form().controls.responsableReversa"
+        placeholder="Nombre del técnico que activará la reversa"
+      />
+    </app-campo-formulario>
+  </div>
+
+  <app-campo-formulario
+    etiqueta="Plan de continuidad asistencial"
+    paraId="cambio-plan-continuidad"
+    [requerido]="requiereContinuidad()"
+    [error]="mensajeContinuidad()"
+    ayuda="Obligatorio para cambios de impacto alto o crítico."
+  >
+    <textarea
+      id="cambio-plan-continuidad"
+      rows="3"
+      [formControl]="form().controls.planContinuidad"
+      placeholder="Ej.: Admisión continuará registrando pacientes en formularios de contingencia."
+    ></textarea>
+  </app-campo-formulario>
+</fieldset>

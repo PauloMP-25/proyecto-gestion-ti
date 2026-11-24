@@ -1,0 +1,76 @@
+<table class="tabla-cambios">
+  <caption class="tabla-cambios__caption">Solicitudes de cambio técnico</caption>
+  <thead>
+    <tr>
+      <th scope="col">Código</th>
+      <th scope="col">Solicitud</th>
+      <th scope="col">Áreas afectadas</th>
+      <th scope="col">Tipo</th>
+      <th scope="col">Impacto</th>
+      <th scope="col">Estado</th>
+      <th scope="col">Horario programado</th>
+      <th scope="col">Responsable</th>
+      <th scope="col"><span class="solo-lectores">Acciones</span></th>
+    </tr>
+  </thead>
+  <tbody>
+    @for (cambio of cambios(); track cambio.id) {
+      <tr
+        class="tabla-cambios__fila"
+        tabindex="0"
+        [attr.data-impacto]="cambio.impacto"
+        (click)="alSeleccionar.emit(cambio.id)"
+        (keydown.enter)="alSeleccionar.emit(cambio.id)"
+      >
+        <td class="tabla-cambios__codigo">{{ cambio.codigo }}</td>
+        <td>
+          <span class="tabla-cambios__titulo">{{ cambio.titulo }}</span>
+          <span class="tabla-cambios__categoria">{{ ETIQUETA_CATEGORIA[cambio.categoria] }}</span>
+        </td>
+        <td class="tabla-cambios__areas">
+          {{ cambio.areasAfectadas.length > 0 ? resumenAreas(cambio.areasAfectadas) : 'Sin áreas definidas' }}
+        </td>
+        <td>
+          <app-insignia
+            [texto]="PRESENTACION_TIPO[cambio.tipo].texto"
+            [tono]="PRESENTACION_TIPO[cambio.tipo].tono"
+            [icono]="PRESENTACION_TIPO[cambio.tipo].icono"
+          />
+        </td>
+        <td>
+          <app-insignia
+            [texto]="PRESENTACION_IMPACTO[cambio.impacto].texto"
+            [tono]="PRESENTACION_IMPACTO[cambio.impacto].tono"
+            [icono]="PRESENTACION_IMPACTO[cambio.impacto].icono"
+          />
+        </td>
+        <td>
+          <app-insignia
+            [texto]="PRESENTACION_ESTADO[cambio.estado].texto"
+            [tono]="PRESENTACION_ESTADO[cambio.estado].tono"
+            [icono]="PRESENTACION_ESTADO[cambio.estado].icono"
+          />
+        </td>
+        <td class="tabla-cambios__horario">
+          @if (cambio.horario; as horario) {
+            <span>{{ horario.inicioIso | date: 'dd/MM/yyyy HH:mm' }}</span>
+            <span>– {{ horario.finIso | date: 'dd/MM/yyyy' }} {{ horario.finIso | date: 'HH:mm' }}</span>
+          } @else {
+            <span class="tabla-cambios__tenue">Sin programar</span>
+          }
+        </td>
+        <td class="tabla-cambios__responsable">
+          {{ cambio.responsableEjecucion ?? 'Sin asignar' }}
+        </td>
+        <td class="tabla-cambios__accion">
+          <app-boton-icono
+            icono="visibility"
+            [etiqueta]="'Ver detalle de ' + cambio.codigo"
+            tamano="sm"
+            (alHacerClick)="seleccionar($event, cambio.id)"
+          />
+        </td>
+      </tr>
+    }
+  </tbody>
+</table>

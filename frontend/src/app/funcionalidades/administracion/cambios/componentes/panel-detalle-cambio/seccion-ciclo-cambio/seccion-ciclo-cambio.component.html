@@ -1,0 +1,31 @@
+<ol class="ciclo" aria-label="Etapas del cambio técnico">
+  @for (etapa of ETAPAS; track etapa.estado; let i = $index) {
+    <li
+      class="ciclo__etapa"
+      [class.ciclo__etapa--completada]="esCompletada(i)"
+      [class.ciclo__etapa--actual]="esActual(i)"
+      [class.ciclo__etapa--rechazada]="esEtapaRechazada(i)"
+      [attr.aria-current]="esActual(i) || esEtapaRechazada(i) ? 'step' : null"
+    >
+      <span class="ciclo__marcador" aria-hidden="true">
+        @if (esCompletada(i) || (esActual(i) && estado() === 'IMPLEMENTADO')) {
+          <app-icono nombre="check" tamano="sm" />
+        } @else if (esEtapaRechazada(i)) {
+          <app-icono nombre="cancel" tamano="sm" />
+        } @else {
+          <span class="ciclo__numero">{{ i + 1 }}</span>
+        }
+      </span>
+      <span class="ciclo__texto">{{ etapa.texto }}</span>
+    </li>
+  }
+</ol>
+
+@if (esRechazado()) {
+  <app-alerta-en-linea tono="peligro" icono="cancel">
+    La evaluación terminó con rechazo.
+    @if (motivo()) {
+      {{ motivo() }}
+    }
+  </app-alerta-en-linea>
+}

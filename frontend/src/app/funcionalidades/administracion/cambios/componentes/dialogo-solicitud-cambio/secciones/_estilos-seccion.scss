@@ -1,0 +1,213 @@
+.seccion {
+  display: flex;
+  flex-direction: column;
+  margin: 0;
+  padding: 0;
+  border: none;
+  gap: var(--espacio-2);
+}
+
+.seccion__titulo {
+  margin: 0 0 var(--espacio-2);
+  padding: 0;
+  font-size: var(--font-size-lg);
+  font-weight: var(--font-weight-semibold);
+  color: var(--color-text-main);
+}
+
+.subcampo {
+  display: flex;
+  flex-direction: column;
+  gap: var(--espacio-1);
+  margin-block-end: var(--espacio-4);
+}
+
+.subcampo__etiqueta {
+  font-size: var(--font-size-sm);
+  font-weight: var(--font-weight-medium);
+  color: var(--color-text-main);
+}
+
+.subcampo__ayuda {
+  margin: 0;
+  font-size: var(--font-size-xs);
+  color: var(--color-text-muted);
+}
+
+.subcampo__nota {
+  margin: 0;
+  font-size: var(--font-size-sm);
+  color: var(--color-text-secondary);
+}
+
+.rejilla-doble {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 0 var(--espacio-4);
+
+  @media (min-width: 768px) {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+}
+
+.campo-texto {
+  inline-size: 100%;
+  min-block-size: 2.75rem;
+  padding: var(--espacio-2) var(--espacio-3);
+  border: 1px solid var(--color-border-strong);
+  border-radius: var(--radio-md);
+  background-color: var(--color-surface-card);
+  color: var(--color-text-main);
+  font-family: inherit;
+  font-size: var(--font-size-sm);
+
+  &:focus-visible {
+    outline: var(--foco-anillo);
+    outline-offset: var(--foco-offset);
+  }
+}
+
+.etiquetas {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--espacio-2);
+  margin: var(--espacio-2) 0 0;
+  padding: 0;
+  list-style: none;
+}
+
+.etiqueta {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--espacio-1);
+  padding: var(--espacio-1) var(--espacio-2);
+  border-radius: var(--radio-full);
+  background-color: var(--color-surface-sunken);
+  border: 1px solid var(--color-border-subtle);
+  font-size: var(--font-size-xs);
+  color: var(--color-text-secondary);
+}
+
+.etiqueta__quitar {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0;
+  border: none;
+  background: transparent;
+  color: var(--color-text-muted);
+  cursor: pointer;
+  border-radius: var(--radio-full);
+
+  &:hover {
+    color: var(--color-error-text);
+  }
+
+  &:focus-visible {
+    outline: var(--foco-anillo);
+    outline-offset: var(--foco-offset);
+  }
+}
+
+.mensaje-error {
+  margin: var(--espacio-1) 0 0;
+  font-size: var(--font-size-xs);
+  font-weight: var(--font-weight-medium);
+  color: var(--color-error-text);
+}
+
+.radio-cards {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: var(--espacio-2);
+
+  @media (min-width: 600px) {
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+  }
+}
+
+.radio-card {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  gap: var(--espacio-1);
+  padding: var(--espacio-3);
+  border: 1px solid var(--color-border-subtle);
+  border-radius: var(--radio-md);
+  background-color: var(--color-surface-card);
+  cursor: pointer;
+  transition: border-color var(--transition-fast), box-shadow var(--transition-fast);
+
+  &:hover {
+    border-color: var(--color-border-strong);
+  }
+
+  &--activo {
+    border-color: var(--color-primary-base);
+    box-shadow: 0 0 0 2px var(--color-primary-light);
+  }
+
+  &:focus-within {
+    outline: var(--foco-anillo);
+    outline-offset: var(--foco-offset);
+  }
+
+  &__input {
+    position: absolute;
+    opacity: 0;
+    inline-size: 1px;
+    block-size: 1px;
+  }
+
+  &__titulo {
+    font-size: var(--font-size-sm);
+    font-weight: var(--font-weight-semibold);
+    color: var(--color-text-main);
+  }
+
+  &__descripcion {
+    font-size: var(--font-size-xs);
+    color: var(--color-text-secondary);
+    line-height: 1.4;
+  }
+}
+
+.pasos {
+  display: flex;
+  flex-direction: column;
+  gap: var(--espacio-2);
+  margin-block-end: var(--espacio-4);
+}
+
+.pasos__fila {
+  display: flex;
+  align-items: center;
+  gap: var(--espacio-1);
+}
+
+.pasos__numero {
+  flex: 0 0 auto;
+  inline-size: 1.5rem;
+  text-align: center;
+  font-family: var(--font-family-mono);
+  font-size: var(--font-size-sm);
+  color: var(--color-text-secondary);
+}
+
+.pasos__input {
+  flex: 1;
+  min-inline-size: 0;
+  min-block-size: 2.75rem;
+  padding: var(--espacio-2) var(--espacio-3);
+  border: 1px solid var(--color-border-strong);
+  border-radius: var(--radio-md);
+  background-color: var(--color-surface-card);
+  color: var(--color-text-main);
+  font-family: inherit;
+  font-size: var(--font-size-sm);
+
+  &:focus-visible {
+    outline: var(--foco-anillo);
+    outline-offset: var(--foco-offset);
+  }
+}

@@ -1,0 +1,39 @@
+<app-dialogo-formulario
+  [titulo]="titulo()"
+  [subtitulo]="'Solicitud ' + cambio().codigo"
+  idTitulo="dialogo-decision-cambio-titulo"
+  (cancelar)="alCancelar.emit()"
+>
+  <div cuerpo>
+    <p class="descripcion">{{ presentacion().descripcion }}</p>
+
+    @if (muestraObservacion()) {
+      <app-campo-formulario
+        [etiqueta]="presentacion().etiquetaObservacion ?? 'Observación'"
+        paraId="decision-cambio-observacion"
+        [requerido]="requiereObservacion()"
+        [error]="mensajeError()"
+      >
+        <textarea
+          id="decision-cambio-observacion"
+          class="campo-texto"
+          rows="4"
+          [formControl]="observacion"
+        ></textarea>
+      </app-campo-formulario>
+    }
+  </div>
+
+  <div acciones>
+    <app-boton variante="fantasma" [deshabilitado]="guardando()" (alHacerClick)="alCancelar.emit()">
+      Cancelar
+    </app-boton>
+    <app-boton
+      [variante]="presentacion().variante"
+      [cargando]="guardando()"
+      (alHacerClick)="confirmar()"
+    >
+      {{ presentacion().textoBoton }}
+    </app-boton>
+  </div>
+</app-dialogo-formulario>

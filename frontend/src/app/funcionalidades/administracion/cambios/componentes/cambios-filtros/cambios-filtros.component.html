@@ -1,0 +1,23 @@
+<app-campo-filtro
+  id="filtro-cambio-estado"
+  etiqueta="Estado"
+  [opciones]="OPCIONES_ESTADO"
+  [valor]="filtro().estado"
+  (valorChange)="cambiarEstado($event)"
+/>
+
+<app-campo-filtro
+  id="filtro-cambio-impacto"
+  etiqueta="Impacto asistencial"
+  [opciones]="OPCIONES_IMPACTO"
+  [valor]="filtro().impacto"
+  (valorChange)="cambiarImpacto($event)"
+/>
+
+<app-campo-filtro
+  id="filtro-cambio-tipo"
+  etiqueta="Tipo de cambio"
+  [opciones]="OPCIONES_TIPO"
+  [valor]="filtro().tipo"
+  (valorChange)="cambiarTipo($event)"
+/>

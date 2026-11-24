@@ -1,0 +1,191 @@
+<fieldset class="seccion" [formGroup]="form()">
+  <legend class="seccion__titulo">Datos generales</legend>
+
+  <app-campo-formulario
+    etiqueta="Título del cambio"
+    paraId="cambio-titulo"
+    [requerido]="true"
+    [error]="mensajeTitulo()"
+  >
+    <input
+      id="cambio-titulo"
+      type="text"
+      maxlength="120"
+      [formControl]="form().controls.titulo"
+      placeholder="Ej.: Actualización del firmware del switch de Emergencia"
+    />
+  </app-campo-formulario>
+
+  <div class="subcampo">
+    <span class="subcampo__etiqueta" id="etiqueta-tipo-cambio">Tipo de cambio</span>
+    <div class="radio-cards" role="radiogroup" aria-labelledby="etiqueta-tipo-cambio">
+      @for (opcion of TIPOS; track opcion.valor) {
+        <label
+          class="radio-card"
+          [class.radio-card--activo]="form().controls.tipo.value === opcion.valor"
+        >
+          <input
+            type="radio"
+            class="radio-card__input"
+            [formControl]="form().controls.tipo"
+            [value]="opcion.valor"
+          />
+          <app-icono [nombre]="opcion.icono" tamano="md" aria-hidden="true" />
+          <span class="radio-card__titulo">{{ opcion.titulo }}</span>
+          <span class="radio-card__descripcion">{{ opcion.descripcion }}</span>
+        </label>
+      }
+    </div>
+  </div>
+
+  <app-campo-formulario etiqueta="Categoría" paraId="cambio-categoria" [requerido]="true">
+    <select id="cambio-categoria" [formControl]="form().controls.categoria">
+      @for (categoria of OPCIONES_CATEGORIA; track categoria.valor) {
+        <option [value]="categoria.valor">{{ categoria.etiqueta }}</option>
+      }
+    </select>
+  </app-campo-formulario>
+
+  <app-campo-formulario etiqueta="Descripción" paraId="cambio-descripcion">
+    <textarea
+      id="cambio-descripcion"
+      rows="4"
+      [formControl]="form().controls.descripcion"
+      placeholder="Describa qué se hará durante la intervención."
+    ></textarea>
+  </app-campo-formulario>
+
+  <app-campo-formulario
+    etiqueta="Justificación"
+    paraId="cambio-justificacion"
+    [requerido]="true"
+    [error]="mensajeJustificacion()"
+    ayuda="¿Por qué es necesario?"
+  >
+    <textarea
+      id="cambio-justificacion"
+      rows="3"
+      [formControl]="form().controls.justificacion"
+      placeholder="Explique el motivo técnico o asistencial del cambio."
+    ></textarea>
+  </app-campo-formulario>
+
+  <div class="subcampo">
+    <label class="subcampo__etiqueta" for="cambio-equipo-entrada">Equipos afectados</label>
+    <p class="subcampo__ayuda">Escriba el código de inventario y presione Enter.</p>
+    <input
+      id="cambio-equipo-entrada"
+      type="text"
+      class="campo-texto"
+      [formControl]="equipoEntrada"
+      (keydown.enter)="agregarEquipo($event)"
+      placeholder="Ej.: EQ-ADM-014"
+    />
+    @if (equipos().length > 0) {
+      <ul class="etiquetas" aria-label="Equipos afectados seleccionados">
+        @for (equipo of equipos(); track equipo) {
+          <li class="etiqueta">
+            <span>{{ equipo }}</span>
+            <button
+              type="button"
+              class="etiqueta__quitar"
+              [attr.aria-label]="'Quitar equipo ' + equipo"
+              (click)="quitarEquipo(equipo)"
+            >
+              <app-icono nombre="close" tamano="sm" aria-hidden="true" />
+            </button>
+          </li>
+        }
+      </ul>
+    }
+  </div>
+
+  <div class="rejilla-doble">
+    <app-campo-formulario etiqueta="Ticket de origen" paraId="cambio-ticket">
+      <input
+        id="cambio-ticket"
+        type="number"
+        min="1"
+        [formControl]="form().controls.idTicketOrigen"
+        placeholder="N.º de ticket que motivó el cambio (opcional)"
+      />
+    </app-campo-formulario>
+
+    <app-campo-formulario etiqueta="Responsable de ejecución" paraId="cambio-responsable">
+      <input
+        id="cambio-responsable"
+        type="text"
+        [formControl]="form().controls.responsableEjecucion"
+        placeholder="Nombre del técnico responsable"
+      />
+    </app-campo-formulario>
+  </div>
+
+  <div class="subcampo">
+    <span class="subcampo__etiqueta">Horario programado</span>
+    <div class="rejilla-doble">
+      <app-campo-formulario etiqueta="Inicio" paraId="cambio-horario-inicio">
+        <input
+          id="cambio-horario-inicio"
+          type="datetime-local"
+          [formControl]="form().controls.horarioInicio"
+        />
+      </app-campo-formulario>
+
+      <app-campo-formulario etiqueta="Fin" paraId="cambio-horario-fin">
+        <input
+          id="cambio-horario-fin"
+          type="datetime-local"
+          [formControl]="form().controls.horarioFin"
+        />
+      </app-campo-formulario>
+    </div>
+    @if (duracionTexto(); as duracion) {
+      <p class="subcampo__nota">{{ duracion }}</p>
+    }
+    @if (mensajeHorario(); as errorHorario) {
+      <p class="mensaje-error" role="alert">{{ errorHorario }}</p>
+    }
+  </div>
+
+  <div class="pasos" formArrayName="pasos">
+    <span class="subcampo__etiqueta">Pasos de implementación</span>
+    @for (paso of pasos().controls; track paso; let i = $index) {
+      <div class="pasos__fila" [formGroupName]="i">
+        <span class="pasos__numero" aria-hidden="true">{{ i + 1 }}</span>
+        <input
+          type="text"
+          class="pasos__input"
+          [formControl]="paso.controls.descripcion"
+          [attr.aria-label]="'Descripción del paso ' + (i + 1)"
+          placeholder="Ej.: Notifique al área afectada antes de iniciar."
+        />
+        <app-boton-icono
+          icono="arrow_upward"
+          [etiqueta]="'Subir paso ' + (i + 1)"
+          tamano="sm"
+          [deshabilitado]="i === 0"
+          (alHacerClick)="moverPaso(i, -1)"
+        />
+        <app-boton-icono
+          icono="arrow_downward"
+          [etiqueta]="'Bajar paso ' + (i + 1)"
+          tamano="sm"
+          [deshabilitado]="i === pasos().length - 1"
+          (alHacerClick)="moverPaso(i, 1)"
+        />
+        <app-boton-icono
+          icono="delete"
+          [etiqueta]="'Quitar paso ' + (i + 1)"
+          variante="peligro"
+          tamano="sm"
+          [deshabilitado]="pasos().length === 1"
+          (alHacerClick)="quitarPaso(i)"
+        />
+      </div>
+    }
+    <app-boton variante="outline" tamano="sm" icono="add" (alHacerClick)="agregarPaso()">
+      Agregar paso
+    </app-boton>
+  </div>
+</fieldset>

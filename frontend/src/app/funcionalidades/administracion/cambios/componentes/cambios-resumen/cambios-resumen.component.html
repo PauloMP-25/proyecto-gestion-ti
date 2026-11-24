@@ -1,0 +1,19 @@
+<div class="resumen" role="group" aria-label="Filtrar solicitudes por estado">
+  <app-chip-filtro
+    etiqueta="Todas"
+    icono="grid_on"
+    [conteo]="total()"
+    [activo]="estadoActivo() === null"
+    (alHacerClick)="alSeleccionarEstado.emit(null)"
+  />
+
+  @for (estado of ESTADOS_CAMBIO; track estado) {
+    <app-chip-filtro
+      [etiqueta]="PRESENTACION_ESTADO[estado].texto"
+      [icono]="PRESENTACION_ESTADO[estado].icono"
+      [conteo]="conteo()[estado]"
+      [activo]="estadoActivo() === estado"
+      (alHacerClick)="alSeleccionarEstado.emit(estado)"
+    />
+  }
+</div>

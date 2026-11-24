@@ -1,0 +1,93 @@
+:host {
+  display: block;
+  margin-block-end: var(--espacio-4);
+}
+
+.ciclo {
+  display: flex;
+  align-items: flex-start;
+  gap: var(--espacio-2);
+  margin: 0 0 var(--espacio-3);
+  padding: 0;
+  list-style: none;
+  overflow-x: auto;
+  scroll-snap-type: x mandatory;
+
+  &__etapa {
+    position: relative;
+    display: flex;
+    flex: 1 0 auto;
+    flex-direction: column;
+    align-items: center;
+    gap: var(--espacio-2xs);
+    min-inline-size: 5.5rem;
+    text-align: center;
+    scroll-snap-align: start;
+
+    &:not(:first-child)::before {
+      content: '';
+      position: absolute;
+      inset-block-start: 0.75rem;
+      inset-inline-end: 50%;
+      inline-size: 100%;
+      border-block-start: 2px solid var(--color-border-subtle);
+    }
+
+    &--completada::before {
+      border-block-start-color: var(--color-primary-base);
+    }
+
+    &--rechazada::before {
+      border-block-start-color: var(--color-error-border);
+    }
+  }
+
+  &__marcador {
+    position: relative;
+    z-index: 1;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    inline-size: 1.5rem;
+    block-size: 1.5rem;
+    border-radius: var(--radio-full);
+    border: 2px solid var(--color-border-strong);
+    background-color: var(--color-surface-card);
+    color: var(--color-text-muted);
+    font-size: var(--font-size-xs);
+    font-weight: var(--font-weight-semibold);
+  }
+
+  &__etapa--completada &__marcador {
+    border-color: var(--color-primary-base);
+    background-color: var(--color-primary-base);
+    color: var(--color-text-on-primary);
+  }
+
+  &__etapa--actual &__marcador {
+    border-color: var(--color-primary-base);
+    color: var(--color-primary-base);
+    box-shadow: 0 0 0 3px var(--color-primary-light);
+  }
+
+  &__etapa--rechazada &__marcador {
+    border-color: var(--color-error-border);
+    background-color: var(--color-error-bg);
+    color: var(--color-error-text);
+  }
+
+  &__texto {
+    font-size: var(--font-size-xs);
+    color: var(--color-text-secondary);
+  }
+
+  &__etapa--actual &__texto {
+    font-weight: var(--font-weight-semibold);
+    color: var(--color-text-main);
+  }
+
+  &__etapa--rechazada &__texto {
+    color: var(--color-error-text);
+    font-weight: var(--font-weight-semibold);
+  }
+}

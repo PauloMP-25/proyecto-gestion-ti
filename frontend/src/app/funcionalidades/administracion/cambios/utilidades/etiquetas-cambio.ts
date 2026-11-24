@@ -1,5 +1,7 @@
 import { TonoInsignia } from '../../../../compartido/ui/atomos/insignia/insignia.component';
+import { VarianteBoton } from '../../../../compartido/ui/atomos/boton/boton.component';
 import {
+  AccionCambio,
   CategoriaCambio,
   EstadoCambio,
   ImpactoAsistencial,
@@ -64,3 +66,67 @@ export const ETIQUETA_CATEGORIA: Record<CategoriaCambio, string> = {
   EQUIPO_USUARIO: 'Equipos de usuario',
   SEGURIDAD: 'Seguridad y accesos',
 };
+
+export interface PresentacionAccionCambio {
+  readonly textoBoton: string;
+  readonly variante: VarianteBoton;
+  readonly icono: string;
+  readonly tituloDialogo: string;
+  readonly etiquetaObservacion: string | null;
+  readonly descripcion: string;
+}
+
+export const PRESENTACION_ACCION: Record<AccionCambio, PresentacionAccionCambio> = {
+  ENVIAR_EVALUACION: {
+    textoBoton: 'Enviar al comité de evaluación',
+    variante: 'primario',
+    icono: 'send',
+    tituloDialogo: '¿Enviar este cambio al comité de evaluación?',
+    etiquetaObservacion: null,
+    descripcion: 'La solicitud pasará al comité de evaluación técnica para su revisión.',
+  },
+  APROBAR: {
+    textoBoton: 'Aprobar cambio',
+    variante: 'exito',
+    icono: 'verified',
+    tituloDialogo: '¿Aprobar el cambio {codigo}?',
+    etiquetaObservacion: 'Observación (opcional)',
+    descripcion: 'El cambio quedará aprobado y podrá programarse para ejecución.',
+  },
+  RECHAZAR: {
+    textoBoton: 'Rechazar',
+    variante: 'peligro',
+    icono: 'cancel',
+    tituloDialogo: '¿Rechazar el cambio {codigo}?',
+    etiquetaObservacion: 'Motivo del rechazo',
+    descripcion: 'Explique el motivo para que el responsable pueda corregirlo en una nueva solicitud.',
+  },
+  DEVOLVER_BORRADOR: {
+    textoBoton: 'Solicitar correcciones',
+    variante: 'outline',
+    icono: 'edit_note',
+    tituloDialogo: '¿Solicitar correcciones al cambio {codigo}?',
+    etiquetaObservacion: 'Correcciones solicitadas',
+    descripcion: 'La solicitud volverá al responsable para que complete o corrija la información.',
+  },
+  INICIAR_EJECUCION: {
+    textoBoton: 'Iniciar intervención',
+    variante: 'primario',
+    icono: 'engineering',
+    tituloDialogo: '¿Iniciar la intervención del cambio {codigo}?',
+    etiquetaObservacion: null,
+    descripcion: 'La intervención quedará registrada como en curso. Coordine con las áreas afectadas.',
+  },
+  MARCAR_IMPLEMENTADO: {
+    textoBoton: 'Registrar como implementado',
+    variante: 'exito',
+    icono: 'task_alt',
+    tituloDialogo: '¿Registrar el cambio {codigo} como implementado?',
+    etiquetaObservacion: 'Resultado de la intervención',
+    descripcion: 'Registre el resultado de la intervención para cerrar el cambio.',
+  },
+};
+
+export function tituloDialogoAccion(accion: AccionCambio, codigo: string): string {
+  return PRESENTACION_ACCION[accion].tituloDialogo.replace('{codigo}', codigo);
+}

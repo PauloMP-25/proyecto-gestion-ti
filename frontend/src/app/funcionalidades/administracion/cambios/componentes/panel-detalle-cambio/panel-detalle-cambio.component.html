@@ -1,0 +1,231 @@
+<app-panel-detalle
+  [abierto]="abierto()"
+  [titulo]="cambio()?.codigo ?? 'Solicitud de cambio técnico'"
+  [subtitulo]="cambio()?.titulo"
+  icono="change_circle"
+  modo="lateral"
+  ancho="lg"
+  (alCerrar)="cerrar()"
+>
+  @if (cargando() || !cambio()) {
+    <app-esqueleto preset="articulo" />
+  } @else if (cambio(); as detalle) {
+    <app-barra-pestanas
+      [pestanas]="PESTANAS"
+      [(activa)]="pestanaActiva"
+      etiquetaAccesible="Secciones del detalle del cambio técnico"
+    />
+
+    @switch (pestanaActiva()) {
+      @case ('resumen') {
+        <app-seccion-ciclo-cambio
+          [estado]="detalle.estado"
+          [motivo]="detalle.observacionDecision"
+        />
+
+        <div class="rejilla-datos">
+          <app-dato-etiquetado
+            etiqueta="Estado"
+            [valor]="PRESENTACION_ESTADO[detalle.estado].texto"
+          />
+          <app-dato-etiquetado
+            etiqueta="Tipo de cambio"
+            [valor]="PRESENTACION_TIPO[detalle.tipo].texto"
+          />
+          <app-dato-etiquetado
+            etiqueta="Categoría"
+            [valor]="ETIQUETA_CATEGORIA[detalle.categoria]"
+          />
+          <app-dato-etiquetado etiqueta="Solicitante" [valor]="detalle.solicitante" />
+          <app-dato-etiquetado
+            etiqueta="Responsable de ejecución"
+            [valor]="detalle.responsableEjecucion ?? 'Sin asignar'"
+          />
+          <app-dato-etiquetado
+            etiqueta="Horario programado"
+            [valor]="horarioTexto(detalle)"
+          />
+          <app-dato-etiquetado
+            etiqueta="Fecha de registro"
+            [valor]="formatearFechaHora(detalle.fechaRegistroIso)"
+          />
+        </div>
+
+        <h3 class="subtitulo-seccion">Justificación</h3>
+        <p class="parrafo">{{ detalle.justificacion }}</p>
+
+        @if (detalle.equiposAfectados.length > 0) {
+          <h3 class="subtitulo-seccion">Equipos afectados</h3>
+          <ul class="lista-chips">
+            @for (equipo of detalle.equiposAfectados; track equipo) {
+              <li class="chip">{{ equipo }}</li>
+            }
+          </ul>
+        }
+
+        @if (detalle.idTicketOrigen !== null) {
+          <p class="enlace-ticket">
+            <a [routerLink]="['/incidentes', detalle.idTicketOrigen]">
+              Consulta el ticket de origen #{{ detalle.idTicketOrigen }}
+            </a>
+          </p>
+        }
+      }
+
+      @case ('impacto') {
+        <app-alerta-en-linea
+          [tono]="tonoAlertaImpacto(detalle.impacto)"
+          [icono]="PRESENTACION_IMPACTO[detalle.impacto].icono"
+        >
+          <strong>{{ PRESENTACION_IMPACTO[detalle.impacto].texto }}.</strong>
+          {{ PRESENTACION_IMPACTO[detalle.impacto].ayuda }}
+        </app-alerta-en-linea>
+
+        <h3 class="subtitulo-seccion">Áreas afectadas</h3>
+        @if (detalle.evaluacion.areasAfectadas.length > 0) {
+          <ul class="lista-areas">
+            @for (area of detalle.evaluacion.areasAfectadas; track area.idArea) {
+              <li [class.lista-areas__critica]="area.esCritica">
+                @if (area.esCritica) {
+                  <app-icono nombre="emergency" tamano="sm" aria-hidden="true" />
+                }
+                <span>{{ area.nombre }}</span>
+              </li>
+            }
+          </ul>
+        } @else {
+          <p class="parrafo tenue">No se registraron áreas afectadas.</p>
+        }
+
+        <div class="rejilla-datos">
+          <app-dato-etiquetado
+            etiqueta="¿Interrumpe el servicio?"
+            [valor]="
+              detalle.evaluacion.requiereInterrupcion
+                ? 'Sí, ' + (detalle.evaluacion.minutosInterrupcion ?? 0) + ' minutos'
+                : 'No'
+            "
+          />
+          <app-dato-etiquetado
+            etiqueta="Servicios afectados"
+            [valor]="
+              detalle.evaluacion.serviciosAfectados.length > 0
+                ? detalle.evaluacion.serviciosAfectados.join(', ')
+                : 'Ninguno'
+            "
+          />
+          <app-dato-etiquetado
+            etiqueta="Pacientes potencialmente afectados"
+            [valor]="detalle.evaluacion.pacientesPotencialmenteAfectados ?? 'No se identificaron'"
+          />
+        </div>
+
+        <h3 class="subtitulo-seccion">Descripción del impacto</h3>
+        <p class="parrafo">{{ detalle.evaluacion.descripcion }}</p>
+      }
+
+      @case ('plan') {
+        <h3 class="subtitulo-seccion">Pasos de implementación</h3>
+        @if (detalle.pasosImplementacion.length > 0) {
+          <ol class="lista-pasos">
+            @for (paso of detalle.pasosImplementacion; track $index) {
+              <li class="lista-pasos__item">
+                <span class="lista-pasos__numero" aria-hidden="true">{{ $index + 1 }}</span>
+                <div class="lista-pasos__contenido">
+                  <p>{{ paso.descripcion }}</p>
+                  @if (paso.responsable || paso.minutosEstimados) {
+                    <span class="lista-pasos__meta">
+                      @if (paso.responsable) {
+                        {{ paso.responsable }}
+                      }
+                      @if (paso.minutosEstimados) {
+                        · {{ paso.minutosEstimados }} min
+                      }
+                    </span>
+                  }
+                </div>
+              </li>
+            }
+          </ol>
+        } @else {
+          <p class="parrafo tenue">La solicitud no tiene pasos de implementación registrados.</p>
+        }
+
+        <h3 class="subtitulo-seccion">Plan de reversa</h3>
+        <app-alerta-en-linea tono="aviso" icono="warning">
+          <strong>Criterio de activación:</strong>
+          {{ detalle.planReversa.criterioActivacion }}
+        </app-alerta-en-linea>
+
+        @if (detalle.planReversa.pasos.length > 0) {
+          <ol class="lista-pasos">
+            @for (paso of detalle.planReversa.pasos; track $index) {
+              <li class="lista-pasos__item">
+                <span class="lista-pasos__numero" aria-hidden="true">{{ $index + 1 }}</span>
+                <div class="lista-pasos__contenido">
+                  <p>{{ paso.descripcion }}</p>
+                </div>
+              </li>
+            }
+          </ol>
+        }
+
+        <div class="rejilla-datos">
+          <app-dato-etiquetado
+            etiqueta="Tiempo estimado de reversa"
+            [valor]="detalle.planReversa.minutosEstimados + ' minutos'"
+          />
+          <app-dato-etiquetado
+            etiqueta="Responsable de la reversa"
+            [valor]="detalle.planReversa.responsableReversa"
+          />
+        </div>
+
+        <h3 class="subtitulo-seccion">Plan de continuidad asistencial</h3>
+        <p class="parrafo">{{ detalle.planReversa.planContinuidad }}</p>
+      }
+
+      @case ('historial') {
+        <app-linea-tiempo-auditoria
+          [eventos]="historial()"
+          ariaLabel="Historial de la solicitud de cambio"
+          [modoTecnico]="false"
+        />
+      }
+    }
+  }
+
+  <div acciones>
+    @if (cambio(); as detalle) {
+      @for (accion of acciones(); track accion) {
+        <app-boton
+          [variante]="PRESENTACION_ACCION[accion].variante"
+          [icono]="PRESENTACION_ACCION[accion].icono"
+          [deshabilitado]="guardando()"
+          (alHacerClick)="alAccion.emit(accion)"
+        >
+          {{ PRESENTACION_ACCION[accion].textoBoton }}
+        </app-boton>
+      }
+
+      @if (esEditable(detalle.estado)) {
+        <app-boton
+          variante="secundario"
+          icono="edit"
+          [deshabilitado]="guardando()"
+          (alHacerClick)="alEditar.emit()"
+        >
+          Editar
+        </app-boton>
+        <app-boton
+          variante="peligro"
+          icono="delete"
+          [deshabilitado]="guardando()"
+          (alHacerClick)="alEliminar.emit()"
+        >
+          Eliminar borrador
+        </app-boton>
+      }
+    }
+  </div>
+</app-panel-detalle>

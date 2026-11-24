@@ -1,0 +1,53 @@
+<app-tarjeta [interactiva]="true" [acento]="acento()">
+  <button
+    type="button"
+    class="tarjeta-cambio"
+    [attr.aria-label]="'Ver detalle de ' + cambio().codigo + ': ' + cambio().titulo"
+    (click)="alSeleccionar.emit(cambio().id)"
+  >
+    <span class="tarjeta-cambio__fila">
+      <span class="tarjeta-cambio__codigo">{{ cambio().codigo }}</span>
+      <app-insignia
+        [texto]="PRESENTACION_ESTADO[cambio().estado].texto"
+        [tono]="PRESENTACION_ESTADO[cambio().estado].tono"
+        [icono]="PRESENTACION_ESTADO[cambio().estado].icono"
+      />
+    </span>
+
+    <span class="tarjeta-cambio__titulo">{{ cambio().titulo }}</span>
+
+    <span class="tarjeta-cambio__insignias">
+      <app-insignia
+        [texto]="PRESENTACION_TIPO[cambio().tipo].texto"
+        [tono]="PRESENTACION_TIPO[cambio().tipo].tono"
+      />
+      <app-insignia
+        [texto]="PRESENTACION_IMPACTO[cambio().impacto].texto"
+        [tono]="PRESENTACION_IMPACTO[cambio().impacto].tono"
+        [icono]="PRESENTACION_IMPACTO[cambio().impacto].icono"
+      />
+    </span>
+
+    @if (cambio().areasAfectadas.length > 0) {
+      <span class="tarjeta-cambio__meta">
+        <app-icono nombre="location_on" tamano="sm" aria-hidden="true" />
+        <span>{{ areasVisibles() }}</span>
+      </span>
+    }
+
+    @if (cambio().horario; as horario) {
+      <span class="tarjeta-cambio__meta">
+        <app-icono nombre="calendar_today" tamano="sm" aria-hidden="true" />
+        <span>
+          {{ horario.inicioIso | date: 'dd/MM/yyyy · HH:mm' }} –
+          {{ horario.finIso | date: (mismoDia(horario.inicioIso, horario.finIso) ? 'HH:mm' : 'dd/MM/yyyy · HH:mm') }}
+        </span>
+      </span>
+    }
+
+    <span class="tarjeta-cambio__meta">
+      <app-icono nombre="person" tamano="sm" aria-hidden="true" />
+      <span>{{ cambio().responsableEjecucion ?? 'Sin asignar' }}</span>
+    </span>
+  </button>
+</app-tarjeta>
