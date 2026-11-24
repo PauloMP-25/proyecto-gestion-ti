@@ -23,7 +23,7 @@
     [cargando]="store.cargando()"
     [error]="store.error()"
     [textoBuscado]="store.filtro().texto"
-    (alAbrir)="store.abrirDetalle($event)"
+    (alAbrir)="abrirDetalle($event)"
     (alEditar)="abrirEditar($event)"
     (alEliminar)="solicitarEliminar($event)"
     (alReintentar)="store.cargar()"
@@ -37,7 +37,7 @@
     icono="menu_book"
     modo="lateral"
     ancho="lg"
-    (alCerrar)="store.cerrarDetalle()"
+    (alCerrar)="cerrarDetalle()"
   >
     @if (store.seleccionada(); as guia) {
       <app-detalle-guia [guia]="guia" (alVotar)="store.votarUtil(guia.id, $event)" />
@@ -78,7 +78,7 @@
       textoConfirmar="Sí, eliminar guía"
       [esPeligroso]="true"
       (confirmar)="confirmarEliminacion()"
-      (cancelar)="guiaParaEliminar.set(null)"
+      (cancelar)="cancelarEliminacion()"
     />
   }
 </app-plantilla-pagina>

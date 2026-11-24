@@ -1,4 +1,11 @@
-import { ChangeDetectionStrategy, Component, OnInit, inject, signal } from '@angular/core';
+import {
+  ChangeDetectionStrategy,
+  Component,
+  ElementRef,
+  OnInit,
+  inject,
+  signal,
+} from '@angular/core';
 import { PlantillaPaginaComponent } from '../../../../../compartido/ui/plantillas/plantilla-pagina/plantilla-pagina.component';
 import { CabeceraPaginaComponent } from '../../../../../compartido/ui/moleculas/cabecera-pagina/cabecera-pagina.component';
 import { BotonComponent } from '../../../../../compartido/ui/atomos/boton/boton.component';
@@ -35,6 +42,9 @@ import { GuiaVista } from '../../modelos/guias.model';
 export class ConocimientoListaPage implements OnInit {
   readonly store = inject(GuiasStore);
 
+  private readonly host = inject<ElementRef<HTMLElement>>(ElementRef);
+  private readonly pilaFoco: HTMLElement[] = [];
+
   protected readonly editorAbierto = signal(false);
   protected readonly articuloParaEditar = signal<GuiaVista | null>(null);
   protected readonly guiaParaEliminar = signal<GuiaVista | null>(null);
@@ -43,12 +53,25 @@ export class ConocimientoListaPage implements OnInit {
     this.store.cargar();
   }
 
+  protected abrirDetalle(id: number): void {
+    this.recordarFoco();
+    this.store.abrirDetalle(id);
+    this.enfocarPanel();
+  }
+
+  protected cerrarDetalle(): void {
+    this.store.cerrarDetalle();
+    this.restaurarFoco();
+  }
+
   protected abrirNueva(): void {
+    this.recordarFoco();
     this.articuloParaEditar.set(null);
     this.editorAbierto.set(true);
   }
 
   protected abrirEditar(guia: GuiaVista): void {
+    this.recordarFoco();
     this.articuloParaEditar.set(guia);
     this.editorAbierto.set(true);
   }
@@ -56,6 +79,7 @@ export class ConocimientoListaPage implements OnInit {
   protected cerrarEditor(): void {
     this.editorAbierto.set(false);
     this.articuloParaEditar.set(null);
+    this.restaurarFoco();
   }
 
   protected guardarArticulo(payload: GuardarArticuloPayload): void {
@@ -71,7 +95,13 @@ export class ConocimientoListaPage implements OnInit {
   }
 
   protected solicitarEliminar(guia: GuiaVista): void {
+    this.recordarFoco();
     this.guiaParaEliminar.set(guia);
+  }
+
+  protected cancelarEliminacion(): void {
+    this.guiaParaEliminar.set(null);
+    this.restaurarFoco();
   }
 
   protected confirmarEliminacion(): void {
@@ -80,8 +110,36 @@ export class ConocimientoListaPage implements OnInit {
       return;
     }
     this.store.eliminar(guia.id).subscribe({
-      next: () => this.guiaParaEliminar.set(null),
-      error: () => this.guiaParaEliminar.set(null),
+      next: () => {
+        this.guiaParaEliminar.set(null);
+        this.restaurarFoco();
+      },
+      error: () => {
+        this.guiaParaEliminar.set(null);
+        this.restaurarFoco();
+      },
     });
+  }
+
+  private recordarFoco(): void {
+    const activo = document.activeElement;
+    if (activo instanceof HTMLElement) {
+      this.pilaFoco.push(activo);
+    }
+  }
+
+  private restaurarFoco(): void {
+    const origen = this.pilaFoco.pop();
+    if (origen?.isConnected) {
+      origen.focus();
+    }
+  }
+
+  private enfocarPanel(): void {
+    setTimeout(() => {
+      this.host.nativeElement
+        .querySelector<HTMLElement>('.panel-detalle__cabecera button')
+        ?.focus();
+    }, 50);
   }
 }

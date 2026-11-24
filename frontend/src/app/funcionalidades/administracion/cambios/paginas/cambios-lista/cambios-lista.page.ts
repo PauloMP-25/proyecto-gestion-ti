@@ -1,6 +1,7 @@
 import {
   ChangeDetectionStrategy,
   Component,
+  ElementRef,
   OnInit,
   inject,
   signal,
@@ -63,6 +64,9 @@ export class CambiosListaPage implements OnInit {
   readonly store = inject(CambiosStore);
   protected readonly viewport = inject(ViewportService);
 
+  private readonly host = inject<ElementRef<HTMLElement>>(ElementRef);
+  private readonly pilaFoco: HTMLElement[] = [];
+
   protected readonly panelAbierto = signal(false);
   protected readonly dialogoAbierto = signal(false);
   protected readonly solicitudEnEdicion = signal<CambioDetalle | null>(null);
@@ -77,16 +81,20 @@ export class CambiosListaPage implements OnInit {
   }
 
   protected seleccionar(id: number): void {
+    this.recordarFoco();
     this.panelAbierto.set(true);
     this.store.abrirDetalle(id);
+    this.enfocarPanel();
   }
 
   protected cerrarPanel(): void {
     this.panelAbierto.set(false);
     this.store.cerrarDetalle();
+    this.restaurarFoco();
   }
 
   protected abrirNuevo(): void {
+    this.recordarFoco();
     this.solicitudEnEdicion.set(null);
     this.dialogoAbierto.set(true);
   }
@@ -96,6 +104,7 @@ export class CambiosListaPage implements OnInit {
     if (!detalle) {
       return;
     }
+    this.recordarFoco();
     this.solicitudEnEdicion.set(detalle);
     this.dialogoAbierto.set(true);
   }
@@ -103,6 +112,7 @@ export class CambiosListaPage implements OnInit {
   protected cerrarDialogo(): void {
     this.dialogoAbierto.set(false);
     this.solicitudEnEdicion.set(null);
+    this.restaurarFoco();
   }
 
   protected guardarSolicitud(resultado: ResultadoSolicitudCambio): void {
@@ -135,11 +145,13 @@ export class CambiosListaPage implements OnInit {
   }
 
   protected solicitarAccion(accion: AccionCambio): void {
+    this.recordarFoco();
     this.accionPendiente.set(accion);
   }
 
   protected cancelarAccion(): void {
     this.accionPendiente.set(null);
+    this.restaurarFoco();
   }
 
   protected confirmarAccion(transicion: TransicionCambio): void {
@@ -148,7 +160,10 @@ export class CambiosListaPage implements OnInit {
       return;
     }
     this.store.transicionar(detalle.id, transicion).subscribe({
-      next: () => this.accionPendiente.set(null),
+      next: () => {
+        this.accionPendiente.set(null);
+        this.restaurarFoco();
+      },
       error: () => {
         // El store ya notifica el error al usuario.
       },
@@ -158,12 +173,14 @@ export class CambiosListaPage implements OnInit {
   protected solicitarEliminar(): void {
     const detalle = this.store.seleccionado();
     if (detalle) {
+      this.recordarFoco();
       this.cambioParaEliminar.set(detalle);
     }
   }
 
   protected cancelarEliminar(): void {
     this.cambioParaEliminar.set(null);
+    this.restaurarFoco();
   }
 
   protected confirmarEliminar(): void {
@@ -174,11 +191,34 @@ export class CambiosListaPage implements OnInit {
     this.store.eliminar(cambio.id).subscribe({
       next: () => {
         this.cambioParaEliminar.set(null);
+        this.restaurarFoco();
         this.cerrarPanel();
       },
       error: () => {
         // El store ya notifica el error al usuario.
       },
     });
+  }
+
+  private recordarFoco(): void {
+    const activo = document.activeElement;
+    if (activo instanceof HTMLElement) {
+      this.pilaFoco.push(activo);
+    }
+  }
+
+  private restaurarFoco(): void {
+    const origen = this.pilaFoco.pop();
+    if (origen?.isConnected) {
+      origen.focus();
+    }
+  }
+
+  private enfocarPanel(): void {
+    setTimeout(() => {
+      this.host.nativeElement
+        .querySelector<HTMLElement>('.panel-detalle__cabecera button')
+        ?.focus();
+    }, 50);
   }
 }
