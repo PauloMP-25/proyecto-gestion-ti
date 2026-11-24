@@ -70,6 +70,17 @@ export class GraficoPorServicioComponent implements AfterViewInit, OnDestroy {
     };
   }
 
+  readonly itemsLeyenda = () => {
+    const tendencias = this.panelService.tendenciasPorServicio();
+    const colores = leerTokensNumerados('--comp-grafico-dona', 5);
+    if (!tendencias || tendencias.length === 0) return [];
+    return tendencias.map((t, i) => ({
+      servicio: t.servicio,
+      totalIncidentes: t.totalIncidentes,
+      color: colores[i % colores.length]
+    }));
+  };
+
   private construirGrafico(): void {
     if (!this.canvasCircular) return;
 
@@ -97,44 +108,11 @@ export class GraficoPorServicioComponent implements AfterViewInit, OnDestroy {
         maintainAspectRatio: false,
         cutout: '52%',
         layout: {
-          padding: { top: 6, bottom: 6, left: 4, right: 4 }
+          padding: { top: 8, bottom: 8, left: 8, right: 8 }
         },
         plugins: {
           legend: {
-            position: 'right',
-            align: 'center',
-            labels: {
-              boxWidth: 12,
-              boxHeight: 12,
-              borderRadius: 3,
-              useBorderRadius: true,
-              padding: 10,
-              color: leerToken('--comp-grafico-leyenda-texto'),
-              font: {
-                family: "'Inter', system-ui, sans-serif",
-                size: 11,
-                weight: 600,
-              },
-              generateLabels: (chart) => {
-                const data = chart.data;
-                if (!data.labels?.length || !data.datasets.length) return [];
-                const dataset = data.datasets[0];
-                const total = (dataset.data as number[]).reduce((a, b) => a + b, 0);
-
-                return data.labels.map((label, i) => {
-                  const val = dataset.data[i] as number;
-                  const color = (dataset.backgroundColor as string[])[i];
-                  return {
-                    text: `${label} (${val} casos)`,
-                    fillStyle: color,
-                    strokeStyle: color,
-                    lineWidth: 0,
-                    hidden: !chart.getDataVisibility(i),
-                    index: i
-                  };
-                });
-              }
-            }
+            display: false
           },
           tooltip: {
             backgroundColor: leerToken('--comp-grafico-tooltip-bg'),

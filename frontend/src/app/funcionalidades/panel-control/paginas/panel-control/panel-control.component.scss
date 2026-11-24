@@ -51,16 +51,16 @@
     background-color: var(--color-surface-sunken);
     border: 1px solid var(--color-border-subtle);
     border-radius: var(--radius-full, 9999px);
-    padding: 3px;
-    gap: 3px;
+    padding: 4px;
+    gap: 4px;
   }
 
   .pill-btn {
     background: transparent;
     border: none;
-    padding: 4px 12px;
+    padding: 6px 16px;
     border-radius: var(--radius-full, 9999px);
-    font-size: 11px;
+    font-size: 0.9375rem;
     font-weight: 600;
     color: var(--color-text-secondary);
     cursor: pointer;
@@ -130,14 +130,14 @@
   align-items: center;
   justify-content: center;
   gap: var(--espacio-2xs);
-  min-height: var(--touch-min);
-  padding: 0 var(--espacio-md);
+  min-height: 40px;
+  padding: 0 1.15rem;
   border: 1px solid transparent;
   border-radius: var(--radius-md);
   background: transparent;
   color: var(--color-text-secondary);
   font-family: inherit;
-  font-size: var(--font-size-sm);
+  font-size: 0.95rem;
   font-weight: 600;
   cursor: pointer;
   white-space: nowrap;
@@ -291,19 +291,41 @@
   width: 100%;
 }
 
-/* PESTAÑA 2: GRID DE LOS 4 GRÁFICOS */
-.grid-cuatro-graficos {
+/* PESTAÑA 2: FILAS DE GRÁFICOS */
+.fila-graficos {
   display: grid;
-  grid-template-columns: repeat(2, 1fr);
   gap: var(--espacio-md);
   width: 100%;
+  align-items: stretch;
 
-  @include r.hasta(lg) {
-    grid-template-columns: 1fr;
+  &--circulares {
+    grid-template-columns: repeat(2, 1fr);
+
+    @include r.hasta(lg) {
+      grid-template-columns: 1fr;
+    }
+  }
+
+  &--barras {
+    /* Curva de turnos a la izquierda y Fallas horizontales a la derecha con mayor ancho */
+    grid-template-columns: 1fr 1.25fr;
+
+    @include r.hasta(lg) {
+      grid-template-columns: 1fr;
+    }
   }
 }
 
 .cuadrante-grafico {
+  display: flex;
+  flex-direction: column;
   width: 100%;
-  min-height: 280px;
+  height: 100%;
+  min-height: 340px;
+
+  > * {
+    display: block;
+    width: 100%;
+    height: 100%;
+  }
 }

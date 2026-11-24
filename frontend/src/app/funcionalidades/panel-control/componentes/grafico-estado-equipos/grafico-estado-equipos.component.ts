@@ -48,6 +48,22 @@ export class GraficoEstadoEquiposComponent implements AfterViewInit, OnDestroy {
     });
   }
 
+  readonly itemsLeyenda = () => {
+    const inv = this.estadoInventario();
+    const colores = [
+      '#0F172A', // Slate institucional
+      '#1B5E20', // Verde préstamo activo
+      '#D97706', // Ámbar mantenimiento
+      '#64748B', // Gris reserva de contingencia
+    ];
+    return [
+      { estado: 'En servicio asistencial', total: inv.enServicio, color: colores[0] },
+      { estado: 'En préstamo activo', total: inv.enPrestamo, color: colores[1] },
+      { estado: 'En mantenimiento técnico', total: inv.enMantenimiento, color: colores[2] },
+      { estado: 'Reserva de contingencia', total: inv.disponiblesReserva, color: colores[3] },
+    ];
+  };
+
   private construirGrafico(): void {
     if (!this.canvasEquipos) return;
     const ctx = this.canvasEquipos.nativeElement.getContext('2d');
@@ -98,42 +114,11 @@ export class GraficoEstadoEquiposComponent implements AfterViewInit, OnDestroy {
         maintainAspectRatio: false,
         cutout: '52%',
         layout: {
-          padding: { top: 6, bottom: 6, left: 4, right: 4 },
+          padding: { top: 8, bottom: 8, left: 8, right: 8 },
         },
         plugins: {
           legend: {
-            position: 'right',
-            align: 'center',
-            labels: {
-              boxWidth: 12,
-              boxHeight: 12,
-              borderRadius: 3,
-              useBorderRadius: true,
-              padding: 10,
-              color: '#334155',
-              font: {
-                family: "'Inter', system-ui, sans-serif",
-                size: 11,
-                weight: 600,
-              },
-              generateLabels: (chart) => {
-                const data = chart.data;
-                if (!data.labels?.length || !data.datasets.length) return [];
-                const dataset = data.datasets[0];
-                return data.labels.map((label, i) => {
-                  const val = dataset.data[i] as number;
-                  const color = (dataset.backgroundColor as string[])[i];
-                  return {
-                    text: `${label} (${val})`,
-                    fillStyle: color,
-                    strokeStyle: color,
-                    lineWidth: 0,
-                    hidden: !chart.getDataVisibility(i),
-                    index: i,
-                  };
-                });
-              },
-            },
+            display: false,
           },
           tooltip: {
             backgroundColor: '#0F172A',
