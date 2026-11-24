@@ -90,4 +90,25 @@ public class CorreoServiceImpl implements CorreoService {
                     destinatario, e.getMessage());
         }
     }
+
+    @Override
+    public void enviarAlerta(String destinatario, String asunto, String contenidoHtml) {
+        log.info("Iniciando despacho de alerta SLA hacia: {}", destinatario);
+        if (mailSender == null) {
+            log.info("JavaMailSender no configurado. Alerta omitida para {}", destinatario);
+            return;
+        }
+        try {
+            MimeMessage message = mailSender.createMimeMessage();
+            MimeMessageHelper helper = new MimeMessageHelper(message, true, "UTF-8");
+            helper.setFrom(remitente);
+            helper.setTo(destinatario);
+            helper.setSubject(asunto);
+            helper.setText(contenidoHtml, true);
+            mailSender.send(message);
+            log.info("Alerta SLA enviada exitosamente a {}", destinatario);
+        } catch (Exception e) {
+            log.error("Error enviando alerta SLA a {}: {}", destinatario, e.getMessage(), e);
+        }
+    }
 }
