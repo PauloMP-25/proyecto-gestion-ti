@@ -1,0 +1,32 @@
+:host {
+  display: block;
+  min-inline-size: 0;
+}
+
+.chips {
+  display: flex;
+  gap: var(--espacio-2);
+  overflow-x: auto;
+  scroll-snap-type: x mandatory;
+  padding-block-end: var(--espacio-1);
+
+  @media (min-width: 768px) {
+    flex-wrap: wrap;
+    overflow: visible;
+    padding-block-end: 0;
+  }
+
+  app-chip-filtro {
+    flex: 0 0 auto;
+    scroll-snap-align: start;
+  }
+}
+
+.chip-atenuado {
+  opacity: 0.55;
+
+  &:hover,
+  &:focus-within {
+    opacity: 1;
+  }
+}

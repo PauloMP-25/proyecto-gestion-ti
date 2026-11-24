@@ -1,0 +1,33 @@
+:host {
+  display: block;
+}
+
+.buscador__filtros {
+  display: flex;
+  flex-direction: column;
+  gap: var(--espacio-2);
+  inline-size: 100%;
+  min-inline-size: 0;
+
+  @media (min-width: 768px) {
+    flex-direction: row;
+    flex-wrap: wrap;
+    align-items: flex-start;
+    gap: var(--espacio-3);
+  }
+}
+
+app-chips-categorias {
+  min-inline-size: 0;
+  flex: 1 1 auto;
+}
+
+app-campo-filtro {
+  flex: 0 0 auto;
+}
+
+.buscador__resultados {
+  margin: var(--espacio-1) 0 0;
+  font-size: var(--font-size-sm);
+  color: var(--color-text-secondary);
+}

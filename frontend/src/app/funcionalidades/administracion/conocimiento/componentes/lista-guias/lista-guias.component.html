@@ -1,0 +1,40 @@
+@if (cargando()) {
+  <div class="grid-guias" aria-live="polite" aria-label="Cargando guías">
+    @for (item of [1, 2, 3, 4, 5, 6]; track item) {
+      <app-esqueleto preset="articulo" />
+    }
+  </div>
+} @else if (error(); as mensaje) {
+  <app-alerta-en-linea tono="peligro" icono="error">
+    {{ mensaje }}
+    <app-boton variante="outline" tamano="sm" icono="refresh" (alHacerClick)="alReintentar.emit()">
+      Reintentar
+    </app-boton>
+  </app-alerta-en-linea>
+} @else if (guias().length === 0) {
+  <div class="estado-vacio">
+    <app-estado-vacio
+      icono="search_off"
+      [mensaje]="
+        textoBuscado()
+          ? 'No encontramos guías para «' + textoBuscado() + '». Pruebe con otras palabras o registre una nueva guía.'
+          : 'No hay guías que coincidan con los filtros seleccionados.'
+      "
+    />
+    @if (textoBuscado()) {
+      <app-boton variante="secundario" (alHacerClick)="alLimpiar.emit()">Limpiar filtros</app-boton>
+    }
+  </div>
+} @else {
+  <div class="grid-guias">
+    @for (guia of guias(); track guia.id) {
+      <app-tarjeta-guia
+        [guia]="guia"
+        [textoBuscado]="textoBuscado()"
+        (alAbrir)="alAbrir.emit($event)"
+        (alEditar)="alEditar.emit($event)"
+        (alEliminar)="alEliminar.emit($event)"
+      />
+    }
+  </div>
+}

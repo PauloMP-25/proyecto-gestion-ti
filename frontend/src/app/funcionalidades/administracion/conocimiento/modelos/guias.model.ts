@@ -1,4 +1,7 @@
-import { ArticuloConocimiento } from '../../../../compartido/modelos/articulo-conocimiento.model';
+import {
+  ArticuloConocimiento,
+  NivelDificultad,
+} from '../../../../compartido/modelos/articulo-conocimiento.model';
 
 /** Las 5 categorías oficiales del Centro de Soluciones. */
 export type CategoriaGuia =
@@ -7,6 +10,18 @@ export type CategoriaGuia =
   | 'REDES'
   | 'HARDWARE'
   | 'SOFTWARE_ASISTENCIAL';
+
+export const ETIQUETA_DIFICULTAD: Record<NivelDificultad, string> = {
+  BASICO: 'Básico',
+  INTERMEDIO: 'Intermedio',
+  AVANZADO: 'Avanzado',
+};
+
+export const ETIQUETA_AMBITO: Record<AmbitoGuia, string> = {
+  TODOS: 'Todas',
+  PUBLICO: 'Para el personal asistencial',
+  INTERNO: 'Uso interno del equipo técnico',
+};
 
 export interface DefinicionCategoriaGuia {
   readonly clave: CategoriaGuia;

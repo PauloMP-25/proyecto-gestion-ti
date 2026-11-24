@@ -1,0 +1,60 @@
+<app-tarjeta [interactiva]="true">
+  <div class="tarjeta-guia">
+    <button type="button" class="tarjeta-guia__principal" (click)="alAbrir.emit(guia().id)">
+      <span class="tarjeta-guia__cabecera">
+        <span class="tarjeta-guia__categoria" [style.color]="colorCategoria()">
+          <app-icono [nombre]="guia().categoria.icono" tamano="sm" aria-hidden="true" />
+          {{ guia().categoria.etiqueta }}
+        </span>
+        <app-insignia [texto]="ambitoTexto()" [tono]="guia().esPublico ? 'marca' : 'neutro'" />
+      </span>
+
+      <span
+        class="tarjeta-guia__titulo"
+        [innerHTML]="guia().titulo | resaltar: textoBuscado()"
+      ></span>
+
+      <span class="tarjeta-guia__sintoma">{{ guia().sintoma || guia().resumen }}</span>
+
+      <span class="tarjeta-guia__meta">
+        @if (guia().minutosEstimados) {
+          <span class="tarjeta-guia__meta-item">
+            <app-icono nombre="schedule" tamano="sm" aria-hidden="true" />
+            {{ guia().minutosEstimados }} min
+          </span>
+        }
+        @if (guia().nivelDificultad; as dificultad) {
+          <span class="tarjeta-guia__meta-item">{{ ETIQUETA_DIFICULTAD[dificultad] }}</span>
+        }
+        <span class="tarjeta-guia__meta-item">
+          <app-icono nombre="thumb_up" tamano="sm" aria-hidden="true" />
+          {{ guia().conteoUtil }}
+        </span>
+      </span>
+
+      @if (guia().requiereTecnico) {
+        <app-insignia texto="Requiere técnico" tono="aviso" icono="engineering" />
+      }
+    </button>
+
+    <footer class="tarjeta-guia__pie">
+      <span class="tarjeta-guia__fecha">
+        Actualizado {{ guia().fechaActualizacion | date: 'dd/MM/yyyy' }}
+      </span>
+      <span class="tarjeta-guia__acciones">
+        <app-boton-icono
+          icono="edit"
+          etiqueta="Editar guía"
+          variante="suave"
+          (alHacerClick)="editar($event)"
+        />
+        <app-boton-icono
+          icono="delete"
+          etiqueta="Eliminar guía"
+          variante="peligro"
+          (alHacerClick)="eliminar($event)"
+        />
+      </span>
+    </footer>
+  </div>
+</app-tarjeta>

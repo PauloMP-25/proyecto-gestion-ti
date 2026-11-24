@@ -1,0 +1,19 @@
+<div class="chips" role="group" aria-label="Filtrar por categoría">
+  <app-chip-filtro
+    etiqueta="Todas"
+    icono="grid_on"
+    [conteo]="total()"
+    [activo]="activa() === null"
+    (alHacerClick)="alSeleccionar.emit(null)"
+  />
+  @for (categoria of CATEGORIAS_GUIA; track categoria.clave) {
+    <app-chip-filtro
+      [etiqueta]="categoria.etiqueta"
+      [icono]="categoria.icono"
+      [conteo]="conteoCategoria(categoria.clave)"
+      [activo]="activa() === categoria.clave"
+      [class.chip-atenuado]="conteoCategoria(categoria.clave) === 0"
+      (alHacerClick)="alSeleccionar.emit(categoria.clave)"
+    />
+  }
+</div>

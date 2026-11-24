@@ -1,0 +1,35 @@
+<app-barra-filtros
+  placeholder="Describa el problema: «impresora de pulseras», «sin red», «sistema no abre»…"
+  [busqueda]="filtro().texto"
+  (busquedaChange)="alBuscar.emit($event)"
+  [filtrosActivos]="filtrosActivos()"
+  (alLimpiar)="alLimpiar.emit()"
+>
+  <div filtros class="buscador__filtros">
+    <app-chips-categorias
+      [conteo]="conteoPorCategoria()"
+      [activa]="filtro().categoria"
+      (alSeleccionar)="alSeleccionarCategoria.emit($event)"
+    />
+    <app-campo-filtro
+      id="filtro-guia-ambito"
+      etiqueta="Ámbito"
+      [opciones]="opcionesAmbito"
+      [valor]="filtro().ambito"
+      (valorChange)="seleccionarAmbito($event)"
+    />
+  </div>
+</app-barra-filtros>
+
+<p class="buscador__resultados" aria-live="polite">
+  @if (hayFiltros()) {
+    {{ totalResultados() }}
+    {{ totalResultados() === 1 ? 'guía encontrada' : 'guías encontradas' }}
+    @if (filtro().texto) {
+      para «{{ filtro().texto }}»
+    }
+  } @else {
+    {{ totalResultados() }}
+    {{ totalResultados() === 1 ? 'guía disponible' : 'guías disponibles' }}
+  }
+</p>
