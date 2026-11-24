@@ -38,9 +38,10 @@
       }
     </div>
 
-    <div class="meta-inline" [title]="'Meta objetivo oficial: ' + kpi().comparador + ' ' + kpi().meta">
-      <span class="meta-comparador">{{ kpi().comparador }}</span>
+    <div class="meta-inline" [title]="'Meta objetivo oficial: ' + simboloComparador() + ' ' + kpi().meta">
+      <span class="meta-comparador">{{ simboloComparador() }}</span>
       <span class="meta-objetivo">{{ kpi().meta }}</span>
     </div>
   </div>
 </div>
+
