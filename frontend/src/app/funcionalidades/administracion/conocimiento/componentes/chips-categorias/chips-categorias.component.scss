@@ -19,6 +19,10 @@
   app-chip-filtro {
     flex: 0 0 auto;
     scroll-snap-align: start;
+
+    ::ng-deep .chip {
+      min-block-size: var(--touch-min);
+    }
   }
 }
 

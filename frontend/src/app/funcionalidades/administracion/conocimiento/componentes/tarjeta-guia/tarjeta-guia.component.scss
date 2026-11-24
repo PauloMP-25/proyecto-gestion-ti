@@ -107,4 +107,9 @@
   display: inline-flex;
   align-items: center;
   gap: var(--espacio-1);
+
+  ::ng-deep .btn-icono {
+    inline-size: var(--touch-min);
+    block-size: var(--touch-min);
+  }
 }

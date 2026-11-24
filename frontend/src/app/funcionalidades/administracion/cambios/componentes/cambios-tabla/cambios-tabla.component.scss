@@ -116,5 +116,10 @@
     inline-size: 1%;
     white-space: nowrap;
     text-align: end;
+
+    ::ng-deep .btn-icono {
+      inline-size: var(--touch-min);
+      block-size: var(--touch-min);
+    }
   }
 }

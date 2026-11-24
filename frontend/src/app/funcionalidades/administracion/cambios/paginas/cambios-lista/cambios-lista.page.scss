@@ -2,6 +2,11 @@
   display: block;
 }
 
+:host ::ng-deep app-panel-detalle .panel-detalle__cabecera .btn-icono {
+  inline-size: var(--touch-min);
+  block-size: var(--touch-min);
+}
+
 .esqueletos {
   display: flex;
   flex-direction: column;

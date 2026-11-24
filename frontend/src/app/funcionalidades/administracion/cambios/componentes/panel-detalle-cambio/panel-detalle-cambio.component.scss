@@ -51,6 +51,10 @@
   font-size: var(--font-size-sm);
 
   a {
+    display: inline-flex;
+    align-items: center;
+    min-block-size: var(--touch-min);
+    padding-inline: var(--espacio-1);
     color: var(--color-primary-base);
     font-weight: var(--font-weight-medium);
     text-decoration: underline;
