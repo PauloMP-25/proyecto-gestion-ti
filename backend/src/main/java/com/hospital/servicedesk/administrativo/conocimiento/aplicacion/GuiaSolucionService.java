@@ -16,6 +16,7 @@ public interface GuiaSolucionService {
     GuiaRespuesta crear(GuiaFormulario f, ContextoActor ctx);
     GuiaRespuesta actualizar(Integer id, GuiaFormulario f, ContextoActor ctx);
     void archivar(Integer id, ContextoActor ctx);
+    void cambiarEstadoPublicado(Integer id, boolean publicado, ContextoActor ctx);
     GuiaRespuesta votar(Integer id, boolean esUtil, ContextoActor ctx);
     void registrarVisita(Integer id, ContextoActor ctx);
 }

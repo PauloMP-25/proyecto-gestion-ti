@@ -69,4 +69,12 @@ public class SolicitudCambioController {
     public List<AreaAfectadaRespuesta> listarAreasSeleccionables() {
         return service.listarAreasSeleccionables();
     }
+
+    @PutMapping("/{id}/decision")
+    public CambioDetalleRespuesta decidir(@PathVariable Integer id,
+                                          @Valid @RequestBody TransicionCambioSolicitud transicion,
+                                          Authentication auth, HttpServletRequest request) {
+        return service.transicionar(id, transicion, resolutorActor.resolver(auth, request));
+    }
+
 }

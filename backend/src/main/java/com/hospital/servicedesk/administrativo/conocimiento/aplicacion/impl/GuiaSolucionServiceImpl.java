@@ -233,4 +233,16 @@ public class GuiaSolucionServiceImpl implements GuiaSolucionService {
                 g.getFechaCreacion()
         );
     }
+
+    @Override
+    @Transactional
+    public void cambiarEstadoPublicado(Integer id, boolean publicado, ContextoActor ctx) {
+        ErrorConocido g = repository.findById(id)
+                .orElseThrow(() -> new RecursoNoEncontradoException("Guía no encontrada: " + id));
+        g.setPublicado(publicado);
+        g.setFechaActualizacion(LocalDateTime.now(clock));
+        repository.save(g);
+        log.info("Guía {} estado publicado cambiado a {} por {}", id, publicado, ctx.correo());
+    }
+
 }

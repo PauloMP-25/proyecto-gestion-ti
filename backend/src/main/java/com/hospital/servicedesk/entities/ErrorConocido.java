@@ -17,7 +17,7 @@ public class ErrorConocido {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "id_error")
+    @Column(name = "id_error_conocido")
     private Integer idError;
 
     @Column(name = "titulo", nullable = false, length = 150)

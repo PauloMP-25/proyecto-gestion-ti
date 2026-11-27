@@ -87,4 +87,12 @@ public class GuiaSolucionController {
     public void registrarVisita(@PathVariable Integer id, Authentication auth, HttpServletRequest request) {
         service.registrarVisita(id, resolutorActor.resolver(auth, request));
     }
+
+    @PatchMapping("/{id}/activo")
+    @PreAuthorize("hasAnyRole('ADMINISTRADOR', 'TECNICO', 'PRACTICANTE')")
+    public void cambiarActivo(@PathVariable Integer id, @RequestParam boolean activo,
+                              Authentication auth, HttpServletRequest request) {
+        service.cambiarEstadoPublicado(id, activo, resolutorActor.resolver(auth, request));
+    }
+
 }
