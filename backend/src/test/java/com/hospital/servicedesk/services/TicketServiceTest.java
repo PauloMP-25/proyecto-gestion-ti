@@ -8,6 +8,11 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
+import com.hospital.servicedesk.operaciones.compromisos.dominio.PoliticaCompromisoAtencion;
+import com.hospital.servicedesk.compartido.auditoria.AuditoriaTicketService;
+import org.springframework.context.ApplicationEventPublisher;
+import java.time.Clock;
+import java.time.LocalDateTime;
 import org.mockito.MockitoAnnotations;
 
 import java.util.Optional;
@@ -33,12 +38,29 @@ class TicketServiceTest {
     @Mock
     private UsuarioRepository usuarioRepository;
 
+    @Mock
+    private PoliticaCompromisoAtencion politicaCompromiso;
+
+    @Mock
+    private Clock clock;
+
+    @Mock
+    private AuditoriaTicketService auditoriaTicketService;
+
+    @Mock
+    private ApplicationEventPublisher eventos;
+
+
     @InjectMocks
     private TicketServiceImpl ticketService;
 
     @BeforeEach
     void setUp() {
         MockitoAnnotations.openMocks(this);
+        when(clock.instant()).thenReturn(java.time.Instant.now());
+        when(clock.getZone()).thenReturn(java.time.ZoneId.systemDefault());
+        when(politicaCompromiso.calcularLimite(any(), any(), any(), any())).thenReturn(LocalDateTime.now().plusHours(2));
+
     }
 
     @Test

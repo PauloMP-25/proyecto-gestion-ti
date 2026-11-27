@@ -11,7 +11,7 @@ import java.time.Clock;
  * Configuración general de beans de infraestructura y utilitarios para el backend hospitalario.
  */
 @Configuration
-@EnableConfigurationProperties(PropiedadesRed.class)
+@EnableConfigurationProperties({PropiedadesRed.class, com.hospital.servicedesk.operaciones.compromisos.config.PropiedadesCompromisoAtencion.class})
 public class ApplicationConfig {
 
     /**

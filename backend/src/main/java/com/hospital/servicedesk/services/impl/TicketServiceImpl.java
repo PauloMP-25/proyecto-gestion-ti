@@ -1,5 +1,9 @@
 package com.hospital.servicedesk.services.impl;
 
+import com.hospital.servicedesk.operaciones.compromisos.dominio.PoliticaCompromisoAtencion;
+import java.time.Clock;
+
+
 import com.hospital.servicedesk.dtos.TicketDTOs.*;
 import com.hospital.servicedesk.entities.*;
 import com.hospital.servicedesk.exceptions.RecursoNoEncontradoException;
@@ -27,6 +31,8 @@ public class TicketServiceImpl implements TicketService {
     private final HistorialTicketRepository auditRepo;
     private final UsuarioRepository userRepo;
     private final ElementoConfiguracionRepository ciRepo;
+    private final PoliticaCompromisoAtencion politicaCompromiso;
+    private final Clock clock;
 
     @Override
     @Transactional
@@ -59,7 +65,8 @@ public class TicketServiceImpl implements TicketService {
                 .area(area)
                 .elementoConfiguracion(ci)
                 .ipOrigen(clientIp)
-                .fechaLimiteResolucion(LocalDateTime.now().plusHours(pri == Prioridad.CRITICA ? 2 : 8))
+                .fechaCreacion(LocalDateTime.now(clock))
+                .fechaLimiteResolucion(politicaCompromiso.calcularLimite(LocalDateTime.now(clock), req.getImpacto(), req.getUrgencia(), pri))
                 .estadoSla(EstadoSLA.DENTRO_TIEMPO)
                 .build();
 
